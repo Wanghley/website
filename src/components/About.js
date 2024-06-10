@@ -3,6 +3,7 @@ import about_photo from '../assets/about.jpg'
 import fetchTimeline from '../api/timeline'
 import { Timeline} from 'rsuite';
 import './css/About.css'
+import ReactPlayer from 'react-player'
 
 const About = () => {
     const [timeline, setTimeline] = useState(null);
@@ -19,8 +20,9 @@ const About = () => {
         getTimeline();
     }, []);
     
-    return(
+    return(<>
             <div className='about'>
+                
                 <div className='about-text'>
                     <h1 className='about-title'>About Me</h1>
                     <h2 className='about-subtitle'>🎼 A Maestro of Curiosity 🚀 Crafting Tomorrow's Tech Marvels 🌟 One Ingenious Solution at a Time ⚙️ Shaping the Future, and Beyond! 🚀🔮</h2>
@@ -38,9 +40,27 @@ const About = () => {
                     <button className='secondary-button about-button'>Know me more</button>
                 </div>
                 <div className='about-image'>
-                    <img src={about_photo} className='lazyload' alt='Wanghley'/>
+                <ReactPlayer 
+                url='https://youtu.be/FOkCz0W5pgw'
+                playing={false}
+                controls={false}
+                volume={0.75}
+                config={
+                    { youtube: {
+                        playerVars: { 
+                            showinfo: 1,
+                            controls: 0,
+                            modestbranding: 1,
+                            loop: 1,
+                            rel: 0,
+                        }
+                    }}
+                }
+            />
+                    {/* <img src={about_photo} className='lazyload' alt='Wanghley'/> */}
                 </div>
             </div>
+            </>
     )
 }
 
