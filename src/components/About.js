@@ -49,6 +49,8 @@ const About = () => {
             src="youtube/FOkCz0W5pgw"
             layout="video"
             controls
+            autoPlay
+
           >
             <MediaProvider />
             <DefaultVideoLayout thumbnails="https://files.vidstack.io/sprite-fight/thumbnails.vtt" icons={defaultLayoutIcons} />
