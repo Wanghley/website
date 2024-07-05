@@ -2,11 +2,15 @@
 
 .skill-card {
   display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-start;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin: 0.5rem;
   padding: 0.5rem;
+  margin-bottom: 0;
+
   /* border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: #fff; */
@@ -15,10 +19,13 @@
 /* create alignment for card title */
 h3 {
   margin: 0.5rem 0;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
+  font-weight: 100;
 }
 
 /* make image size to default height */
 img {
   height: 75px;
+  /* margin bottom small */
+  margin-bottom: -.5rem;
 }
