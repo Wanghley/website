@@ -1,6 +1,33 @@
 import axios from "axios";
 
 const baseURL = process.env.REACT_APP_skills_api_url;
+const apiKey = process.env.REACT_APP_cms_api_token;
+
+//TODO: Need to test with pagination
+async function fetchFeaturedSkills() {
+  try {
+    const url = `${baseURL}?filters[Featured][$eq]=true&populate=Icon`;
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `${apiKey}`
+      }
+    });
+
+    // just need to get the Name and Icon.data.thumbnail.url for each skill
+    let r = response.data.data.map((skill) => {
+      const name = skill.attributes.Name;
+      let icon = skill.attributes.Icon.data;
+      icon = icon==null? "https://res.cloudinary.com/wanghley/image/upload/v1720032994/placeholder_icon.png" : icon.attributes.formats.thumbnail.url;
+      const type = skill.attributes.Type;
+      return { name, type, icon};
+    });
+
+    return r;
+  }catch(e){
+    console.error(e);
+    throw e;
+  }
+}
 
 async function fetchData(nextPage = 1, prevData = null) {
   try {
@@ -45,3 +72,4 @@ export async function getUniqueElements() {
   }
 }
 
+export { fetchFeaturedSkills };
