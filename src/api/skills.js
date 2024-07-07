@@ -3,31 +3,46 @@ import axios from "axios";
 const baseURL = process.env.REACT_APP_skills_api_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
 
-//TODO: Need to test with pagination
 async function fetchFeaturedSkills() {
   try {
     const url = `${baseURL}?filters[Featured][$eq]=true&populate=Icon`;
+    // console.log("Fetching from URL: ", url); // Log the URL
     const response = await axios.get(url, {
       headers: {
-        Authorization: `${apiKey}`
+        Authorization: `Bearer ${apiKey}` // Ensure Bearer prefix if needed
       }
     });
 
-    // just need to get the Name and Icon.data.thumbnail.url for each skill
-    let r = response.data.data.map((skill) => {
+    // console.log("Response Data: ", response.data); // Log the entire response
+
+    // Check if the response data is structured as expected
+    if (!response.data.data) {
+      throw new Error("Unexpected response structure");
+    }
+
+    // Map through the response data to extract necessary fields
+    let skills = response.data.data.map((skill) => {
       const name = skill.attributes.Name;
-      let icon = skill.attributes.Icon.data;
-      icon = icon==null? "https://res.cloudinary.com/wanghley/image/upload/v1720032994/placeholder_icon.png" : icon.attributes.formats.thumbnail.url;
       const type = skill.attributes.Type;
-      return { name, type, icon};
+      const iconData = skill.attributes.Icon.data;
+
+      // Handle cases where Icon.data might be null
+      const icon = iconData && iconData.attributes.formats && iconData.attributes.formats.thumbnail
+        ? iconData.attributes.formats.thumbnail.url
+        : "https://res.cloudinary.com/wanghley/image/upload/v1720032994/placeholder_icon.png";
+      
+      return { name, type, icon };
     });
 
-    return r;
-  }catch(e){
-    console.error(e);
-    throw e;
+    // console.log("Mapped Skills: ", skills); // Log the mapped skills
+    return skills;
+
+  } catch (error) {
+    console.error("Error fetching featured skills: ", error);
+    throw error;
   }
 }
+
 
 async function fetchData(nextPage = 1, prevData = null) {
   try {
