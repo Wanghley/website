@@ -7,8 +7,8 @@ nav {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0px 5rem;
-    margin-top: 25px;
+    padding: 20px 5rem;
+    margin-top: 0;
     position: sticky;
     top: 0;
     z-index: 999;
@@ -18,7 +18,7 @@ nav {
 nav.scrolled {
     background-color: #313131ed;
     transition: 0.3s ease-in-out;
-    padding: 0 5rem;
+    padding: 10px 5rem;
 }
 
 
