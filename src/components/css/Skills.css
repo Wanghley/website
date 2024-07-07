@@ -15,7 +15,7 @@
   padding: auto 5rem;
   width: 100%;
   text-align: left;
-  margin-top: 3rem;
+  margin-top: 2rem;
   margin-bottom: 25px;
   font-size: 3em;
   color: #575757;
@@ -33,38 +33,37 @@
 
 .skills_category {
   flex: 1 1 calc(50% - 20px);
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease-in-out;
+  background: #fff;
+  padding: 0px 20px;
+  border-radius: 10px;
+  box-shadow: 0 20px 20px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
 }
 
 .skills_category h2 {
   padding-bottom: 10px;
   font-size: 1.5em;
   color: #575757;
-  text-decoration:underline;
+  text-decoration: underline;
 }
 
 .skills_card {
   display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 }
 
 .skills_card > * {
-  /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); */
-    padding: 10px;
-    background-color: #fff;
-    border-radius: 5px;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
+  padding: 10px;
+  background-color: #fff;
+  border-radius: 5px;
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
 }
 
-.skills_card > *:hover {
+/* .skills_card > *:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-}
+} */
 
 .skills_card > * h3 {
   margin-bottom: 5px;
@@ -79,14 +78,28 @@
   color: #666;
 }
 
-/* .skills_card {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin: 1rem;
-  padding: 1rem;
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: #ffffffd0;
-} */
+/* Mobile view carousel adjustments */
+@media (max-width: 768px) {
+  .skills_container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .skills_category {
+    width: 100%;
+    padding: 0;
+  }
+
+  .skills_card {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+}
+
