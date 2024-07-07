@@ -18,7 +18,7 @@ nav {
 nav.scrolled {
     background-color: #313131ed;
     transition: 0.3s ease-in-out;
-    padding: 10px 5rem;
+    padding: 0 5rem;
 }
 
 
