@@ -1,0 +1,79 @@
+.card {
+    position: relative;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  
+  .card__image {
+    transition: transform 0.25s ease-in-out;
+  }
+  
+  .card__image:hover {
+    transform: scale(1.2);
+  }
+  
+  .card__overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    background: linear-gradient(to bottom, rgba(92, 107, 192, 0.1), rgba(92, 107, 192, 0.8));
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.5em;
+  }
+  
+  .card__overlay--blue {
+    background: linear-gradient(to bottom, rgba(41, 182, 246, 0.1), rgba(41, 182, 246, 0.8));
+  }
+  
+  .card__title {
+    color: white;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 0.75em;
+    transition: color 0.3s ease-out;
+  }
+  
+  .card__title:hover {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .card__meta {
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0.75em;
+    list-style: none;
+    color: #f8f8f8;
+    font-size: 0.85em;
+    letter-spacing: 1px;
+  }
+  
+  .card__meta li {
+    margin-right: 1em;
+  }
+  
+  .card__meta li:after {
+    content: "•";
+    margin-left: 0.6em;
+  }
+  
+  .card__meta li:last-child:after {
+    content: "";
+  }
+  
+  .card__meta--last {
+    margin-bottom: 0;
+  }
+  
+  .card__meta a {
+    color: #f8f8f8;
+  }
+  
