@@ -9,6 +9,8 @@ import WhyMe from "./WhyMe";
 import AboutText from "./About-text";
 import NotFound from "./NotFound";
 import ProjectCard from "./ProjectCard";
+import ProjectCardGrid from "./ProjectCardGrid";
+import Card from "./Card";
 
 export {
     Navbar,
@@ -21,5 +23,7 @@ export {
     Footer,
     AboutText,
     NotFound,
-    ProjectCard
+    ProjectCard,
+    ProjectCardGrid,
+    Card
 }
