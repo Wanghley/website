@@ -1,7 +1,7 @@
 import React from 'react';
 import './css/Card.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons from Font Awesome
+import { faExternalLinkAlt, faBook } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons from Font Awesome
 import { faGithub } from '@fortawesome/free-brands-svg-icons'; // Import necessary icons from Font Awesome
 
 
@@ -19,11 +19,14 @@ const Card = ({ imageUrl, title, date, teaser, category }) => {
                 <h3 className="card__title">{title}</h3>
                 <p className="card__teaser">{teaser}</p>
                 <div className="card__icons">
-                    <a href="#" className="card__icon">
-                        <FontAwesomeIcon icon={faGithub} /> Source{/* GitHub Icon */}
+                    <a href="#" className="card__icon" title="Read More">
+                        <FontAwesomeIcon icon={faBook} />
                     </a>
-                    <a href="#" className="card__icon">
-                        <FontAwesomeIcon icon={faExternalLinkAlt} /> Demo {/* Demo Icon */}
+                    <a href="#" className="card__icon" title="Source">
+                        <FontAwesomeIcon icon={faGithub} />
+                    </a>
+                    <a href="#" className="card__icon" title="Demo">
+                        <FontAwesomeIcon icon={faExternalLinkAlt} />
                     </a>
                 </div>
             </div>
