@@ -17,20 +17,22 @@ const Projects = (props) => {
         try {
             setLoading(true);
             const newProjects = await fetchProjects(page);
+
             if (newProjects && newProjects.length > 0) {
                 const filteredProjects = newProjects.filter(
                     (project) => !uniqueProjectIds.has(project.attributes.id)
                 );
                 filteredProjects.forEach((project) => uniqueProjectIds.add(project.attributes.id));
                 setProjects((prevProjects) => [...prevProjects, ...filteredProjects]);
+                setPage(page + 1); // Increment page for the next load
             } else {
-                setHasMore(false);
+                setHasMore(false); // No more projects to load
             }
-            setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
+            setHasMore(false); // Set hasMore to false on error
+        } finally {
             setLoading(false);
-            setHasMore(false);
         }
     };
 
@@ -39,18 +41,21 @@ const Projects = (props) => {
     }, [page]);
 
     const handleScroll = () => {
-        if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight || loading) {
-            return;
+        if (loading) return; // If already loading, do not trigger another load
+
+        // Calculate scroll conditions
+        const isBottom = window.innerHeight + window.scrollY >= document.documentElement.offsetHeight;
+
+        // Check if at the bottom
+        if (isBottom && hasMore) {
+            loadProjects(page); // Load next page if hasMore is true
         }
-        setPage((prevPage) => prevPage + 1);
     };
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [loading]);
-
-
+    }, [loading, hasMore]); // Depend on loading and hasMore to update scroll listener
 
     return (
         <div className="projects">
@@ -67,7 +72,7 @@ const Projects = (props) => {
                 )}
                 {!hasMore && !loading && (
                     <Box className="no-more-projects">
-                        <p>No more projects to load.</p>
+                        <p>End of projects, this is. A new path, seek you must.</p>
                     </Box>
                 )}
             </Box>
@@ -76,5 +81,3 @@ const Projects = (props) => {
 };
 
 export default Projects;
-
-// https://github.com/mayankagarwal09/dev-portfolio/blob/master/src/components/Projects.jsx
