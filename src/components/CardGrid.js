@@ -14,6 +14,8 @@ const CardGrid = ({ cardData }) => {
                         date={data.attributes?.Start}
                         teaser={data.attributes?.Teaser}
                         category="Project"
+                        sourceURL={data.attributes?.Github}
+                        demoURL={data.attributes?.Demo}
                     />
                 </Grid>
             ))}
