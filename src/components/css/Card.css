@@ -1,7 +1,7 @@
 .card {
     position: relative;
     width: 100%;
-    max-width: 300px; /* Adjust max-width as needed */
+    max-width: 400px; /* Adjust max-width as needed */
     border-radius: 12px;
     overflow: hidden;
     background-color: #fff;

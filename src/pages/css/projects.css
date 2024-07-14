@@ -1,0 +1,75 @@
+/* projects.css */
+
+.projects {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 5rem; /* Add padding for spacing */
+    margin: 0 auto; /* Center align content */
+}
+
+.projects-title {
+    font-size: 3rem; /* Decrease title font size for better fit */
+    margin-bottom: 1rem; /* Add margin below title */
+    color: #333; /* Adjust title color */
+    text-align: center; /* Center align title */
+}
+
+.projects-subtitle {
+    font-size: 1.25rem; /* Decrease subtitle font size */
+    text-align: center; /* Center align subtitle */
+    margin-bottom: 2rem; /* Add more margin below subtitle */
+    color: #555; /* Adjust subtitle color */
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center; /* Center loading spinner */
+    margin-top: 2rem; /* Add margin top for spacing */
+}
+
+.no-more-projects {
+    text-align: center; /* Center align no more projects message */
+    margin-top: 2rem; /* Add margin top for spacing */
+    color: #888; /* Adjust color for no more projects message */
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid columns */
+    gap: 1.5rem; /* Gap between cards */
+}
+
+@media (max-width: 1200px) {
+    .projects {
+        padding: 2rem; /* Adjust padding */
+    }
+
+    .projects-title {
+        font-size: 2.5rem; /* Further decrease title font size */
+    }
+
+    .projects-subtitle {
+        font-size: 1rem; /* Further decrease subtitle font size */
+        margin-bottom: 1.5rem; /* Adjust margin */
+    }
+}
+
+@media (max-width: 768px) {
+    .projects {
+        padding: 1rem; /* Adjust padding */
+    }
+
+    .projects-title {
+        font-size: 2rem; /* Further decrease title font size */
+    }
+
+    .projects-subtitle {
+        font-size: 0.875rem; /* Further decrease subtitle font size */
+        margin-bottom: 1rem; /* Adjust margin */
+    }
+
+    .card-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust grid columns for smaller screens */
+        gap: 1rem; /* Decrease gap between cards */
+    }
+}
