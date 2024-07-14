@@ -9,6 +9,9 @@ const Card = ({ imageUrl, title, date, teaser, category, slug, sourceURL = "#", 
     const truncatedTeaser = truncateText(teaser, 100);
     const projectLink = `${slug}`;
 
+    console.log("sourceURL", sourceURL);
+    console.log("demoURL", demoURL);
+
     return (
         <article className="card">
             <Link to={projectLink} className="card__link">
@@ -25,10 +28,10 @@ const Card = ({ imageUrl, title, date, teaser, category, slug, sourceURL = "#", 
                     <Link to={projectLink} className="card__icon" title="Read More">
                         <FontAwesomeIcon icon={faBook} />
                     </Link>
-                    <a href={sourceURL} className="card__icon" title="Source">
+                    <a href={sourceURL} className="card__icon" title="Source" target="_blank" rel="noreferrer">
                         <FontAwesomeIcon icon={faGithub} />
                     </a>
-                    <a href={demoURL} className="card__icon" title="Demo">
+                    <a href={demoURL} className="card__icon" title="Demo" target="_blank" rel="noreferrer">
                         <FontAwesomeIcon icon={faExternalLinkAlt} />
                     </a>
                 </div>
