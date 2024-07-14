@@ -3,29 +3,32 @@ import './css/Card.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt, faBook } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons from Font Awesome
 import { faGithub } from '@fortawesome/free-brands-svg-icons'; // Import necessary icons from Font Awesome
+import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
+const Card = ({ imageUrl, title, date, teaser, category, slug, sourceURL = "#", demoURL = "#" }) => {
+    const truncatedTeaser = truncateText(teaser, 100);
+    const projectLink = `${slug}`;
 
-const Card = ({ imageUrl, title, date, teaser, category }) => {
     return (
         <article className="card">
-            <div className="card__img" style={{ backgroundImage: `url(${imageUrl})` }}>
-                <div className="card__date">{date}</div>
-                <a href="#" className="card_link">
+            <Link to={projectLink} className="card__link">
+                <div className="card__img" style={{ backgroundImage: `url(${imageUrl})` }}>
+                    <div className="card__date">{date}</div>
                     <div className="card__img--hover"></div>
-                </a>
-            </div>
+                </div>
+            </Link>
             <div className="card__info">
                 <span className="card__category">{category}</span>
                 <h3 className="card__title">{title}</h3>
-                <p className="card__teaser">{teaser}</p>
+                <p className="card__teaser">{truncatedTeaser}</p>
                 <div className="card__icons">
-                    <a href="#" className="card__icon" title="Read More">
+                    <Link to={projectLink} className="card__icon" title="Read More">
                         <FontAwesomeIcon icon={faBook} />
-                    </a>
-                    <a href="#" className="card__icon" title="Source">
+                    </Link>
+                    <a href={sourceURL} className="card__icon" title="Source">
                         <FontAwesomeIcon icon={faGithub} />
                     </a>
-                    <a href="#" className="card__icon" title="Demo">
+                    <a href={demoURL} className="card__icon" title="Demo">
                         <FontAwesomeIcon icon={faExternalLinkAlt} />
                     </a>
                 </div>
@@ -33,5 +36,12 @@ const Card = ({ imageUrl, title, date, teaser, category }) => {
         </article>
     );
 }
+
+const truncateText = (text, maxLength) => {
+    if (!text) return ''; // Handle case when text is undefined or null
+    if (text.length <= maxLength) return text;
+    const truncated = text.substring(0, maxLength);
+    return truncated.substring(0, truncated.lastIndexOf(' ')) + '...';
+};
 
 export default Card;

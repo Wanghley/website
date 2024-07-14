@@ -11,6 +11,7 @@ import NotFound from "./NotFound";
 import ProjectCard from "./ProjectCard";
 import ProjectCardGrid from "./ProjectCardGrid";
 import Card from "./Card";
+import CardGrid from "./CardGrid";
 
 export {
     Navbar,
@@ -25,5 +26,6 @@ export {
     NotFound,
     ProjectCard,
     ProjectCardGrid,
-    Card
+    Card,
+    CardGrid
 }
