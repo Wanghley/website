@@ -1,0 +1,272 @@
+/* Site wrapper */
+.site__wrapper {
+  width: 100%;
+  padding: 2rem 5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  /* Add scroll for overflow */
+  display: flex;
+  /* Flexbox to center content vertically */
+  justify-content: center;
+  /* Center horizontally */
+  align-items: center;
+  /* Center vertically */
+}
+
+/* Grid container */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* Three columns, equal width */
+  grid-auto-rows: auto;
+  /* Automatic row height */
+  grid-gap: 1rem;
+  /* Grid gap */
+  width: 100%;
+  /* Ensure grid fills the width of the site__wrapper */
+  max-width: 1200px;
+  /* Limit grid width for readability */
+}
+
+/* Large grid item (first item) */
+.grid--large {
+  grid-column: span 1;
+  /* Span one column */
+  grid-row: span 2;
+  /* Span two rows */
+}
+
+/* Grid item styles */
+.grid {
+  position: relative;
+  width: 100%;
+  /* Ensure each grid item fills its container */
+}
+
+/* set img proportion to 16:9 */
+.grid img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* set img proportion to 16:9 */
+}
+
+/* make invisible */
+.btn--mobile {
+  display: none;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  /* Ensure cards fill their grid cell */
+}
+
+.card__image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  transition: background 0.3s ease;
+}
+
+.card__overlay--indigo {
+  background: linear-gradient(to bottom, rgba(92, 107, 192, 0.1), rgba(92, 107, 192, 0.8));
+}
+
+.card__overlay--blue {
+  background: linear-gradient(to bottom, rgba(41, 182, 246, 0.1), rgba(41, 182, 246, 0.8));
+}
+
+.card__overlay-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem;
+}
+
+.card__title {
+  color: white;
+  display: inline-block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 1.5em;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.75em;
+  text-decoration: none;
+  transition: all 0.3s ease-out;
+}
+
+.card__title:hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.card__meta {
+  margin: 0;
+  margin-bottom: 0.75em;
+  list-style-type: none;
+  padding: 0;
+  font-size: 0.85em;
+  font-variant: small-caps;
+  letter-spacing: 1px;
+  color: #f8f8f8;
+}
+
+.card__meta--last {
+  margin-bottom: 0;
+}
+
+.card__meta li {
+  display: inline;
+  margin-right: 1em;
+}
+
+.card__meta li a {
+  color: #f8f8f8;
+  text-decoration: none;
+}
+
+.card__meta li:not(:last-child)::after {
+  content: "\25cf";
+  font-style: normal;
+  position: relative;
+  color: rgba(255, 255, 255, 0.25);
+  margin-left: 0.5em;
+}
+
+/* Placeholder styles */
+.placeholder {
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.placeholder__image {
+  background: #c0c0c0;
+  height: 150px;
+}
+
+.placeholder__overlay {
+  background: rgba(0, 0, 0, 0.1);
+  height: 100%;
+}
+
+.placeholder__title {
+  background: #c0c0c0;
+  height: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+.placeholder__meta {
+  list-style-type: none;
+  padding: 0;
+  font-size: 0.85em;
+}
+
+.placeholder__meta li {
+  background: #c0c0c0;
+  height: 1em;
+  margin-bottom: 0.5em;
+  display: inline-block;
+  width: 5em;
+}
+
+/* Button.css */
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn--primary {
+  background-color: #6aaff1;
+  /* Green color */
+  color: white;
+  margin-top: 1rem;
+}
+
+.btn--primary:hover {
+  background-color: #5890cb;
+  /* Darker green on hover */
+}
+
+/* Adjustments for smaller screens */
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+    /* Single column layout */
+    grid-gap: 1.5rem;
+    /* Increased gap for better readability */
+    padding: 0 1rem;
+    /* Adjust padding for smaller screens */
+  }
+
+  .card {
+    margin-bottom: 1.5rem;
+    /* Add space between cards */
+  }
+
+  .site__wrapper {
+    display: flex;
+    padding: 2rem;
+    /* Adjust padding */
+    flex-direction: column;
+    max-height: none;
+    align-items: center;
+    text-align: center;
+  }
+
+  .site__wrapper p {
+    margin-bottom: 1rem;
+    /* Add space between paragraphs */
+  }
+
+  .btn--primary {
+    display: none;
+  }
+
+  .btn--mobile {
+    background-color: #6aaff1;
+    /* Green color */
+    color: white;
+    margin-top: 1rem;
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+}
+
+/* Other existing styles remain unchanged */

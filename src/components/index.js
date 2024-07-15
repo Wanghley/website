@@ -12,6 +12,7 @@ import ProjectCard from "./ProjectCard";
 import ProjectCardGrid from "./ProjectCardGrid";
 import Card from "./Card";
 import CardGrid from "./CardGrid";
+import GridFeatured from "./GridFeatured";
 
 export {
     Navbar,
@@ -27,5 +28,6 @@ export {
     ProjectCard,
     ProjectCardGrid,
     Card,
-    CardGrid
+    CardGrid,
+    GridFeatured
 }
