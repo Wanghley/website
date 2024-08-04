@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './css/ProjectPost.css';
+import { formatDate } from '../utils/formatDate';
 
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
@@ -36,9 +37,9 @@ const ProjectPage = () => {
         fetchProject();
     }, [slug]);
 
-    if (loading) return <p>Loading...</p>;
-    if (error) return <p>{error}</p>;
-    if (!project) return <p>No project found.</p>;
+    if (loading) return <p className="loading-text">Loading...</p>;
+    if (error) return <p className="error-text">{error}</p>;
+    if (!project) return <p className="no-project-text">No project found.</p>;
 
     const { Title, Github, Description, Category, Demo, End, Start, Teaser, video } = project.attributes;
     const featuredImage = project.attributes.Featured?.data?.attributes?.formats?.large?.url;
@@ -54,32 +55,35 @@ const ProjectPage = () => {
                         <img src={featuredImage} alt={Title} className="project-page__image" />
                         <div className="project-page__overlay">
                             <h1 className="project-page__title">{Title}</h1>
-                            <div className="project-page__tags">
-                                <span className="project-page__tag">{Category}</span>
+                            <div className="project-page__info">
+                                <span className="project-page__category">{Category}</span>
+                                <span className="project-page__dates">
+                                    {Start ? formatDate(Start) : 'N/A'}
+                                    {End && <span><strong> - </strong>{formatDate(End)}</span>}
+                                </span>
                             </div>
-                            <p className="project-page__dates">
-                                <strong>Start:</strong> {Start} {End && <span><strong>End:</strong> {End}</span>}
-                            </p>
                         </div>
                     </div>
                 )}
             </header>
 
             <section className="project-page__content">
-                {Github && (
-                    <a href={Github} target="_blank" rel="noopener noreferrer" className="project-page__button project-page__button--github">
-                        View on GitHub
-                    </a>
-                )}
-                {Demo && (
-                    <a href={Demo} target="_blank" rel="noopener noreferrer" className="project-page__button project-page__button--demo">
-                        Visit Demo
-                    </a>
-                )}
+                <div className="project-page__links">
+                    {Github && (
+                        <a href={Github} target="_blank" rel="noopener noreferrer" className="project-page__button project-page__button--github">
+                            View on GitHub
+                        </a>
+                    )}
+                    {Demo && (
+                        <a href={Demo} target="_blank" rel="noopener noreferrer" className="project-page__button project-page__button--demo">
+                            Visit Demo
+                        </a>
+                    )}
+                </div>
                 {Description && <ReactMarkdown className="project-page__description">{Description}</ReactMarkdown>}
             </section>
 
-            {video && (
+            {video?.url && (
                 <section className="project-page__video">
                     <video controls>
                         <source src={video.url} type="video/mp4" />
