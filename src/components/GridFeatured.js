@@ -71,7 +71,7 @@ const GridFeatured = () => {
                           <span>{project?.attributes?.Start}</span>
                         </li>
                       </ul>
-                      <a href="#0" className="card__title">{project?.attributes?.Title}</a>
+                      <a href={`/projects/${project?.attributes?.slug}`} className="card__title">{project?.attributes?.Title}</a>
                     </div>
                   </div>
                 </div>

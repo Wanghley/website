@@ -21,8 +21,9 @@ const Card = ({ imageUrl, title, date, teaser, category, slug, sourceURL = "#", 
                 </div>
             </Link>
             <div className="card__info">
-                <span className="card__category">{category}</span>
                 <h3 className="card__title">{title}</h3>
+                <span className="card__category">{category}</span>
+
                 <p className="card__teaser">{truncatedTeaser}</p>
                 <div className="card__icons">
                     <Link to={projectLink} className="card__icon" title="Read More">

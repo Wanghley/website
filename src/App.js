@@ -5,22 +5,23 @@ import {
   Route,
 } from "react-router-dom";
 
-import Home from './pages';
+import Home from './pages/index';
 import AboutPage from './pages/about';
 import Projects from './pages/projects';
-import {Navbar, Footer} from './components';
+import ProjectPage from './components/ProjectPost'; // Import the ProjectPage component
+import { Navbar, Footer } from './components';
 import { NotFound } from './components';
 
 function App() {
   return (
     <Router>
-      <Navbar/>
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/projects" element={<Projects />} />
-        {/* add 404 page redirection */}
-        <Route path="*" element={<NotFound/>} />
+        <Route path="/projects/:slug" element={<ProjectPage />} /> {/* Add this line */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </Router>

@@ -1,0 +1,112 @@
+.project-page {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    margin: 0 auto;
+}
+
+.project-page__header {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.project-page__image-container {
+    position: relative;
+}
+
+.project-page__image {
+    width: 100%;
+    height: auto;
+}
+
+.project-page__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+}
+
+.project-page__title {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.project-page__tags {
+    margin-bottom: 10px;
+}
+
+.project-page__tag {
+    display: inline-block;
+    background-color: #007bff;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.project-page__dates {
+    font-size: 1em;
+}
+
+.project-page__content {
+    margin-bottom: 20px;
+}
+
+.project-page__button {
+    display: inline-block;
+    margin: 10px 5px;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.project-page__button--github {
+    background-color: #333;
+}
+
+.project-page__button--demo {
+    background-color: #28a745;
+}
+
+.project-page__description {
+    margin-top: 20px;
+}
+
+.project-page__video {
+    margin-top: 20px;
+}
+
+.project-page__teaser {
+    margin-top: 20px;
+}
+
+.project-page__media {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.project-page__media-item {
+    flex: 1 1 calc(33.333% - 10px);
+    box-sizing: border-box;
+}
+
+.project-page__media-image {
+    width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
