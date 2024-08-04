@@ -7,7 +7,7 @@ const fetchAbout = async () => {
     try {
         const response = await axios.get(`${baseURL}/api/about`, {
         headers: {
-            Authorization: `${token}`,
+            Authorization: `Bearer ${token}`,
         },
         });
         return response.data;
