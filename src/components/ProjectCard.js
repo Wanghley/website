@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTag, faClock, faUser } from '@fortawesome/free-solid-svg-icons';
 import './css/ProjectCard.css';
 
-const ProjectCard = ({ image, title, category, timeAgo, author }) => {
+const ProjectCard = ({ image, title, category, timeAgo, author, slug }) => {
   return (
     <Card className="card">
       <CardMedia

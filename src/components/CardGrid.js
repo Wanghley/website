@@ -16,6 +16,7 @@ const CardGrid = ({ cardData }) => {
                         category="Project"
                         sourceURL={data.attributes?.Github}
                         demoURL={data.attributes?.Demo}
+                        slug={data.attributes?.slug}
                     />
                 </Grid>
             ))}
