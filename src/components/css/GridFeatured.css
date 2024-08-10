@@ -204,6 +204,10 @@
   color: #fff;
 }
 
+.projects .card__title {
+  color: #333; /* Black for about page */
+}
+
 .card__image:hover {
   transform: scale(1.05);
 }
