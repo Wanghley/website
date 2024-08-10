@@ -53,6 +53,7 @@ const GridFeatured = () => {
           projects.map((project, index) => (
             <div className={`grid ${index === 0 ? 'grid--large' : ''}`} key={project?.attributes?.Title || index}>
               <div className="card">
+              <a href={`/projects/${project?.attributes?.slug}`} className="card__title">
                 <div className="card__image">
                   <img 
                     src={project?.attributes?.Featured?.data?.attributes?.formats?.medium?.url || (index === 0 ? 'https://placehold.co/400x600.png' : 'https://res.cloudinary.com/wanghley/image/upload/c_crop,w_768,h_432,ar_16:9,g_auto/v1720995375/Letter-Balloons-OH-FLOCK-IM-70-16-Inch-Alphabet-Letters-Foil-Mylar-Balloon-Birthday-Party-Banner-Gold_7c65fc96-4677-4109-8d67-ac46ed45bf21.8a40faa79f80896c60f90e991f888fd8_zxpeiv.jpg')}
@@ -75,6 +76,7 @@ const GridFeatured = () => {
                     </div>
                   </div>
                 </div>
+                </a>
               </div>
             </div>
           ))

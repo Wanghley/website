@@ -200,6 +200,14 @@
   /* Darker green on hover */
 }
 
+.card__title {
+  color: #fff;
+}
+
+.card__image:hover {
+  transform: scale(1.05);
+}
+
 /* Adjustments for smaller screens */
 @media (max-width: 768px) {
   .projects-grid {
