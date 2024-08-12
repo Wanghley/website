@@ -14,6 +14,7 @@ import Card from "./Card";
 import CardGrid from "./CardGrid";
 import GridFeatured from "./GridFeatured";
 import ProjectPost from "./ProjectPost";
+import GridFeaturedBlog from "./GridFeaturedBlog";
 
 export {
     Navbar,
@@ -31,5 +32,6 @@ export {
     Card,
     CardGrid,
     GridFeatured,
-    ProjectPost
+    ProjectPost,
+    GridFeaturedBlog
 }

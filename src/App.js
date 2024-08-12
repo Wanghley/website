@@ -11,6 +11,8 @@ import Projects from './pages/projects';
 import ProjectPage from './components/ProjectPost'; // Import the ProjectPage component
 import { Navbar, Footer } from './components';
 import { NotFound } from './components';
+import Blogs from './pages/blog'; // Import the Blogs component
+import BlogPostPage from './components/BlogPost'; // Import the BlogPostPage component
 
 function App() {
   return (
@@ -20,7 +22,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/blog" element={<Blogs />} /> {/* Add this line */}
         <Route path="/projects/:slug" element={<ProjectPage />} /> {/* Add this line */}
+        <Route path="/blog/:slug" element={<BlogPostPage />} /> {/* Add this line */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

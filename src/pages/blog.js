@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { CardGrid } from '../components';
 import { fetchProjects } from '../api/projects';
+import { fetchBlogs } from '../api/blog';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import './css/projects.css';
 
-const Projects = (props) => {
+const Blogs = (props) => {
     const [projects, setProjects] = useState([]); // Initialize projects state
     const [loading, setLoading] = useState(true); // Initialize loading state
     const [page, setPage] = useState(1); // Initialize page state
@@ -16,7 +17,7 @@ const Projects = (props) => {
     const loadProjects = async (page) => {
         try {
             setLoading(true);
-            const newProjects = await fetchProjects(page);
+            const newProjects = await fetchBlogs(page);
 
             if (newProjects && newProjects.length > 0) {
                 const filteredProjects = newProjects.filter(
@@ -59,12 +60,12 @@ const Projects = (props) => {
 
     return (
         <div className="projects">
-            <h1 className="projects-title">Projects</h1>
+            <h1 className="projects-title">Blog</h1>
             <p className="projects-subtitle">
-                Explore a Diverse Range of Projects I've Worked On
+                Explore the depths of my mind, you will. A collection of thoughts, this is.
             </p>
             <Box sx={{ flexGrow: 1 }}>
-                <CardGrid cardData={projects} type='project' />
+                <CardGrid cardData={projects} type='blog'/>
                 {loading && (
                     <Box className="loading-container">
                         <CircularProgress />
@@ -80,4 +81,4 @@ const Projects = (props) => {
     );
 };
 
-export default Projects;
+export default Blogs;
