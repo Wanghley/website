@@ -17,7 +17,7 @@ const Blogs = (props) => {
     const loadProjects = async (page) => {
         try {
             setLoading(true);
-            const newProjects = await fetchBlogs(page);
+            const newProjects = await fetchBlogs(page); // Fetch projects
 
             if (newProjects && newProjects.length > 0) {
                 const filteredProjects = newProjects.filter(

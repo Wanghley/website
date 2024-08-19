@@ -34,7 +34,7 @@ const Navbar = () => {
       <div className='menu'>
         <ul id='navbar' className={clicked?"#navbar active":"#navbar"}>
           <li className='menu-item'><a href='/about'>About</a></li>
-          <li className='menu-item'><a href='/CV'>CV</a></li>
+          <li className='menu-item'><a href='/curriculum-vitae'>CV</a></li>
           <li className='menu-item'><a href='/projects'>Projects</a></li>
           <li className='menu-item'><a href='/blog'>Blog</a></li>
           <li className='menu-item'><a href='/contact'>Contact</a></li>

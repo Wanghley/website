@@ -36,7 +36,7 @@ const CardGrid = ({ cardData, type }) => {
                                 {...commonProps}
                                 content={data.attributes?.Content}
                                 categories={data.attributes?.Categories || []}
-                                date={data.attributes?.publishedAt}
+                                date={data.attributes?.published}
                                 teaser={data.attributes?.Excerpt}
                             />
                         </Grid>
