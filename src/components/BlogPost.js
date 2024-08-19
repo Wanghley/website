@@ -13,6 +13,9 @@ const BlogPostPage = () => {
     const [blogPost, setBlogPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [latestPosts, setLatestPosts] = useState([]);
+    const [projects, setProjects] = useState([]);
+    const [socialMedia, setSocialMedia] = useState([]);
 
     useEffect(() => {
         const fetchBlogPost = async () => {
@@ -34,53 +37,145 @@ const BlogPostPage = () => {
             }
         };
 
+        const fetchLatestPosts = async () => {
+            try {
+                const response = await axios.get(
+                    `${baseURL}/api/latest-posts?populate=*`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${apiKey}`,
+                        },
+                    }
+                );
+                setLatestPosts(response.data.data);
+            } catch (error) {
+                console.error('Fetch latest posts error:', error.response || error.message || error);
+            }
+        };
+
+        const fetchProjects = async () => {
+            try {
+                const response = await axios.get(
+                    `${baseURL}/api/projects?populate=*`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${apiKey}`,
+                        },
+                    }
+                );
+                setProjects(response.data.data);
+            } catch (error) {
+                console.error('Fetch projects error:', error.response || error.message || error);
+            }
+        };
+
+        const fetchSocialMedia = async () => {
+            try {
+                const response = await axios.get(
+                    `${baseURL}/api/social-media-links`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${apiKey}`,
+                        },
+                    }
+                );
+                setSocialMedia(response.data.data);
+            } catch (error) {
+                console.error('Fetch social media links error:', error.response || error.message || error);
+            }
+        };
+
         fetchBlogPost();
+        fetchLatestPosts();
+        fetchProjects();
+        fetchSocialMedia();
     }, [slug]);
 
     if (loading) return <p className="loading-text">Loading...</p>;
     if (error) return <p className="error-text">{error}</p>;
     if (!blogPost) return <p className="no-blog-post-text">No blog post found.</p>;
 
-    console.log("Blog post:", blogPost.attributes);
-
-    const { Title, publishedAt, Content, Categories } = blogPost.attributes;
+    const { Title, published, Content, Categories } = blogPost.attributes;
     const featuredImage = blogPost.attributes.Featured?.data?.attributes?.formats?.large?.url;
 
+    // Convert categories array to a comma-separated string
+    const categoryList = Categories.slice(0, 3).join(', ');
+
     return (
-        <article className="blog-page">
-            <header className="blog-page__header">
-                {featuredImage && (
-                    <div className="blog-page__image-container">
-                        <img src={featuredImage} alt={Title} className="blog-page__image" />
-                        <div className="blog-page__overlay">
+        <div className="blog-page-container">
+            <article className="blog-page">
+                <header className="blog-page__header">
+                    {featuredImage && (
+                        <>
+                            <div className="blog-page__image-container">
+                                <img src={featuredImage} alt={Title} className="blog-page__image" />
+                                <div className="blog-page__overlay">
+                                    <h1 className="blog-page__title">{Title}</h1>
+                                    <div className="blog-page__info">
+                                        <span className="blog-page__category">{categoryList}</span>
+                                        <span className="blog-page__dates">
+                                            {published ? formatDate(published) : 'N/A'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 className="blog-page__title-mobile">{Title}</h1>
+                            <div className="blog-page__info-mobile">
+                                <span className="blog-page__category">{categoryList}</span>
+                                <span className="blog-page__dates">
+                                    {published ? formatDate(published) : 'N/A'}
+                                </span>
+                            </div>
+                        </>
+
+                    )}
+                    {!featuredImage && (
+                        <div className="blog-page__title-container">
                             <h1 className="blog-page__title">{Title}</h1>
                             <div className="blog-page__info">
-                                <span className="blog-page__category">{Categories}</span>
+                                <span className="blog-page__category">{categoryList}</span>
                                 <span className="blog-page__dates">
-                                    {publishedAt ? formatDate(publishedAt) : 'N/A'}
+                                    {published ? formatDate(published) : 'N/A'}
                                 </span>
                             </div>
                         </div>
-                    </div>
-                )}
-                {!featuredImage && (
-                     <div className="blog-page__title-container">
-                        <h1 className="blog-page__title">{Title}</h1>
-                     <div className="blog-page__info">
-                         <span className="blog-page__category">{Categories}</span>
-                         <span className="blog-page__dates">
-                             {publishedAt ? formatDate(publishedAt) : 'N/A'}
-                         </span>
-                     </div>
-                </div>
-                )}
-            </header>
+                    )}
+                </header>
 
-            <section className="blog-page__content">
-                {Content && <ReactMarkdown className="blog-page__text">{Content}</ReactMarkdown>}
-            </section>
+                <section className="blog-page__content">
+                    {Content && <ReactMarkdown className="blog-page__text">{Content}</ReactMarkdown>}
+                </section>
+            </article>
 
-        </article>
+            <aside className="sidebar">
+                <section className="sidebar__section">
+                    <h2>Latest Posts</h2>
+                    <ul>
+                        {latestPosts.map(post => (
+                            <li key={post.id}><a href={`/blog/${post.slug}`}>{post.title}</a></li>
+                        ))}
+                    </ul>
+                </section>
+
+                <section className="sidebar__section">
+                    <h2>Projects</h2>
+                    <ul>
+                        {projects.map(project => (
+                            <li key={project.id}><a href={`/projects/${project.slug}`}>{project.title}</a></li>
+                        ))}
+                    </ul>
+                </section>
+
+                <section className="sidebar__section">
+                    <h2>Social Media</h2>
+                    <ul>
+                        {socialMedia.map(link => (
+                            <li key={link.id}><a href={link.url} target="_blank" rel="noopener noreferrer">{link.name}</a></li>
+                        ))}
+                    </ul>
+                </section>
+            </aside>
+        </div>
     );
 };
 
