@@ -11,7 +11,6 @@ const CardGrid = ({ cardData, type }) => {
                 const commonProps = {
                     imageUrl: data?.attributes?.Featured?.data?.attributes?.formats?.small?.url ?? 'https://via.placeholder.com/300',
                     title: data.attributes.Title,
-                    teaser: data.attributes?.Teaser,
                     slug: data.attributes?.slug,
                 };
 
@@ -24,6 +23,7 @@ const CardGrid = ({ cardData, type }) => {
                                 sourceURL={data.attributes?.Github}
                                 demoURL={data.attributes?.Demo}
                                 date={data.attributes?.Start}
+                                teaser={data.attributes?.Teaser}
                             />
                         </Grid>
                     );
@@ -37,6 +37,7 @@ const CardGrid = ({ cardData, type }) => {
                                 content={data.attributes?.Content}
                                 categories={data.attributes?.Categories || []}
                                 date={data.attributes?.publishedAt}
+                                teaser={data.attributes?.Excerpt}
                             />
                         </Grid>
                     );
