@@ -40,22 +40,18 @@
 
 .cardblog__categories {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 4px 8px;
+    border-radius: 6px;
 }
 
-.cardblog__categories-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-}
-
-.cardblog__category-item {
-    text-transform: uppercase;
+.cardblog__categories-text {
     font-size: 12px;
-    letter-spacing: 1px;
-    color: #868686;
     font-weight: 500;
+    color: #fff;
+    margin: 0;
 }
 
 .cardblog__info {
@@ -71,6 +67,8 @@
     margin-bottom: 5px;
     font-size: 1.2rem;
     font-weight: 700;
+    line-height: 1rem;
+    text-align: center;
     color: #333;
 }
 
