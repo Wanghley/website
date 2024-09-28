@@ -5,9 +5,10 @@
   margin-top: 5rem;
   width: 100%;
   padding: 2rem 5rem;
-  max-height: 80vh;
   overflow-y: auto;
   /* Add scroll for overflow */
+  /* make vertical more compact */
+  height: 100%;
   display: flex;
   /* Flexbox to center content vertically */
   justify-content: center;
@@ -56,7 +57,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* set img proportion to 16:9 */
+  /* add a little black overlay */
+  filter: brightness(0.6);
 }
 
 /* make invisible */

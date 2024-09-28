@@ -48,7 +48,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* set img proportion to 16:9 */
+  /* have brightness 50% */
+  filter: brightness(0.5);
 }
 
 /* make invisible */
