@@ -13,6 +13,7 @@ import { Navbar, Footer } from './components';
 import { NotFound } from './components';
 import Blogs from './pages/blog'; // Import the Blogs component
 import BlogPostPage from './components/BlogPost'; // Import the BlogPostPage component
+import CVPage from './pages/cv'; // Import the CVPage component
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/blog" element={<Blogs />} /> {/* Add this line */}
         <Route path="/projects/:slug" element={<ProjectPage />} /> {/* Add this line */}
         <Route path="/blog/:slug" element={<BlogPostPage />} /> {/* Add this line */}
+        <Route path="/curriculum-vitae" element={<CVPage />} /> {/* Add this line */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
