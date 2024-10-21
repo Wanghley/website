@@ -2,7 +2,7 @@
 
 /* General Styles */
 .project-page {
-    max-width: 800px;
+    max-width: 70%;
     margin: 0 auto;
     padding: 20px;
     font-family: 'Arial', sans-serif;
@@ -10,6 +10,7 @@
 }
 
 /* Header Styles */
+/* make it smaller vertically */
 .project-page__header {
     position: relative;
     margin-bottom: 20px;
@@ -44,13 +45,33 @@
 }
 
 .project-page__title {
-    font-size: 2rem;
+    font-size: 3.5rem;
     margin-bottom: 10px;
 }
 
 .project-page__info {
     font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
+
+.project-page__category {
+    display: inline-flex; /* Aligns items in a row */
+    align-items: center; /* Centers items vertically */
+    background-color: #333;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 14px; /* Adjust font size if necessary */
+}
+
+.project-page__category svg {
+    margin-right: 5px; /* Adds space between the icon and text */
+}
+
 
 /* Content Styles */
 .project-page__content {
@@ -130,12 +151,30 @@
     background-color: #f7f7f7;
 }
 
-/* Code Block Styles */
+/* Inline Code Styles */
 .project-page__markdown-inline-code {
-    background-color: #f0f0f0;
-    padding: 2px 4px;
-    border-radius: 4px;
+    background-color: #f5f5f5; /* Light gray background */
+    color: #333; /* Dark text color */
+    border-radius: 3px; /* Slightly rounded corners */
+    padding: 2px 4px; /* Small padding for a neat appearance */
+    font-family: monospace; /* Monospace font for code */
+    font-size: 90%; /* Slightly smaller than normal text */
+    line-height: 1.2; /* Tight line height for inline code */
 }
+
+/* Block Code Styles */
+.project-page__markdown-block-code {
+    background-color: #282c34; /* Dark background for block code */
+    color: #f8f8f2; /* Light text color for contrast */
+    border-radius: 5px; /* Rounded corners */
+    padding: 10px; /* Ample padding for readability */
+    overflow-x: auto; /* Enable horizontal scrolling for long lines */
+    font-family: 'Fira Code', monospace; /* Monospace font for block code */
+    font-size: 100%; /* Normal font size */
+    line-height: 1.5; /* Better line height for readability */
+    border: 1px solid #444; /* Subtle border for separation */
+}
+
 
 .project-page__video {
     margin-top: 20px;
@@ -169,4 +208,41 @@
     text-align: center;
     font-size: 1.2rem;
     margin: 20px 0;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .project-page {
+        max-width: 100%;
+    }
+
+    .project-page__title {
+        font-size: 2rem;
+        line-height: 1;
+    }
+
+    .project-page__info {
+        font-size: 0.9rem;
+    }
+
+    .project-page__markdown-header {
+        margin: 10px 0;
+    }
+
+    .project-page__markdown-table {
+        margin: 10px 0;
+    }
+
+    .project-page__markdown-table-header,
+    .project-page__markdown-table-cell {
+        padding: 5px;
+    }
+
+    .project-page__video {
+        margin-top: 10px;
+    }
+
+    .project-page__teaser {
+        margin: 10px 0;
+    }
 }
