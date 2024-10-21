@@ -5,6 +5,10 @@ import ReactMarkdown from 'react-markdown';
 import './css/ProjectPost.css';
 import { formatDate } from '../utils/formatDate';
 
+// Import components for specific Markdown elements
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { solarizedlight } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
 
@@ -47,6 +51,42 @@ const ProjectPage = () => {
         ? project.attributes.Media.data.map((item) => item.attributes.formats.large.url)
         : [];
 
+    // Custom components for ReactMarkdown
+    const markdownComponents = {
+        // Render paragraphs
+        p: ({ node, ...props }) => <p className="project-page__markdown-paragraph" {...props} />,
+
+        // Render headers
+        h1: ({ node, ...props }) => <h1 className="project-page__markdown-header" {...props} />,
+        h2: ({ node, ...props }) => <h2 className="project-page__markdown-header" {...props} />,
+        h3: ({ node, ...props }) => <h3 className="project-page__markdown-header" {...props} />,
+
+        // Render lists
+        ul: ({ node, ...props }) => <ul className="project-page__markdown-list" {...props} />,
+        ol: ({ node, ...props }) => <ol className="project-page__markdown-list" {...props} />,
+        li: ({ node, ...props }) => <li className="project-page__markdown-list-item" {...props} />,
+
+        // Render tables
+        table: ({ node, ...props }) => <table className="project-page__markdown-table" {...props} />,
+        tr: ({ node, ...props }) => <tr className="project-page__markdown-table-row" {...props} />,
+        th: ({ node, ...props }) => <th className="project-page__markdown-table-header" {...props} />,
+        td: ({ node, ...props }) => <td className="project-page__markdown-table-cell" {...props} />,
+
+        // Render code blocks
+        code: ({ node, inline, className, children, ...props }) => {
+            const match = /language-(\w+)/.exec(className || '');
+            return inline ? (
+                <code className="project-page__markdown-inline-code" {...props}>
+                    {children}
+                </code>
+            ) : (
+                <SyntaxHighlighter style={solarizedlight} language={match ? match[1] : ''} {...props}>
+                    {String(children).replace(/\n$/, '')}
+                </SyntaxHighlighter>
+            );
+        },
+    };
+
     return (
         <article className="project-page">
             <header className="project-page__header">
@@ -80,7 +120,11 @@ const ProjectPage = () => {
                         </a>
                     )}
                 </div>
-                {Description && <ReactMarkdown className="project-page__description">{Description}</ReactMarkdown>}
+                {Description && (
+                    <ReactMarkdown className="project-page__description" components={markdownComponents}>
+                        {Description}
+                    </ReactMarkdown>
+                )}
             </section>
 
             {video?.url && (
