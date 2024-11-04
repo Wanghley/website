@@ -1,12 +1,114 @@
 /* ProjectPost.css */
+html {
+    scroll-behavior: smooth;
+}
 
 /* General Styles */
 .project-page {
-    max-width: 70%;
     margin: 0 auto;
     padding: 20px;
     font-family: 'Arial', sans-serif;
     color: #333;
+}
+
+/* show aside in the right and section on the left */
+.project-page__layout {
+    display: flex;
+    justify-content: space-between;
+    /* calculate margin on right to be the same width as aside */
+    margin-right: 10%;
+    margin-left: 10px;
+
+}
+
+.project-page__sidebar {
+    width: 30%;
+    /* Adjust as needed */
+    background-color: #f5f5f5;
+    /* Light background */
+    border-radius: 8px;
+    /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow */
+    padding: 15px;
+    /* Inner spacing */
+    margin-bottom: 20px;
+    /* Space below the sidebar */
+    overflow-y: auto;
+    /* Enable scrolling if content overflows */
+    margin-right: 20px;
+    /* Space between sidebar and content */
+}
+
+.project-page__sidebar h3 {
+    font-size: 1.5rem;
+    /* Larger font size */
+    color: #333;
+    /* Darker color for emphasis */
+    border-bottom: 2px solid #ddd;
+    /* Underline for separation */
+    padding-bottom: 5px;
+    /* Space below the heading */
+    margin-bottom: 15px;
+    /* Space between heading and list */
+}
+
+.project-page__index-list {
+    padding-left: 10px;
+    /* Indent for numbering */
+    margin: 0;
+    /* Remove default margin */
+    list-style-type: decimal;
+    /* Use numbers for the list */
+}
+
+.project-page__index-item {
+    margin-bottom: 10px;
+    /* Space between items */
+}
+
+.project-page__index-item a {
+    text-decoration: none;
+    /* Remove underline */
+    color: #007BFF;
+    /* Blue color for links */
+    font-weight: 500;
+    /* Medium font weight */
+    padding: 5px 8px;
+    /* Padding for clickable area */
+    display: block;
+    /* Make link fill the entire list item */
+    border-radius: 5px;
+    /* Rounded corners */
+    transition: background-color 0.3s, color 0.3s;
+    /* Smooth hover effect */
+}
+
+.project-page__index-item a:hover {
+    background-color: #007BFF;
+    /* Blue background on hover */
+    color: #fff;
+    /* White text on hover */
+}
+
+/* Level-based indentation */
+.project-page__index-item.level-2 {
+    padding-left: 10px;
+    /* Indent second-level items */
+    list-style-type: decimal;
+    /* Use numbers for sub-level */
+}
+
+.project-page__index-item.level-3 {
+    padding-left: 20px;
+    /* Indent third-level items */
+    list-style-type: none;
+    /* Use Roman numerals for sub-level */
+}
+
+.project-page__mobile-index {
+    display: none;
+    /* Hide mobile index by default */
 }
 
 /* Header Styles */
@@ -23,9 +125,14 @@
 .project-page__image {
     width: 100%;
     height: auto;
+    max-height: 400px;
+    /* Limit the height of the image */
+    object-fit: cover;
+    /* Ensures the image covers the area without distortion */
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 
 .project-page__overlay {
     position: absolute;
@@ -58,18 +165,22 @@
 }
 
 .project-page__category {
-    display: inline-flex; /* Aligns items in a row */
-    align-items: center; /* Centers items vertically */
+    display: inline-flex;
+    /* Aligns items in a row */
+    align-items: center;
+    /* Centers items vertically */
     background-color: #333;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
     margin-bottom: 5px;
-    font-size: 14px; /* Adjust font size if necessary */
+    font-size: 14px;
+    /* Adjust font size if necessary */
 }
 
 .project-page__category svg {
-    margin-right: 5px; /* Adds space between the icon and text */
+    margin-right: 5px;
+    /* Adds space between the icon and text */
 }
 
 
@@ -153,26 +264,42 @@
 
 /* Inline Code Styles */
 .project-page__markdown-inline-code {
-    background-color: #f5f5f5; /* Light gray background */
-    color: #333; /* Dark text color */
-    border-radius: 3px; /* Slightly rounded corners */
-    padding: 2px 4px; /* Small padding for a neat appearance */
-    font-family: monospace; /* Monospace font for code */
-    font-size: 90%; /* Slightly smaller than normal text */
-    line-height: 1.2; /* Tight line height for inline code */
+    background-color: #f5f5f5;
+    /* Light gray background */
+    color: #333;
+    /* Dark text color */
+    border-radius: 3px;
+    /* Slightly rounded corners */
+    padding: 2px 4px;
+    /* Small padding for a neat appearance */
+    font-family: monospace;
+    /* Monospace font for code */
+    font-size: 90%;
+    /* Slightly smaller than normal text */
+    line-height: 1.2;
+    /* Tight line height for inline code */
 }
 
 /* Block Code Styles */
 .project-page__markdown-block-code {
-    background-color: #282c34; /* Dark background for block code */
-    color: #f8f8f2; /* Light text color for contrast */
-    border-radius: 5px; /* Rounded corners */
-    padding: 10px; /* Ample padding for readability */
-    overflow-x: auto; /* Enable horizontal scrolling for long lines */
-    font-family: 'Fira Code', monospace; /* Monospace font for block code */
-    font-size: 100%; /* Normal font size */
-    line-height: 1.5; /* Better line height for readability */
-    border: 1px solid #444; /* Subtle border for separation */
+    background-color: #282c34;
+    /* Dark background for block code */
+    color: #f8f8f2;
+    /* Light text color for contrast */
+    border-radius: 5px;
+    /* Rounded corners */
+    padding: 10px;
+    /* Ample padding for readability */
+    overflow-x: auto;
+    /* Enable horizontal scrolling for long lines */
+    font-family: 'Fira Code', monospace;
+    /* Monospace font for block code */
+    font-size: 100%;
+    /* Normal font size */
+    line-height: 1.5;
+    /* Better line height for readability */
+    border: 1px solid #444;
+    /* Subtle border for separation */
 }
 
 
@@ -245,4 +372,84 @@
     .project-page__teaser {
         margin: 10px 0;
     }
+
+    .project-page {
+        max-width: 100%;
+        padding: 15px;
+        /* Reduce padding for smaller screens */
+    }
+
+    .project-page__layout {
+        flex-direction: column;
+        /* Stack elements vertically */
+        margin: 0;
+        /* Remove side margins */
+    }
+
+    .project-page__main-content {
+        width: 100%;
+        /* Full width on mobile */
+    }
+
+    .project-page__sidebar {
+        display: none;
+        /* Hide sidebar */
+    }
+    /* Mobile-specific index styles */
+.project-page__mobile-index {
+    display: block; /* Show index on mobile */
+    background-color: #f5f5f5; /* Light background similar to the sidebar */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    padding: 15px; /* Inner spacing */
+    margin-bottom: 20px; /* Space below the index */
+    overflow: hidden; /* Ensure content stays within bounds */
+}
+
+.project-page__mobile-index h3 {
+    font-size: 1.5rem; /* Consistent heading size */
+    color: #333; /* Dark color for emphasis */
+    border-bottom: 2px solid #ddd; /* Underline for separation */
+    padding-bottom: 5px; /* Space below the heading */
+    margin-bottom: 15px; /* Space between heading and list */
+}
+
+.project-page__index-list {
+    padding-left: 0; /* Remove extra padding */
+    margin: 0; /* Remove default margin */
+    list-style: none; /* Remove list dots */
+    list-style-type:none;
+}
+
+.project-page__index-item {
+    margin-bottom: 10px; /* Consistent space between items */
+}
+
+.project-page__index-item a {
+    text-decoration: none; /* Remove underline */
+    color: #007BFF; /* Blue color for links */
+    font-weight: 500; /* Medium weight for readability */
+    padding: 8px 12px; /* Padding for clickable area */
+    display: block; /* Full-width clickable link */
+    border-radius: 5px; /* Rounded corners */
+    background-color: #ffffff; /* White background for better contrast */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow for link */
+    transition: background-color 0.3s, color 0.3s; /* Smooth hover effect */
+}
+
+.project-page__index-item a:hover {
+    background-color: #007BFF; /* Blue background on hover */
+    color: #fff; /* White text on hover */
+}
+
+/* Level-based indentation for subheadings */
+.project-page__index-item.level-2 {
+    padding-left: 15px; /* Indent for second-level items */
+    background-color: #f0f8ff; /* Light background color for visual hierarchy */
+}
+
+.project-page__index-item.level-3 {
+    padding-left: 30px; /* Indent for third-level items */
+    background-color: #f0f8ff; /* Maintain background color for third-level */
+}
 }
