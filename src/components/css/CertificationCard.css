@@ -1,0 +1,39 @@
+/* src/components/CertificationCard.css */
+.certification-card {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px 0;
+    max-width: 300px;
+}
+
+.certification-logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.certification-info {
+    flex: 1;
+}
+
+.certification-info h4 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.certification-info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.certification-info a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.certification-info a:hover {
+    text-decoration: underline;
+}

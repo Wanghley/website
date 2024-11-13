@@ -1,0 +1,60 @@
+/* src/components/CertificationCard.css */
+.certification-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    background-color: #fff;
+    width: 100%; /* Use full available width */
+    box-sizing: border-box; /* Ensure padding and border are included in the width */
+}
+
+.certification-header {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    margin-right: 12px; /* Add space between header and action */
+}
+
+.certification-logo img {
+    width: 36px; /* Reduce logo size */
+    height: 36px; /* Reduce logo size */
+    border-radius: 4px;
+    margin-right: 12px; /* Space between logo and text */
+}
+
+.certification-info {
+    flex: 1; /* Allow info section to take available space */
+}
+
+.certification-info h3 {
+    font-size: 1em; /* Small font size */
+    margin: 0;
+    font-weight: bold;
+}
+
+.certification-info span {
+    display: block;
+    color: #666;
+    font-size: 0.875em; /* Smaller font size */
+}
+
+.certification-action {
+    display: flex;
+    align-items: center;
+}
+
+.certification-action .show-credential-btn {
+    background-color: #0073b1;
+    color: #fff;
+    padding: 4px 8px; /* Compact padding */
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.75em; /* Smaller font size */
+}
+
+.certification-action .show-credential-btn:hover {
+    background-color: #005580;
+}
