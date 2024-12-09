@@ -7,6 +7,7 @@ import { formatDate } from '../utils/formatDate';
 import { FaTag } from "react-icons/fa";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import remarkGfm from 'remark-gfm';
 
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
@@ -18,6 +19,7 @@ const ProjectPage = () => {
     const [error, setError] = useState(null);
     const [headings, setHeadings] = useState([]);
 
+    // Fetch project details
     useEffect(() => {
         const fetchProject = async () => {
             try {
@@ -31,15 +33,13 @@ const ProjectPage = () => {
                 );
                 setProject(response.data.data);
 
-                // Extract headings from the description
+                // Extract markdown headings for the index
                 if (response.data.data.attributes.Description) {
                     const tempHeadings = [];
                     response.data.data.attributes.Description.split('\n').forEach(line => {
                         const match = line.match(/^(#{1,6})\s+(.*)/);
                         if (match) {
-                            const level = match[1].length; // Number of `#` indicates the level
-                            const text = match[2];
-                            tempHeadings.push({ level, text });
+                            tempHeadings.push({ level: match[1].length, text: match[2] });
                         }
                     });
                     setHeadings(tempHeadings);
@@ -55,18 +55,21 @@ const ProjectPage = () => {
         fetchProject();
     }, [slug]);
 
+    // Loading and error states
     if (loading) return <p className="loading-text">Loading...</p>;
     if (error) return <p className="error-text">{error}</p>;
     if (!project) return <p className="no-project-text">No project found.</p>;
 
-    const { Title, Github, Description, Category, Demo, End, Start, Teaser, video } = project.attributes;
-    const featuredImage = project.attributes.Featured?.data?.attributes?.formats?.large?.url;
-    const media = project.attributes.Media?.data
-        ? project.attributes.Media.data.map((item) => item.attributes.formats.large.url)
-        : [];
+    const {
+        Title, Github, Description, Category, Demo,
+        End, Start, Teaser, video, Featured, Media
+    } = project.attributes;
 
+    const featuredImage = Featured?.data?.attributes?.formats?.large?.url;
+    const media = Media?.data?.map(item => item.attributes.formats.large.url) || [];
+
+    // Custom Markdown rendering components
     const markdownComponents = {
-        // Custom rendering for headings
         h1: ({ children }) => <h1 id={children} className="project-page__markdown-header">{children}</h1>,
         h2: ({ children }) => <h2 id={children} className="project-page__markdown-header">{children}</h2>,
         h3: ({ children }) => <h3 id={children} className="project-page__markdown-header">{children}</h3>,
@@ -79,13 +82,13 @@ const ProjectPage = () => {
             ) : (
                 <code className="project-page__markdown-inline-code" {...props}>{children}</code>
             );
-        }
+        },
     };
 
     return (
         <article className="project-page">
             <div className="project-page__layout">
-                {/* Desktop Sidebar Index */}
+                {/* Sidebar for desktop */}
                 <aside className="project-page__sidebar">
                     <h3>Index</h3>
                     <ol className="project-page__index-list">
@@ -97,6 +100,7 @@ const ProjectPage = () => {
                     </ol>
                 </aside>
 
+                {/* Main Content Section */}
                 <section className="project-page__main-content">
                     <header className="project-page__header">
                         {featuredImage && (
@@ -106,12 +110,11 @@ const ProjectPage = () => {
                                     <h1 className="project-page__title">{Title}</h1>
                                     <div className="project-page__info">
                                         <span className="project-page__category">
-                                            <FaTag />
-                                            {Category}
+                                            <FaTag /> {Category}
                                         </span>
                                         <span className="project-page__dates">
                                             {Start ? formatDate(Start) : 'N/A'}
-                                            {End && <span><strong> - </strong>{formatDate(End)}</span>}
+                                            {End && <strong> - </strong>}{End && formatDate(End)}
                                         </span>
                                     </div>
                                 </div>
@@ -119,7 +122,7 @@ const ProjectPage = () => {
                         )}
                     </header>
 
-                    {/* Inline Mobile Index */}
+                    {/* Mobile Index */}
                     <div className="project-page__mobile-index">
                         <h3>Index</h3>
                         <ul>
@@ -131,6 +134,7 @@ const ProjectPage = () => {
                         </ul>
                     </div>
 
+                    {/* Project Content */}
                     <section className="project-page__content">
                         <div className="project-page__links">
                             {Github && (
@@ -145,12 +149,17 @@ const ProjectPage = () => {
                             )}
                         </div>
                         {Description && (
-                            <ReactMarkdown className="project-page__description" components={markdownComponents}>
+                            <ReactMarkdown
+                                remarkPlugins={[remarkGfm]}
+                                className="project-page__description"
+                                components={markdownComponents}
+                            >
                                 {Description}
                             </ReactMarkdown>
                         )}
                     </section>
 
+                    {/* Additional Sections */}
                     {video?.url && (
                         <section className="project-page__video">
                             <video controls>
@@ -159,13 +168,11 @@ const ProjectPage = () => {
                             </video>
                         </section>
                     )}
-
                     {Teaser && (
                         <section className="project-page__teaser">
                             <p><strong>Teaser:</strong> {Teaser}</p>
                         </section>
                     )}
-
                     {media.length > 0 && (
                         <section className="project-page__media">
                             {media.map((url, index) => (
