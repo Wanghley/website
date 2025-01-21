@@ -12,6 +12,8 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
+import MediaGallery from './ProjectMediaGallery';
+
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
 
@@ -216,30 +218,7 @@ const ProjectPage = () => {
                             )}
                             
                             {/* Media Gallery */}
-                            {media.length > 0 && (
-                            <>
-                                <h2>Media Gallery</h2>
-                                <section className="project-page__media">
-                                {media.length <= 6 ? (
-                                    <div className="project-page__media-grid">
-                                    {media.map((url, index) => (
-                                        <div key={index} className="project-page__media-item">
-                                        <img src={url} alt={`Media ${index + 1}`} className="project-page__media-image" />
-                                        </div>
-                                    ))}
-                                    </div>
-                                ) : (
-                                    <div className="project-page__media-carousel">
-                                    {media.map((url, index) => (
-                                        <div key={index} className="project-page__media-item">
-                                        <img src={url} alt={`Media ${index + 1}`} className="project-page__media-image" />
-                                        </div>
-                                    ))}
-                                    </div>
-                                )}
-                                </section>
-                            </>
-                            )}
+                            <MediaGallery media={media} />
 
                         </div>
 
