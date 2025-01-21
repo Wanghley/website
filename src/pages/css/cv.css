@@ -151,10 +151,6 @@ section:last-child {
         flex: 1;
         min-width: 280px;
     }
-
-    .certifications-list {
-        grid-template-columns: repeat(2, 1fr);
-    }
 }
 
 @media (min-width: 1024px) {
@@ -178,10 +174,6 @@ section:last-child {
         flex: 1;
         min-width: 320px;
     }
-
-    .certifications-list {
-        grid-template-columns: repeat(3, 1fr);
-    }
 }
 
 @media (min-width: 1280px) {
@@ -204,9 +196,5 @@ section:last-child {
     .personal-info .info-item {
         flex: 1;
         min-width: 350px;
-    }
-
-    .certifications-list {
-        grid-template-columns: repeat(4, 1fr);
     }
 }
