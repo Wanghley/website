@@ -10,6 +10,9 @@ import ExperienceList from '../components/cv/ExperienceList';
 import PublicationList from '../components/cv/PublicationList';
 import CertificationsList from '../components/CertificationCard';
 
+import '../components/css/global.css';
+import './css/cv.css';
+
 const CVPage = () => {
     const [personalInfo, setPersonalInfo] = useState(null);
     const [educations, setEducations] = useState([]);
