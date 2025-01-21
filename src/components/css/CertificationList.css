@@ -1,60 +1,105 @@
 /* src/components/CertificationCard.css */
 .certification-card {
-    border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 12px;
+    padding: 8px 12px; /* Add padding for better spacing */
     display: flex;
+    justify-content: space-between; /* Distribute space evenly between name/info and details */
     align-items: center;
-    margin-bottom: 12px;
-    background-color: #fff;
-    width: 100%; /* Use full available width */
-    box-sizing: border-box; /* Ensure padding and border are included in the width */
-}
-
-.certification-header {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    margin-right: 12px; /* Add space between header and action */
-}
-
-.certification-logo img {
-    width: 36px; /* Reduce logo size */
-    height: 36px; /* Reduce logo size */
-    border-radius: 4px;
-    margin-right: 12px; /* Space between logo and text */
+    width: 100%; /* Full available width */
+    box-sizing: border-box;
+    font-size: 0.9em; /* Slightly smaller font for compactness */
 }
 
 .certification-info {
-    flex: 1; /* Allow info section to take available space */
+    flex: 1; /* Allow info section to take most of the width */
+    margin-right: 12px; /* Space between info and details */
+    display: flex;
+    flex-direction: column;
 }
 
 .certification-info h3 {
-    font-size: 1em; /* Small font size */
-    margin: 0;
+    font-size: 1em; /* Keep the name readable */
     font-weight: bold;
+    margin: 0;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate text if too long */
 }
 
 .certification-info span {
-    display: block;
-    color: #666;
     font-size: 0.875em; /* Smaller font size */
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate text if too long */
+}
+
+.certification-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Align details to the right */
+    font-size: 0.75em; /* Slightly smaller font size for details */
+    color: #777;
+    padding-right: 20px;
 }
 
 .certification-action {
     display: flex;
     align-items: center;
+    justify-content: flex-end; /* Align button to the right */
 }
 
 .certification-action .show-credential-btn {
     background-color: #0073b1;
     color: #fff;
-    padding: 4px 8px; /* Compact padding */
+    padding: 6px 12px; /* Slightly more padding for the button */
     border-radius: 4px;
     text-decoration: none;
-    font-size: 0.75em; /* Smaller font size */
+    font-size: 0.75em;
+    text-align: center;
+    display: inline-block;
 }
 
 .certification-action .show-credential-btn:hover {
     background-color: #005580;
+}
+
+.certifications-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.certification-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow on hover for emphasis */
+    background-color: #f9f9f9; /* Slight background change on hover */
+}
+
+/* src/components/CertificationCard.css */
+.show-credential-btn {
+    background-color: #0073b1;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.75em;
+    display: inline-block;
+    text-align: center;
+}
+
+.show-credential-btn:hover {
+    background-color: #005580;
+}
+
+.show-credential-btn.disabled {
+    background-color: #ccc; /* Lighter color for the disabled button */
+    color: #888; /* Dimmed text color */
+    pointer-events: none; /* Disable hover and click functionality */
+    cursor: not-allowed; /* Change cursor to indicate non-interactivity */
+}
+
+.show-credential-btn[aria-disabled="true"] {
+    background-color: #f0f0f0;
+    color: #b0b0b0;
 }
