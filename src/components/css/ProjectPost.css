@@ -3,457 +3,366 @@ html {
     scroll-behavior: smooth;
 }
 
-/* General Styles */
+/* Base Layout */
 .project-page {
     margin: 0 auto;
     padding: 20px;
     font-family: 'Arial', sans-serif;
     color: #333;
+    max-width: 1440px;
 }
 
-/* show aside in the right and section on the left */
 .project-page__layout {
     display: flex;
-    justify-content: space-between;
-    /* calculate margin on right to be the same width as aside */
-    margin-right: 10%;
-    margin-left: 10px;
-
+    gap: 40px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
-.project-page__sidebar {
-    width: 30%;
-    /* Adjust as needed */
-    background-color: #f5f5f5;
-    /* Light background */
+/* Target images within the markdown content */
+.project-page__description img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 2em auto;
     border-radius: 8px;
-    /* Rounded corners */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Optional: Add different sizes using data attributes */
+.project-page__description img[data-size="small"] {
+    max-width: 300px;
+}
+
+.project-page__description img[data-size="medium"] {
+    max-width: 500px;
+}
+
+.project-page__description img[data-size="large"] {
+    max-width: 800px;
+}
+
+/* Sidebar */
+.project-page__sidebar {
+    position: sticky;
+    top: 20px;
+    width: 300px;
+    height: fit-content;
+    background-color: #f5f5f5;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow */
-    padding: 15px;
-    /* Inner spacing */
-    margin-bottom: 20px;
-    /* Space below the sidebar */
+    padding: 20px;
     overflow-y: auto;
-    /* Enable scrolling if content overflows */
-    margin-right: 20px;
-    /* Space between sidebar and content */
 }
 
 .project-page__sidebar h3 {
     font-size: 1.5rem;
-    /* Larger font size */
     color: #333;
-    /* Darker color for emphasis */
     border-bottom: 2px solid #ddd;
-    /* Underline for separation */
-    padding-bottom: 5px;
-    /* Space below the heading */
-    margin-bottom: 15px;
-    /* Space between heading and list */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .project-page__index-list {
-    padding-left: 10px;
-    /* Indent for numbering */
+    list-style-type: none;
+    padding: 0;
     margin: 0;
-    /* Remove default margin */
-    list-style-type: decimal;
-    /* Use numbers for the list */
 }
 
 .project-page__index-item {
-    margin-bottom: 10px;
-    /* Space between items */
+    margin-bottom: 12px;
+}
+
+.project-page__index-item.level-1 {
+    margin-left: 0;
+}
+
+.project-page__index-item.level-2 {
+    margin-left: 16px;
+}
+
+.project-page__index-item.level-3 {
+    margin-left: 32px;
 }
 
 .project-page__index-item a {
-    text-decoration: none;
-    /* Remove underline */
     color: #007BFF;
-    /* Blue color for links */
-    font-weight: 500;
-    /* Medium font weight */
-    padding: 5px 8px;
-    /* Padding for clickable area */
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 6px;
     display: block;
-    /* Make link fill the entire list item */
-    border-radius: 5px;
-    /* Rounded corners */
-    transition: background-color 0.3s, color 0.3s;
-    /* Smooth hover effect */
+    transition: all 0.2s ease;
 }
 
 .project-page__index-item a:hover {
     background-color: #007BFF;
-    /* Blue background on hover */
-    color: #fff;
-    /* White text on hover */
+    color: white;
 }
 
-/* Level-based indentation */
-.project-page__index-item.level-2 {
-    padding-left: 10px;
-    /* Indent second-level items */
-    list-style-type: decimal;
-    /* Use numbers for sub-level */
-}
-
-.project-page__index-item.level-3 {
-    padding-left: 20px;
-    /* Indent third-level items */
-    list-style-type: none;
-    /* Use Roman numerals for sub-level */
-}
-
+/* Hide mobile index by default */
 .project-page__mobile-index {
     display: none;
-    /* Hide mobile index by default */
 }
 
-/* Header Styles */
-/* make it smaller vertically */
-.project-page__header {
-    position: relative;
-    margin-bottom: 20px;
+/* Main Content */
+.project-page__main-content {
+    flex: 1;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
+/* Header and Image */
 .project-page__image-container {
     position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 32px;
 }
 
 .project-page__image {
     width: 100%;
-    height: auto;
-    max-height: 400px;
-    /* Limit the height of the image */
+    height: 100%;
     object-fit: cover;
-    /* Ensures the image covers the area without distortion */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
 
 .project-page__overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.7));
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.5);
     color: white;
-    text-align: center;
-    padding: 20px;
-    border-radius: 8px;
+    padding: 24px;
 }
 
 .project-page__title {
-    font-size: 3.5rem;
-    margin-bottom: 10px;
+    font-size: 3rem;
+    margin-bottom: 16px;
+    text-align: center;
 }
 
-.project-page__info {
-    font-size: 1rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
+/* Category Styles */
 .project-page__category {
     display: inline-flex;
-    /* Aligns items in a row */
     align-items: center;
-    /* Centers items vertically */
     background-color: #333;
     color: white;
     padding: 5px 10px;
     border-radius: 5px;
     margin-bottom: 5px;
     font-size: 14px;
-    /* Adjust font size if necessary */
 }
 
 .project-page__category svg {
     margin-right: 5px;
-    /* Adds space between the icon and text */
 }
 
-
-/* Content Styles */
-.project-page__content {
-    margin-top: 20px;
-}
-
+/* Buttons */
 .project-page__links {
-    margin-bottom: 20px;
+    display: flex;
+    gap: 16px;
+    margin: 24px 0;
 }
 
 .project-page__button {
-    display: inline-block;
-    padding: 10px 15px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 5px;
+    padding: 12px 24px;
+    border-radius: 6px;
     color: white;
     text-decoration: none;
-    transition: background-color 0.3s;
+    font-weight: 500;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.project-page__button:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
 }
 
 .project-page__button--github {
-    background-color: #333;
+    background-color: #24292e;
 }
 
 .project-page__button--demo {
     background-color: #28a745;
 }
 
-.project-page__button:hover {
-    opacity: 0.8;
-}
-
-/* Markdown Styles */
+/* Content Styling */
 .project-page__description {
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.8;
 }
 
-.project-page__markdown-paragraph {
-    margin: 10px 0;
+.project-page__description p {
+    margin: 1.5em 0;
 }
 
-.project-page__markdown-header {
-    font-weight: bold;
-    margin: 15px 0;
-    border-bottom: 1px solid #eaeaea;
-    padding-bottom: 5px;
+.project-page__description h1,
+.project-page__description h2,
+.project-page__description h3 {
+    margin: 2em 0 1em;
+    color: #1a1a1a;
 }
 
-.project-page__markdown-list {
-    margin: 10px 0;
-    padding-left: 20px;
+.project-page__description ul,
+.project-page__description ol {
+    padding-left: 24px;
+    margin: 1.5em 0;
 }
 
-.project-page__markdown-list-item {
-    margin: 5px 0;
+.project-page__description li {
+    margin-bottom: 0.8em;
 }
 
-/* Table Styles */
+/* Code Blocks */
+.project-page__markdown-block-code {
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 1.5em 0;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    color: #f8f8f2;
+    line-height: 1.5;
+    border: 1px solid #444;
+}
+
+.project-page__markdown-inline-code {
+    background-color: #f5f5f5;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9em;
+    color: #333;
+}
+
+/* Tables */
 .project-page__markdown-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 20px 0;
+    margin: 1.5em 0;
+    table-layout: fixed;
 }
 
-.project-page__markdown-table-row {
-    border-bottom: 1px solid #eaeaea;
-}
-
-.project-page__markdown-table-header,
-.project-page__markdown-table-cell {
-    padding: 10px;
-    text-align: left;
+.project-page__markdown-table-cell,
+.project-page__markdown-table-header {
+    white-space: normal !important;
+    min-width: 150px;
 }
 
 .project-page__markdown-table-header {
-    background-color: #f7f7f7;
-}
-
-/* Inline Code Styles */
-.project-page__markdown-inline-code {
     background-color: #f5f5f5;
-    /* Light gray background */
-    color: #333;
-    /* Dark text color */
-    border-radius: 3px;
-    /* Slightly rounded corners */
-    padding: 2px 4px;
-    /* Small padding for a neat appearance */
-    font-family: monospace;
-    /* Monospace font for code */
-    font-size: 90%;
-    /* Slightly smaller than normal text */
-    line-height: 1.2;
-    /* Tight line height for inline code */
-}
-
-/* Block Code Styles */
-.project-page__markdown-block-code {
-    background-color: #282c34;
-    /* Dark background for block code */
-    color: #f8f8f2;
-    /* Light text color for contrast */
-    border-radius: 5px;
-    /* Rounded corners */
-    padding: 10px;
-    /* Ample padding for readability */
-    overflow-x: auto;
-    /* Enable horizontal scrolling for long lines */
-    font-family: 'Fira Code', monospace;
-    /* Monospace font for block code */
-    font-size: 100%;
-    /* Normal font size */
-    line-height: 1.5;
-    /* Better line height for readability */
-    border: 1px solid #444;
-    /* Subtle border for separation */
-}
-
-
-.project-page__video {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-}
-
-.project-page__teaser {
-    margin: 20px 0;
     font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
+.project-page__markdown-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.project-page__markdown-table tr:hover {
+    background-color: #f0f0f0;
+}
+
+.project-page__markdown-table-cell br,
+.project-page__markdown-table-header br {
+    display: block;
+    margin: 5px 0;
+    content: "";
+}
+
+/* Media */
 .project-page__media {
-    margin-top: 20px;
-}
-
-.project-page__media-item {
-    margin-bottom: 10px;
+    /* display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px; */
+    margin-top: 32px;
 }
 
 .project-page__media-image {
     width: 100%;
     height: auto;
-    border-radius: 8px;
+    object-fit: cover;
 }
 
-/* Loading, Error, and No Project Styles */
-.loading-text,
-.error-text,
-.no-project-text {
-    text-align: center;
-    font-size: 1.2rem;
-    margin: 20px 0;
+.project-page__media-carousel {
+    display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  scroll-snap-type: x mandatory;
 }
 
-.project-page__main-content {
-    max-width: 80%;
+.project-page__media-carousel .project-page__media-item {
+    flex: 0 0 80%;
+    scroll-snap-align: start;
+  }
+
+.project-page__preview-content {
+    margin: 2rem 0;
 }
 
-/* Responsive Styles */
-@media screen and (max-width: 768px) {
-    .project-page {
-        max-width: 100%;
-    }
+.project-page__media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
 
-    .project-page__title {
-        font-size: 2rem;
-        line-height: 1;
-    }
+.project-page__media-item {
+    overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
-    .project-page__info {
-        font-size: 0.9rem;
-    }
 
-    .project-page__markdown-header {
-        margin: 10px 0;
-    }
+.project-page__teaser {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
 
-    .project-page__markdown-table {
-        margin: 10px 0;
-    }
-
-    .project-page__markdown-table-header,
-    .project-page__markdown-table-cell {
-        padding: 5px;
-    }
-
-    .project-page__video {
-        margin-top: 10px;
-    }
-
-    .project-page__teaser {
-        margin: 10px 0;
-    }
-
-    .project-page {
-        max-width: 100%;
-        padding: 15px;
-        /* Reduce padding for smaller screens */
-    }
-
+/* Mobile Styles */
+@media screen and (max-width: 1024px) {
     .project-page__layout {
-        flex-direction: column;
-        /* Stack elements vertically */
-        margin: 0;
-        /* Remove side margins */
+        padding: 0 16px;
     }
 
     .project-page__main-content {
-        width: 100%;
-        /* Full width on mobile */
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .project-page__layout {
+        flex-direction: column;
     }
 
     .project-page__sidebar {
         display: none;
-        /* Hide sidebar */
     }
-    /* Mobile-specific index styles */
-.project-page__mobile-index {
-    display: block; /* Show index on mobile */
-    background-color: #f5f5f5; /* Light background similar to the sidebar */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    padding: 15px; /* Inner spacing */
-    margin-bottom: 20px; /* Space below the index */
-    overflow: hidden; /* Ensure content stays within bounds */
-}
 
-.project-page__mobile-index h3 {
-    font-size: 1.5rem; /* Consistent heading size */
-    color: #333; /* Dark color for emphasis */
-    border-bottom: 2px solid #ddd; /* Underline for separation */
-    padding-bottom: 5px; /* Space below the heading */
-    margin-bottom: 15px; /* Space between heading and list */
-}
+    .project-page__title {
+        font-size: 2rem;
+    }
 
-.project-page__index-list {
-    padding-left: 0; /* Remove extra padding */
-    margin: 0; /* Remove default margin */
-    list-style: none; /* Remove list dots */
-    list-style-type:none;
-}
+    .project-page__image-container {
+        height: 300px;
+    }
 
-.project-page__index-item {
-    margin-bottom: 10px; /* Consistent space between items */
-}
+    .project-page__links {
+        flex-direction: column;
+    }
 
-.project-page__index-item a {
-    text-decoration: none; /* Remove underline */
-    color: #007BFF; /* Blue color for links */
-    font-weight: 500; /* Medium weight for readability */
-    padding: 8px 12px; /* Padding for clickable area */
-    display: block; /* Full-width clickable link */
-    border-radius: 5px; /* Rounded corners */
-    background-color: #ffffff; /* White background for better contrast */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow for link */
-    transition: background-color 0.3s, color 0.3s; /* Smooth hover effect */
-}
+    .project-page__button {
+        text-align: center;
+    }
 
-.project-page__index-item a:hover {
-    background-color: #007BFF; /* Blue background on hover */
-    color: #fff; /* White text on hover */
-}
-
-/* Level-based indentation for subheadings */
-.project-page__index-item.level-2 {
-    padding-left: 15px; /* Indent for second-level items */
-    background-color: #f0f8ff; /* Light background color for visual hierarchy */
-}
-
-.project-page__index-item.level-3 {
-    padding-left: 30px; /* Indent for third-level items */
-    background-color: #f0f8ff; /* Maintain background color for third-level */
-}
+    .project-page__media {
+        grid-template-columns: 1fr;
+    }
 }

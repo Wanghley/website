@@ -8,6 +8,9 @@ import { FaTag } from "react-icons/fa";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
@@ -19,7 +22,6 @@ const ProjectPage = () => {
     const [error, setError] = useState(null);
     const [headings, setHeadings] = useState([]);
 
-    // Fetch project details
     useEffect(() => {
         const fetchProject = async () => {
             try {
@@ -33,7 +35,6 @@ const ProjectPage = () => {
                 );
                 setProject(response.data.data);
 
-                // Extract markdown headings for the index
                 if (response.data.data.attributes.Description) {
                     const tempHeadings = [];
                     response.data.data.attributes.Description.split('\n').forEach(line => {
@@ -55,7 +56,6 @@ const ProjectPage = () => {
         fetchProject();
     }, [slug]);
 
-    // Loading and error states
     if (loading) return <p className="loading-text">Loading...</p>;
     if (error) return <p className="error-text">{error}</p>;
     if (!project) return <p className="no-project-text">No project found.</p>;
@@ -66,9 +66,12 @@ const ProjectPage = () => {
     } = project.attributes;
 
     const featuredImage = Featured?.data?.attributes?.formats?.large?.url;
-    const media = Media?.data?.map(item => item.attributes.formats.large.url) || [];
+    console.log('Media:', Media);
+    const media = Media?.data?.flatMap(item => [
+        item.attributes.formats.large?.url,
+        item.attributes.formats.medium?.url
+      ]).filter(url => url !== null && url !== undefined) || [];
 
-    // Custom Markdown rendering components
     const markdownComponents = {
         h1: ({ children }) => <h1 id={children} className="project-page__markdown-header">{children}</h1>,
         h2: ({ children }) => <h2 id={children} className="project-page__markdown-header">{children}</h2>,
@@ -83,12 +86,57 @@ const ProjectPage = () => {
                 <code className="project-page__markdown-inline-code" {...props}>{children}</code>
             );
         },
+        table: props => (
+            <table className="project-page__markdown-table">
+                {props.children}
+            </table>
+        ),
+        td: props => {
+            const content = React.Children.map(props.children, child => {
+                if (typeof child === 'object' && child !== null) {
+                    return child.props?.children || '';
+                }
+                return child || '';
+            }).join('');
+    
+            return (
+                <td 
+                    className="project-page__markdown-table-cell"
+                    dangerouslySetInnerHTML={{ 
+                        __html: content
+                            .replace(/\\n/g, '<br />')
+                            .replace(/\n/g, '<br />')
+                            .replace(/•/g, '<br />•')
+                    }}
+                />
+            );
+        },
+        th: props => {
+            const content = React.Children.map(props.children, child => {
+                if (typeof child === 'object' && child !== null) {
+                    return child.props?.children || '';
+                }
+                return child || '';
+            }).join('');
+    
+            return (
+                <th 
+                    className="project-page__markdown-table-header"
+                    dangerouslySetInnerHTML={{ 
+                        __html: content
+                            .replace(/\\n/g, '<br />')
+                            .replace(/\n/g, '<br />')
+                            .replace(/•/g, '<br />•')
+                    }}
+                />
+            );
+        }
     };
 
     return (
         <article className="project-page">
             <div className="project-page__layout">
-                {/* Sidebar for desktop */}
+                {/* Sidebar */}
                 <aside className="project-page__sidebar">
                     <h3>Index</h3>
                     <ol className="project-page__index-list">
@@ -100,7 +148,7 @@ const ProjectPage = () => {
                     </ol>
                 </aside>
 
-                {/* Main Content Section */}
+                {/* Main Content */}
                 <section className="project-page__main-content">
                     <header className="project-page__header">
                         {featuredImage && (
@@ -138,50 +186,85 @@ const ProjectPage = () => {
                     <section className="project-page__content">
                         <div className="project-page__links">
                             {Github && (
-                                <a href={Github} target="_blank" rel="noopener noreferrer" className="project-page__button project-page__button--github">
+                                <a 
+                                    href={Github} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="project-page__button project-page__button--github"
+                                >
                                     View on GitHub
                                 </a>
                             )}
                             {Demo && (
-                                <a href={Demo} target="_blank" rel="noopener noreferrer" className="project-page__button project-page__button--demo">
-                                    Visit Demo
+                                <a 
+                                    href={Demo.includes('http') ? Demo : `https://${Demo}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="project-page__button project-page__button--demo"
+                                >
+                                    View Demo
                                 </a>
                             )}
                         </div>
+
+                        {/* Teaser and Media Gallery moved here */}
+                        <div className="project-page__preview-content">
+                            {Teaser && (
+                                <section className="project-page__teaser">
+                                    <p>{Teaser}</p>
+                                </section>
+                            )}
+                            
+                            {/* Media Gallery */}
+                            {media.length > 0 && (
+                            <>
+                                <h2>Media Gallery</h2>
+                                <section className="project-page__media">
+                                {media.length <= 6 ? (
+                                    <div className="project-page__media-grid">
+                                    {media.map((url, index) => (
+                                        <div key={index} className="project-page__media-item">
+                                        <img src={url} alt={`Media ${index + 1}`} className="project-page__media-image" />
+                                        </div>
+                                    ))}
+                                    </div>
+                                ) : (
+                                    <div className="project-page__media-carousel">
+                                    {media.map((url, index) => (
+                                        <div key={index} className="project-page__media-item">
+                                        <img src={url} alt={`Media ${index + 1}`} className="project-page__media-image" />
+                                        </div>
+                                    ))}
+                                    </div>
+                                )}
+                                </section>
+                            </>
+                            )}
+
+                        </div>
+
+                        {/* Main Description */}
                         {Description && (
                             <ReactMarkdown
-                                remarkPlugins={[remarkGfm]}
+                                remarkPlugins={[remarkGfm, remarkMath]}
+                                rehypePlugins={[rehypeKatex]}
                                 className="project-page__description"
                                 components={markdownComponents}
                             >
                                 {Description}
                             </ReactMarkdown>
                         )}
-                    </section>
 
-                    {/* Additional Sections */}
-                    {video?.url && (
-                        <section className="project-page__video">
-                            <video controls>
-                                <source src={video.url} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
-                        </section>
-                    )}
-                    {Teaser && (
-                        <section className="project-page__teaser">
-                            <p><strong>Teaser:</strong> {Teaser}</p>
-                        </section>
-                    )}
-                    {media.length > 0 && (
-                        <section className="project-page__media">
-                            {media.map((url, index) => (
-                                <div key={index} className="project-page__media-item">
-                                    <img src={url} alt={`Media ${index + 1}`} className="project-page__media-image" />
-                                </div>
-                            ))}
-                        </section>
-                    )}
+                        {/* Video Section */}
+                        {video?.url && (
+                            <section className="project-page__video">
+                                <video controls>
+                                    <source src={video.url} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            </section>
+                        )}
+                    </section>
                 </section>
             </div>
         </article>
