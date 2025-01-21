@@ -1,0 +1,212 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+h1, h2 {
+    color: #444;
+    font-weight: 700;
+}
+
+h1 {
+    font-size: 3.5em;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 2.2em;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* CV Page Layout */
+.cv-page {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+section {
+    margin-bottom: 30px;
+}
+
+section:last-child {
+    margin-bottom: 0;
+}
+
+/* Personal Information */
+.personal-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.personal-info .info-item {
+    flex: 1;
+    min-width: 250px;
+    font-size: 1.1rem;
+}
+
+.personal-info h2 {
+    margin-bottom: 10px;
+    font-size: 1.5em;
+}
+
+.personal-info .info-item p {
+    margin: 5px 0;
+}
+
+/* Education List */
+.education-list, .experience-list, .publication-list, .certifications-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.education-item, .experience-item, .publication-item, .certification-item {
+    margin-bottom: 15px;
+}
+
+.education-item h3, .experience-item h3, .publication-item h3 {
+    font-size: 1.3em;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.education-item p, .experience-item p, .publication-item p {
+    font-size: 1rem;
+    color: #7f8c8d;
+}
+
+/* Certifications */
+.certifications-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.certification-item {
+    background-color: #ecf0f1;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.certification-item h3 {
+    font-size: 1.2em;
+    color: #34495e;
+    margin-bottom: 5px;
+}
+
+.certification-item p {
+    color: #95a5a6;
+    font-size: 1rem;
+}
+
+.certification-item a {
+    background-color: #3498db;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+
+.certification-item a:hover {
+    background-color: #2980b9;
+}
+
+/* Responsive Adjustments */
+@media (min-width: 768px) {
+    .cv-page {
+        padding: 40px;
+    }
+
+    h1 {
+        font-size: 4em;
+    }
+
+    h2 {
+        font-size: 2.5em;
+    }
+
+    .personal-info {
+        gap: 30px;
+    }
+
+    .personal-info .info-item {
+        flex: 1;
+        min-width: 280px;
+    }
+
+    .certifications-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .cv-page {
+        padding: 50px;
+    }
+
+    h1 {
+        font-size: 4.5em;
+    }
+
+    h2 {
+        font-size: 3em;
+    }
+
+    .personal-info {
+        gap: 35px;
+    }
+
+    .personal-info .info-item {
+        flex: 1;
+        min-width: 320px;
+    }
+
+    .certifications-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1280px) {
+    .cv-page {
+        max-width: 1200px;
+    }
+
+    h1 {
+        font-size: 5em;
+    }
+
+    h2 {
+        font-size: 3.5em;
+    }
+
+    .personal-info {
+        gap: 40px;
+    }
+
+    .personal-info .info-item {
+        flex: 1;
+        min-width: 350px;
+    }
+
+    .certifications-list {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
