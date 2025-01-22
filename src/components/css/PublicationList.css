@@ -1,0 +1,141 @@
+/* Base styles for larger screens */
+.publications {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+  }
+  
+  .publications h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .publications ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .publications li {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .publication-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  
+  .publication-header h3 {
+    font-size: 1em;
+    margin: 0;
+    font-weight: bold;
+    color: #000;
+    flex-grow: 1;
+  }
+  
+  .right-aligned {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+  }
+  
+  .journal, .publication-date {
+    font-size: 0.9em;
+    color: #666;
+    margin-left: 20px;
+  }
+  
+  .authors {
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: #444;
+  }
+  
+  .doi-link {
+    font-size: 0.85em;
+    color: #1a73e8;
+    text-decoration: none;
+    margin-top: 5px;
+  }
+  
+  .doi-link:hover {
+    text-decoration: underline;
+  }
+  
+  .publications li:last-child {
+    border-bottom: none;
+  }
+  
+  /* Mobile-Responsive Styles */
+  @media screen and (max-width: 768px) {
+    .publication-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .publication-header h3 {
+      font-size: 1.2em;
+      margin-bottom: 5px;
+    }
+  
+    .right-aligned {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  
+    .journal, .publication-date {
+      font-size: 0.85em;
+      text-align: left;
+    }
+  
+    .authors {
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+  
+    .doi-link {
+      font-size: 0.9em;
+      margin-top: 10px;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .publication-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .right-aligned {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+    }
+  
+    .publication-header h3 {
+      font-size: 1.1em;
+      margin-bottom: 5px;
+    }
+  
+    .journal, .publication-date {
+      font-size: 0.8em;
+    }
+  
+    .authors {
+      font-size: 0.85em;
+    }
+  
+    .doi-link {
+      font-size: 0.85em;
+      margin-top: 5px;
+    }
+  }
+  
