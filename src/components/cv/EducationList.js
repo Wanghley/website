@@ -1,3 +1,11 @@
+/**
+ * The `EducationList` component in React displays a list of education items with details such as
+ * title, dates, institution, degree, location, and description.
+ * @returns The `EducationList` component is being returned. It is a functional component that takes in
+ * an array of `educations` as a prop and renders a list of education items based on the data provided
+ * in the `educations` array. Each education item includes details such as title, dates, institution,
+ * degree, location, and description.
+ */
 import React from 'react';
 
 import '../css/EducationList.css';

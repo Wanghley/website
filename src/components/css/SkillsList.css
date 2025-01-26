@@ -1,0 +1,90 @@
+.skills-list {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    color: #2c3e50;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+
+.skills-list__category {
+    display: flex;
+    flex-direction: column;  /* Stack the title and the list vertically */
+    margin-bottom: 25px;
+}
+
+.skills-list__category h3 {
+    font-size: 1.3em;
+    font-weight: 500;
+    color: #34495e;
+    margin: 0;  /* Remove margin */
+    white-space: nowrap;  /* Prevent title from breaking into new line */
+}
+
+.skills-list__skills {
+    display: flex;
+    flex-wrap: wrap;  /* Allow items to wrap */
+    gap: 12px;
+    padding: 0;
+    list-style: none;
+    justify-content: flex-start; /* Align items to the left */
+}
+
+.skills-list__skill-item {
+    display: flex;
+    align-items: center;
+    font-size: 1em;
+    gap: 8px;
+    min-width: 120px;
+    transition: transform 0.3s;
+    cursor: pointer;  /* Show pointer cursor when hovering */
+}
+
+/* Tooltip style */
+.skills-list__skill-stars {
+    position: relative;
+    color: #ffd700;
+}
+
+.tooltip {
+    visibility: hidden;
+    width: auto;
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Position the tooltip above the stars */
+    left: 50%;
+    margin-left: -60px; /* Centers the tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Tooltip appears on hover */
+.skills-list__skill-stars:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Hover effect for the skill items */
+.skills-list__skill-item:hover .skills-list__skill-stars {
+    transform: scale(1.2); /* Slightly enlarge the stars */
+}
+
+@media (max-width: 768px) {
+    .skills-list__skills {
+        /* On smaller screens, items will still wrap */
+    }
+
+    .skills-list__skill-item {
+        max-width: 100%;
+        font-size: 0.95em;
+    }
+
+    .skills-list h2, .skills-list__category h3 {
+        font-size: 1.2em;
+    }
+}
