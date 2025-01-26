@@ -1,0 +1,101 @@
+/* Personal Info Section */
+.personal-info {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+    line-height: 1.6; /* Make the lines closer vertically */
+    margin: 0 auto;
+    padding: 10px;
+    gap: 0 !important; /* Remove the gap between the columns */
+}
+
+/* Name */
+.personal-info h2 {
+    text-align: center;
+    width: 100%;
+    font-size: 2.5rem !important; /* Larger font size */
+    color: #2c3e50; /* Dark text color */
+    font-weight: 800;
+    font-family: "Poppins", sans-serif;
+    margin-bottom: 5px;
+}
+
+/* Headline */
+.personal-info h3 {
+    width: 100%;
+    font-size: 1.125rem; /* Slightly smaller font size */
+    text-align: center;
+    color: #7f8c8d; /* Light gray color for the headline */
+    margin-bottom: 15px; /* Reduced bottom margin */
+}
+
+/* Contact Information */
+.contact-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center; /* Align contact info in center */
+    margin-top: 10px;
+    width: 100%;
+}
+
+/* Individual contact item */
+.contact-item {
+    font-size: 1.05em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #7f8c8d; /* Lighter text color */
+    text-decoration: none;
+}
+
+.contact-item i {
+    font-size: 1.2em;
+    color: #2c3e50; /* Icon color */
+}
+
+/* Horizontal line styles */
+hr {
+    border: 0;
+    height: 1px;
+    background: #ccc; /* Light gray color */
+    margin-top: 20px;
+}
+
+
+/* Links */
+.contact-item a {
+    color: #3498db; /* Lighter blue for links */
+    text-decoration: none;
+    font-weight: 500; /* Slightly bolder links */
+}
+
+.contact-item a:hover {
+    text-decoration: underline;
+}
+
+/* Horizontal line between sections */
+hr {
+    border: 0;
+    border-top: 1px solid #ecf0f1;
+    margin: 20px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .personal-info h2 {
+        font-size: 2.2rem;
+    }
+
+    .personal-info h3 {
+        font-size: 1.1rem;
+    }
+
+    .contact-item {
+        font-size: 1rem;
+    }
+
+    .contact-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

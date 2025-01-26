@@ -60,7 +60,7 @@ const CVPage = () => {
 
     return (
         <div className="cv-page">
-            <h1>Curriculum Vitae</h1>
+            {/* <h1>Curriculum Vitae</h1> */}
             <PersonalInfo personalInfo={personalInfo} />
              <EducationList educations={educations} />
             <ExperienceList experiences={experiences} />
