@@ -4,11 +4,14 @@ import { fetchAllEducations } from '../api/education';
 import { fetchAllExperiences } from '../api/experience';
 import { fetchAllPublications } from '../api/publication';
 import { fetchAllCertifications } from '../api/certification';
+import { getSkills, getSkillsgrouped } from "../api/skills";
 import PersonalInfo from '../components/cv/PersonalInfo';
 import EducationList from '../components/cv/EducationList';
 import ExperienceList from '../components/cv/ExperienceList';
 import PublicationList from '../components/cv/PublicationList';
 import CertificationsList from '../components/CertificationCard';
+import SkillsList from '../components/cv/SkillList';
+
 
 import '../components/css/global.css';
 import './css/cv.css';
@@ -21,16 +24,18 @@ const CVPage = () => {
     const [certifications, setCertifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [skills, setSkills] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [personal, educationsData, experiencesData, publicationsData, certificationsData] = await Promise.all([
+                const [personal, educationsData, experiencesData, publicationsData, certificationsData, skillsData] = await Promise.all([
                     fetchPersonalInfo(),
                     fetchAllEducations(),
                     fetchAllExperiences(),
                     fetchAllPublications(),
-                    fetchAllCertifications()
+                    fetchAllCertifications(),
+                    getSkillsgrouped()
                 ]);
 
                 setPersonalInfo(personal);
@@ -38,6 +43,8 @@ const CVPage = () => {
                 setExperiences(experiencesData);
                 setPublications(publicationsData);
                 setCertifications(certificationsData || []);
+                setSkills(skillsData);
+
             } catch (err) {
                 setError(err);
             } finally {
@@ -57,6 +64,7 @@ const CVPage = () => {
             <PersonalInfo personalInfo={personalInfo} />
              <EducationList educations={educations} />
             <ExperienceList experiences={experiences} />
+            <SkillsList skills={skills} />
             <PublicationList publications={publications} />
             <section className="certifications">
                 <h2>Certifications</h2>

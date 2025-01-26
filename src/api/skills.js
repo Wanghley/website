@@ -30,7 +30,7 @@ async function fetchFeaturedSkills() {
       const icon = iconData && iconData.attributes.formats && iconData.attributes.formats.thumbnail
         ? iconData.attributes.formats.thumbnail.url
         : "https://res.cloudinary.com/wanghley/image/upload/v1720032994/placeholder_icon.png";
-      
+
       return { name, type, icon };
     });
 
@@ -65,6 +65,38 @@ async function fetchData(nextPage = 1, prevData = null) {
     console.error(e);
     throw e; // Rethrow the error for the caller to handle
   }
+}
+
+export async function getSkills() {
+  try {
+    const initialChart = await fetchData();
+    // console.log(initialChart.data);
+    return initialChart.data;
+  } catch (e) {
+    console.error(e);
+    return null; // or throw e; depending on your error handling strategy
+  }
+};
+
+export async function getSkillsgrouped() {
+  const skills = await getSkills();
+  const groupedSkills = {};
+
+  skills.forEach(skill => {
+    const type = skill.attributes.Type;
+    const name = skill.attributes.Name;
+    const expertise = skill.attributes.Expertise;
+
+    // If the type doesn't exist, create it
+    if (!groupedSkills[type]) {
+      groupedSkills[type] = [];
+    }
+
+    // Push the skill into the correct type category
+    groupedSkills[type].push({ name, expertise });
+  });
+
+  return groupedSkills;
 }
 
 export async function getUniqueElements() {
