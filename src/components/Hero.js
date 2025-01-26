@@ -1,12 +1,32 @@
 import React from 'react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import './css/Hero.css'
 
 const Hero = () => {
-    function onClickHeaderItem(sectionId){
+    function onClickHeaderItem(sectionId) {
         // make smooth scroll to the section
-        document.getElementById(sectionId).scrollIntoView({behavior: 'smooth'});
+        document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
     }
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+
+    // Toggle dropdown visibility
+    const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
+    // Go to full CV page
+    const onClickGoToCV = () => {
+        window.location.href = '/Curriculum-vitae';
+    };
+
+    // Handle downloading summarized resume
+    const onClickDownloadResume = () => {
+        // Assuming you have a file link or generation logic for the resume
+        const fileLink = '/path/to/summarized-resume.pdf';
+        const a = document.createElement('a');
+        a.href = fileLink;
+        a.download = 'Summarized_Resume.pdf'; // Optional: name the file when downloading
+        a.click();
+    };
 
     return (
         <div className="hero">
@@ -17,10 +37,16 @@ const Hero = () => {
                 <p className='hero-paragraph'>Problem-solver. Computer Technician. Young Scientist. Fullstack Developer. Data Scientist. Data Analyst. Artificial Intelligence Developer. Quantum Computing Developer. DevOps. Social Entrepreneur. Speaker. Mentor.</p>
                 <div className='hero-buttons'>
                     <button className='hero-button' onClick={() => onClickHeaderItem('contactme')}>HIRE ME!</button>
-                    <button className='hero-button secondary'>Download CV</button>
-                <div/>
+                    {/* go to /Curriculum-vitae page */}
+                    <div className="dropdown-container">
+                        {/* Button that toggles dropdown */}
+                        <button className="hero-button secondary" onClick={onClickGoToCV}>
+                            RESUME
+                        </button>
+                    </div>
+                    <div />
+                </div>
             </div>
-        </div>
         </div>
     )
 }
