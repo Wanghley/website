@@ -173,7 +173,7 @@
     .text{
         width: 100%;
         float: none;
-        padding: 0 1rem;
+        padding: 2rem 1rem;
         align-items: center;
     }
     .text h1{
@@ -191,7 +191,30 @@
     }
     
     .hero-buttons{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         padding: 0 2rem;
+    }
+
+    .hero-button:not(:last-child) {
+        margin-bottom: 1rem;
+        margin-right: 0;
+    }
+
+    .hero-button .secondary{
+        width: 100%;
+        height: 50px;
+        text-align: center;
+        margin-bottom: 1rem;
+        display:flexbox;
+    }
+
+    .dropdown-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
     }
 
     .hero-button{
@@ -199,5 +222,6 @@
         height: 50px;
         text-align: center;
         margin-bottom: 1rem;
+        display:flexbox;
     }
 }

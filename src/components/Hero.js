@@ -18,6 +18,11 @@ const Hero = () => {
         window.location.href = '/Curriculum-vitae';
     };
 
+    // Go to full CV page
+    const onClickGoToProjects = () => {
+        window.location.href = '/projects';
+    };
+
     // Handle downloading summarized resume
     const onClickDownloadResume = () => {
         // Assuming you have a file link or generation logic for the resume
@@ -36,12 +41,12 @@ const Hero = () => {
                 <h2 className="hero-subtitle">ASPIRANT ENGINEER. ENTREPRENEUR. SCIENTIST. DEVELOPER.</h2>
                 <p className='hero-paragraph'>Problem-solver. Computer Technician. Young Scientist. Fullstack Developer. Data Scientist. Data Analyst. Artificial Intelligence Developer. Quantum Computing Developer. DevOps. Social Entrepreneur. Speaker. Mentor.</p>
                 <div className='hero-buttons'>
-                    <button className='hero-button' onClick={() => onClickHeaderItem('contactme')}>HIRE ME!</button>
+                    <button className='hero-button' onClick={onClickGoToProjects}>PROJECTS</button>
                     {/* go to /Curriculum-vitae page */}
                     <div className="dropdown-container">
                         {/* Button that toggles dropdown */}
                         <button className="hero-button secondary" onClick={onClickGoToCV}>
-                            RESUME
+                            EXPERIENCES
                         </button>
                     </div>
                     <div />
