@@ -4,6 +4,7 @@ import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './css/BlogPost.css';
 import { formatDate } from '../utils/formatDate'; // Update this import path if needed
+import { Helmet } from 'react-helmet';
 
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
@@ -103,6 +104,23 @@ const BlogPostPage = () => {
 
     return (
         <div className="blog-page-container">
+            <Helmet>
+                <title>{Title}</title>
+                <meta name="description" content={Content} />
+                <link rel="canonical" href={`https://wanghley.com/blog/${slug}`} />
+                <meta name="keywords" content={Categories.join(', ')} />
+                <meta name="author" content="Wanghley" />
+                <meta name="robots" content="index, follow" />
+                <meta property="og:title" content={Title} />
+                <meta property="og:description" content={Content} />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content={`https://wanghley.com/blog/${slug}`} />
+                <meta property="og:image" content={featuredImage || 'https://example.com/default-image.jpg'} />
+                <meta property="og:site_name" content="Wanghley – Sci&Tech" />
+                <meta property="og:locale" content="en_US" />
+                <meta property="og:locale:alternate" content="pt_BR" />
+                <meta property="article:published_time" content={published} />
+            </Helmet>
             <article className="blog-page">
                 <header className="blog-page__header">
                     {featuredImage && (
