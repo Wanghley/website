@@ -5,6 +5,7 @@ import { fetchProjects } from '../api/projects';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import './css/projects.css';
+import { Helmet } from 'react-helmet';
 
 const Projects = (props) => {
     const [projects, setProjects] = useState([]); // Initialize projects state
@@ -59,6 +60,23 @@ const Projects = (props) => {
 
     return (
         <div className="projects">
+            <Helmet>
+                <title>Wanghley's Projects</title>
+                <meta name="description" content="Explore a diverse range of projects I've worked on, showcasing my skills and expertise." />
+                <link rel="canonical" href="https://wanghley.com/projects" />
+                <meta name="keywords" content="Projects, Wanghley, Portfolio, Skills, Experience" />
+                <meta name="author" content="Wanghley" />
+                <meta name="robots" content="index, follow" />
+
+                <meta property="og:title" content="Wanghley's Projects" />
+                <meta property="og:description" content="Explore a diverse range of projects I've worked on, showcasing my skills and expertise." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://wanghley.com/projects" />
+                <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1740099778/projects/large_e851a845_4eab_40ea_adc8_11bb99b908e8_fcd76cabf2.jpg" />
+                <meta property="og:site_name" content="Wanghley – Sci&Tech" />
+                <meta property="og:locale" content="en_US" />
+                <meta property="og:locale:alternate" content="pt_BR" />
+            </Helmet>
             <h1 className="projects-title">Projects</h1>
             <p className="projects-subtitle">
                 Explore a Diverse Range of Projects I've Worked On
