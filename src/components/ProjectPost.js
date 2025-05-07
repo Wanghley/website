@@ -11,6 +11,7 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import { Helmet } from 'react-helmet';
 
 import MediaGallery from './ProjectMediaGallery';
 
@@ -137,6 +138,20 @@ const ProjectPage = () => {
 
     return (
         <article className="project-page">
+            <Helmet>
+                <title>{Title}</title>
+                <meta name="description" content={Description} />
+                <meta name="keywords" content={Category} />
+                <link rel="canonical" href={`https://wanghley.com/projects/${slug}`} />
+                <meta property="og:title" content={Title} />
+                <meta property="og:description" content={Description} />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={`https://wanghley.com/projects/${slug}`} />
+                <meta property="og:image" content={featuredImage || 'https://res.cloudinary.com/wanghley/image/upload/v1746648815/branding/logo_applied_sq.png'} />
+                <meta property="og:site_name" content="Wanghley – Sci&Tech" />
+                <meta property="og:locale" content="en_US" />
+                <meta property="og:locale:alternate" content="pt_BR" />
+            </Helmet>
             <div className="project-page__layout">
                 {/* Sidebar */}
                 <aside className="project-page__sidebar">
