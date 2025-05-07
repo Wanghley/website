@@ -32,6 +32,7 @@
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
     "rsuite": "^5.74.2",
+    "sitemap": "^8.0.0",
     "styled-components": "^6.1.6"
   },
   "devDependencies": {
@@ -45,7 +46,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "generate-sitemap": "node src/sitemap.js"
   },
   "eslintConfig": {
     "extends": [
