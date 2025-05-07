@@ -68,6 +68,14 @@ const CVPage = () => {
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://wanghley.com/cv" />
                 <meta name="author" content="Wanghley" />
+
+                {/* Open Graph*/}
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://wanghley.com/cv" />
+                <meta property="og:title" content="Wanghley's Curriculum Vitae" />
+                <meta property="og:description" content="Explore Wanghley's professional CV, including education, experience, skills, publications, and certifications." />
+                <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1746646971/vhwsrugv5l1sxh7fx0zi.jpg" />
+                <meta property="og:image:alt" content="Wanghley's CV" />
             </Helmet>
             {/* <h1>Curriculum Vitae</h1> */}
             <PersonalInfo personalInfo={personalInfo} />
