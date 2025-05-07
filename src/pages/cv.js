@@ -11,6 +11,7 @@ import ExperienceList from '../components/cv/ExperienceList';
 import PublicationList from '../components/cv/PublicationList';
 import CertificationsList from '../components/CertificationCard';
 import SkillsList from '../components/cv/SkillList';
+import { Helmet } from "react-helmet";
 
 
 import '../components/css/global.css';
@@ -60,6 +61,14 @@ const CVPage = () => {
 
     return (
         <div className="cv-page">
+            <Helmet>
+                <title>Wanghley's Curriculum Vitae</title>
+                <meta name="description" content="Explore Wanghley's professional CV, including education, experience, skills, publications, and certifications." />
+                <meta name="keywords" content="Curriculum Vitae, CV, Wanghley, Education, Experience, Skills, Publications, Certifications" />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://wanghley.com/cv" />
+                <meta name="author" content="Wanghley" />
+            </Helmet>
             {/* <h1>Curriculum Vitae</h1> */}
             <PersonalInfo personalInfo={personalInfo} />
              <EducationList educations={educations} />
