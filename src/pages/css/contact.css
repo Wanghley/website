@@ -1,5 +1,5 @@
 .contact {
-    min-height: auto;
+    height: calc(100vh - 74px - 72px);
     display: flex;
     flex-direction: row;
     justify-content: center; /* centers content vertically */
