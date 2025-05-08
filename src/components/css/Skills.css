@@ -1,12 +1,13 @@
 @import url('./global.css');
 
+/* ---------- Container ---------- */
 .skills {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #f6f6f6;
-  padding: 5rem 5rem;
+  background: #fbfbfb;
+  padding: 5rem;
   border-radius: 10px;
   margin: 2rem auto;
 }
@@ -20,83 +21,114 @@
   font-weight: 700;
 }
 
-.skills_container {
+/* ---------- Filter Chips ---------- */
+.chip-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  width: 100%;
-}
-
-.skills_category {
-  flex: 1 1 calc(33% - 20px); /* Increased width to show more items */
-  background: #fff;
-  padding: 0 15px;
-  border-radius: 10px;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
-
-.skills_category h2 {
-  padding-bottom: 5px;
-  font-size: 1.3em;
-  color: #575757;
-  text-decoration: underline;
-}
-
-.skills_card {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Ensure more items per row */
   gap: 10px;
-  padding-bottom: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
 }
 
-.skills_card > * {
-  padding: 8px;
-  background: #fff;
-  border-radius: 5px;
-  text-align: center;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.skills_card > * h3 {
-  margin-bottom: 4px;
-  font-size: 1em;
+.chip {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 20px;
+  background-color: #e0e0e0;
   color: #333;
-  font-weight: 100;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.skills_card > * p {
-  margin-bottom: 8px;
-  font-size: 0.8em;
-  color: #666;
+.chip.active {
+  background-color: #007acc;
+  color: white;
 }
 
-.secondary-button.about-button {
-
-  margin-top: 20px; /* Adds space between button and content above */
+/* ---------- Skills Grid ---------- */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
+  width: 100%;
+  margin-bottom: 2rem;
+  justify-items: center;
 }
 
-
-
-
-@media (max-width: 768px) {
-  .skills_container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .skills_category, .skills_card {
+.skill-card {
+  background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    padding: 1rem;
     width: 100%;
-  }
+    max-width: 180px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
 
-  .skills_card {
-    grid-template-columns: 1fr; /* Display one item per row for mobile */
-  }
+.skill-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
 
-  .carousel-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
+.skill-card img {
+  height: 50px;
+  margin-bottom: 0.5rem;
+}
+
+.skill-meta {
+  margin-top: 0.5rem;
+}
+
+.skill-bar {
+  background-color: #eee;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.skill-bar-fill {
+  background-color: #007bff;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.skill-card span {
+  display: block;
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+/* ---------- CV Button ---------- */
+.secondary-button.about-button {
+  margin-top: 2rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.secondary-button.about-button:hover {
+  background-color: #0056b3;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .skills {
+    padding: 3rem 1.2rem;
   }
+  .skills-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    max-width: 100%;
+}
+
+.skill-card {
+    max-width: 140px;
+}
 }

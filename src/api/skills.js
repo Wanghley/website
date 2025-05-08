@@ -25,13 +25,15 @@ async function fetchFeaturedSkills() {
       const name = skill.attributes.Name;
       const type = skill.attributes.Type;
       const iconData = skill.attributes.Icon.data;
+      const score = skill.attributes.Score;
+      const level = skill.attributes.Expertise;
 
       // Handle cases where Icon.data might be null
       const icon = iconData && iconData.attributes.formats && iconData.attributes.formats.thumbnail
         ? iconData.attributes.formats.thumbnail.url
         : "https://res.cloudinary.com/wanghley/image/upload/v1720032994/placeholder_icon.png";
 
-      return { name, type, icon };
+      return { name, type, icon, score, level };
     });
 
     // console.log("Mapped Skills: ", skills); // Log the mapped skills
