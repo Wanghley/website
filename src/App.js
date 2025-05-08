@@ -15,6 +15,8 @@ import { NotFound } from './components';
 import Blogs from './pages/blog'; // Import the Blogs component
 import BlogPostPage from './components/BlogPost'; // Import the BlogPostPage component
 import CVPage from './pages/cv'; // Import the CVPage component
+import ContactPage from './pages/contact'; // Import the ContactPage component
+import { Helmet } from "react-helmet";
 
 function App() {
   return (
@@ -24,10 +26,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/projects" element={<Projects />} />
-        <Route path="/blog" element={<Blogs />} /> {/* Add this line */}
-        <Route path="/projects/:slug" element={<ProjectPage />} /> {/* Add this line */}
-        <Route path="/blog/:slug" element={<BlogPostPage />} /> {/* Add this line */}
-        <Route path="/curriculum-vitae" element={<CVPage />} /> {/* Add this line */}
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blog" element={<Blogs />} /> 
+        <Route path="/projects/:slug" element={<ProjectPage />} /> 
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/curriculum-vitae" element={<CVPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />

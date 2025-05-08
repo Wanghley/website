@@ -24,10 +24,10 @@ const Contact = () => {
                         <FontAwesomeIcon icon={faEnvelope} className='contact__icon' />
                         <span>me@wanghley.com</span>
                     </li></a>
-                    <a href='https://wa.me/19843120046' className='contact__link'><li className='contact__item active'>
+                    {/* <a href='https://wa.me/19843120046' className='contact__link'><li className='contact__item active'>
                         <FontAwesomeIcon icon={faPhone} className='contact__icon' />
                         <span>+1 984 312 0046</span>
-                    </li></a>
+                    </li></a> */}
                     <a href='https://cal.com/wanghley' rel="noreferrer" target='_blank' className='contact__link'><li className='contact__item'>
                         <FontAwesomeIcon icon={faHandshakeSimple} className='contact__icon' />
                         <span>Schedule a call now!</span>
