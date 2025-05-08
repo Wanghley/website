@@ -12,6 +12,21 @@
   margin: 2rem auto;
 }
 
+.skills-layout {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.skills-list {
+  width: 100%;
+}
+
 .skills h1 {
   width: 100%;
   text-align: left;
@@ -48,12 +63,11 @@
 
 /* ---------- Skills Grid ---------- */
 .skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 20px;
-  width: 100%;
-  margin-bottom: 2rem;
-  justify-items: center;
+  flex: 1 1 60%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
 }
 
 .skill-card {
@@ -66,6 +80,7 @@
     text-align: center;
     transition: transform 0.2s ease;
 }
+
 
 .skill-card:hover {
   transform: scale(1.05);

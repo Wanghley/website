@@ -1,0 +1,25 @@
+.skills-radar-container {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #fafafa;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+    height: 600px;
+  }
+  
+  .skills-radar-title {
+    text-align: center;
+    color: #007acc;
+    margin-bottom: 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+  
+  .skills-radar-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+  }
+  
