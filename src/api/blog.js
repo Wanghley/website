@@ -13,7 +13,7 @@ export async function fetchBlogs(page=1, limit=10, sortBy = "published", sortOrd
             }
         );
 
-        console.log("Fetched data:", response.data);
+        // console.log("Fetched data:", response.data);
 
         return response.data.data;   
     } catch (error) {

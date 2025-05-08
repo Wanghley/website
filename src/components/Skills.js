@@ -1,22 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
-import SkillsRadarChart from "./SkillsRadarChart";
+import React, { useState, useEffect } from "react";
+import SkillFilterChips from "./SkillFilterChips";
+import { fetchFeaturedSkills } from "../api/skills";
 import "./css/Skills.css";
-import { getUniqueElements, fetchFeaturedSkills } from "../api/skills";
-import SkillCard from "./SkillCard";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
-import { CustomLeftArrow, CustomRightArrow } from "./CustomArrows";
-
-const breakpoints = {
-    superLargeDesktop: { breakpoint: { max: 4000, min: 3000 }, items: 6 }, // Show more items
-    desktop: { breakpoint: { max: 3000, min: 1024 }, items: 4 },  // Show more items
-    tablet: { breakpoint: { max: 1024, min: 464 }, items: 2 },
-    mobile: { breakpoint: { max: 464, min: 0 }, items: 1 }
-};
 
 const Skills = () => {
     const [featuredSkills, setFeaturedSkills] = useState([]);
-    const containerRef = useRef(null);
+    const [selectedCategory, setSelectedCategory] = useState("All");
 
     useEffect(() => {
         const fetchData = async () => {
@@ -24,60 +13,55 @@ const Skills = () => {
                 const data = await fetchFeaturedSkills();
                 setFeaturedSkills(data);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error("Error fetching skills:", error);
             }
         };
         fetchData();
     }, []);
 
-    const getFilteredSkills = (type) => featuredSkills.filter(skill => skill.type === type);
+    const categories = [...new Set(featuredSkills.map(skill => skill.type))];
+    const isMobile = window.innerWidth <= 600;
 
-    const renderCategory = (title, filterType) => {
-        const skills = getFilteredSkills(filterType);
-        const shouldAutoPlay = skills.length > breakpoints.desktop.items;
+    const displayedSkills = selectedCategory === "All"
+        ? featuredSkills.slice(0, isMobile ? 5 : 20)
+        : featuredSkills.filter(skill => skill.type === selectedCategory).slice(0, isMobile ? 5 : 20);
 
-        return skills.length ? (
-            <div className="skills_category">
-                <h2>{title}</h2>
-                <div className="skills_card">
-                    <Carousel
-                        responsive={breakpoints}
-                        infinite
-                        autoPlay={shouldAutoPlay}
-                        autoPlaySpeed={3000}
-                        arrows
-                        customLeftArrow={<CustomLeftArrow />}
-                        customRightArrow={<CustomRightArrow />}
-                        swipeable
-                        draggable
-                    >
-                        {skills.map((skill, index) => (
-                            <SkillCard key={index} title={skill.name} icon={skill.icon} />
-                        ))}
-                    </Carousel>
-                </div>
-            </div>
-        ) : null;
-    };
+
+    console.log("Selected Category:", selectedCategory);
+    console.log("Displayed Skills:", displayedSkills);
 
     return (
-        <div ref={containerRef} className="skills">
+        <div className="skills">
             <h1>Featured Skills</h1>
-            <div className="skills_container">
-                {renderCategory("Engineering", "Engineering")}
-                {renderCategory("Software Development", "Software")}
-                {renderCategory("DevOps", "DevOps")}
-                {renderCategory("Data Science", "Data")}
-                {renderCategory("Other", "Other")}
+
+            <SkillFilterChips
+                categories={categories}
+                selected={selectedCategory}
+                onSelect={setSelectedCategory}
+            />
+
+            <div className="skills-grid">
+                {displayedSkills.map((skill, i) => (
+                    <div className="skill-card" key={i}>
+                        <img src={skill.icon} alt={skill.name} />
+                        <span>{skill.name}</span>
+                        <div className="skill-meta">
+                            <small className={`level ${skill.level.toLowerCase()}`}>{skill.level}</small>
+                            <div className="skill-bar">
+                                <div className="skill-bar-fill" style={{ width: `${skill.score}%` }} />
+                            </div>
+                        </div>
+                    </div>
+                ))}
             </div>
 
-            {/* Button to see more on CV */}
-            {/* <div className="cv-button-container">
-                <a href="/path-to-cv" className="cv-button">See More on My CV</a>
-            </div> */}
-            <button className='secondary-button about-button' onClick={() => window.location.href = '/curriculum-vitae'}>See more</button>
+            <button
+                className="secondary-button about-button"
+                onClick={() => window.location.href = '/curriculum-vitae'}
+            >
+                See more
+            </button>
         </div>
-
     );
 };
 
