@@ -1,162 +1,109 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-    Chart as ChartJS,
-    RadialLinearScale,
-    PointElement,
-    LineElement,
-    Filler,
-    Tooltip,
-    Legend,
-} from "chart.js";
+import React from "react";
 import { Radar } from "react-chartjs-2";
-import {getUniqueElements} from "../api/skills";
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+  Filler
+} from "chart.js";
+import "./css/SkillsRadarChart.css";
+
 
 ChartJS.register(
-    RadialLinearScale,
-    PointElement,
-    LineElement,
-    Filler,
-    Tooltip,
-    Legend
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Tooltip,
+  Legend,
+  Filler
 );
 
-const SKillRadarChart = () => {
-    
-    const [uniqueElements, setUniqueElements] = useState(null);
+const SkillsRadarChart = ({ skills }) => {
+  const categoryScores = {};
+  const categoryCounts = {};
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getUniqueElements();
-        setUniqueElements(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        // Handle the error as needed
-      }
-    };
-
-    fetchData();
-  }, []); // Empty dependency array to trigger the effect only once
-    console.log(uniqueElements)
-    if (!uniqueElements) return null;
-
-    // Convert the object back to an array
-    const uniqueArray = Object.keys(uniqueElements).map(id => ({
-        id: parseInt(id), // Ensure id is parsed as an integer
-        attributes: uniqueElements[id]
-    }));
-
-    // Now uniqueArray contains only unique elements based on the "id" property
-    // console.log(uniqueArray);
-
-
-    // Map proficiency levels to numerical values
-    const proficiencyMapping = {
-        "Basic": 1,
-        "Intermediate": 2,
-        "Advanced": 3,
-        "Proficient": 4,  // Note: Correct the typo in the dataset
-    };
-
-    // Iterate over the chart data
-    const countsByTypeAndProficiency = {};
-    // Iterate over the chart data
-    // console.log(chart)
-
-    // iterate over each element on the chart
-    // console.log(chart)
-    uniqueArray.forEach(element => {
-        const type = element.attributes.Type;
-        const proficiency = element.attributes.Expertise;
-
-        if (!countsByTypeAndProficiency[type]) {
-            countsByTypeAndProficiency[type] = {};
-        }
-        if (countsByTypeAndProficiency[type][proficiency] === undefined) {
-            countsByTypeAndProficiency[type][proficiency] = 1;
-        } else {
-            countsByTypeAndProficiency[type][proficiency] += 1;
-        }
-    });
-
-    const proficiencyPercentagesByType = {};
-    Object.keys(countsByTypeAndProficiency).forEach(type => {
-        const proficiencyCounts = countsByTypeAndProficiency[type];
-        let total = 0;
-        let sumProficiencyValues = 0;
-
-        Object.keys(proficiencyCounts).forEach(proficiency => {
-            const count = proficiencyCounts[proficiency];
-            const proficiencyValue = proficiencyMapping[proficiency];
-            total += count;
-            sumProficiencyValues += count * proficiencyValue;
-        });
-        // console log the total and sumProficiencyValues and object key in the same line
-        // console.log(total, sumProficiencyValues, type)
-        const averageProficiency = total !== 0 ? sumProficiencyValues / total : 0;
-        // normalize the average proficiency to a scale of 0 to 100
-        const normalizedAverageProficiency = Math.round(averageProficiency * 100 / 4);
-
-        proficiencyPercentagesByType[type] = normalizedAverageProficiency;
-    });
-
-    var data = {
-        labels: Object.keys(proficiencyPercentagesByType),
-        datasets: [{
-            data: Object.values(proficiencyPercentagesByType),
-            backgroundColor: 'rgba(58, 175, 241, 0.3)',
-            borderColor: 'rgba(58, 175, 241, 1)',
-            borderWidth: 2,
-            pointRadius: 5,
-            pointBackgroundColor: 'rgba(58, 175, 241, 1)',
-        }]
+  skills.forEach(({ type, score }) => {
+    if (typeof score === "number") {
+      categoryScores[type] = (categoryScores[type] || 0) + score;
+      categoryCounts[type] = (categoryCounts[type] || 0) + 1;
     }
+  });
 
-    var options = {
-        plugins: {
-            legend: {
-                display: false,
-            }
+  const categories = Object.keys(categoryScores);
+  const averages = categories.map(
+    type => Math.round(categoryScores[type] / categoryCounts[type])
+  );
+
+  const data = {
+    labels: categories,
+    datasets: [
+      {
+        label: "Average Score by Category",
+        data: averages,
+        backgroundColor: "rgba(0, 122, 204, 0.3)",
+        borderColor: "#005fa3",
+        borderWidth: 2,
+        pointBackgroundColor: "#007acc",
+        pointHoverRadius: 6,
+        fill: true
+      }
+    ]
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        min: 0,
+        max: 100,
+        ticks: {
+          stepSize: 20,
+          color: "#666",
+          backdropColor: "transparent"
         },
-        scale: {
-            angleLines: {
-              display: true,
-              color: 'rgba(0, 0, 0, 0.1)'
-            },
-            pointLabels: {
-              fontSize: 16,
-              fontColor: '#666',
-                fontStyle: 'bold'
-            },
-            ticks: {
-              beginAtZero: false,
-              stepSize: 25
-            },
-            circular: true // Set circular to true to make it a circular radar chart
+        grid: {
+          color: "#e0e0e0"
+        },
+        pointLabels: {
+          font: {
+            size: 14,
+            weight: "600"
           },
-          responsive: true,
-          maintainAspectRatio: true,
-    };
+          color: "#333"
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        backgroundColor: "#ffffff",
+        borderColor: "#007acc",
+        borderWidth: 1,
+        titleColor: "#007acc",
+        bodyColor: "#333",
+        callbacks: {
+          label: context => `${context.label}: ${context.raw} / 100`
+        }
+      }
+    }
+  };
 
-    // change Radar chartjs canvas size
-    // const canvasRef = useRef(null);
-    // useEffect(() => {
-    //     const canvas = canvasRef.current;
-    //     const ctx = canvas.getContext("2d");
-    //     ctx.canvas.width = 400;
-    //     ctx.canvas.height = 400;
-    // }, []);
+  return (
+    <div className="skills-radar-container">
+      <h2 className="skills-radar-title">Skills Radar</h2>
+      <p className="skills-radar-subtitle">
+        Average proficiency per skill category (based on self-evaluation)
+      </p>
+      <Radar data={data} options={options} />
+    </div>
+  );
+  
+};
 
-    return (
-        <div>
-            <Radar
-                style={{ width: '98%', margin: '0 auto' }}
-                data={data}
-                options={options}
-                // use maximum width and height of the canvas to maintain aspect ratio
-            />
-        </div>
-    )
-}
-
-export default SKillRadarChart;
+export default SkillsRadarChart;

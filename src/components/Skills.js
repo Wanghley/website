@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SkillFilterChips from "./SkillFilterChips";
+import SkillsRadarChart from "./SkillsRadarChart";
 import { fetchFeaturedSkills } from "../api/skills";
 import "./css/Skills.css";
 
@@ -34,25 +35,32 @@ const Skills = () => {
         <div className="skills">
             <h1>Featured Skills</h1>
 
-            <SkillFilterChips
-                categories={categories}
-                selected={selectedCategory}
-                onSelect={setSelectedCategory}
-            />
 
-            <div className="skills-grid">
-                {displayedSkills.map((skill, i) => (
-                    <div className="skill-card" key={i}>
-                        <img src={skill.icon} alt={skill.name} />
-                        <span>{skill.name}</span>
-                        <div className="skill-meta">
-                            <small className={`level ${skill.level.toLowerCase()}`}>{skill.level}</small>
-                            <div className="skill-bar">
-                                <div className="skill-bar-fill" style={{ width: `${skill.score}%` }} />
+            <div className="skills-layout">
+                <div className="skills-list">
+                    <SkillFilterChips
+                        categories={categories}
+                        selected={selectedCategory}
+                        onSelect={setSelectedCategory}
+                    />
+                    <div className="skills-grid">
+                        {displayedSkills.map((skill, i) => (
+                            <div className="skill-card" key={i}>
+                                <img src={skill.icon} alt={skill.name} />
+                                <span>{skill.name}</span>
+                                <div className="skill-meta">
+                                    <small className={`level ${skill.level.toLowerCase()}`}>{skill.level}</small>
+                                    <div className="skill-bar">
+                                        <div className="skill-bar-fill" style={{ width: `${skill.score}%` }} />
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        ))}
                     </div>
-                ))}
+                </div>
+                {/* <div className="skills-radar-wrapper">
+                    <SkillsRadarChart skills={featuredSkills} />
+                </div> */}
             </div>
 
             <button
@@ -62,6 +70,7 @@ const Skills = () => {
                 See more
             </button>
         </div>
+
     );
 };
 
