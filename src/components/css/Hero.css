@@ -164,11 +164,17 @@
 @media screen and (max-width: 768px) {
     .hero{
         background-image: url('../../assets/hero-mobile.jpg');
+        /* remove scrolling inside hero */
+        overflow: hidden;
+        background-size: cover;
+        min-height: 100vh;
     }
     .spacer{
         width: 0px;
         float: none;
         padding: 0;
+        margin: 0;
+        display: none;
     }
     .text{
         width: 100%;
