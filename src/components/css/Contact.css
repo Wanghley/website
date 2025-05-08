@@ -184,6 +184,7 @@
     .contact {
         flex-direction: column;
         padding: 2rem 2rem;
+        height: auto;
     }
     .contact_text {
         width: 100%;
