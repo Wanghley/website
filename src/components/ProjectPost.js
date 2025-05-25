@@ -59,7 +59,15 @@ const ProjectPage = () => {
         fetchProject();
     }, [slug]);
 
-    if (loading) return <p className="loading-text">Loading...</p>;
+    // Add loading state for dynamic content
+    if (loading) {
+        return (
+            <div className="loading-state">
+                <meta name="robots" content="noindex" />
+                <p>Loading...</p>
+            </div>
+        );
+    }
     if (error) return <p className="error-text">{error}</p>;
     if (!project) return <p className="no-project-text">No project found.</p>;
 
@@ -136,6 +144,26 @@ const ProjectPage = () => {
         }
     };
 
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://wanghley.com"
+        }, {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Projects",
+            "item": "https://wanghley.com/projects"
+        }, {
+            "@type": "ListItem",
+            "position": 3,
+            "name": Title
+        }]
+    };
+
     return (
         <article className="project-page">
             <Helmet>
@@ -151,6 +179,7 @@ const ProjectPage = () => {
                 <meta property="og:site_name" content="Wanghley – Sci&Tech" />
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:locale:alternate" content="pt_BR" />
+                <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
             </Helmet>
             <div className="project-page__layout">
                 {/* Sidebar */}

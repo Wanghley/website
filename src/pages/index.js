@@ -1,6 +1,9 @@
-import React from "react";
-import { Navbar, Hero, About, Timeline, Contact, Skills,Footer, WhyMe, GridFeatured,GridFeaturedBlog } from '../components'
-import { Helmet } from "react-helmet"; 
+import React, { lazy, Suspense } from "react";
+import { Navbar, Hero, About, Timeline, Contact, Skills, Footer, WhyMe, GridFeatured, GridFeaturedBlog } from '../components';
+import { Helmet } from "react-helmet";
+
+const BlogPost = lazy(() => import('./components/BlogPost'));
+const ProjectPost = lazy(() => import('./components/ProjectPost'));
 
 const Home = () => {
     return (
@@ -29,6 +32,9 @@ const Home = () => {
         <GridFeatured />
         <GridFeaturedBlog />
         {/* <WhyMe /> */}
+        <Suspense fallback={<LoadingSpinner />}>
+            <BlogPost />
+        </Suspense>
         <Contact />
         </>
     );
