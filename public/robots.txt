@@ -6,3 +6,6 @@ Crawl-delay: 10
 
 # Sitemaps
 Sitemap: https://wanghley.com/sitemap.xml
+Sitemap: https://wanghley.com/sitemap-static.xml
+Sitemap: https://wanghley.com/sitemap-blog.xml
+Sitemap: https://wanghley.com/sitemap-projects.xml
