@@ -21,10 +21,6 @@ import { Helmet } from "react-helmet";
 function App() {
   return (
     <Router>
-      <Helmet>
-        <link rel="preload" href={featuredImage} as="image" />
-        <link rel="preconnect" href="https://res.cloudinary.com" />
-      </Helmet>
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
