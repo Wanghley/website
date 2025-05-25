@@ -96,11 +96,58 @@ const BlogPostPage = () => {
     if (error) return <p className="error-text">{error}</p>;
     if (!blogPost) return <p className="no-blog-post-text">No blog post found.</p>;
 
-    const { Title, published, Content, Categories } = blogPost.attributes;
+    const { Title, published, Content, Categories, updated } = blogPost.attributes;
     const featuredImage = blogPost.attributes.Featured?.data?.attributes?.formats?.large?.url;
 
     // Convert categories array to a comma-separated string
     const categoryList = Categories.slice(0, 3).join(', ');
+
+    // Add this before the return statement
+    const structuredData = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": Title,
+        "image": featuredImage,
+        "datePublished": published,
+        "author": {
+            "@type": "Person",
+            "name": "Wanghley"
+        }
+    };
+
+    const articleSchema = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": Title,
+        "image": featuredImage,
+        "datePublished": published,
+        "dateModified": updated,
+        "author": {
+            "@type": "Person",
+            "name": "Wanghley",
+            "url": "https://wanghley.com/about"
+        }
+    };
+
+    const breadcrumbSchema = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [{
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://wanghley.com"
+        }, {
+            "@type": "ListItem", 
+            "position": 2,
+            "name": "Blog",
+            "item": "https://wanghley.com/blog"
+        }, {
+            "@type": "ListItem",
+            "position": 3,
+            "name": Title
+        }]
+    };
 
     return (
         <div className="blog-page-container">
@@ -113,6 +160,15 @@ const BlogPostPage = () => {
                 <meta name="robots" content="index, follow" />
                 <meta property="og:title" content={Title} />
                 <meta property="og:description" content={Content} />
+                <script type="application/ld+json">
+                    {JSON.stringify(structuredData)}
+                </script>
+                <script type="application/ld+json">
+                    {JSON.stringify(articleSchema)}
+                </script>
+                <script type="application/ld+json">
+                    {JSON.stringify(breadcrumbSchema)}
+                </script>
                 <meta property="og:type" content="article" />
                 <meta property="og:url" content={`https://wanghley.com/blog/${slug}`} />
                 <meta property="og:image" content={featuredImage || 'https://example.com/default-image.jpg'} />
