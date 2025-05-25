@@ -1,3 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /admin/
+Crawl-delay: 10
+
+# Sitemaps
 Sitemap: https://wanghley.com/sitemap.xml
