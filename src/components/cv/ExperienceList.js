@@ -18,7 +18,9 @@ const ExperienceList = ({ experiences }) => {
                             <div className="experience-details">
                                 <span className="company">{experience.attributes.company}</span>
                                 <span className="location">{experience.attributes.location?.description}</span>
-                                <span className="dates">{experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} - {experience.attributes.end.split('-')[1]}/{experience.attributes.end.split('-')[0]}</span>
+                                <span className="dates">{experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} - {experience.attributes.end
+                                    ? `${experience.attributes.end.split('-')[1]}/${experience.attributes.end.split('-')[0]}`
+                                    : 'Present'} </span>
                             </div>
                             <p>{experience.attributes.description}</p>
                         </li>
@@ -37,7 +39,9 @@ const ExperienceList = ({ experiences }) => {
                                 <span className="company">{experience.attributes.company}</span>
                                 <span className="location">{experience.attributes.location?.description}</span>
                                 {/* show year and month */}
-                                <span className="dates">{experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} - {experience.attributes.end.split('-')[1]}/{experience.attributes.end.split('-')[0]}</span>
+                                <span className="dates">{experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} - {experience.attributes.end
+                                    ? `${experience.attributes.end.split('-')[1]}/${experience.attributes.end.split('-')[0]}`
+                                    : 'Present'}</span>
                             </div>
                             <p>{experience.attributes.description}</p>
                         </li>
@@ -55,7 +59,9 @@ const ExperienceList = ({ experiences }) => {
                             <div className="experience-details">
                                 <span className="company">{experience.attributes.company}</span>
                                 <span className="location">{experience.attributes.location?.description}</span>
-                                <span className="dates">{experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} - {experience.attributes.end.split('-')[1]}/{experience.attributes.end.split('-')[0]}</span>
+                                <span className="dates">{experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} - {experience.attributes.end
+                                    ? `${experience.attributes.end.split('-')[1]}/${experience.attributes.end.split('-')[0]}`
+                                    : 'Present'}</span>
                             </div>
                             <p>{experience.attributes.description}</p>
                         </li>
@@ -73,7 +79,9 @@ const ExperienceList = ({ experiences }) => {
                             <div className="experience-details">
                                 <span className="company">{experience.attributes.company}</span>
                                 <span className="location">{experience.attributes.location?.description}</span>
-                                <span className="dates">{experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} - {experience.attributes.end.split('-')[1]}/{experience.attributes.end.split('-')[0]}</span>
+                                <span className="dates">{experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} - {experience.attributes.end
+                                    ? `${experience.attributes.end.split('-')[1]}/${experience.attributes.end.split('-')[0]}`
+                                    : 'Present'}</span>
                             </div>
                             <p>{experience.attributes.description}</p>
                         </li>
