@@ -20,19 +20,15 @@ const SkillsList = ({ skills }) => {
             {Object.keys(skills).map((category) => (
                 <div key={category} className="skills-list__category">
                     <h3>{category}</h3>
-                    <ul className="skills-list__skills">
+                    <div className="skills-list__skills">
                         {skills[category]
-                            .sort((a, b) => expertiseToStars[b.expertise] - expertiseToStars[a.expertise]) // Sorting skills by proficiency (high to low)
-                            .map(({ name, expertise }, index) => (
-                                <li key={index} className="skills-list__skill-item">
-                                    <span>{name}</span>
-                                    <span className="skills-list__skill-stars">
-                                        {generateStars(expertise)}
-                                        <span className="tooltip">{expertise}</span>
-                                    </span>
-                                </li>
+                            .sort((a, b) => expertiseToStars[b.expertise] - expertiseToStars[a.expertise])
+                            .map(({ name }, index, arr) => (
+                                <span key={index} className="skills-list__skill-name">
+                                    {name}{index < arr.length - 1 ? ', ' : ''}
+                                </span>
                             ))}
-                    </ul>
+                    </div>
                 </div>
             ))}
         </section>
