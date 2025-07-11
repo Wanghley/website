@@ -9,6 +9,8 @@
 import React from 'react';
 
 import '../css/EducationList.css';
+import education from '../../api/education';
+import ReactMarkdown from 'react-markdown';
 
 const EducationList = ({ educations }) => {
     return (
@@ -31,7 +33,9 @@ const EducationList = ({ educations }) => {
                             </div>
                         <p className="location">{education.attributes.location?.description}</p>
                         </div>
-                        <p className="description">{education.attributes.description}</p>
+                        <ReactMarkdown className="description">
+                            {education.attributes.description}
+                        </ReactMarkdown>
                     </li>
                 ))}
             </ul>
