@@ -52,35 +52,38 @@
 
 /* Experience Details (company, location, dates) */
 .experience-details {
+    margin-bottom: 4px;
+}
+
+.company-date-row {
     display: flex;
     justify-content: space-between;
-    margin-top: 5px;
-    font-size: 0.95em;
-    color: #7f8c8d;
+    align-items: center;
+    width: 100%;
 }
 
-.experience-details span {
-    max-width: 30%;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-}
-
-/* Company */
 .company {
-    font-weight: 600;
-    color: #34495e;
+    font-weight: bold;
+    color: #2c3e50;
 }
 
-/* Location */
-.location {
-    color: #7f8c8d;
-}
-
-/* Dates */
 .dates {
-    font-size: 0.85em;
-    color: #95a5a6;
+    color: #888;
+    font-size: 0.95em;
+    white-space: nowrap;
+}
+
+.location-row {
+    display: flex;
+    justify-content: flex-end;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.location {
+    color: #555;
+    text-align: right;
+    font-size: 0.95em;
 }
 
 /* Description Styling */
