@@ -7,8 +7,8 @@
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) 250px; /* Reduced from 300px to 250px */
+  gap: 1.5rem; /* Slightly reduced gap */
   padding: 2rem;
 }
 
@@ -529,14 +529,37 @@ body {
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  padding: 1.5rem;
+  padding: 1.25rem;
   align-self: start;
   position: sticky;
   top: 2rem;
+  max-height: calc(100vh - 120px); /* Limit maximum height */
+  overflow-y: auto; /* Add scrolling for overflow content */
+  scrollbar-width: thin; /* Thin scrollbar for Firefox */
+  max-width: 20%;
+}
+
+/* Custom scrollbar for webkit browsers */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #c0c0c0;
+  border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
 }
 
 .sidebar__section {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem; /* Reduced from 2rem */
 }
 
 .sidebar__section:last-child {
@@ -544,12 +567,8 @@ body {
 }
 
 .sidebar__section h2 {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin: 0 0 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #edf2f7;
+  font-size: 1.1rem; /* Slightly smaller heading */
+  margin: 0 0 0.75rem;
 }
 
 .sidebar__section ul {
@@ -559,7 +578,7 @@ body {
 }
 
 .sidebar__section li {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem; /* Reduced from 0.75rem */
 }
 
 .sidebar__section li:last-child {
@@ -570,9 +589,9 @@ body {
   color: #4a5568;
   text-decoration: none;
   display: block;
-  font-size: 0.95rem;
+  font-size: 0.9rem; /* Smaller font size */
   transition: color 0.15s;
-  padding: 0.3rem 0;
+  padding: 0.25rem 0;
 }
 
 .sidebar__section a:hover {
@@ -634,6 +653,7 @@ body {
 @media (max-width: 1024px) {
   .blog-page-container {
     padding: 1.5rem;
+    grid-template-columns: minmax(0, 1fr) 220px; /* Even smaller on medium screens */
   }
 }
 
@@ -717,4 +737,31 @@ body {
   .blog-page__title-container .blog-page__title {
     font-size: 1.8rem;
   }
+}
+
+/* Add this to your existing styles */
+
+.sidebar__social-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sidebar__social-links li {
+  margin-bottom: 0.5rem;
+}
+
+.sidebar__social-links a {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.sidebar__social-links a:hover {
+  background-color: #e9ecef;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }

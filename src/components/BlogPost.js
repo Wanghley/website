@@ -320,27 +320,50 @@ const BlogPostPage = () => {
                 <section className="sidebar__section">
                     <h2>Latest Posts</h2>
                     <ul>
-                        {latestPosts.map(post => (
-                            <li key={post.id}><a href={`/blog/${post.slug}`}>{post.title}</a></li>
+                        {latestPosts.slice(0, 3).map(post => (
+                            <li key={post.id}>
+                                <a href={`/blog/${post.attributes?.slug}`}>
+                                    {post.attributes?.Title || "Untitled Post"}
+                                </a>
+                            </li>
                         ))}
+                        {latestPosts.length === 0 && <li>No recent posts found</li>}
                     </ul>
                 </section>
 
                 <section className="sidebar__section">
                     <h2>Projects</h2>
                     <ul>
-                        {projects.map(project => (
-                            <li key={project.id}><a href={`/projects/${project.slug}`}>{project.title}</a></li>
+                        {projects.slice(0, 3).map(project => (
+                            <li key={project.id}>
+                                <a href={`/projects/${project.attributes?.slug}`}>
+                                    {project.attributes?.Title || "Untitled Project"}
+                                </a>
+                            </li>
                         ))}
+                        {projects.length === 0 && <li>No projects found</li>}
                     </ul>
                 </section>
 
                 <section className="sidebar__section">
                     <h2>Social Media</h2>
-                    <ul>
-                        {socialMedia.map(link => (
-                            <li key={link.id}><a href={link.url} target="_blank" rel="noopener noreferrer">{link.name}</a></li>
-                        ))}
+                    <ul className="sidebar__social-links">
+                        {socialMedia && socialMedia.attributes && socialMedia.attributes.links ? (
+                            socialMedia.attributes.links.map((link, index) => (
+                                <li key={index}>
+                                    <a href={link.url} target="_blank" rel="noopener noreferrer">
+                                        {link.name}
+                                    </a>
+                                </li>
+                            ))
+                        ) : (
+                            <>
+                                <li><a href="https://linkedin.com/in/wanghley" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+                                <li><a href="https://github.com/wanghley" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                                <li><a href="https://twitter.com/wanghley" target="_blank" rel="noopener noreferrer">Twitter</a></li>
+                                <li><a href="https://instagram.com/wanghley" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                            </>
+                        )}
                     </ul>
                 </section>
             </aside>
