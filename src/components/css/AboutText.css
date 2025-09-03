@@ -334,6 +334,68 @@
     font-style: italic;
 }
 
+/* Citation and references styling */
+.citation-link {
+    color: #0645ad;
+    text-decoration: none;
+    vertical-align: super;
+    font-size: 0.75em;
+    line-height: 0;
+    padding: 0 1px;
+    font-weight: bold;
+    position: relative;
+    top: -0.5em;
+    margin: 0 1px;
+    border-bottom: none !important;
+}
+
+.citation-link:hover {
+    color: #0b0080;
+    background-color: #eaf3ff;
+    text-decoration: none !important;
+}
+
+.references-section {
+    margin-top: 2.5em;
+    padding-top: 1em;
+    border-top: 1px solid #ddd;
+}
+
+.references-list {
+    margin-left: 1em;
+    padding-left: 1em;
+}
+
+.reference-item {
+    margin-bottom: 0.8em;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 2.5em;
+    list-style: none;
+}
+
+.reference-id {
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.reference-text {
+    color: #333;
+}
+
+.reference-link {
+    color: #0645ad;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.reference-link:hover {
+    text-decoration: underline;
+}
+
 /* Improved references section */
 .references {
     margin-top: 2em;
