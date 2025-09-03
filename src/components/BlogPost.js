@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import './css/BlogPost.css';
 import { formatDate } from '../utils/formatDate'; // Update this import path if needed
 import { Helmet } from 'react-helmet';
@@ -149,6 +151,30 @@ const BlogPostPage = () => {
         }]
     };
 
+    // Add this function inside your component before the return statement
+    const extractHeadings = (content) => {
+        const headingRegex = /^(#{1,3})\s+(.+)$/gm;
+        const headings = [];
+        let match;
+        
+        while ((match = headingRegex.exec(content)) !== null) {
+            const level = match[1].length;
+            const text = match[2];
+            const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+            
+            headings.push({
+                level,
+                text,
+                id
+            });
+        }
+        
+        return headings;
+    };
+
+    // Then use it in your component
+    const headings = Content ? extractHeadings(Content) : [];
+
     return (
         <div className="blog-page-container">
             <Helmet>
@@ -217,8 +243,77 @@ const BlogPostPage = () => {
                 </header>
 
                 <section className="blog-page__content">
-                    {Content && <ReactMarkdown className="blog-page__text">{Content}</ReactMarkdown>}
+                    {Content && 
+                        <ReactMarkdown 
+                            className="blog-page__text"
+                            remarkPlugins={[remarkGfm]}
+                            rehypePlugins={[rehypeRaw]}
+                            components={{
+                                table: ({node, ...props}) => (
+                                    <div className="table-responsive">
+                                        <table {...props} />
+                                    </div>
+                                ),
+                                img: ({node, ...props}) => (
+                                    <div className="blog-image-container">
+                                        <img {...props} alt={props.alt || "Blog image"} />
+                                        {props.alt && <em className="image-caption">{props.alt}</em>}
+                                    </div>
+                                ),
+                                a: ({node, ...props}) => (
+                                    <a {...props} target="_blank" rel="noopener noreferrer" />
+                                ),
+                                code: ({node, inline, className, children, ...props}) => {
+                                    const match = /language-(\w+)/.exec(className || '');
+                                    return !inline ? (
+                                        <div className="code-block-container">
+                                            <pre className={className}>
+                                                <code className={className} {...props}>
+                                                    {children}
+                                                </code>
+                                            </pre>
+                                        </div>
+                                    ) : (
+                                        <code className={className} {...props}>
+                                            {children}
+                                        </code>
+                                    );
+                                },
+                                h1: ({node, ...props}) => {
+                                    const id = props.children.toString().toLowerCase().replace(/[^\w]+/g, '-');
+                                    return <h1 id={id} {...props} />;
+                                },
+                                h2: ({node, ...props}) => {
+                                    const id = props.children.toString().toLowerCase().replace(/[^\w]+/g, '-');
+                                    return <h2 id={id} {...props} />;
+                                },
+                                h3: ({node, ...props}) => {
+                                    const id = props.children.toString().toLowerCase().replace(/[^\w]+/g, '-');
+                                    return <h3 id={id} {...props} />;
+                                },
+                            }}
+                        >
+                            {Content}
+                        </ReactMarkdown>
+                    }
                 </section>
+
+                {/* Add Table of Contents section */}
+                {headings.length > 3 && (
+                    <div className="blog-page__toc">
+                        <h3>Table of Contents</h3>
+                        <ul className="blog-page__toc-list">
+                            {headings.map((heading, index) => (
+                                <li 
+                                    key={index} 
+                                    className={`blog-page__toc-item level-${heading.level}`}
+                                >
+                                    <a href={`#${heading.id}`}>{heading.text}</a>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
             </article>
 
             <aside className="sidebar">
