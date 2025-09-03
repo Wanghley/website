@@ -1,0 +1,569 @@
+/* AboutText.css - Modern Wikipedia-inspired styling */
+
+/* Base layout with improved typography */
+.about-page {
+    margin: 0 auto;
+    padding: 20px 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+    color: #222;
+    max-width: 100%;
+    background-color: #fff;
+    line-height: 1.6;
+}
+
+.about-page__layout {
+    display: flex;
+    gap: 30px;
+    margin: 0 auto;
+    padding: 0 20px;
+    max-width: 1300px;
+}
+
+/* Enhanced title styling */
+.about-page__title {
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    font-size: 2.8rem;
+    border-bottom: none;
+    margin-bottom: 0.25em;
+    font-weight: normal;
+    color: #000;
+    letter-spacing: -0.02em;
+}
+
+.about-page__pronunciation {
+    font-size: 1rem;
+    font-weight: normal;
+    color: #5a6772;
+    margin-left: 10px;
+}
+
+.about-page__main-title {
+    display: none;
+}
+
+/* Improved hatnote styling */
+.hatnote {
+    font-size: 0.95rem;
+    color: #444;
+    font-style: italic;
+    margin-bottom: 16px;
+    background-color: #f5f8fa;
+    border: 1px solid #dce6f0;
+    padding: 10px 14px;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.hatnote a {
+    color: #0366d6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.hatnote a:hover {
+    text-decoration: underline;
+}
+
+/* Enhanced lead paragraph */
+.about-page__lead-paragraph {
+    font-size: 1.2rem;
+    line-height: 1.7;
+    margin-bottom: 1.8em;
+    color: #333;
+}
+
+.about-page__lead-paragraph strong {
+    font-weight: 600;
+}
+
+/* Modern TOC styling */
+.about-page__sidebar {
+    position: sticky;
+    top: 30px;
+    width: 280px;
+    height: fit-content;
+    font-family: inherit;
+    font-size: 0.95rem;
+    margin-top: 2rem;
+}
+
+.about-page__toc-container {
+    border: 1px solid #d8dee4;
+    background-color: #f6f8fa;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.about-page__toc-header {
+    text-align: center;
+    font-weight: 600;
+    padding: 8px 0 12px;
+    font-size: 1.1rem;
+    border-bottom: 1px solid #d1d5da;
+    margin-bottom: 14px;
+    color: #24292e;
+}
+
+.about-page__index-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: section;
+}
+
+.about-page__index-item {
+    margin-bottom: 6px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+    padding: 2px 0;
+    transition: all 0.2s ease;
+}
+
+.about-page__index-item.level-2 {
+    margin-left: 0;
+}
+
+.about-page__index-item.level-3 {
+    margin-left: 22px;
+    font-size: 0.9rem;
+}
+
+.about-page__index-item a {
+    color: #0366d6;
+    text-decoration: none;
+    display: block;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.about-page__index-item a:hover {
+    background-color: #e6f0ff;
+    color: #0366d6;
+    text-decoration: none;
+}
+
+.about-page__index-item.active a {
+    font-weight: 600;
+    color: #24292e;
+    background-color: #e1e8ef;
+}
+
+.about-page__toc-number {
+    display: inline-block;
+    min-width: 24px;
+}
+
+/* Hide mobile index by default */
+.about-page__mobile-index {
+    display: none;
+}
+
+/* Main content with improved readability */
+.about-page__content {
+    flex: 1;
+    max-width: 860px;
+    line-height: 1.7;
+    font-family: inherit;
+    font-size: 1rem;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    color: #24292e;
+}
+
+/* Better section headings */
+.about-page__section-number {
+    display: inline-block;
+    min-width: 28px;
+    font-weight: normal;
+    margin-right: 0.5em;
+    color: #586069;
+}
+
+/* Enhanced infobox styling */
+.infobox {
+    float: right;
+    margin: 0.5em 0 1.5em 1.5em;
+    padding: 0.5em;
+    border: 1px solid #d1d5da;
+    background-color: #f8f9fa;
+    font-size: 0.95rem;
+    line-height: 1.5em;
+    width: 22em;
+    clear: right;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 6px;
+}
+
+.infobox-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-align: center;
+    background-color: #e9ecef;
+    padding: 8px 0;
+    margin: -0.5em -0.5em 0.5em;
+    border-radius: 6px 6px 0 0;
+    color: #24292e;
+}
+
+.infobox-figure {
+    margin: 0.8em auto;
+    text-align: center;
+    max-width: 100%;
+}
+
+.infobox-image {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #d1d5da;
+    padding: 3px;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+.infobox-caption {
+    font-size: 0.9em;
+    text-align: center;
+    padding: 0.3em 0;
+    color: #444;
+}
+
+.infobox-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.infobox-table th {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.4em 0.6em;
+    background-color: #f0f2f5;
+    width: 33%;
+    font-weight: 500;
+    border-bottom: 1px solid #eaecef;
+}
+
+.infobox-table td {
+    vertical-align: top;
+    padding: 0.4em 0.6em;
+    border-bottom: 1px solid #eaecef;
+}
+
+.infobox-table tr:last-child th,
+.infobox-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Markdown styling with improved typography */
+.about-page__markdown {
+    line-height: 1.7;
+}
+
+.about-page__markdown-header {
+    scroll-margin-top: 30px;
+    margin: 2rem 0 1rem;
+    color: #24292e;
+    font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
+    border-bottom: 1px solid #d1d5da;
+    padding-bottom: 0.3em;
+    overflow: hidden;
+    font-weight: normal;
+}
+
+.about-page__markdown h2 {
+    font-size: 1.7rem;
+    margin: 1.5em 0 0.5em;
+    letter-spacing: -0.01em;
+}
+
+.about-page__markdown h3 {
+    font-size: 1.4rem;
+    margin: 1em 0 0.5em;
+    font-weight: 600;
+}
+
+.about-page__markdown p {
+    margin: 0.8em 0 1.2em;
+    text-align: justify;
+    font-size: 1rem;
+    line-height: 1.7;
+}
+
+.about-page__markdown ul, .about-page__markdown ol {
+    margin: 0.5em 0 1em 1.8em;
+}
+
+.about-page__markdown li {
+    margin: 0.3em 0;
+}
+
+.about-page__wiki-link {
+    color: #0366d6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.about-page__wiki-link:hover {
+    text-decoration: underline;
+}
+
+/* Enhanced figures and captions */
+.about-page__figure {
+    margin: 1.5em auto 2em;
+    border: 1px solid #d1d5da;
+    padding: 6px;
+    background-color: #f8f9fa;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    border-radius: 6px;
+}
+
+.about-page__image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 2px;
+}
+
+.about-page__figcaption {
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 0.6em 0.3em 0.3em;
+    color: #444;
+    font-style: italic;
+}
+
+/* Improved references section */
+.references {
+    margin-top: 2em;
+    font-size: 0.95rem;
+    border-top: 1px solid #eaecef;
+    padding-top: 1em;
+}
+
+.references ol {
+    list-style-type: decimal;
+    margin-left: 2.2em;
+}
+
+.references li {
+    margin-bottom: 0.7em;
+    line-height: 1.5;
+}
+
+.reference-text {
+    display: block;
+    color: #444;
+}
+
+.external-link:after {
+    content: " \f08e";
+    font-family: FontAwesome;
+    font-size: 0.7em;
+    vertical-align: super;
+    margin-left: 3px;
+    color: #6a737d;
+}
+
+/* See also and External links sections */
+.see-also-list, .external-links-list {
+    margin: 0.5em 0 1em 1.8em;
+}
+
+.see-also-list li, .external-links-list li {
+    margin: 0.3em 0 0.5em;
+}
+
+/* Categories section */
+.about-page__categories {
+    border-top: 1px solid #d1d5da;
+    padding: 0.8em 0;
+    margin-top: 2.5em;
+    color: #444;
+    font-size: 0.9rem;
+    background-color: #f6f8fa;
+    padding: 12px 15px;
+    border-radius: 6px;
+}
+
+.about-page__categories a {
+    color: #0366d6;
+    text-decoration: none;
+    margin: 0 0.3em;
+    font-weight: 500;
+}
+
+.about-page__categories a:hover {
+    text-decoration: underline;
+}
+
+/* Loading and error states */
+.about-page__loading,
+.about-page__error {
+    text-align: center;
+    padding: 3rem;
+    font-size: 1.1rem;
+    font-family: inherit;
+    background-color: #f6f8fa;
+    border-radius: 8px;
+    margin: 2rem auto;
+    max-width: 500px;
+}
+
+.about-page__error {
+    color: #cb2431;
+    border: 1px solid #f1c0c0;
+}
+
+/* Responsive design */
+@media screen and (max-width: 1300px) {
+    .about-page__layout {
+        max-width: 95%;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    .about-page__layout {
+        gap: 25px;
+    }
+    
+    .infobox {
+        width: 20em;
+    }
+    
+    .about-page__sidebar {
+        width: 250px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .about-page__layout {
+        padding: 0 20px;
+    }
+    
+    .infobox {
+        width: 18em;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .about-page__layout {
+        flex-direction: column;
+        padding: 0 20px;
+    }
+
+    .about-page__sidebar {
+        display: none;
+    }
+
+    .about-page__mobile-index {
+        display: block;
+        margin-bottom: 1.5rem;
+        font-family: inherit;
+    }
+
+    .about-page__mobile-index-toggle {
+        width: 100%;
+        padding: 10px 15px;
+        background-color: #f0f2f5;
+        color: #24292e;
+        border: 1px solid #d1d5da;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        position: relative;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    
+    .about-page__mobile-index-toggle:hover {
+        background-color: #e6ebf1;
+    }
+
+    .about-page__mobile-index-toggle::after {
+        content: "▼";
+        position: absolute;
+        right: 16px;
+        font-size: 0.8rem;
+    }
+
+    .about-page__mobile-index-content {
+        display: none;
+        background-color: #f6f8fa;
+        border: 1px solid #d1d5da;
+        border-top: none;
+        padding: 10px 15px;
+        margin-top: -1px;
+        list-style-type: none;
+        border-radius: 0 0 6px 6px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .about-page__mobile-index-content.open {
+        display: block;
+    }
+
+    .about-page__mobile-index-content li {
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+
+    .about-page__mobile-index-content li.level-2 {
+        margin-left: 0;
+    }
+
+    .about-page__mobile-index-content li.level-3 {
+        margin-left: 18px;
+    }
+
+    .about-page__mobile-index-content a {
+        color: #0366d6;
+        text-decoration: none;
+        display: inline;
+        padding: 3px 0;
+    }
+    
+    .about-page__mobile-index-content a:hover {
+        text-decoration: underline;
+    }
+
+    .infobox {
+        float: none;
+        width: 100%;
+        margin: 0 0 1.5em 0;
+        box-sizing: border-box;
+    }
+
+    .about-page__title {
+        font-size: 2.2rem;
+    }
+
+    .about-page__markdown h2 {
+        font-size: 1.5rem;
+    }
+
+    .about-page__markdown h3 {
+        font-size: 1.3rem;
+    }
+    
+    .about-page__figure {
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .about-page__layout {
+        padding: 0 15px;
+    }
+    
+    .about-page__title {
+        font-size: 2rem;
+    }
+    
+    .about-page__lead-paragraph {
+        font-size: 1.1rem;
+    }
+}
