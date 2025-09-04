@@ -25,6 +25,15 @@ const ProjectPage = () => {
     const [error, setError] = useState(null);
     const [headings, setHeadings] = useState([]);
 
+    // Toggle function for mobile index
+    const toggleMobileIndex = () => {
+        const mobileIndex = document.querySelector('.project-page__mobile-index');
+        if (mobileIndex) {
+            mobileIndex.classList.toggle('open');
+        }
+    };
+
+    // First useEffect - fetch project data
     useEffect(() => {
         const fetchProject = async () => {
             try {
@@ -58,6 +67,61 @@ const ProjectPage = () => {
 
         fetchProject();
     }, [slug]);
+
+    // Second useEffect - observe headings (MOVED UP before any conditional returns)
+    useEffect(() => {
+        // Only run this effect when the project is loaded and we're not in a loading state
+        if (loading || !project) return;
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-80px 0px -20% 0px',
+            threshold: 0
+        };
+
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Get all sidebar links
+                    const sidebarLinks = document.querySelectorAll('.project-page__index-item a');
+                    
+                    // Remove active class from all links
+                    sidebarLinks.forEach(link => {
+                      link.classList.remove('active');
+                    });
+                    
+                    // Add active class to the link that corresponds to the current section
+                    const id = entry.target.id;
+                    const correspondingLink = document.querySelector(`.project-page__index-item a[href="#${id}"]`);
+                    if (correspondingLink) {
+                      correspondingLink.classList.add('active');
+                    }
+                }
+            });
+        };
+
+        // Create observer
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        
+        // Use setTimeout to ensure DOM elements are available
+        setTimeout(() => {
+            // Observe all section headings
+            const headings = document.querySelectorAll('.project-page__description h1, .project-page__description h2, .project-page__description h3');
+            headings.forEach(heading => {
+                if (heading) observer.observe(heading);
+            });
+        }, 100);
+
+        return () => {
+            // Cleanup - use setTimeout to ensure we're not trying to unobserve elements that don't exist
+            setTimeout(() => {
+                const headings = document.querySelectorAll('.project-page__description h1, .project-page__description h2, .project-page__description h3');
+                headings.forEach(heading => {
+                    if (heading) observer.unobserve(heading);
+                });
+            }, 100);
+        };
+    }, [loading, project]); // Add dependencies
 
     // Add loading state for dynamic content
     if (loading) {
@@ -218,7 +282,7 @@ const ProjectPage = () => {
 
                     {/* Mobile Index */}
                     <div className="project-page__mobile-index">
-                        <h3>Index</h3>
+                        <h3 onClick={toggleMobileIndex}>Index</h3>
                         <ul>
                             {headings.map((heading, index) => (
                                 <li key={index} className={`level-${heading.level}`}>
