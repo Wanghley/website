@@ -6,13 +6,17 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import './css/projects.css';
 import { Helmet } from 'react-helmet';
+import { FaSearch, FaTags, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
 
 const Projects = (props) => {
-    const [projects, setProjects] = useState([]); // Initialize projects state
-    const [loading, setLoading] = useState(true); // Initialize loading state
-    const [page, setPage] = useState(1); // Initialize page state
-    const [hasMore, setHasMore] = useState(true); // Initialize hasMore state
-    const uniqueProjectIds = new Set(); // Initialize a set to store unique project IDs to avoid duplicates
+    const [projects, setProjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [activeCategory, setActiveCategory] = useState('All');
+    const [categories, setCategories] = useState(['All']);
+    const uniqueProjectIds = new Set();
 
     const loadProjects = async (page) => {
         try {
@@ -20,18 +24,27 @@ const Projects = (props) => {
             const newProjects = await fetchProjects(page);
 
             if (newProjects && newProjects.length > 0) {
+                // Extract all categories for the filter
+                const allCategories = new Set(['All']);
+                newProjects.forEach(project => {
+                    if (project.attributes.Category) {
+                        allCategories.add(project.attributes.Category);
+                    }
+                });
+                setCategories(Array.from(allCategories));
+
                 const filteredProjects = newProjects.filter(
                     (project) => !uniqueProjectIds.has(project.attributes.id)
                 );
                 filteredProjects.forEach((project) => uniqueProjectIds.add(project.attributes.id));
                 setProjects((prevProjects) => [...prevProjects, ...filteredProjects]);
-                setPage(page + 1); // Increment page for the next load
+                setPage(page + 1);
             } else {
-                setHasMore(false); // No more projects to load
+                setHasMore(false);
             }
         } catch (error) {
             console.error("Error fetching data:", error);
-            setHasMore(false); // Set hasMore to false on error
+            setHasMore(false);
         } finally {
             setLoading(false);
         }
@@ -39,24 +52,34 @@ const Projects = (props) => {
 
     useEffect(() => {
         loadProjects(page);
-    }, [page]);
+    }, []);
 
     const handleScroll = () => {
-        if (loading) return; // If already loading, do not trigger another load
-
-        // Calculate scroll conditions
-        const isBottom = window.innerHeight + window.scrollY >= document.documentElement.offsetHeight;
-
-        // Check if at the bottom
+        if (loading) return;
+        const isBottom = window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 100;
         if (isBottom && hasMore) {
-            loadProjects(page); // Load next page if hasMore is true
+            loadProjects(page);
         }
     };
 
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
-    }, [loading, hasMore]); // Depend on loading and hasMore to update scroll listener
+    }, [loading, hasMore, page]);
+
+    // Filter projects based on search and category
+    const filteredProjects = projects.filter(project => {
+        const matchesSearch = project.attributes.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             (project.attributes.Description && project.attributes.Description.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        const matchesCategory = activeCategory === 'All' || 
+                               project.attributes.Category === activeCategory;
+        
+        return matchesSearch && matchesCategory;
+    });
+
+    // Get featured project for the header (using the first project)
+    const featuredProject = projects.length > 0 ? projects[0] : null;
 
     return (
         <div className="projects">
@@ -77,23 +100,93 @@ const Projects = (props) => {
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:locale:alternate" content="pt_BR" />
             </Helmet>
-            <h1 className="projects-title">Projects</h1>
-            <p className="projects-subtitle">
-                Explore a Diverse Range of Projects I've Worked On
-            </p>
-            <Box sx={{ flexGrow: 1 }}>
-                <CardGrid cardData={projects} type='project' />
+            
+            {featuredProject && (
+                <div className="projects-featured-header" style={{
+                    backgroundImage: `url(${featuredProject.attributes.Featured?.data?.attributes?.formats?.large?.url || 'https://res.cloudinary.com/wanghley/image/upload/v1700976651/branding/Logo_Wanghley_Simbolo_Fundo_Transparente_1_min_c28472b597.png'})`
+                }}>
+                    <div className="projects-featured-overlay">
+                        <div className="projects-featured-content">
+                            <div className="projects-featured-meta">
+                                {featuredProject.attributes.Category && (
+                                    <span className="projects-featured-category">{featuredProject.attributes.Category}</span>
+                                )}
+                                <span className="projects-featured-date">
+                                    <FaCalendarAlt />
+                                    {featuredProject.attributes.Start}
+                                </span>
+                            </div>
+                            <h1 className="projects-featured-title">{featuredProject.attributes.Title}</h1>
+                            <p className="projects-featured-excerpt">
+                                {featuredProject.attributes.Teaser}
+                            </p>
+                            <a href={`/projects/${featuredProject.attributes.slug}`} className="projects-featured-button">
+                                View Project <FaArrowRight />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
+            
+            <div className="projects-container">
+                <div className="projects-controls-container">
+                    <h2 className="projects-section-title">All Projects</h2>
+                    <div className="projects-controls">
+                        <div className="projects-search">
+                            <input 
+                                type="text" 
+                                placeholder="Search projects..." 
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <FaSearch className="search-icon" />
+                        </div>
+                        
+                        <div className="projects-categories">
+                            <div className="categories-header">
+                                <FaTags className="categories-icon" />
+                                <span>Filter by:</span>
+                            </div>
+                            <div className="categories-list">
+                                {categories.map(category => (
+                                    <button 
+                                        key={category}
+                                        className={`category-button ${activeCategory === category ? 'active' : ''}`}
+                                        onClick={() => setActiveCategory(category)}
+                                    >
+                                        {category}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {filteredProjects.length > 0 ? (
+                    <div className="projects-grid">
+                        <CardGrid cardData={filteredProjects} type='project'/>
+                    </div>
+                ) : !loading ? (
+                    <div className="no-results">
+                        <h3>No projects found</h3>
+                        <p>Try adjusting your search or category filters</p>
+                    </div>
+                ) : null}
+                
                 {loading && (
-                    <Box className="loading-container">
+                    <div className="loading-container">
                         <CircularProgress />
-                    </Box>
+                    </div>
                 )}
-                {!hasMore && !loading && (
-                    <Box className="no-more-projects">
-                        <p>End of projects, this is. A new path, seek you must.</p>
-                    </Box>
+                
+                {!hasMore && !loading && filteredProjects.length > 0 && (
+                    <div className="end-of-content">
+                        <div className="end-line"></div>
+                        <span>You've reached the end</span>
+                        <div className="end-line"></div>
+                    </div>
                 )}
-            </Box>
+            </div>
         </div>
     );
 };
