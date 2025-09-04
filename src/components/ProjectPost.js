@@ -55,6 +55,12 @@ const ProjectPage = () => {
                             tempHeadings.push({ level: match[1].length, text: match[2] });
                         }
                     });
+                    
+                    // Add the gallery section to the headings if media exists
+                    if (response.data.data.attributes.Media?.data?.length > 0) {
+                        tempHeadings.push({ level: 2, text: "project-gallery" });
+                    }
+                    
                     setHeadings(tempHeadings);
                 }
             } catch (error) {
@@ -248,11 +254,13 @@ const ProjectPage = () => {
             <div className="project-page__layout">
                 {/* Sidebar */}
                 <aside className="project-page__sidebar">
-                    <h3>Index</h3>
+                    <h3>Contents</h3>
                     <ol className="project-page__index-list">
                         {headings.map((heading, index) => (
                             <li key={index} className={`project-page__index-item level-${heading.level}`}>
-                                <a href={`#${heading.text}`}>{heading.text}</a>
+                                <a href={`#${heading.text}`}>
+                                    {heading.text === "project-gallery" ? "Project Gallery" : heading.text}
+                            </a>
                             </li>
                         ))}
                     </ol>
@@ -282,11 +290,13 @@ const ProjectPage = () => {
 
                     {/* Mobile Index */}
                     <div className="project-page__mobile-index">
-                        <h3 onClick={toggleMobileIndex}>Index</h3>
+                        <h3 onClick={toggleMobileIndex}>Contents</h3>
                         <ul>
                             {headings.map((heading, index) => (
                                 <li key={index} className={`level-${heading.level}`}>
-                                    <a href={`#${heading.text}`}>{heading.text}</a>
+                                    <a href={`#${heading.text}`}>
+                                        {heading.text === "project-gallery" ? "Project Gallery" : heading.text}
+                                    </a>
                                 </li>
                             ))}
                         </ul>
@@ -324,10 +334,6 @@ const ProjectPage = () => {
                                     <p>{Teaser}</p>
                                 </section>
                             )}
-                            
-                            {/* Media Gallery */}
-                            <MediaGallery media={media} />
-
                         </div>
 
                         {/* Main Description */}
@@ -349,6 +355,13 @@ const ProjectPage = () => {
                                     <source src={video.url} type="video/mp4" />
                                     Your browser does not support the video tag.
                                 </video>
+                            </section>
+                        )}
+                        
+                        {/* Media Gallery - moved to end and given an id */}
+                        {media && media.length > 0 && (
+                            <section id="project-gallery">
+                                <MediaGallery media={media} />
                             </section>
                         )}
                     </section>
