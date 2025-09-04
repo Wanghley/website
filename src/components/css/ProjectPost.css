@@ -1,4 +1,4 @@
-/* ProjectPost.css - Enhanced Version */
+/* ProjectPost.css*/
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px; /* Account for fixed header */
@@ -201,7 +201,6 @@ html {
 /* Main Content Area */
 .project-page__main-content {
   flex: 1;
-  max-width: 800px;
   margin: 0 auto;
   background-color: white;
   border-radius: 8px;
