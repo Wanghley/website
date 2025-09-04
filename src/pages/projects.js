@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import { CardGrid } from '../components';
 import { fetchProjects } from '../api/projects';
 import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import './css/projects.css';
 import { Helmet } from 'react-helmet';
 import { FaSearch, FaTags, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
 
-const Projects = (props) => {
+const Projects = () => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -33,17 +31,18 @@ const Projects = (props) => {
                 });
                 setCategories(Array.from(allCategories));
 
+                // Filter out duplicates
                 const filteredProjects = newProjects.filter(
-                    (project) => !uniqueProjectIds.has(project.attributes.id)
+                    project => !uniqueProjectIds.has(project.attributes.id)
                 );
-                filteredProjects.forEach((project) => uniqueProjectIds.add(project.attributes.id));
-                setProjects((prevProjects) => [...prevProjects, ...filteredProjects]);
+                filteredProjects.forEach(project => uniqueProjectIds.add(project.attributes.id));
+                setProjects(prevProjects => [...prevProjects, ...filteredProjects]);
                 setPage(page + 1);
             } else {
                 setHasMore(false);
             }
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error("Error fetching projects:", error);
             setHasMore(false);
         } finally {
             setLoading(false);
@@ -78,11 +77,17 @@ const Projects = (props) => {
         return matchesSearch && matchesCategory;
     });
 
-    // Get featured project for the header (using the first project)
-    const featuredProject = projects.length > 0 ? projects[0] : null;
+    // Format date function
+    const formatDate = (dateString) => {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+    };
+
+    // Get latest project for the header
+    const latestProject = projects.length > 0 ? projects[0] : null;
 
     return (
-        <div className="projects">
+        <div className="projects-page">
             <Helmet>
                 <title>Wanghley's Projects</title>
                 <meta name="description" content="Explore a diverse range of projects I've worked on, showcasing my skills and expertise." />
@@ -101,26 +106,26 @@ const Projects = (props) => {
                 <meta property="og:locale:alternate" content="pt_BR" />
             </Helmet>
             
-            {featuredProject && (
+            {latestProject && (
                 <div className="projects-featured-header" style={{
-                    backgroundImage: `url(${featuredProject.attributes.Featured?.data?.attributes?.formats?.large?.url || 'https://res.cloudinary.com/wanghley/image/upload/v1700976651/branding/Logo_Wanghley_Simbolo_Fundo_Transparente_1_min_c28472b597.png'})`
+                    backgroundImage: `url(${latestProject.attributes.Featured?.data?.attributes?.formats?.large?.url || 'https://res.cloudinary.com/wanghley/image/upload/v1700976651/branding/Logo_Wanghley_Simbolo_Fundo_Transparente_1_min_c28472b597.png'})`
                 }}>
                     <div className="projects-featured-overlay">
                         <div className="projects-featured-content">
                             <div className="projects-featured-meta">
-                                {featuredProject.attributes.Category && (
-                                    <span className="projects-featured-category">{featuredProject.attributes.Category}</span>
+                                {latestProject.attributes.Category && (
+                                    <span className="projects-featured-category">{latestProject.attributes.Category}</span>
                                 )}
                                 <span className="projects-featured-date">
                                     <FaCalendarAlt />
-                                    {featuredProject.attributes.Start}
+                                    {latestProject.attributes.Start ? formatDate(latestProject.attributes.Start) : 'N/A'}
                                 </span>
                             </div>
-                            <h1 className="projects-featured-title">{featuredProject.attributes.Title}</h1>
+                            <h1 className="projects-featured-title">{latestProject.attributes.Title}</h1>
                             <p className="projects-featured-excerpt">
-                                {featuredProject.attributes.Teaser}
+                                {latestProject.attributes.Teaser}
                             </p>
-                            <a href={`/projects/${featuredProject.attributes.slug}`} className="projects-featured-button">
+                            <a href={`/projects/${latestProject.attributes.slug}`} className="projects-featured-button">
                                 View Project <FaArrowRight />
                             </a>
                         </div>
@@ -164,7 +169,7 @@ const Projects = (props) => {
                 
                 {filteredProjects.length > 0 ? (
                     <div className="projects-grid">
-                        <CardGrid cardData={filteredProjects} type='project'/>
+                        <CardGrid cardData={filteredProjects} type="project"/>
                     </div>
                 ) : !loading ? (
                     <div className="no-results">
