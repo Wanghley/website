@@ -57,8 +57,6 @@ function MediaGallery({ media }) {
 
   return (
     <section className="project-page__media">
-      <h2>Project Gallery</h2>
-      
       {/* Grid layout for fewer images */}
       {media.length <= 12 ? (
         <div className="project-page__media-grid">
