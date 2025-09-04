@@ -173,13 +173,22 @@ const ProjectPage = () => {
             </table>
         ),
         td: props => {
-            const content = React.Children.map(props.children, child => {
+            // Check if children exists
+            if (!props.children) {
+                return <td className="project-page__markdown-table-cell"></td>;
+            }
+            
+            // Safely map over children and join the result
+            const mappedChildren = React.Children.map(props.children, child => {
                 if (typeof child === 'object' && child !== null) {
                     return child.props?.children || '';
                 }
                 return child || '';
-            }).join('');
-    
+            });
+            
+            // Check if mappedChildren is defined before joining
+            const content = mappedChildren ? mappedChildren.join('') : '';
+
             return (
                 <td 
                     className="project-page__markdown-table-cell"
@@ -193,13 +202,22 @@ const ProjectPage = () => {
             );
         },
         th: props => {
-            const content = React.Children.map(props.children, child => {
+            // Check if children exists
+            if (!props.children) {
+                return <th className="project-page__markdown-table-header"></th>;
+            }
+            
+            // Safely map over children and join the result
+            const mappedChildren = React.Children.map(props.children, child => {
                 if (typeof child === 'object' && child !== null) {
                     return child.props?.children || '';
                 }
                 return child || '';
-            }).join('');
-    
+            });
+            
+            // Check if mappedChildren is defined before joining
+            const content = mappedChildren ? mappedChildren.join('') : '';
+
             return (
                 <th 
                     className="project-page__markdown-table-header"
