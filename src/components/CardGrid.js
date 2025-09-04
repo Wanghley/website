@@ -1,51 +1,61 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Grid from '@mui/material/Grid';
-import Card from './Card'; // Import your Card component
-import BlogCard from './BlogCard'; // Import your BlogCard component
+import Box from '@mui/material/Box';
+import Card from './Card';
+import BlogCard from './BlogCard';
 
 const CardGrid = ({ cardData, type }) => {
     return (
-        <Grid container spacing={2}>
-            {cardData?.map((data, index) => {
-                const commonProps = {
-                    imageUrl: data?.attributes?.Featured?.data?.attributes?.formats?.small?.url ?? 'https://via.placeholder.com/300',
-                    title: data.attributes.Title,
-                    slug: data.attributes?.slug,
-                };
+        <Box sx={{ width: '100%', padding: '0.5rem' }}>
+            <Grid 
+                container 
+                spacing={2} // Changed from 4 to 2
+                justifyContent="center"
+                alignItems="stretch"
+            >
+                {cardData?.map((data, index) => {
+                    const commonProps = {
+                        imageUrl: data?.attributes?.Featured?.data?.attributes?.formats?.small?.url ?? 'https://via.placeholder.com/300',
+                        title: data.attributes.Title,
+                        slug: data.attributes?.slug,
+                    };
 
-                if (type === 'project') {
-                    return (
-                        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                            <Card
-                                {...commonProps}
-                                category="Project"
-                                sourceURL={data.attributes?.Github}
-                                demoURL={data.attributes?.Demo}
-                                date={data.attributes?.Start}
-                                teaser={data.attributes?.Teaser}
-                            />
-                        </Grid>
-                    );
-                }
+                    if (type === 'project') {
+                        return (
+                            <Grid item xs={12} sm={6} md={4} key={index} sx={{ display: 'flex' }}>
+                                <Card
+                                    {...commonProps}
+                                    category="Project"
+                                    sourceURL={data.attributes?.Github}
+                                    demoURL={data.attributes?.Demo}
+                                    date={data.attributes?.Start}
+                                    teaser={data.attributes?.Teaser}
+                                    sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}
+                                />
+                            </Grid>
+                        );
+                    }
 
-                if (type === 'blog') {
-                    return (
-                        <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                            <BlogCard
-                                {...commonProps}
-                                content={data.attributes?.Content}
-                                categories={data.attributes?.Categories || []}
-                                date={data.attributes?.published}
-                                teaser={data.attributes?.Excerpt}
-                            />
-                        </Grid>
-                    );
-                }
+                    if (type === 'blog') {
+                        return (
+                            <Grid item xs={12} sm={6} md={4} key={index} sx={{ display: 'flex' }}>
+                                <BlogCard
+                                    {...commonProps}
+                                    content={data.attributes?.Content}
+                                    categories={data.attributes?.Categories || []}
+                                    date={data.attributes?.published}
+                                    teaser={data.attributes?.Excerpt}
+                                    sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}
+                                />
+                            </Grid>
+                        );
+                    }
 
-                return null; // In case of an unknown type, don't render anything
-            })}
-        </Grid>
+                    return null;
+                })}
+            </Grid>
+        </Box>
     );
 };
 
