@@ -148,10 +148,14 @@ const ProjectPage = () => {
 
     const featuredImage = Featured?.data?.attributes?.formats?.large?.url;
     console.log('Media:', Media);
-    const media = Media?.data?.flatMap(item => [
-        item.attributes.formats.large?.url,
-        item.attributes.formats.medium?.url
-      ]).filter(url => url !== null && url !== undefined) || [];
+    const media = Media?.data?.map(item => {
+        // Prioritize large format, fall back to medium, then small, then thumbnail
+        return item.attributes.formats.large?.url || 
+               item.attributes.formats.medium?.url || 
+               item.attributes.formats.small?.url || 
+               item.attributes.formats.thumbnail?.url || 
+               item.attributes.url; // original as last resort
+    }).filter(url => url !== null && url !== undefined) || [];
 
     const markdownComponents = {
         h1: ({ children }) => <h1 id={children} className="project-page__markdown-header">{children}</h1>,
