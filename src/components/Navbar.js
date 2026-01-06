@@ -266,7 +266,7 @@ const Navbar = () => {
 
           {/* Mobile Footer */}
           <div className="navbar__mobile-footer">
-            <p>© 2025 Wanghley Martins</p>
+            <p>© {new Date().getFullYear()} Wanghley Martins</p>
           </div>
         </div>
       </div>
