@@ -1,91 +1,190 @@
-import React, { useState, useEffect } from 'react';
-import './css/GridFeatured.css';
-import { fetchProjects } from '../api/projects';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTag, faClock, faUser, faFacebookSquare } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useMemo, useState } from "react";
+import { fetchProjects } from "../api/projects";
+import "./css/GridFeaturedProjects.css";
+
+const getProjectImage = (project) => {
+  const formats = project?.attributes?.Featured?.data?.attributes?.formats;
+  return (
+    formats?.large?.url ||
+    formats?.medium?.url ||
+    formats?.small?.url ||
+    formats?.thumbnail?.url ||
+    project?.attributes?.Featured?.data?.attributes?.url ||
+    null
+  );
+};
+
+// Fallback abstract images for projects without images
+const getFallbackImage = (index) => {
+  const fallbacks = [
+    "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&q=80",
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=800&q=80",
+    "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?w=800&q=80",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&q=80",
+  ];
+  return fallbacks[index % fallbacks.length];
+};
+
+const getProjectHref = (project) => {
+  const slug = project?.attributes?.slug;
+  return slug ? `/projects/${slug}` : "/projects";
+};
 
 const GridFeatured = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchProjects();
-        setProjects(data?.slice(0, 5) || []);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    };
-    fetchData();
+    setIsVisible(true);
   }, []);
 
+  useEffect(() => {
+    let alive = true;
+
+    const run = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchProjects();
+        if (!alive) return;
+        setProjects(Array.isArray(data) ? data.slice(0, 5) : []);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        if (!alive) return;
+        setProjects([]);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    };
+
+    run();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const items = useMemo(() => projects, [projects]);
+
   return (
-    <div className="site__wrapper">
-      <div>
-        <h1>Latest Projects</h1>
-        <p className="subtitle">Explore the wonders of my latest creations!</p>
-        <button className="btn btn--primary" onClick={() => window.location.href = '/projects'}>
-          View All Projects
-        </button>
+    <section
+      className={`eng-showroom ${isVisible ? "eng-showroom--visible" : ""}`}
+      aria-label="Selected Engineering Projects"
+    >
+      {/* Background effects */}
+      <div className="eng-showroom__bg" aria-hidden="true">
+        <div className="eng-showroom__grid-pattern" />
+        <div className="eng-showroom__glow eng-showroom__glow--1" />
+        <div className="eng-showroom__glow eng-showroom__glow--2" />
       </div>
-      <div className="projects-grid">
-        {loading ? (
-          [1, 2, 3, 4, 5].map((placeholder) => (
-            <div className={`grid ${placeholder === 1 ? 'grid--large' : ''}`} key={placeholder}>
-              <div className="card placeholder">
-                <div className="card__image placeholder__image"></div>
-                <div className="card__overlay placeholder__overlay">
-                  <div className="card__overlay-content">
-                    <div className="placeholder__title"></div>
-                    <ul className="card__meta placeholder__meta">
-                      <li></li>
-                      <li></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+
+      <div className="eng-showroom__container">
+        {/* Left Column - Header & CTA */}
+        <div className="eng-showroom__header">
+          <span className="eng-showroom__label">Portfolio</span>
+          <h2 className="eng-showroom__title">Selected Engineering</h2>
+          <p className="eng-showroom__subtitle">
+            End-to-end systems built with precision. From custom silicon to cloud infrastructure.
+          </p>
+
+          <a className="eng-showroom__cta" href="/projects">
+            <span>View All Projects</span>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
+        {/* Right Column - Bento Grid */}
+        <div className="eng-showroom__content" role="region" aria-label="Project cards">
+          {loading ? (
+            <div className="eng-showroom__bento" aria-label="Loading projects">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  className={`eng-showroom__skeleton ${i === 0 ? "eng-showroom__skeleton--hero" : ""}`}
+                  key={i}
+                />
+              ))}
             </div>
-          ))
-        ) : (
-          projects.map((project, index) => (
-            <div className={`grid ${index === 0 ? 'grid--large' : ''}`} key={project?.attributes?.Title || index}>
-              <div className="card">
-              <a href={`/projects/${project?.attributes?.slug}`} className="card__title">
-                <div className="card__image">
-                  <img 
-                    src={project?.attributes?.Featured?.data?.attributes?.formats?.medium?.url || (index === 0 ? 'https://placehold.co/400x600.png' : 'https://res.cloudinary.com/wanghley/image/upload/c_crop,w_768,h_432,ar_16:9,g_auto/v1720995375/Letter-Balloons-OH-FLOCK-IM-70-16-Inch-Alphabet-Letters-Foil-Mylar-Balloon-Birthday-Party-Banner-Gold_7c65fc96-4677-4109-8d67-ac46ed45bf21.8a40faa79f80896c60f90e991f888fd8_zxpeiv.jpg')}
-                    alt={project?.attributes?.Title || "Project Image"} 
-                    className={index === 0 ? 'large-image' : 'standard-image'}
-                  />
-                  <div className={`card__overlay card__overlay--${index % 2 === 0 ? 'indigo' : 'blue'}`}>
-                    <div className="card__overlay-content">
-                      <ul className="card__meta">
-                        <li className="card__meta-item">
-                          <FontAwesomeIcon icon={faTag} />
-                          <span>{project?.attributes?.Category}</span>
-                        </li>
-                        <li className="card__meta-item">
-                          <FontAwesomeIcon icon={faClock} />
-                          <span>{project?.attributes?.Start}</span>
-                        </li>
-                      </ul>
-                      <a href={`/projects/${project?.attributes?.slug}`} className="card__title">{project?.attributes?.Title}</a>
+          ) : items.length === 0 ? (
+            <div className="eng-showroom__empty">
+              <h3>No projects found</h3>
+              <p>Engineering projects coming soon.</p>
+            </div>
+          ) : (
+            <div className="eng-showroom__bento" role="list">
+              {items.map((project, index) => {
+                const title = project?.attributes?.Title || "Untitled Project";
+                const teaser = project?.attributes?.Teaser;
+                const category = project?.attributes?.Category;
+                const image = getProjectImage(project) || getFallbackImage(index);
+                const isHero = index === 0;
+
+                return (
+                  <a
+                    key={project?.id ?? `${title}-${index}`}
+                    href={getProjectHref(project)}
+                    className={`eng-showroom__card ${isHero ? "eng-showroom__card--hero" : ""}`}
+                    role="listitem"
+                    aria-label={`Open project: ${title}`}
+                  >
+                    {/* Image */}
+                    <div className="eng-showroom__card-image">
+                      <img src={image} alt="" loading="lazy" />
+                      <div className="eng-showroom__card-overlay" />
                     </div>
-                  </div>
-                </div>
-                </a>
-              </div>
+
+                    {/* Content */}
+                    <div className="eng-showroom__card-content">
+                      {/* Category Badge */}
+                      {category && (
+                        <div className="eng-showroom__card-tags">
+                          <span className="eng-showroom__tag">{category}</span>
+                        </div>
+                      )}
+
+                      <h3 className="eng-showroom__card-title">{title}</h3>
+
+                      {isHero && teaser && (
+                        <p className="eng-showroom__card-teaser">{teaser}</p>
+                      )}
+
+                      <span className="eng-showroom__card-link">
+                        Explore
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                      </span>
+                    </div>
+
+                    {/* Glow effect on hover */}
+                    <div className="eng-showroom__card-glow" aria-hidden="true" />
+                  </a>
+                );
+              })}
             </div>
-          ))
-        )}
+          )}
+        </div>
       </div>
-      <button className="btn--mobile" onClick={() => window.location.href = '/projects'}>
-          View All Projects
-        </button>
-    </div>
+    </section>
   );
 };
 
