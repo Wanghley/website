@@ -276,6 +276,16 @@ const Navbar = () => {
         aria-hidden={!isMenuOpen}
       >
         <div className="mobile-menu__content">
+          {/* Close button inside the menu */}
+          <button
+            className="mobile-menu__close"
+            onClick={() => setIsMenuOpen(false)}
+            aria-label="Close menu"
+          >
+            <span className="mobile-menu__close-bar" aria-hidden="true" />
+            <span className="mobile-menu__close-bar" aria-hidden="true" />
+          </button>
+
           {/* Mobile Navigation */}
           <ul className="mobile-menu__list">
             {navItems.map((item, index) => (

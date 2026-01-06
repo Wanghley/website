@@ -286,6 +286,22 @@
   transform-origin: center;
 }
 
+/* Light theme toggle bars */
+.nav--light .nav__toggle-bar {
+  background: #1e293b;
+}
+
+/* Scrolled state - always white bars */
+.nav--scrolled .nav__toggle-bar {
+  background: #ffffff;
+}
+
+/* IMPORTANT: When menu is open, always use white bars regardless of theme */
+.nav--open .nav__toggle-bar,
+.nav__toggle--active .nav__toggle-bar {
+  background: #ffffff !important;
+}
+
 .nav__toggle--active .nav__toggle-bar:nth-child(1) {
   transform: translateY(8px) rotate(45deg);
 }
@@ -297,11 +313,6 @@
 
 .nav__toggle--active .nav__toggle-bar:nth-child(3) {
   transform: translateY(-8px) rotate(-45deg);
-}
-
-/* When menu is open, always use light bars (dark mobile menu background) */
-.nav__toggle--active .nav__toggle-bar {
-  background: #ffffff;
 }
 
 /* ========================================
@@ -338,6 +349,7 @@
   flex-direction: column;
   min-height: 100%;
   padding: calc(var(--nav-height) + 40px) 32px 40px;
+  position: relative;
 }
 
 /* ========================================
@@ -498,6 +510,53 @@
 .nav-backdrop--visible {
   opacity: 1;
   visibility: visible;
+}
+
+/* ========================================
+   Mobile menu close button
+   ======================================== */
+.mobile-menu__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: 
+    background 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.mobile-menu__close:hover,
+.mobile-menu__close:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.03);
+  outline: none;
+}
+
+.mobile-menu__close-bar {
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: #ffffff;
+  border-radius: 2px;
+}
+
+.mobile-menu__close-bar:first-child {
+  transform: rotate(45deg);
+}
+
+.mobile-menu__close-bar:last-child {
+  transform: rotate(-45deg);
 }
 
 /* ========================================
