@@ -1,99 +1,192 @@
-import React, { useState, useEffect } from 'react';
-import './css/FeaturedBlogGrid.css'; // Update file name if necessary
-import { fetchBlogs } from '../api/blog'; // Update import path as needed
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTag, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from "react";
+import { fetchBlogs } from "../api/blog";
+import "./css/FeaturedBlogGrid.css";
 
-const FeaturedBlogGrid = () => {
+// Calculate read time from content
+const getReadTime = (content) => {
+  if (!content) return "3 min read";
+  const wordsPerMinute = 200;
+  const words = content.split(/\s+/).length;
+  const minutes = Math.ceil(words / wordsPerMinute);
+  return `${minutes} min read`;
+};
+
+// Format date to editorial style
+const formatDate = (date) => {
+  if (!date) return "";
+  const options = { month: "short", day: "numeric" };
+  return new Date(date).toLocaleDateString("en-US", options);
+};
+
+// Get tag/category style
+const getTagStyle = (category) => {
+  const styles = {
+    tutorial: "editorial__tag--tutorial",
+    guide: "editorial__tag--tutorial",
+    "system design": "editorial__tag--system",
+    architecture: "editorial__tag--system",
+    opinion: "editorial__tag--opinion",
+    rant: "editorial__tag--opinion",
+    research: "editorial__tag--research",
+    ai: "editorial__tag--research",
+    default: "editorial__tag--default",
+  };
+  const key = (category || "").toLowerCase();
+  return styles[key] || styles.default;
+};
+
+const GridFeaturedBlog = () => {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchBlogs();
-        setBlogPosts(data?.slice(0, 5) || []);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-      }
-    };
-    fetchData();
+    setIsVisible(true);
   }, []);
 
-  return (
-    <div className="featured-blog-grid__wrapper">
+  useEffect(() => {
+    let alive = true;
 
-      <div className="featured-blog-grid__container">
-        {loading ? (
-          [1, 2, 3, 4, 5].map((placeholder) => (
-            <div className={`featured-blog-grid__item ${placeholder === 1 ? 'featured-blog-grid__item--large' : ''}`} key={placeholder}>
-              <div className="card placeholder">
-                <div className="card__image placeholder__image"></div>
-                <div className="card__overlay placeholder__overlay">
-                  <div className="card__overlay-content">
-                    <div className="placeholder__title"></div>
-                    <ul className="card__meta placeholder__meta">
-                      <li></li>
-                      <li></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const data = await fetchBlogs();
+        if (!alive) return;
+        setBlogPosts(data?.slice(0, 5) || []);
+      } catch (error) {
+        console.error("Error fetching blog posts:", error);
+        if (!alive) return;
+        setBlogPosts([]);
+      } finally {
+        if (alive) setLoading(false);
+      }
+    };
+
+    fetchData();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const getPostImage = (post) => {
+    const formats = post?.attributes?.Featured?.data?.attributes?.formats;
+    return (
+      formats?.large?.url ||
+      formats?.medium?.url ||
+      formats?.small?.url ||
+      post?.attributes?.Featured?.data?.attributes?.url ||
+      "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80"
+    );
+  };
+
+  return (
+    <section
+      className={`editorial ${isVisible ? "editorial--visible" : ""}`}
+      aria-label="Writing & Thoughts"
+    >
+      <div className="editorial__container">
+        {/* Header */}
+        <div className="editorial__header">
+          <span className="editorial__label">Blog</span>
+          <h2 className="editorial__title">Writing & Thoughts</h2>
+          <p className="editorial__subtitle">
+            Insights on Edge AI, engineering challenges, and the future of health tech.
+          </p>
+
+          <a className="editorial__cta" href="/blog">
+            <span>View All Articles</span>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+
+        {/* Bento Grid */}
+        <div className="editorial__content" role="region" aria-label="Blog posts">
+          {loading ? (
+            <div className="editorial__bento" aria-label="Loading posts">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  className={`editorial__skeleton ${i === 0 ? "editorial__skeleton--hero" : ""}`}
+                  key={i}
+                />
+              ))}
             </div>
-          ))
-        ) : (
-          blogPosts.map((post, index) => (
-            <div className={`featured-blog-grid__item ${index === 0 ? 'featured-blog-grid__item--large' : ''}`} key={post?.attributes?.slug || index}>
-              <div className="card">
-                <a href={`/blog/${post?.attributes?.slug}`} className="card__title">
-                  <div className="card__image">
-                    <img 
-                      src={post?.attributes?.Featured?.data?.attributes?.formats?.medium?.url || (index === 0 ? 'https://placehold.co/400x600.png' : 'https://res.cloudinary.com/wanghley/image/upload/c_crop,w_768,h_432,ar_16:9,g_auto/v1720995375/Letter-Balloons-OH-FLOCK-IM-70-16-Inch-Alphabet-Letters-Foil-Mylar-Balloon-Birthday-Party-Banner-Gold_7c65fc96-4677-4109-8d67-ac46ed45bf21.8a40faa79f80896c60f90e991f888fd8_zxpeiv.jpg')}
-                      alt={post?.attributes?.Title || "Blog Post Image"} 
-                      className={index === 0 ? 'large-image' : 'standard-image'}
-                    />
-                    <div className={`card__overlay card__overlay--${index % 2 === 0 ? 'indigo' : 'blue'}`}>
-                      <div className="card__overlay-content">
-                        <ul className="card__meta">
-                          <li className="card__meta-item">
-                            <FontAwesomeIcon icon={faTag} />
-                            <span>{post?.attributes?.Categories[0]}</span>
-                          </li>
-                          <li className="card__meta-item">
-                            <FontAwesomeIcon icon={faCalendarAlt} />
-                            <span>{formatDate(post?.attributes?.publishedAt)}</span>
-                          </li>
-                        </ul>
-                        <a href={`/blog/${post?.attributes?.slug}`} className="card__title">{post?.attributes?.Title}</a>
+          ) : blogPosts.length === 0 ? (
+            <div className="editorial__empty">
+              <h3>No articles found</h3>
+              <p>New posts coming soon.</p>
+            </div>
+          ) : (
+            <div className="editorial__bento" role="list">
+              {blogPosts.map((post, index) => {
+                const title = post?.attributes?.Title || "Untitled";
+                const slug = post?.attributes?.slug;
+                const href = slug ? `/blog/${slug}` : "/blog";
+                const excerpt = post?.attributes?.Teaser || post?.attributes?.Excerpt;
+                const content = post?.attributes?.Content;
+                const categories = post?.attributes?.Categories || [];
+                const published = post?.attributes?.publishedAt || post?.attributes?.published;
+                const image = getPostImage(post);
+                const isHero = index === 0;
+
+                return (
+                  <a
+                    key={post?.id ?? `${title}-${index}`}
+                    href={href}
+                    className={`editorial__card ${isHero ? "editorial__card--hero" : ""}`}
+                    role="listitem"
+                    aria-label={`Read article: ${title}`}
+                  >
+                    {/* Image */}
+                    <div className="editorial__card-image">
+                      <img src={image} alt="" loading="lazy" />
+                    </div>
+
+                    {/* Content */}
+                    <div className="editorial__card-content">
+                      {/* Tags */}
+                      {categories.length > 0 && (
+                        <div className="editorial__card-tags">
+                          {categories.slice(0, 2).map((cat, i) => (
+                            <span key={i} className={`editorial__tag ${getTagStyle(cat)}`}>
+                              {cat}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <h3 className="editorial__card-title">{title}</h3>
+
+                      {isHero && excerpt && (
+                        <p className="editorial__card-excerpt">{excerpt}</p>
+                      )}
+
+                      {/* Metadata */}
+                      <div className="editorial__card-meta">
+                        <span className="editorial__card-date">{formatDate(published)}</span>
+                        <span className="editorial__card-separator">•</span>
+                        <span className="editorial__card-readtime">{getReadTime(content)}</span>
                       </div>
                     </div>
-                  </div>
-                </a>
-              </div>
+                  </a>
+                );
+              })}
             </div>
-          ))
-        )}
+          )}
+        </div>
       </div>
-      <div className='featured-blog-text'>
-        <h1>Latest Blog Posts</h1>
-        <p className="subtitle">Discover the latest insights and stories from my blog!</p>
-        <button className="btn btn--primary" onClick={() => window.location.href = '/blogs'}>
-          View All Posts
-        </button>
-      </div>
-      <button className="btn--mobile" onClick={() => window.location.href = '/blogs'}>
-          View All Posts
-        </button>
-    </div>
+    </section>
   );
 };
 
-// format date to human readable format yyyy-mm-dd to Month dd, yyyy
-const formatDate = (date) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(date).toLocaleDateString(undefined, options);
-}
-
-export default FeaturedBlogGrid;
+export default GridFeaturedBlog;
