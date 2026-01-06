@@ -35,9 +35,9 @@ const Hero = () => {
         },
         { 
             icon: <FaRocket aria-hidden="true" />, 
-            title: "CTO & Co-Founder", 
-            subtitle: "Ambulis INC.",
-            ariaLabel: "CTO and Co-Founder at Ambulis Incorporated"
+            title: "Entrepreneur & Founder", 
+            subtitle: "Ambulis INC., Rearth, Kairos, etc",
+            ariaLabel: "Inventor and co-founder of impactful businesses"
         },
         { 
             icon: <FaMicrophone aria-hidden="true" />, 
