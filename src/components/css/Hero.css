@@ -763,7 +763,8 @@
     }
 
     .hero__image-wrapper {
-        width: 100%;
+        width: 80%;
+        height: auto;
     }
 
     .hero__image-glow {
@@ -886,7 +887,7 @@
     }
 
     .hero__image-wrapper {
-        width: 300px;
+        width: 80%;
         height: auto;
     }
 
@@ -959,13 +960,13 @@
     }
 
     .hero__image-wrapper {
-        width: 140px;
-        height: 140px;
+        width: 80%;
+        height: auto;
     }
 
     .hero__image-glow {
-        width: 190px;
-        height: 190px;
+        width: 80%;
+        height: auto;
     }
 
     .hero__btn,
