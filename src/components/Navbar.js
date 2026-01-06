@@ -1,285 +1,335 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo-white.svg';
-import linkedin from '../assets/linkedin.svg';
-import instagram from '../assets/instagram.svg';
-import github from '../assets/github.svg';
-import twitter from '../assets/twitter.svg';
+import logoDark from '../assets/logo-colorful.png';
+import { FaLinkedinIn, FaInstagram, FaGithub, FaXTwitter } from 'react-icons/fa6';
 import './css/Navbar.css';
 
 const Navbar = () => {
-  const [clicked, setClicked] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
+  const navRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Handle scroll-based navbar styling
-  useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 20;
-      setScrolled(isScrolled);
+  // Define which pages have dark headers (navbar should be light text)
+  // and which have light backgrounds (navbar should be dark text)
+  const pageThemes = {
+    '/': 'dark',           // Homepage has dark hero
+    '/about': 'light',     // About page has light background
+    '/curriculum-vitae': 'light',  // CV has light background
+    '/projects': 'dark',   // Projects has dark featured header
+    '/blog': 'dark',       // Blog has dark featured header
+    '/contact': 'light',   // Contact has light background
+  };
 
-      // Update active section based on scroll position (homepage only)
-      if (location.pathname === '/') {
-        const sections = ['hero', 'about', 'skills', 'projects', 'blog', 'contact'];
-        const current = sections.find(section => {
-          const element = document.getElementById(section);
-          if (element) {
-            const rect = element.getBoundingClientRect();
-            return rect.top <= 100 && rect.bottom >= 100;
+  // Navigation items configuration
+  const navItems = [
+    { path: '/about', label: 'About', number: '01' },
+    { path: '/curriculum-vitae', label: 'CV', mobileLabel: 'Curriculum Vitae', number: '02' },
+    { path: '/projects', label: 'Projects', number: '03' },
+    { path: '/blog', label: 'Blog', number: '04' },
+    { path: '/', label: 'Contact', section: 'contact', number: '05' },
+  ];
+
+  const socialLinks = [
+    { icon: FaLinkedinIn, url: 'https://linkedin.com/in/wanghley', label: 'LinkedIn' },
+    { icon: FaInstagram, url: 'https://instagram.com/wanghley', label: 'Instagram' },
+    { icon: FaGithub, url: 'https://github.com/Wanghley', label: 'GitHub' },
+    { icon: FaXTwitter, url: 'https://twitter.com/wanghley', label: 'X (Twitter)' },
+  ];
+
+  // Determine theme based on current path
+  useEffect(() => {
+    const path = location.pathname;
+    
+    // Check for exact match first
+    if (pageThemes[path]) {
+      setTheme(pageThemes[path]);
+    } 
+    // Check for dynamic routes (blog posts, project posts)
+    else if (path.startsWith('/blog/')) {
+      setTheme('dark'); // Blog posts have dark headers
+    } else if (path.startsWith('/projects/')) {
+      setTheme('dark'); // Project posts have dark headers
+    } else {
+      setTheme('light'); // Default to light for unknown pages
+    }
+  }, [location.pathname]);
+
+  // Switch to dark navbar style when scrolled (always readable)
+  const handleScroll = useCallback(() => {
+    const scrollY = window.scrollY;
+    setIsScrolled(scrollY > 50);
+
+    // Section detection only on homepage
+    if (location.pathname === '/') {
+      const sections = ['hero', 'about', 'skills', 'projects', 'blog', 'contact'];
+      const viewportHeight = window.innerHeight;
+      
+      for (const sectionId of sections) {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          const sectionMiddle = rect.top + rect.height / 2;
+          
+          if (sectionMiddle >= 0 && sectionMiddle <= viewportHeight * 0.6) {
+            setActiveSection(sectionId);
+            break;
           }
-          return false;
+        }
+      }
+    }
+  }, [location.pathname]);
+
+  // Throttled scroll listener
+  useEffect(() => {
+    let ticking = false;
+    
+    const scrollListener = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
         });
-        if (current) setActiveSection(current);
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', scrollListener, { passive: true });
     handleScroll(); // Initial check
+    
+    return () => window.removeEventListener('scroll', scrollListener);
+  }, [handleScroll]);
 
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [location.pathname]);
-
-  // Close mobile menu when route changes
+  // Lock body scroll when menu is open
   useEffect(() => {
-    setClicked(false);
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [isMenuOpen]);
+
+  // Close menu on route change
+  useEffect(() => {
+    setIsMenuOpen(false);
+    setActiveSection('');
   }, [location.pathname]);
 
-  // Handle navigation clicks
-  const handleNavClick = (e, path, sectionId = null) => {
-    e.preventDefault();
-    setClicked(false);
+  // Close menu on escape key
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape' && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isMenuOpen]);
 
-    if (location.pathname === '/' && sectionId) {
-      // On homepage, scroll to section
+  // Smart navigation handler
+  const handleNavigation = useCallback((e, item) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+
+    const scrollToSection = (sectionId) => {
       const element = document.getElementById(sectionId);
       if (element) {
-        const navHeight = 90;
+        const navHeight = navRef.current?.offsetHeight || 80;
         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-        const offsetPosition = elementPosition - navHeight;
+        const offsetPosition = elementPosition - navHeight - 20;
 
         window.scrollTo({
           top: offsetPosition,
           behavior: 'smooth'
         });
       }
-    } else if (sectionId === 'contact') {
-      // Navigate to homepage then scroll to contact
-      navigate('/');
-      setTimeout(() => {
-        const element = document.getElementById('contact');
-        if (element) {
-          const navHeight = 90;
-          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-          const offsetPosition = elementPosition - navHeight;
-          
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
+    };
+
+    if (item.section) {
+      // Section navigation
+      if (location.pathname === '/') {
+        scrollToSection(item.section);
+      } else {
+        navigate('/');
+        // Wait for navigation then scroll
+        setTimeout(() => scrollToSection(item.section), 150);
+      }
     } else {
-      // Regular page navigation
-      navigate(path);
+      // Page navigation
+      navigate(item.path);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
+  }, [location.pathname, navigate]);
 
-  const toggleMenu = () => setClicked(!clicked);
-
-  const isActive = (path, section = null) => {
-    if (location.pathname === '/' && section) {
-      return activeSection === section;
+  // Check if nav item is active
+  const isActive = useCallback((item) => {
+    if (item.section) {
+      return location.pathname === '/' && activeSection === item.section;
     }
-    return location.pathname === path;
+    return location.pathname === item.path;
+  }, [location.pathname, activeSection]);
+
+  // Logo click handler
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    
+    if (location.pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      navigate('/');
+    }
   };
 
-  const socialLinks = [
-    { icon: linkedin, url: 'https://www.linkedin.com/in/wanghley/', label: 'LinkedIn' },
-    { icon: instagram, url: 'https://instagram.com/wanghley', label: 'Instagram' },
-    { icon: github, url: 'https://github.com/Wanghley', label: 'GitHub' },
-    { icon: twitter, url: 'https://twitter.com/wanghley', label: 'Twitter' }
-  ];
+  // Determine which logo to use
+  const currentLogo = (theme === 'light' && !isScrolled) ? logoDark : logo;
 
   return (
-    <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''} ${clicked ? 'navbar--open' : ''}`}>
-      <div className="navbar__container">
-        {/* Logo */}
-        <a href="/" className="navbar__logo" onClick={(e) => handleNavClick(e, '/')}>
-          <img src={logo} alt="Wanghley" className="navbar__logo-img" />
-        </a>
+    <>
+      <nav 
+        ref={navRef}
+        className={`nav ${isScrolled ? 'nav--scrolled' : ''} ${isMenuOpen ? 'nav--open' : ''} nav--${theme}`}
+        role="navigation"
+        aria-label="Main navigation"
+        data-theme={theme}
+      >
+        <div className="nav__container">
+          {/* Logo */}
+          <a 
+            href="/" 
+            className="nav__logo" 
+            onClick={handleLogoClick}
+            aria-label="Wanghley - Home"
+          >
+            <img src={currentLogo} alt="" className="nav__logo-img" aria-hidden="true" />
+            <span className="nav__logo-text">Wanghley</span>
+          </a>
 
-        {/* Desktop Navigation */}
-        <ul className="navbar__menu">
-          <li className="navbar__item">
-            <a 
-              href="/about" 
-              className={`navbar__link ${isActive('/about') ? 'navbar__link--active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/about')}
-            >
-              About
-            </a>
-          </li>
-          <li className="navbar__item">
-            <a 
-              href="/curriculum-vitae" 
-              className={`navbar__link ${isActive('/curriculum-vitae') ? 'navbar__link--active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/curriculum-vitae')}
-            >
-              CV
-            </a>
-          </li>
-          <li className="navbar__item">
-            <a 
-              href="/projects" 
-              className={`navbar__link ${isActive('/projects') ? 'navbar__link--active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/projects')}
-            >
-              Projects
-            </a>
-          </li>
-          <li className="navbar__item">
-            <a 
-              href="/blog" 
-              className={`navbar__link ${isActive('/blog') ? 'navbar__link--active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/blog')}
-            >
-              Blog
-            </a>
-          </li>
-          <li className="navbar__item">
-            <a 
-              href="#contact" 
-              className={`navbar__link ${isActive('/', 'contact') ? 'navbar__link--active' : ''}`}
-              onClick={(e) => handleNavClick(e, '/', 'contact')}
-            >
-              Contact
-            </a>
-          </li>
-        </ul>
+          {/* Desktop Navigation */}
+          <ul className="nav__list" role="menubar">
+            {navItems.map((item) => (
+              <li key={item.path + (item.section || '')} className="nav__item" role="none">
+                <a
+                  href={item.section ? `#${item.section}` : item.path}
+                  className={`nav__link ${isActive(item) ? 'nav__link--active' : ''}`}
+                  onClick={(e) => handleNavigation(e, item)}
+                  role="menuitem"
+                  aria-current={isActive(item) ? 'page' : undefined}
+                >
+                  <span className="nav__link-text">{item.label}</span>
+                  <span className="nav__link-indicator" aria-hidden="true" />
+                </a>
+              </li>
+            ))}
+          </ul>
 
-        {/* Desktop Social Links */}
-        <div className="navbar__socials">
-          {socialLinks.map((social, index) => (
-            <a
-              key={index}
-              href={social.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="navbar__social-link"
-              aria-label={social.label}
-            >
-              <img src={social.icon} alt={social.label} />
-            </a>
-          ))}
+          {/* Desktop Social Links */}
+          <div className="nav__socials" aria-label="Social media links">
+            {socialLinks.map((social) => (
+              <a
+                key={social.label}
+                href={social.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nav__social"
+                aria-label={social.label}
+              >
+                <social.icon aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            className={`nav__toggle ${isMenuOpen ? 'nav__toggle--active' : ''}`}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-menu"
+          >
+            <span className="nav__toggle-bar" aria-hidden="true" />
+            <span className="nav__toggle-bar" aria-hidden="true" />
+            <span className="nav__toggle-bar" aria-hidden="true" />
+          </button>
         </div>
+      </nav>
 
-        {/* Mobile Menu Button */}
-        <button 
-          className="navbar__toggle" 
-          onClick={toggleMenu}
-          aria-label="Toggle navigation menu"
-          aria-expanded={clicked}
-        >
-          <span className="navbar__toggle-line"></span>
-          <span className="navbar__toggle-line"></span>
-          <span className="navbar__toggle-line"></span>
-        </button>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      <div className={`navbar__mobile ${clicked ? 'navbar__mobile--open' : ''}`}>
-        <div className="navbar__mobile-content">
-          <ul className="navbar__mobile-menu">
-            <li className="navbar__mobile-item">
-              <a 
-                href="/about" 
-                className={`navbar__mobile-link ${isActive('/about') ? 'navbar__mobile-link--active' : ''}`}
-                onClick={(e) => handleNavClick(e, '/about')}
+      {/* Mobile Menu */}
+      <div
+        id="mobile-menu"
+        className={`mobile-menu ${isMenuOpen ? 'mobile-menu--open' : ''}`}
+        aria-hidden={!isMenuOpen}
+      >
+        <div className="mobile-menu__content">
+          {/* Mobile Navigation */}
+          <ul className="mobile-menu__list">
+            {navItems.map((item, index) => (
+              <li 
+                key={item.path + (item.section || '')} 
+                className="mobile-menu__item"
+                style={{ '--item-index': index }}
               >
-                <span className="navbar__mobile-number">01</span>
-                <span className="navbar__mobile-text">About</span>
-              </a>
-            </li>
-            <li className="navbar__mobile-item">
-              <a 
-                href="/curriculum-vitae" 
-                className={`navbar__mobile-link ${isActive('/curriculum-vitae') ? 'navbar__mobile-link--active' : ''}`}
-                onClick={(e) => handleNavClick(e, '/curriculum-vitae')}
-              >
-                <span className="navbar__mobile-number">02</span>
-                <span className="navbar__mobile-text">Curriculum Vitae</span>
-              </a>
-            </li>
-            <li className="navbar__mobile-item">
-              <a 
-                href="/projects" 
-                className={`navbar__mobile-link ${isActive('/projects') ? 'navbar__mobile-link--active' : ''}`}
-                onClick={(e) => handleNavClick(e, '/projects')}
-              >
-                <span className="navbar__mobile-number">03</span>
-                <span className="navbar__mobile-text">Projects</span>
-              </a>
-            </li>
-            <li className="navbar__mobile-item">
-              <a 
-                href="/blog" 
-                className={`navbar__mobile-link ${isActive('/blog') ? 'navbar__mobile-link--active' : ''}`}
-                onClick={(e) => handleNavClick(e, '/blog')}
-              >
-                <span className="navbar__mobile-number">04</span>
-                <span className="navbar__mobile-text">Blog</span>
-              </a>
-            </li>
-            <li className="navbar__mobile-item">
-              <a 
-                href="#contact" 
-                className={`navbar__mobile-link ${isActive('/', 'contact') ? 'navbar__mobile-link--active' : ''}`}
-                onClick={(e) => handleNavClick(e, '/', 'contact')}
-              >
-                <span className="navbar__mobile-number">05</span>
-                <span className="navbar__mobile-text">Contact</span>
-              </a>
-            </li>
+                <a
+                  href={item.section ? `#${item.section}` : item.path}
+                  className={`mobile-menu__link ${isActive(item) ? 'mobile-menu__link--active' : ''}`}
+                  onClick={(e) => handleNavigation(e, item)}
+                  tabIndex={isMenuOpen ? 0 : -1}
+                >
+                  <span className="mobile-menu__number">{item.number}</span>
+                  <span className="mobile-menu__label">{item.mobileLabel || item.label}</span>
+                  <span className="mobile-menu__arrow" aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))}
           </ul>
 
           {/* Mobile Social Links */}
-          <div className="navbar__mobile-socials">
-            <p className="navbar__mobile-socials-label">Connect with me</p>
-            <div className="navbar__mobile-socials-grid">
-              {socialLinks.map((social, index) => (
+          <div className="mobile-menu__footer">
+            <p className="mobile-menu__social-label">Let's connect</p>
+            <div className="mobile-menu__socials">
+              {socialLinks.map((social) => (
                 <a
-                  key={index}
+                  key={social.label}
                   href={social.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="navbar__mobile-social-link"
+                  className="mobile-menu__social"
                   aria-label={social.label}
+                  tabIndex={isMenuOpen ? 0 : -1}
                 >
-                  <img src={social.icon} alt={social.label} />
+                  <social.icon aria-hidden="true" />
                 </a>
               ))}
             </div>
-          </div>
-
-          {/* Mobile Footer */}
-          <div className="navbar__mobile-footer">
-            <p>© {new Date().getFullYear()} Wanghley Martins</p>
+            <p className="mobile-menu__copyright">
+              © {new Date().getFullYear()} Wanghley Martins
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu Backdrop */}
-      {clicked && (
-        <div 
-          className="navbar__backdrop" 
-          onClick={toggleMenu}
-          aria-hidden="true"
-        />
-      )}
-    </nav>
+      {/* Backdrop */}
+      <div
+        className={`nav-backdrop ${isMenuOpen ? 'nav-backdrop--visible' : ''}`}
+        onClick={() => setIsMenuOpen(false)}
+        aria-hidden="true"
+      />
+    </>
   );
 };
 
