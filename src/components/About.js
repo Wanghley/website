@@ -51,10 +51,10 @@ const About = () => {
   }, []);
 
   const impactStats = [
-    { value: "$500K+", label: "Grants Secured", detail: "NIH, NSF & Private" },
-    { value: "3", label: "Patents Filed", detail: "Biosensor & Edge AI" },
-    { value: "50K+", label: "Lives Impacted", detail: "Via Ambulis Platform" },
-    { value: "23%", label: "Response Time ↓", detail: "EMS Pilot Results" }
+    { value: "$800K+", label: "Grants Secured", detail: "Duke, Estudar Foundation, BMO, etc" },
+    { value: "5+", label: "Papers published", detail: "Peer reviewed papers"},
+    { value: "100K+", label: "Lives Impacted", detail: "Via entrepreneurship, research, and volunteering" },
+    { value: "92%+", label: "Satisfaction", detail: "From users in pilot deployments" }
   ];
 
   const techStack = {
@@ -146,7 +146,7 @@ const About = () => {
                     <FaPlay aria-hidden="true" />
                   </button>
                   <div className="about__video-overlay">
-                    <span className="about__video-duration">12:34</span>
+                    <span className="about__video-duration">1:07</span>
                   </div>
                 </div>
               ) : (
