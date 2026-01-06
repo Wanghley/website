@@ -1,22 +1,27 @@
-/* AboutText.css - Modern Wikipedia-inspired styling */
+/* AboutText.css - Modern Card-based Wikipedia-inspired styling */
 
 /* Base layout with improved typography */
 .about-page {
     margin: 0 auto;
-    padding: 20px 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
     color: #222;
-    max-width: 100%;
-    background-color: #fff;
+    max-width: 1400px;
     line-height: 1.6;
+    min-height: 100vh;
 }
 
 .about-page__layout {
     display: flex;
     gap: 30px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 40px;
     max-width: 1300px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.05),
+        0 10px 25px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e1e4e8;
 }
 
 /* Enhanced title styling */
@@ -50,7 +55,7 @@
     background-color: #f5f8fa;
     border: 1px solid #dce6f0;
     padding: 10px 14px;
-    border-radius: 4px;
+    border-radius: 6px;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
@@ -79,19 +84,18 @@
 /* Modern TOC styling */
 .about-page__sidebar {
     position: sticky;
-    top: 30px;
+    top: 110px;
     width: 280px;
     height: fit-content;
     font-family: inherit;
     font-size: 0.95rem;
-    margin-top: 2rem;
 }
 
 .about-page__toc-container {
     border: 1px solid #d8dee4;
     background-color: #f6f8fa;
     padding: 12px;
-    border-radius: 6px;
+    border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
@@ -193,7 +197,7 @@
     width: 22em;
     clear: right;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .infobox-title {
@@ -203,7 +207,7 @@
     background-color: #e9ecef;
     padding: 8px 0;
     margin: -0.5em -0.5em 0.5em;
-    border-radius: 6px 6px 0 0;
+    border-radius: 8px 8px 0 0;
     color: #24292e;
 }
 
@@ -219,7 +223,7 @@
     border: 1px solid #d1d5da;
     padding: 3px;
     background-color: #fff;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .infobox-caption {
@@ -261,7 +265,7 @@
 }
 
 .about-page__markdown-header {
-    scroll-margin-top: 30px;
+    scroll-margin-top: 110px;
     margin: 2rem 0 1rem;
     color: #24292e;
     font-family: 'Linux Libertine', 'Georgia', 'Times', serif;
@@ -317,13 +321,13 @@
     max-width: 500px;
     text-align: center;
     box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .about-page__image {
     max-width: 100%;
     height: auto;
-    border-radius: 2px;
+    border-radius: 4px;
 }
 
 .about-page__figcaption {
@@ -446,7 +450,7 @@
     font-size: 0.9rem;
     background-color: #f6f8fa;
     padding: 12px 15px;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .about-page__categories a {
@@ -468,7 +472,7 @@
     font-size: 1.1rem;
     font-family: inherit;
     background-color: #f6f8fa;
-    border-radius: 8px;
+    border-radius: 12px;
     margin: 2rem auto;
     max-width: 500px;
 }
@@ -479,15 +483,27 @@
 }
 
 /* Responsive design */
+@media screen and (max-width: 1400px) {
+    .about-page {
+        padding: 120px 40px 40px;
+    }
+}
+
 @media screen and (max-width: 1300px) {
     .about-page__layout {
         max-width: 95%;
+        padding: 35px;
     }
 }
 
 @media screen and (max-width: 1024px) {
+    .about-page {
+        padding: 110px 30px 30px;
+    }
+
     .about-page__layout {
         gap: 25px;
+        padding: 30px;
     }
     
     .infobox {
@@ -496,12 +512,17 @@
     
     .about-page__sidebar {
         width: 250px;
+        top: 100px;
     }
 }
 
 @media screen and (max-width: 900px) {
+    .about-page {
+        padding: 100px 20px 30px;
+    }
+
     .about-page__layout {
-        padding: 0 20px;
+        padding: 25px;
     }
     
     .infobox {
@@ -510,9 +531,17 @@
 }
 
 @media screen and (max-width: 768px) {
+    .about-page {
+        padding: 90px 15px 25px;
+        background-color: #ffffff;
+    }
+
     .about-page__layout {
         flex-direction: column;
-        padding: 0 20px;
+        padding: 25px 20px;
+        border-radius: 12px;
+        box-shadow: none;
+        border: none;
     }
 
     .about-page__sidebar {
@@ -531,7 +560,7 @@
         background-color: #f0f2f5;
         color: #24292e;
         border: 1px solid #d1d5da;
-        border-radius: 6px;
+        border-radius: 8px;
         font-size: 1rem;
         font-weight: 500;
         cursor: pointer;
@@ -560,7 +589,7 @@
         padding: 10px 15px;
         margin-top: -1px;
         list-style-type: none;
-        border-radius: 0 0 6px 6px;
+        border-radius: 0 0 8px 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
@@ -597,6 +626,7 @@
         width: 100%;
         margin: 0 0 1.5em 0;
         box-sizing: border-box;
+        border-radius: 8px;
     }
 
     .about-page__title {
@@ -613,12 +643,22 @@
     
     .about-page__figure {
         max-width: 100%;
+        border-radius: 8px;
+    }
+
+    .about-page__markdown-header {
+        scroll-margin-top: 90px;
     }
 }
 
 @media screen and (max-width: 480px) {
+    .about-page {
+        padding: 80px 10px 20px;
+    }
+
     .about-page__layout {
-        padding: 0 15px;
+        padding: 20px 15px;
+        border-radius: 10px;
     }
     
     .about-page__title {
@@ -628,4 +668,20 @@
     .about-page__lead-paragraph {
         font-size: 1.1rem;
     }
+}
+
+/* Smooth entrance animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.about-page__layout {
+    animation: fadeInUp 0.6s ease-out;
 }
