@@ -1,0 +1,11 @@
+.navbar-spacer {
+  height: var(--nav-height, 100px);
+  width: 100%;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .navbar-spacer {
+    height: 72px;
+  }
+}
