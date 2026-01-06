@@ -21,7 +21,7 @@ const Navbar = () => {
     '/about': 'light',     // About page has light background
     '/curriculum-vitae': 'light',  // CV has light background
     '/projects': 'dark',   // Projects has dark featured header
-    '/blog': 'dark',       // Blog has dark featured header
+    '/blog': 'light',       // Blog has dark featured header
     '/contact': 'light',   // Contact has light background
   };
 
