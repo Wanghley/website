@@ -12,7 +12,7 @@ import PublicationList from '../components/cv/PublicationList';
 import CertificationsList from '../components/CertificationCard';
 import SkillsList from '../components/cv/SkillList';
 import { Helmet } from "react-helmet";
-
+import NavbarSpacer from '../components/NavbarSpacer';
 
 import '../components/css/global.css';
 import './css/cv.css';
@@ -60,6 +60,8 @@ const CVPage = () => {
     if (error) return <p>Error loading data: {error.message}</p>;
 
     return (
+        <>
+        <NavbarSpacer/>
         <div className="cv-page">
             <Helmet>
                 <title>Wanghley's Curriculum Vitae</title>
@@ -88,6 +90,7 @@ const CVPage = () => {
                 <CertificationsList certifications={certifications} />
             </section>
         </div>
+    </>
     );
 };
 
