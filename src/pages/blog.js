@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import './css/blog.css';
 import { Helmet } from 'react-helmet';
 import { FaSearch, FaTags, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
+import NavbarSpacer from '../components/NavbarSpacer';
 
 const Blogs = () => {
     const [posts, setPosts] = useState([]);
@@ -108,7 +109,7 @@ const Blogs = () => {
                 <meta property="og:locale" content="en_US" />
                 <meta property="og:locale:alternate" content="pt_BR" />
             </Helmet>
-            
+            <NavbarSpacer/>
             {latestPost && (
                 <div className="blog-featured-header" style={{
                     backgroundImage: `url(${latestPost.attributes.Featured?.data?.attributes?.formats?.large?.url || 'https://res.cloudinary.com/wanghley/image/upload/v1700976651/branding/Logo_Wanghley_Simbolo_Fundo_Transparente_1_min_c28472b597.png'})`

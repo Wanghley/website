@@ -1,6 +1,7 @@
 import React from "react";
 import { Navbar, Hero, About, Timeline, Contact, Skills,Footer, WhyMe, AboutText } from '../components'
 import { Helmet } from "react-helmet";
+import NavbarSpacer from '../components/NavbarSpacer';
 
 const AboutPage = () => {
     
@@ -24,6 +25,7 @@ const AboutPage = () => {
             <meta property="og:locale" content="en_US" />
             <meta property="og:locale:alternate" content="pt_BR" />
         </Helmet>
+        <NavbarSpacer/>
         <AboutText />
         <Contact />
         </>
