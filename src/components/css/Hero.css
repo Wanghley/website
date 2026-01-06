@@ -743,7 +743,7 @@
         /* make it use full height; */
         grid-template-columns: 1fr;
         text-align: center;
-        height: 80vh;
+        height: 100vh;
     }
 
     .hero__title {
