@@ -25,6 +25,9 @@ const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
+  const [contactFormStartedAt, setContactFormStartedAt] = useState(Date.now());
+  const [newsletterStartedAt, setNewsletterStartedAt] = useState(Date.now());
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -54,46 +57,128 @@ const Contact = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setIsSubmitting(true);
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
 
-  // 1. Capture the form data
-  const formDataObj = new FormData(e.target);
-
-  // 2. Add your Access Key from the .env file
-  formDataObj.append("access_key", process.env.REACT_APP_WEB3FORMS_ACCESS_KEY);
-
-  try {
-    // 3. Send the POST request to Web3Forms
-    const response = await fetch("https://api.web3forms.com/submit", {
-      method: "POST",
-      body: formDataObj
-    });
-
-    const data = await response.json();
-
-    if (data.success) {
-      setIsSubmitted(true);
-      setFormData({ name: '', email: '', message: '' });
-    } else {
-      // Handle API-level errors (e.g., invalid key)
-      console.error("Web3Forms Error:", data.message);
-      alert("Submission failed: " + data.message);
+    // Basic timing check: block too-fast submissions (likely bots)
+    const elapsedMs = Date.now() - contactFormStartedAt;
+    if (elapsedMs < 2000) {
+      setSubmitError('Please wait a moment before submitting.');
+      setIsSubmitting(false);
+      return;
     }
-  } catch (error) {
-    // Handle Network errors
-    console.error('Network Error:', error);
-    alert('Something went wrong. Please check your connection or email me directly.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+
+    // Capture and sanitize values
+    const formEl = e.target;
+    const formDataObj = new FormData(formEl);
+
+    // Honeypot checks: any value in these means bot
+    const honeypots = ['botcheck', 'website', 'company'];
+    for (const hp of honeypots) {
+      const v = (formDataObj.get(hp) || '').toString().trim();
+      if (v) {
+        setSubmitError('Spam check failed.');
+        setIsSubmitting(false);
+        return;
+      }
+    }
+
+    // Sanitize fields
+    const name = (formDataObj.get('name') || '').toString().trim();
+    const email = (formDataObj.get('email') || '').toString().trim().toLowerCase();
+    const message = (formDataObj.get('message') || '').toString().trim();
+
+    // Client-side validation
+    if (name.length < 2 || name.length > 80) {
+      setSubmitError('Please enter a valid name (2-80 chars).');
+      setIsSubmitting(false);
+      return;
+    }
+    if (email.length > 254) {
+      setSubmitError('Email is too long.');
+      setIsSubmitting(false);
+      return;
+    }
+    if (message.length < 10 || message.length > 2000) {
+      setSubmitError('Please include a message (10-2000 chars).');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const accessKey = process.env.REACT_APP_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      setSubmitError(
+        'Missing Web3Forms access key. Please set REACT_APP_WEB3FORMS_ACCESS_KEY in your environment (Amplify Hosting -> App settings -> Environment variables) and rebuild.'
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Rebuild form payload with sanitized values
+    formDataObj.set('name', name);
+    formDataObj.set('email', email);
+    formDataObj.set('message', message);
+    formDataObj.set('access_key', accessKey);
+    formDataObj.set('subject', `New message from ${name}`);
+    formDataObj.set('from_name', name);
+    // Optionally include elapsed time for server-side heuristics
+    formDataObj.set('submission_time_ms', String(elapsedMs));
+
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        body: formDataObj
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setIsSubmitted(true);
+        setFormData({ name: '', email: '', message: '' });
+        setSubmitError(null);
+      } else {
+        // Surface API-level errors (e.g., invalid key or SMTP misconfig)
+        const msg = data.message || 'Submission failed.';
+        console.error("Web3Forms Error:", msg, data);
+        setSubmitError(msg);
+      }
+    } catch (error) {
+      console.error('Network Error:', error);
+      setSubmitError('Network error. Please try again later or email me directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
+    const formEl = e.target;
+    const formDataObj = new FormData(formEl);
+
+    // Timing check
+    const elapsedMs = Date.now() - newsletterStartedAt;
+    if (elapsedMs < 1500) {
+      setSubmitError('Please wait a moment before subscribing.');
+      return;
+    }
+
+    // Honeypot check
+    const hp = (formDataObj.get('confirm_email') || '').toString().trim();
+    if (hp) {
+      setSubmitError('Spam check failed.');
+      return;
+    }
+
+    // Validate and normalize email
+    const email = (formDataObj.get('email') || '').toString().trim().toLowerCase();
+    if (!email || email.length > 254) {
+      setSubmitError('Please enter a valid email address.');
+      return;
+    }
+
     // Redirect to Substack subscribe with pre-filled email
-    window.open(`https://wanghley.substack.com/?email=${encodeURIComponent(email)}&utm_campaign=contact_form_subscribe_portfolio`, '_blank');
+    window.open(`https://wanghley.substack.com/?email=${encodeURIComponent(email)}&utm_campaign=contact_form_subscribe_portfolio`, '_blank', 'noopener');
   };
 
   const benefits = [
@@ -221,7 +306,12 @@ const Contact = () => {
                   </div>
 
                   <form onSubmit={handleSubmit} className="contact-section__form">
-                    <input type="checkbox" name="botcheck" style={{ display: "none" }} />
+                    {/* Honeypots */}
+                    <input type="checkbox" name="botcheck" style={{ display: "none" }} tabIndex={-1} aria-hidden="true" />
+                    <input type="text" name="website" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" autoComplete="off" />
+                    <input type="text" name="company" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" autoComplete="off" />
+                    {/* Optional timestamp field */}
+                    <input type="hidden" name="form_started_at" value={contactFormStartedAt} />
                     <div className={`contact-section__field ${focusedField === 'name' ? 'is-focused' : ''} ${formData.name ? 'has-value' : ''}`}>
                       <label htmlFor="contact-name" className="contact-section__label-text">
                         Your Name
@@ -235,7 +325,10 @@ const Contact = () => {
                         onFocus={() => setFocusedField('name')}
                         onBlur={() => setFocusedField(null)}
                         required
+                        minLength={2}
+                        maxLength={80}
                         className="contact-section__input"
+                        autoComplete="name"
                         placeholder="John Doe"
                       />
                     </div>
@@ -253,7 +346,9 @@ const Contact = () => {
                         onFocus={() => setFocusedField('email')}
                         onBlur={() => setFocusedField(null)}
                         required
+                        maxLength={254}
                         className="contact-section__input"
+                        autoComplete="email"
                         placeholder="john@example.com"
                       />
                     </div>
@@ -270,7 +365,10 @@ const Contact = () => {
                         onFocus={() => setFocusedField('message')}
                         onBlur={() => setFocusedField(null)}
                         required
+                        minLength={10}
+                        maxLength={2000}
                         className="contact-section__textarea"
+                        autoComplete="off"
                         placeholder="Tell me about your project or idea..."
                         rows={4}
                       />
@@ -297,6 +395,11 @@ const Contact = () => {
                     <p className="contact-section__privacy">
                       Your information is safe. I never share or sell your data.
                     </p>
+                    {submitError && (
+                      <p className="contact-section__error" role="alert">
+                        Error sending message: {submitError}
+                      </p>
+                    )}
                   </form>
                 </>
               ) : (
@@ -332,6 +435,9 @@ const Contact = () => {
               </p>
             </div>
             <form className="contact-section__newsletter-form" onSubmit={handleNewsletterSubmit}>
+              {/* Honeypot and timestamp */}
+              <input type="text" name="confirm_email" style={{ display: 'none' }} tabIndex={-1} aria-hidden="true" autoComplete="off" />
+              <input type="hidden" name="newsletter_started_at" value={newsletterStartedAt} />
               <input
                 type="email"
                 name="email"
@@ -339,6 +445,8 @@ const Contact = () => {
                 className="contact-section__newsletter-input"
                 aria-label="Email for newsletter"
                 required
+                maxLength={254}
+                autoComplete="email"
               />
               <button type="submit" className="contact-section__newsletter-btn">
                 Subscribe
