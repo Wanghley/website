@@ -14,7 +14,6 @@ import {
   FaHandshake
 } from 'react-icons/fa';
 import { HiSparkles } from 'react-icons/hi';
-import emailjs from '@emailjs/browser';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -55,25 +54,40 @@ const Contact = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  e.preventDefault();
+  setIsSubmitting(true);
 
-    try {
-      await emailjs.sendForm(
-        process.env.REACT_APP_emailjs_service_id,
-        process.env.REACT_APP_emailjs_template_id,
-        e.target,
-        process.env.REACT_APP_emailjs_public_key
-      );
+  // 1. Capture the form data
+  const formDataObj = new FormData(e.target);
+
+  // 2. Add your Access Key from the .env file
+  formDataObj.append("access_key", process.env.REACT_APP_WEB3FORMS_ACCESS_KEY);
+
+  try {
+    // 3. Send the POST request to Web3Forms
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formDataObj
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
       setIsSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
-    } catch (error) {
-      console.error('Error sending email:', error);
-      alert('Something went wrong. Please try again or email me directly.');
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      // Handle API-level errors (e.g., invalid key)
+      console.error("Web3Forms Error:", data.message);
+      alert("Submission failed: " + data.message);
     }
-  };
+  } catch (error) {
+    // Handle Network errors
+    console.error('Network Error:', error);
+    alert('Something went wrong. Please check your connection or email me directly.');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleNewsletterSubmit = (e) => {
     e.preventDefault();
@@ -207,6 +221,7 @@ const Contact = () => {
                   </div>
 
                   <form onSubmit={handleSubmit} className="contact-section__form">
+                    <input type="checkbox" name="botcheck" style={{ display: "none" }} />
                     <div className={`contact-section__field ${focusedField === 'name' ? 'is-focused' : ''} ${formData.name ? 'has-value' : ''}`}>
                       <label htmlFor="contact-name" className="contact-section__label-text">
                         Your Name
