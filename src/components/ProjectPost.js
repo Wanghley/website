@@ -1,22 +1,140 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './css/ProjectPost.css';
 import { formatDate } from '../utils/formatDate';
-import { FaTag } from "react-icons/fa";
+import { FaTag, FaGithub, FaExternalLinkAlt, FaCalendarAlt, FaArrowLeft, FaChevronUp, FaShareAlt, FaLink } from "react-icons/fa";
+import { HiSparkles } from 'react-icons/hi';
+import { BsArrowUpRight } from 'react-icons/bs';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { Helmet } from 'react-helmet';
-
 import MediaGallery from './ProjectMediaGallery';
 
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
+
+// Reading time calculator
+const calculateReadingTime = (text) => {
+    if (!text) return 0;
+    const wordsPerMinute = 200;
+    const words = text.trim().split(/\s+/).length;
+    return Math.ceil(words / wordsPerMinute);
+};
+
+// Copy link functionality
+const copyToClipboard = async (text) => {
+    try {
+        await navigator.clipboard.writeText(text);
+        return true;
+    } catch (err) {
+        console.error('Failed to copy:', err);
+        return false;
+    }
+};
+
+// Back to Top Button
+const BackToTop = () => {
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        const toggleVisibility = () => setVisible(window.pageYOffset > 500);
+        window.addEventListener('scroll', toggleVisibility);
+        return () => window.removeEventListener('scroll', toggleVisibility);
+    }, []);
+
+    return (
+        <button 
+            className={`project-back-to-top ${visible ? 'visible' : ''}`}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            aria-label="Back to top"
+        >
+            <FaChevronUp />
+        </button>
+    );
+};
+
+// Progress Bar Component
+const ReadingProgress = () => {
+    const [progress, setProgress] = useState(0);
+
+    useEffect(() => {
+        const updateProgress = () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            setProgress(scrollPercent);
+        };
+
+        window.addEventListener('scroll', updateProgress);
+        return () => window.removeEventListener('scroll', updateProgress);
+    }, []);
+
+    return (
+        <div className="reading-progress">
+            <div className="reading-progress__bar" style={{ width: `${progress}%` }} />
+        </div>
+    );
+};
+
+// Table of Contents Component
+const TableOfContents = ({ headings, activeId }) => {
+    if (!headings || headings.length === 0) return null;
+
+    return (
+        <nav className="project-toc">
+            <div className="project-toc__header">
+                <span className="project-toc__icon">📑</span>
+                <h3 className="project-toc__title">Contents</h3>
+            </div>
+            <ul className="project-toc__list">
+                {headings.map((heading, index) => (
+                    <li 
+                        key={index} 
+                        className={`project-toc__item project-toc__item--level-${heading.level} ${activeId === heading.id ? 'active' : ''}`}
+                    >
+                        <a href={`#${heading.id}`}>
+                            {heading.text}
+                        </a>
+                    </li>
+                ))}
+            </ul>
+        </nav>
+    );
+};
+
+// Share Button Component
+const ShareButton = ({ title, url }) => {
+    const [copied, setCopied] = useState(false);
+
+    const handleShare = async () => {
+        if (navigator.share) {
+            try {
+                await navigator.share({ title, url });
+            } catch (err) {
+                console.log('Share cancelled');
+            }
+        } else {
+            const success = await copyToClipboard(url);
+            if (success) {
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            }
+        }
+    };
+
+    return (
+        <button className="project-share-btn" onClick={handleShare}>
+            {copied ? <FaLink /> : <FaShareAlt />}
+            <span>{copied ? 'Copied!' : 'Share'}</span>
+        </button>
+    );
+};
 
 const ProjectPage = () => {
     const { slug } = useParams();
@@ -24,16 +142,10 @@ const ProjectPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [headings, setHeadings] = useState([]);
+    const [activeHeadingId, setActiveHeadingId] = useState('');
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    // Toggle function for mobile index
-    const toggleMobileIndex = () => {
-        const mobileIndex = document.querySelector('.project-page__mobile-index');
-        if (mobileIndex) {
-            mobileIndex.classList.toggle('open');
-        }
-    };
-
-    // First useEffect - fetch project data
+    // Fetch project data
     useEffect(() => {
         const fetchProject = async () => {
             try {
@@ -47,25 +159,27 @@ const ProjectPage = () => {
                 );
                 setProject(response.data.data);
 
+                // Extract headings for TOC
                 if (response.data.data.attributes.Description) {
                     const tempHeadings = [];
-                    response.data.data.attributes.Description.split('\n').forEach(line => {
-                        const match = line.match(/^(#{1,6})\s+(.*)/);
+                    const lines = response.data.data.attributes.Description.split('\n');
+                    lines.forEach(line => {
+                        const match = line.match(/^(#{1,3})\s+(.*)/);
                         if (match) {
-                            tempHeadings.push({ level: match[1].length, text: match[2] });
+                            const text = match[2].trim();
+                            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                            tempHeadings.push({ 
+                                level: match[1].length, 
+                                text,
+                                id
+                            });
                         }
                     });
-                    
-                    // Add the gallery section to the headings if media exists
-                    if (response.data.data.attributes.Media?.data?.length > 0) {
-                        tempHeadings.push({ level: 2, text: "project-gallery" });
-                    }
-                    
                     setHeadings(tempHeadings);
                 }
-            } catch (error) {
-                console.error('Fetch project error:', error.response || error.message || error);
-                setError('Failed to fetch project details.');
+            } catch (err) {
+                console.error("Error fetching project data:", err);
+                setError("Failed to load project.");
             } finally {
                 setLoading(false);
             }
@@ -74,166 +188,127 @@ const ProjectPage = () => {
         fetchProject();
     }, [slug]);
 
-    // Second useEffect - observe headings (MOVED UP before any conditional returns)
+    // Intersection Observer for active heading
     useEffect(() => {
-        // Only run this effect when the project is loaded and we're not in a loading state
         if (loading || !project) return;
 
         const observerOptions = {
-            root: null,
-            rootMargin: '-80px 0px -20% 0px',
+            rootMargin: '-80px 0px -70% 0px',
             threshold: 0
         };
 
         const observerCallback = (entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Get all sidebar links
-                    const sidebarLinks = document.querySelectorAll('.project-page__index-item a');
-                    
-                    // Remove active class from all links
-                    sidebarLinks.forEach(link => {
-                      link.classList.remove('active');
-                    });
-                    
-                    // Add active class to the link that corresponds to the current section
-                    const id = entry.target.id;
-                    const correspondingLink = document.querySelector(`.project-page__index-item a[href="#${id}"]`);
-                    if (correspondingLink) {
-                      correspondingLink.classList.add('active');
-                    }
+                    setActiveHeadingId(entry.target.id);
                 }
             });
         };
 
-        // Create observer
         const observer = new IntersectionObserver(observerCallback, observerOptions);
-        
-        // Use setTimeout to ensure DOM elements are available
+
         setTimeout(() => {
-            // Observe all section headings
-            const headings = document.querySelectorAll('.project-page__description h1, .project-page__description h2, .project-page__description h3');
-            headings.forEach(heading => {
-                if (heading) observer.observe(heading);
-            });
+            const headingElements = document.querySelectorAll('.project-content h1[id], .project-content h2[id], .project-content h3[id]');
+            headingElements.forEach(heading => observer.observe(heading));
         }, 100);
 
-        return () => {
-            // Cleanup - use setTimeout to ensure we're not trying to unobserve elements that don't exist
-            setTimeout(() => {
-                const headings = document.querySelectorAll('.project-page__description h1, .project-page__description h2, .project-page__description h3');
-                headings.forEach(heading => {
-                    if (heading) observer.unobserve(heading);
-                });
-            }, 100);
-        };
-    }, [loading, project]); // Add dependencies
+        return () => observer.disconnect();
+    }, [loading, project]);
 
-    // Add loading state for dynamic content
+    // Loading state
     if (loading) {
         return (
-            <div className="loading-state">
-                <meta name="robots" content="noindex" />
-                <p>Loading...</p>
+            <div className="project-page project-page--loading">
+                <div className="project-skeleton">
+                    <div className="project-skeleton__hero shimmer"></div>
+                    <div className="project-skeleton__content">
+                        <div className="project-skeleton__sidebar">
+                            <div className="project-skeleton__toc shimmer"></div>
+                        </div>
+                        <div className="project-skeleton__main">
+                            <div className="project-skeleton__line project-skeleton__line--xl shimmer"></div>
+                            <div className="project-skeleton__line project-skeleton__line--lg shimmer"></div>
+                            <div className="project-skeleton__line shimmer"></div>
+                            <div className="project-skeleton__line shimmer"></div>
+                            <div className="project-skeleton__line project-skeleton__line--md shimmer"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
-    if (error) return <p className="error-text">{error}</p>;
-    if (!project) return <p className="no-project-text">No project found.</p>;
+
+    if (error) return <div className="project-error">{error}</div>;
+    if (!project) return <div className="project-error">Project not found.</div>;
 
     const {
         Title, Github, Description, Category, Demo,
         End, Start, Teaser, video, Featured, Media
     } = project.attributes;
 
-    const featuredImage = Featured?.data?.attributes?.formats?.large?.url;
-    console.log('Media:', Media);
+    const featuredImage = Featured?.data?.attributes?.formats?.large?.url || 
+                          Featured?.data?.attributes?.url;
+    
     const media = Media?.data?.map(item => {
-        // Prioritize large format, fall back to medium, then small, then thumbnail
-        return item.attributes.formats.large?.url || 
-               item.attributes.formats.medium?.url || 
-               item.attributes.formats.small?.url || 
-               item.attributes.formats.thumbnail?.url || 
-               item.attributes.url; // original as last resort
-    }).filter(url => url !== null && url !== undefined) || [];
+        return item.attributes.formats?.large?.url || 
+               item.attributes.formats?.medium?.url || 
+               item.attributes.formats?.small?.url || 
+               item.attributes.url;
+    }).filter(Boolean) || [];
 
+    const readingTime = calculateReadingTime(Description);
+    const projectUrl = `https://wanghley.com/projects/${slug}`;
+
+    // Markdown components
     const markdownComponents = {
-        h1: ({ children }) => <h1 id={children} className="project-page__markdown-header">{children}</h1>,
-        h2: ({ children }) => <h2 id={children} className="project-page__markdown-header">{children}</h2>,
-        h3: ({ children }) => <h3 id={children} className="project-page__markdown-header">{children}</h3>,
+        h1: ({ children }) => {
+            const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            return <h1 id={id} className="project-content__heading">{children}</h1>;
+        },
+        h2: ({ children }) => {
+            const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            return <h2 id={id} className="project-content__heading">{children}</h2>;
+        },
+        h3: ({ children }) => {
+            const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            return <h3 id={id} className="project-content__heading">{children}</h3>;
+        },
         code: ({ node, inline, className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');
             return !inline ? (
-                <SyntaxHighlighter style={materialDark} language={match ? match[1] : ''} {...props}>
+                <SyntaxHighlighter 
+                    style={oneDark} 
+                    language={match ? match[1] : ''} 
+                    PreTag="div"
+                    className="project-code-block"
+                    {...props}
+                >
                     {String(children).replace(/\n$/, '')}
                 </SyntaxHighlighter>
             ) : (
-                <code className="project-page__markdown-inline-code" {...props}>{children}</code>
+                <code className="project-inline-code" {...props}>{children}</code>
             );
         },
-        table: props => (
-            <table className="project-page__markdown-table">
-                {props.children}
-            </table>
+        table: ({ children }) => (
+            <div className="project-table-wrapper">
+                <table className="project-table">{children}</table>
+            </div>
         ),
-        td: props => {
-            // Check if children exists
-            if (!props.children) {
-                return <td className="project-page__markdown-table-cell"></td>;
-            }
-            
-            // Safely map over children and join the result
-            const mappedChildren = React.Children.map(props.children, child => {
-                if (typeof child === 'object' && child !== null) {
-                    return child.props?.children || '';
-                }
-                return child || '';
-            });
-            
-            // Check if mappedChildren is defined before joining
-            const content = mappedChildren ? mappedChildren.join('') : '';
-
-            return (
-                <td 
-                    className="project-page__markdown-table-cell"
-                    dangerouslySetInnerHTML={{ 
-                        __html: content
-                            .replace(/\\n/g, '<br />')
-                            .replace(/\n/g, '<br />')
-                            .replace(/•/g, '<br />•')
-                    }}
-                />
-            );
-        },
-        th: props => {
-            // Check if children exists
-            if (!props.children) {
-                return <th className="project-page__markdown-table-header"></th>;
-            }
-            
-            // Safely map over children and join the result
-            const mappedChildren = React.Children.map(props.children, child => {
-                if (typeof child === 'object' && child !== null) {
-                    return child.props?.children || '';
-                }
-                return child || '';
-            });
-            
-            // Check if mappedChildren is defined before joining
-            const content = mappedChildren ? mappedChildren.join('') : '';
-
-            return (
-                <th 
-                    className="project-page__markdown-table-header"
-                    dangerouslySetInnerHTML={{ 
-                        __html: content
-                            .replace(/\\n/g, '<br />')
-                            .replace(/\n/g, '<br />')
-                            .replace(/•/g, '<br />•')
-                    }}
-                />
-            );
-        }
+        img: ({ src, alt }) => (
+            <figure className="project-figure">
+                <img src={src} alt={alt} loading="lazy" />
+                {alt && <figcaption>{alt}</figcaption>}
+            </figure>
+        ),
+        blockquote: ({ children }) => (
+            <blockquote className="project-blockquote">{children}</blockquote>
+        ),
+        a: ({ href, children }) => (
+            <a href={href} target="_blank" rel="noopener noreferrer" className="project-link">
+                {children}
+                <BsArrowUpRight className="project-link__icon" />
+            </a>
+        ),
     };
 
     const breadcrumbSchema = {
@@ -259,136 +334,213 @@ const ProjectPage = () => {
     return (
         <article className="project-page">
             <Helmet>
-                <title>{Title}</title>
-                <meta name="description" content={Description} />
+                <title>{Title} | Wanghley</title>
+                <meta name="description" content={Teaser || Description?.substring(0, 160)} />
                 <meta name="keywords" content={Category} />
-                <link rel="canonical" href={`https://wanghley.com/projects/${slug}`} />
+                <link rel="canonical" href={projectUrl} />
                 <meta property="og:title" content={Title} />
-                <meta property="og:description" content={Description} />
-                <meta property="og:type" content="website" />
-                <meta property="og:url" content={`https://wanghley.com/projects/${slug}`} />
+                <meta property="og:description" content={Teaser || Description?.substring(0, 160)} />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content={projectUrl} />
                 <meta property="og:image" content={featuredImage || 'https://res.cloudinary.com/wanghley/image/upload/v1746648815/branding/logo_applied_sq.png'} />
-                <meta property="og:site_name" content="Wanghley – Sci&Tech" />
-                <meta property="og:locale" content="en_US" />
-                <meta property="og:locale:alternate" content="pt_BR" />
                 <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
             </Helmet>
-            <div className="project-page__layout">
-                {/* Sidebar */}
-                <aside className="project-page__sidebar">
-                    <h3>Contents</h3>
-                    <ol className="project-page__index-list">
-                        {headings.map((heading, index) => (
-                            <li key={index} className={`project-page__index-item level-${heading.level}`}>
-                                <a href={`#${heading.text}`}>
-                                    {heading.text === "project-gallery" ? "Project Gallery" : heading.text}
+
+            <ReadingProgress />
+
+            {/* Hero Section */}
+            <header className="project-hero">
+                <div className="project-hero__background">
+                    {featuredImage && (
+                        <img 
+                            src={featuredImage} 
+                            alt="" 
+                            className="project-hero__bg-image" 
+                            aria-hidden="true"
+                        />
+                    )}
+                    <div className="project-hero__overlay"></div>
+                </div>
+
+                <div className="project-hero__container">
+                    {/* Breadcrumb */}
+                    <nav className="project-breadcrumb">
+                        <Link to="/projects" className="project-breadcrumb__link">
+                            <FaArrowLeft />
+                            <span>All Projects</span>
+                        </Link>
+                    </nav>
+
+                    {/* Meta Info */}
+                    <div className="project-hero__meta">
+                        {Category && (
+                            <span className="project-hero__category">
+                                <FaTag /> {Category}
+                            </span>
+                        )}
+                        <span className="project-hero__date">
+                            <FaCalendarAlt />
+                            {Start ? formatDate(Start) : 'N/A'}
+                            {End && ` — ${formatDate(End)}`}
+                        </span>
+                        <span className="project-hero__reading-time">
+                            📖 {readingTime} min read
+                        </span>
+                    </div>
+
+                    {/* Title */}
+                    <h1 className="project-hero__title">{Title}</h1>
+
+                    {/* Teaser */}
+                    {Teaser && (
+                        <p className="project-hero__teaser">{Teaser}</p>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="project-hero__actions">
+                        {Github && (
+                            <a 
+                                href={Github} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="project-btn project-btn--github"
+                            >
+                                <FaGithub />
+                                <span>View Code</span>
                             </a>
+                        )}
+                        {Demo && (
+                            <a 
+                                href={Demo.includes('http') ? Demo : `https://${Demo}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="project-btn project-btn--demo"
+                            >
+                                <FaExternalLinkAlt />
+                                <span>Live Demo</span>
+                            </a>
+                        )}
+                        <ShareButton title={Title} url={projectUrl} />
+                    </div>
+                </div>
+
+                {/* Featured Image */}
+                {featuredImage && (
+                    <div className="project-hero__image-container">
+                        <img 
+                            src={featuredImage} 
+                            alt={Title} 
+                            className="project-hero__image"
+                        />
+                    </div>
+                )}
+            </header>
+
+            {/* Main Content Area */}
+            <div className="project-layout">
+                {/* Mobile TOC Toggle */}
+                <button 
+                    className="project-mobile-toc-toggle"
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
+                    📑 Contents
+                </button>
+
+                {/* Mobile TOC */}
+                <div className={`project-mobile-toc ${mobileMenuOpen ? 'open' : ''}`}>
+                    <div className="project-mobile-toc__header">
+                        <span>Contents</span>
+                        <button onClick={() => setMobileMenuOpen(false)}>✕</button>
+                    </div>
+                    <ul className="project-mobile-toc__list">
+                        {headings.map((heading, index) => (
+                            <li key={index} className={`level-${heading.level}`}>
+                                <a 
+                                    href={`#${heading.id}`}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                >
+                                    {heading.text}
+                                </a>
                             </li>
                         ))}
-                    </ol>
+                    </ul>
+                </div>
+
+                {/* Sidebar */}
+                <aside className="project-sidebar">
+                    <div className="project-sidebar__sticky">
+                        <TableOfContents headings={headings} activeId={activeHeadingId} />
+                        
+                        {/* Quick Links */}
+                        <div className="project-quick-links">
+                            <h4>Quick Links</h4>
+                            <div className="project-quick-links__buttons">
+                                {Github && (
+                                    <a href={Github} target="_blank" rel="noopener noreferrer">
+                                        <FaGithub /> GitHub
+                                    </a>
+                                )}
+                                {Demo && (
+                                    <a href={Demo.includes('http') ? Demo : `https://${Demo}`} target="_blank" rel="noopener noreferrer">
+                                        <FaExternalLinkAlt /> Demo
+                                    </a>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </aside>
 
                 {/* Main Content */}
-                <section className="project-page__main-content">
-                    <header className="project-page__header">
-                        {featuredImage && (
-                            <div className="project-page__image-container">
-                                <img src={featuredImage} alt={Title} className="project-page__image" />
-                                <div className="project-page__overlay">
-                                    <h1 className="project-page__title">{Title}</h1>
-                                    <div className="project-page__info">
-                                        <span className="project-page__category">
-                                            <FaTag /> {Category}
-                                        </span>
-                                        <span className="project-page__dates">
-                                            {Start ? formatDate(Start) : 'N/A'}
-                                            {End && <strong> - </strong>}{End && formatDate(End)}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </header>
-
-                    {/* Mobile Index */}
-                    <div className="project-page__mobile-index">
-                        <h3 onClick={toggleMobileIndex}>Contents</h3>
-                        <ul>
-                            {headings.map((heading, index) => (
-                                <li key={index} className={`level-${heading.level}`}>
-                                    <a href={`#${heading.text}`}>
-                                        {heading.text === "project-gallery" ? "Project Gallery" : heading.text}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-
-                    {/* Project Content */}
-                    <section className="project-page__content">
-                        <div className="project-page__links">
-                            {Github && (
-                                <a 
-                                    href={Github} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    className="project-page__button project-page__button--github"
-                                >
-                                    View on GitHub
-                                </a>
-                            )}
-                            {Demo && (
-                                <a 
-                                    href={Demo.includes('http') ? Demo : `https://${Demo}`} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
-                                    className="project-page__button project-page__button--demo"
-                                >
-                                    View Demo
-                                </a>
-                            )}
-                        </div>
-
-                        {/* Teaser and Media Gallery moved here */}
-                        <div className="project-page__preview-content">
-                            {Teaser && (
-                                <section className="project-page__teaser">
-                                    <p>{Teaser}</p>
-                                </section>
-                            )}
-                        </div>
-
-                        {/* Main Description */}
-                        {Description && (
+                <main className="project-main">
+                    {/* Content */}
+                    {Description && (
+                        <div className="project-content">
                             <ReactMarkdown
                                 remarkPlugins={[remarkGfm, remarkMath]}
                                 rehypePlugins={[rehypeKatex]}
-                                className="project-page__description"
                                 components={markdownComponents}
                             >
                                 {Description}
                             </ReactMarkdown>
-                        )}
+                        </div>
+                    )}
 
-                        {/* Video Section */}
-                        {video?.url && (
-                            <section className="project-page__video">
+                    {/* Video Section */}
+                    {video?.url && (
+                        <section className="project-video">
+                            <h2 className="project-section-title">
+                                <HiSparkles /> Project Demo
+                            </h2>
+                            <div className="project-video__wrapper">
                                 <video controls>
                                     <source src={video.url} type="video/mp4" />
                                     Your browser does not support the video tag.
                                 </video>
-                            </section>
-                        )}
-                        
-                        {/* Media Gallery - moved to end and given an id */}
-                        {media && media.length > 0 && (
-                            <section id="project-gallery">
-                                <MediaGallery media={media} />
-                            </section>
-                        )}
-                    </section>
-                </section>
+                            </div>
+                        </section>
+                    )}
+
+                    {/* Media Gallery */}
+                    {media && media.length > 0 && (
+                        <section className="project-gallery" id="gallery">
+                            <h2 className="project-section-title">
+                                <HiSparkles /> Project Gallery
+                            </h2>
+                            <MediaGallery media={media} />
+                        </section>
+                    )}
+
+                    {/* Back to Projects */}
+                    <div className="project-footer">
+                        <Link to="/projects" className="project-footer__back">
+                            <FaArrowLeft />
+                            <span>Back to All Projects</span>
+                        </Link>
+                    </div>
+                </main>
             </div>
+
+            <BackToTop />
         </article>
     );
 };
