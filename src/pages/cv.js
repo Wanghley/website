@@ -13,6 +13,7 @@ import CertificationsList from '../components/CertificationCard';
 import SkillsList from '../components/cv/SkillList';
 import { Helmet } from "react-helmet";
 import NavbarSpacer from '../components/NavbarSpacer';
+import { FaPrint, FaFileDownload } from "react-icons/fa"; // Add imports
 
 import '../components/css/global.css';
 import './css/cv.css';
@@ -56,7 +57,40 @@ const CVPage = () => {
         fetchData();
     }, []);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) {
+        return (
+            <>
+                <NavbarSpacer />
+                <div className="cv-page">
+                    {/* Personal Info Skeleton */}
+                    <div className="skeleton-personal-header">
+                        <div className="skeleton skeleton-avatar-text"></div>
+                        <div className="skeleton skeleton-avatar-sub"></div>
+                        <div className="skeleton skeleton-text" style={{ width: '80%', marginTop: '10px' }}></div>
+                    </div>
+
+                    <hr style={{ margin: '30px 0', opacity: 0.1 }} />
+
+                    {/* Simulating Sections (Education, Experience, etc.) */}
+                    {[1, 2, 3, 4].map((sectionIndex) => (
+                        <section key={sectionIndex} style={{ marginBottom: '40px' }}>
+                            <div className="skeleton skeleton-title"></div>
+                            {[1, 2].map((itemIndex) => (
+                                <div key={itemIndex} className="skeleton-block">
+                                    <div className="skeleton skeleton-header"></div>
+                                    <div className="skeleton skeleton-meta"></div>
+                                    <div className="skeleton skeleton-text"></div>
+                                    <div className="skeleton skeleton-text"></div>
+                                    <div className="skeleton skeleton-text"></div>
+                                </div>
+                            ))}
+                        </section>
+                    ))}
+                </div>
+            </>
+        );
+    }
+    
     if (error) return <p>Error loading data: {error.message}</p>;
 
     return (
@@ -79,6 +113,20 @@ const CVPage = () => {
                 <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1746646971/vhwsrugv5l1sxh7fx0zi.jpg" />
                 <meta property="og:image:alt" content="Wanghley's CV" />
             </Helmet>
+
+            {/* NEW: CV Actions Bar */}
+            <div className="cv-actions no-print">
+                <button className="cv-btn primary" onClick={() => window.print()}>
+                    <FaPrint /> Print / Save as PDF
+                </button>
+                <div className="cv-note">
+                    * To save as PDF, click Print and select "Save as PDF" as the destination.
+                </div>
+            </div>
+
+            {/* Europass Header Label (Visible only on print) */}
+            <div className="europass-label only-print">Europass Curriculum Vitae</div>
+
             {/* <h1>Curriculum Vitae</h1> */}
             <PersonalInfo personalInfo={personalInfo} />
              <EducationList educations={educations} />
