@@ -1,12 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import React, { useEffect, useState, useRef } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './css/ProjectPost.css';
 import { formatDate } from '../utils/formatDate';
-import { FaTag, FaGithub, FaExternalLinkAlt, FaCalendarAlt, FaArrowLeft, FaChevronUp, FaShareAlt, FaLink } from "react-icons/fa";
-import { HiSparkles } from 'react-icons/hi';
-import { BsArrowUpRight } from 'react-icons/bs';
+import { 
+    FaTag, FaGithub, FaExternalLinkAlt, FaCalendarAlt, 
+    FaArrowLeft, FaChevronUp, FaShareAlt, FaLink, FaClock,
+    FaPlay, FaImages, FaBookOpen
+} from "react-icons/fa";
+import { HiSparkles, HiOutlineBookOpen } from 'react-icons/hi';
+import { BsArrowUpRight, BsChevronRight } from 'react-icons/bs';
+import { IoClose } from 'react-icons/io5';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
@@ -38,7 +43,7 @@ const copyToClipboard = async (text) => {
     }
 };
 
-// Back to Top Button
+// Back to Top Button Component
 const BackToTop = () => {
     const [visible, setVisible] = useState(false);
 
@@ -50,7 +55,7 @@ const BackToTop = () => {
 
     return (
         <button 
-            className={`project-back-to-top ${visible ? 'visible' : ''}`}
+            className={`proj-back-to-top ${visible ? 'proj-back-to-top--visible' : ''}`}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             aria-label="Back to top"
         >
@@ -67,17 +72,18 @@ const ReadingProgress = () => {
         const updateProgress = () => {
             const scrollTop = window.scrollY;
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = (scrollTop / docHeight) * 100;
-            setProgress(scrollPercent);
+            const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            setProgress(Math.min(scrollPercent, 100));
         };
 
         window.addEventListener('scroll', updateProgress);
+        updateProgress();
         return () => window.removeEventListener('scroll', updateProgress);
     }, []);
 
     return (
-        <div className="reading-progress">
-            <div className="reading-progress__bar" style={{ width: `${progress}%` }} />
+        <div className="proj-progress">
+            <div className="proj-progress__bar" style={{ width: `${progress}%` }} />
         </div>
     );
 };
@@ -87,18 +93,19 @@ const TableOfContents = ({ headings, activeId }) => {
     if (!headings || headings.length === 0) return null;
 
     return (
-        <nav className="project-toc">
-            <div className="project-toc__header">
-                <span className="project-toc__icon">📑</span>
-                <h3 className="project-toc__title">Contents</h3>
+        <nav className="proj-toc" aria-label="Table of contents">
+            <div className="proj-toc__header">
+                <HiOutlineBookOpen className="proj-toc__icon" />
+                <h3 className="proj-toc__title">On This Page</h3>
             </div>
-            <ul className="project-toc__list">
+            <ul className="proj-toc__list">
                 {headings.map((heading, index) => (
                     <li 
                         key={index} 
-                        className={`project-toc__item project-toc__item--level-${heading.level} ${activeId === heading.id ? 'active' : ''}`}
+                        className={`proj-toc__item proj-toc__item--level-${heading.level} ${activeId === heading.id ? 'proj-toc__item--active' : ''}`}
                     >
                         <a href={`#${heading.id}`}>
+                            <span className="proj-toc__marker"></span>
                             {heading.text}
                         </a>
                     </li>
@@ -129,25 +136,131 @@ const ShareButton = ({ title, url }) => {
     };
 
     return (
-        <button className="project-share-btn" onClick={handleShare}>
+        <button className="proj-btn proj-btn--outline" onClick={handleShare}>
             {copied ? <FaLink /> : <FaShareAlt />}
-            <span>{copied ? 'Copied!' : 'Share'}</span>
+            <span>{copied ? 'Link Copied!' : 'Share'}</span>
         </button>
     );
 };
 
+// Loading Skeleton Component
+const ProjectSkeleton = () => (
+    <div className="proj-page proj-page--loading">
+        <div className="proj-skeleton">
+            <div className="proj-skeleton__hero">
+                <div className="proj-skeleton__hero-content">
+                    <div className="proj-skeleton__breadcrumb shimmer"></div>
+                    <div className="proj-skeleton__meta shimmer"></div>
+                    <div className="proj-skeleton__title shimmer"></div>
+                    <div className="proj-skeleton__teaser shimmer"></div>
+                    <div className="proj-skeleton__actions">
+                        <div className="proj-skeleton__btn shimmer"></div>
+                        <div className="proj-skeleton__btn shimmer"></div>
+                    </div>
+                </div>
+            </div>
+            <div className="proj-skeleton__body">
+                <div className="proj-skeleton__sidebar">
+                    <div className="proj-skeleton__toc shimmer"></div>
+                </div>
+                <div className="proj-skeleton__main">
+                    <div className="proj-skeleton__line proj-skeleton__line--full shimmer"></div>
+                    <div className="proj-skeleton__line proj-skeleton__line--lg shimmer"></div>
+                    <div className="proj-skeleton__line proj-skeleton__line--md shimmer"></div>
+                    <div className="proj-skeleton__line proj-skeleton__line--full shimmer"></div>
+                    <div className="proj-skeleton__line proj-skeleton__line--sm shimmer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+);
+
+// Mobile TOC Component
+const MobileTOC = ({ headings, isOpen, onClose }) => {
+    if (!headings || headings.length === 0) return null;
+
+    return (
+        <>
+            <div 
+                className={`proj-mobile-toc__backdrop ${isOpen ? 'proj-mobile-toc__backdrop--visible' : ''}`}
+                onClick={onClose}
+            />
+            <div className={`proj-mobile-toc ${isOpen ? 'proj-mobile-toc--open' : ''}`}>
+                <div className="proj-mobile-toc__header">
+                    <h3>Contents</h3>
+                    <button onClick={onClose} aria-label="Close menu">
+                        <IoClose />
+                    </button>
+                </div>
+                <ul className="proj-mobile-toc__list">
+                    {headings.map((heading, index) => (
+                        <li key={index} className={`proj-mobile-toc__item level-${heading.level}`}>
+                            <a href={`#${heading.id}`} onClick={onClose}>
+                                {heading.text}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </>
+    );
+};
+
+// Quick Navigation Component
+const QuickNav = ({ hasGithub, hasDemo, hasVideo, hasGallery, github, demo }) => {
+    const items = [];
+    
+    if (hasGithub) items.push({ icon: FaGithub, label: 'Source Code', href: github, external: true });
+    if (hasDemo) items.push({ icon: FaExternalLinkAlt, label: 'Live Demo', href: demo, external: true });
+    if (hasVideo) items.push({ icon: FaPlay, label: 'Watch Demo', href: '#video', external: false });
+    if (hasGallery) items.push({ icon: FaImages, label: 'Gallery', href: '#gallery', external: false });
+
+    if (items.length === 0) return null;
+
+    return (
+        <div className="proj-quick-nav">
+            <h4 className="proj-quick-nav__title">Quick Links</h4>
+            <div className="proj-quick-nav__grid">
+                {items.map((item, index) => (
+                    <a 
+                        key={index}
+                        href={item.external ? (item.href?.includes('http') ? item.href : `https://${item.href}`) : item.href}
+                        target={item.external ? '_blank' : '_self'}
+                        rel={item.external ? 'noopener noreferrer' : undefined}
+                        className="proj-quick-nav__item"
+                    >
+                        <item.icon />
+                        <span>{item.label}</span>
+                    </a>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// Main Project Page Component
 const ProjectPage = () => {
     const { slug } = useParams();
+    const navigate = useNavigate();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [headings, setHeadings] = useState([]);
     const [activeHeadingId, setActiveHeadingId] = useState('');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const contentRef = useRef(null);
+
+    // Scroll to top on mount and slug change
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+    }, [slug]);
 
     // Fetch project data
     useEffect(() => {
         const fetchProject = async () => {
+            setLoading(true);
+            setError(null);
+            
             try {
                 const response = await axios.get(
                     `${baseURL}/api/slugify/slugs/project/${slug}?populate=*`,
@@ -157,35 +270,37 @@ const ProjectPage = () => {
                         },
                     }
                 );
-                setProject(response.data.data);
+                
+                const projectData = response.data.data;
+                setProject(projectData);
 
                 // Extract headings for TOC
-                if (response.data.data.attributes.Description) {
+                if (projectData?.attributes?.Description) {
                     const tempHeadings = [];
-                    const lines = response.data.data.attributes.Description.split('\n');
+                    const lines = projectData.attributes.Description.split('\n');
                     lines.forEach(line => {
                         const match = line.match(/^(#{1,3})\s+(.*)/);
                         if (match) {
                             const text = match[2].trim();
-                            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                            tempHeadings.push({ 
-                                level: match[1].length, 
-                                text,
-                                id
-                            });
+                            const id = text.toLowerCase()
+                                .replace(/[^a-z0-9]+/g, '-')
+                                .replace(/(^-|-$)/g, '');
+                            tempHeadings.push({ level: match[1].length, text, id });
                         }
                     });
                     setHeadings(tempHeadings);
                 }
             } catch (err) {
                 console.error("Error fetching project data:", err);
-                setError("Failed to load project.");
+                setError("Failed to load project. Please try again.");
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchProject();
+        if (slug) {
+            fetchProject();
+        }
     }, [slug]);
 
     // Intersection Observer for active heading
@@ -193,7 +308,7 @@ const ProjectPage = () => {
         if (loading || !project) return;
 
         const observerOptions = {
-            rootMargin: '-80px 0px -70% 0px',
+            rootMargin: '-100px 0px -60% 0px',
             threshold: 0
         };
 
@@ -207,46 +322,83 @@ const ProjectPage = () => {
 
         const observer = new IntersectionObserver(observerCallback, observerOptions);
 
-        setTimeout(() => {
-            const headingElements = document.querySelectorAll('.project-content h1[id], .project-content h2[id], .project-content h3[id]');
+        const timer = setTimeout(() => {
+            const headingElements = document.querySelectorAll(
+                '.proj-content h1[id], .proj-content h2[id], .proj-content h3[id]'
+            );
             headingElements.forEach(heading => observer.observe(heading));
-        }, 100);
+        }, 200);
 
-        return () => observer.disconnect();
+        return () => {
+            clearTimeout(timer);
+            observer.disconnect();
+        };
     }, [loading, project]);
+
+    // Close mobile menu on escape key
+    useEffect(() => {
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') setMobileMenuOpen(false);
+        };
+        document.addEventListener('keydown', handleEscape);
+        return () => document.removeEventListener('keydown', handleEscape);
+    }, []);
 
     // Loading state
     if (loading) {
+        return <ProjectSkeleton />;
+    }
+
+    // Error state
+    if (error) {
         return (
-            <div className="project-page project-page--loading">
-                <div className="project-skeleton">
-                    <div className="project-skeleton__hero shimmer"></div>
-                    <div className="project-skeleton__content">
-                        <div className="project-skeleton__sidebar">
-                            <div className="project-skeleton__toc shimmer"></div>
-                        </div>
-                        <div className="project-skeleton__main">
-                            <div className="project-skeleton__line project-skeleton__line--xl shimmer"></div>
-                            <div className="project-skeleton__line project-skeleton__line--lg shimmer"></div>
-                            <div className="project-skeleton__line shimmer"></div>
-                            <div className="project-skeleton__line shimmer"></div>
-                            <div className="project-skeleton__line project-skeleton__line--md shimmer"></div>
-                        </div>
+            <div className="proj-page proj-page--error">
+                <div className="proj-error">
+                    <div className="proj-error__icon">⚠️</div>
+                    <h2 className="proj-error__title">Something went wrong</h2>
+                    <p className="proj-error__message">{error}</p>
+                    <div className="proj-error__actions">
+                        <button 
+                            className="proj-btn proj-btn--primary"
+                            onClick={() => window.location.reload()}
+                        >
+                            Try Again
+                        </button>
+                        <Link to="/projects" className="proj-btn proj-btn--outline">
+                            Back to Projects
+                        </Link>
                     </div>
                 </div>
             </div>
         );
     }
 
-    if (error) return <div className="project-error">{error}</div>;
-    if (!project) return <div className="project-error">Project not found.</div>;
+    // Not found state
+    if (!project) {
+        return (
+            <div className="proj-page proj-page--error">
+                <div className="proj-error">
+                    <div className="proj-error__icon">🔍</div>
+                    <h2 className="proj-error__title">Project Not Found</h2>
+                    <p className="proj-error__message">
+                        The project you're looking for doesn't exist or has been moved.
+                    </p>
+                    <Link to="/projects" className="proj-btn proj-btn--primary">
+                        Browse All Projects
+                    </Link>
+                </div>
+            </div>
+        );
+    }
 
+    // Extract project data
     const {
         Title, Github, Description, Category, Demo,
         End, Start, Teaser, video, Featured, Media
     } = project.attributes;
 
     const featuredImage = Featured?.data?.attributes?.formats?.large?.url || 
+                          Featured?.data?.attributes?.formats?.medium?.url ||
                           Featured?.data?.attributes?.url;
     
     const media = Media?.data?.map(item => {
@@ -258,81 +410,90 @@ const ProjectPage = () => {
 
     const readingTime = calculateReadingTime(Description);
     const projectUrl = `https://wanghley.com/projects/${slug}`;
+    const hasVideo = video?.url;
+    const hasGallery = media && media.length > 0;
 
     // Markdown components
     const markdownComponents = {
         h1: ({ children }) => {
             const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            return <h1 id={id} className="project-content__heading">{children}</h1>;
+            return <h1 id={id} className="proj-content__heading proj-content__heading--h1">{children}</h1>;
         },
         h2: ({ children }) => {
             const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            return <h2 id={id} className="project-content__heading">{children}</h2>;
+            return <h2 id={id} className="proj-content__heading proj-content__heading--h2">{children}</h2>;
         },
         h3: ({ children }) => {
             const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            return <h3 id={id} className="project-content__heading">{children}</h3>;
+            return <h3 id={id} className="proj-content__heading proj-content__heading--h3">{children}</h3>;
         },
         code: ({ node, inline, className, children, ...props }) => {
             const match = /language-(\w+)/.exec(className || '');
             return !inline ? (
-                <SyntaxHighlighter 
-                    style={oneDark} 
-                    language={match ? match[1] : ''} 
-                    PreTag="div"
-                    className="project-code-block"
-                    {...props}
-                >
-                    {String(children).replace(/\n$/, '')}
-                </SyntaxHighlighter>
+                <div className="proj-code-wrapper">
+                    {match && <span className="proj-code-lang">{match[1]}</span>}
+                    <SyntaxHighlighter 
+                        style={oneDark} 
+                        language={match ? match[1] : ''} 
+                        PreTag="div"
+                        className="proj-code-block"
+                        {...props}
+                    >
+                        {String(children).replace(/\n$/, '')}
+                    </SyntaxHighlighter>
+                </div>
             ) : (
-                <code className="project-inline-code" {...props}>{children}</code>
+                <code className="proj-inline-code" {...props}>{children}</code>
             );
         },
         table: ({ children }) => (
-            <div className="project-table-wrapper">
-                <table className="project-table">{children}</table>
+            <div className="proj-table-wrapper">
+                <table className="proj-table">{children}</table>
             </div>
         ),
         img: ({ src, alt }) => (
-            <figure className="project-figure">
+            <figure className="proj-figure">
                 <img src={src} alt={alt} loading="lazy" />
                 {alt && <figcaption>{alt}</figcaption>}
             </figure>
         ),
         blockquote: ({ children }) => (
-            <blockquote className="project-blockquote">{children}</blockquote>
+            <blockquote className="proj-blockquote">
+                <div className="proj-blockquote__icon">💡</div>
+                <div className="proj-blockquote__content">{children}</div>
+            </blockquote>
         ),
         a: ({ href, children }) => (
-            <a href={href} target="_blank" rel="noopener noreferrer" className="project-link">
+            <a 
+                href={href} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="proj-link"
+            >
                 {children}
-                <BsArrowUpRight className="project-link__icon" />
+                <BsArrowUpRight className="proj-link__icon" />
             </a>
         ),
+        ul: ({ children }) => <ul className="proj-list proj-list--ul">{children}</ul>,
+        ol: ({ children }) => <ol className="proj-list proj-list--ol">{children}</ol>,
+        li: ({ children }) => <li className="proj-list__item">{children}</li>,
+        p: ({ children }) => <p className="proj-paragraph">{children}</p>,
+        hr: () => <hr className="proj-divider" />,
     };
 
+    // Schema.org breadcrumb
     const breadcrumbSchema = {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
-        "itemListElement": [{
-            "@type": "ListItem",
-            "position": 1,
-            "name": "Home",
-            "item": "https://wanghley.com"
-        }, {
-            "@type": "ListItem",
-            "position": 2,
-            "name": "Projects",
-            "item": "https://wanghley.com/projects"
-        }, {
-            "@type": "ListItem",
-            "position": 3,
-            "name": Title
-        }]
+        "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://wanghley.com" },
+            { "@type": "ListItem", "position": 2, "name": "Projects", "item": "https://wanghley.com/projects" },
+            { "@type": "ListItem", "position": 3, "name": Title }
+        ]
     };
 
     return (
-        <article className="project-page">
+        <article className="proj-page">
             <Helmet>
                 <title>{Title} | Wanghley</title>
                 <meta name="description" content={Teaser || Description?.substring(0, 160)} />
@@ -349,64 +510,66 @@ const ProjectPage = () => {
             <ReadingProgress />
 
             {/* Hero Section */}
-            <header className="project-hero">
-                <div className="project-hero__background">
+            <header className="proj-hero">
+                <div className="proj-hero__bg">
                     {featuredImage && (
                         <img 
                             src={featuredImage} 
                             alt="" 
-                            className="project-hero__bg-image" 
+                            className="proj-hero__bg-img" 
                             aria-hidden="true"
                         />
                     )}
-                    <div className="project-hero__overlay"></div>
+                    <div className="proj-hero__overlay" />
+                    <div className="proj-hero__pattern" />
                 </div>
 
-                <div className="project-hero__container">
+                <div className="proj-hero__container">
                     {/* Breadcrumb */}
-                    <nav className="project-breadcrumb">
-                        <Link to="/projects" className="project-breadcrumb__link">
-                            <FaArrowLeft />
-                            <span>All Projects</span>
-                        </Link>
+                    <nav className="proj-breadcrumb" aria-label="Breadcrumb">
+                        <Link to="/" className="proj-breadcrumb__item">Home</Link>
+                        <BsChevronRight className="proj-breadcrumb__sep" />
+                        <Link to="/projects" className="proj-breadcrumb__item">Projects</Link>
+                        <BsChevronRight className="proj-breadcrumb__sep" />
+                        <span className="proj-breadcrumb__item proj-breadcrumb__item--current">{Title}</span>
                     </nav>
 
-                    {/* Meta Info */}
-                    <div className="project-hero__meta">
+                    {/* Meta Tags */}
+                    <div className="proj-hero__tags">
                         {Category && (
-                            <span className="project-hero__category">
+                            <span className="proj-tag proj-tag--category">
                                 <FaTag /> {Category}
                             </span>
                         )}
-                        <span className="project-hero__date">
+                        <span className="proj-tag">
                             <FaCalendarAlt />
                             {Start ? formatDate(Start) : 'N/A'}
                             {End && ` — ${formatDate(End)}`}
                         </span>
-                        <span className="project-hero__reading-time">
-                            📖 {readingTime} min read
+                        <span className="proj-tag">
+                            <FaClock /> {readingTime} min read
                         </span>
                     </div>
 
                     {/* Title */}
-                    <h1 className="project-hero__title">{Title}</h1>
+                    <h1 className="proj-hero__title">{Title}</h1>
 
                     {/* Teaser */}
                     {Teaser && (
-                        <p className="project-hero__teaser">{Teaser}</p>
+                        <p className="proj-hero__teaser">{Teaser}</p>
                     )}
 
                     {/* Action Buttons */}
-                    <div className="project-hero__actions">
+                    <div className="proj-hero__actions">
                         {Github && (
                             <a 
                                 href={Github} 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
-                                className="project-btn project-btn--github"
+                                className="proj-btn proj-btn--white"
                             >
                                 <FaGithub />
-                                <span>View Code</span>
+                                <span>View Source</span>
                             </a>
                         )}
                         {Demo && (
@@ -414,7 +577,7 @@ const ProjectPage = () => {
                                 href={Demo.includes('http') ? Demo : `https://${Demo}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
-                                className="project-btn project-btn--demo"
+                                className="proj-btn proj-btn--primary"
                             >
                                 <FaExternalLinkAlt />
                                 <span>Live Demo</span>
@@ -426,93 +589,55 @@ const ProjectPage = () => {
 
                 {/* Featured Image */}
                 {featuredImage && (
-                    <div className="project-hero__image-container">
-                        <img 
-                            src={featuredImage} 
-                            alt={Title} 
-                            className="project-hero__image"
-                        />
+                    <div className="proj-hero__image">
+                        <img src={featuredImage} alt={Title} />
                     </div>
                 )}
             </header>
 
-            {/* Main Content Area */}
-            <div className="project-layout">
-                {/* Mobile TOC Toggle */}
-                <button 
-                    className="project-mobile-toc-toggle"
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                >
-                    📑 Contents
-                </button>
-
-                {/* Mobile TOC */}
-                <div className={`project-mobile-toc ${mobileMenuOpen ? 'open' : ''}`}>
-                    <div className="project-mobile-toc__header">
-                        <span>Contents</span>
-                        <button onClick={() => setMobileMenuOpen(false)}>✕</button>
-                    </div>
-                    <ul className="project-mobile-toc__list">
-                        {headings.map((heading, index) => (
-                            <li key={index} className={`level-${heading.level}`}>
-                                <a 
-                                    href={`#${heading.id}`}
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    {heading.text}
-                                </a>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
+            {/* Main Content */}
+            <div className="proj-layout">
                 {/* Sidebar */}
-                <aside className="project-sidebar">
-                    <div className="project-sidebar__sticky">
+                <aside className="proj-sidebar">
+                    <div className="proj-sidebar__sticky">
                         <TableOfContents headings={headings} activeId={activeHeadingId} />
-                        
-                        {/* Quick Links */}
-                        <div className="project-quick-links">
-                            <h4>Quick Links</h4>
-                            <div className="project-quick-links__buttons">
-                                {Github && (
-                                    <a href={Github} target="_blank" rel="noopener noreferrer">
-                                        <FaGithub /> GitHub
-                                    </a>
-                                )}
-                                {Demo && (
-                                    <a href={Demo.includes('http') ? Demo : `https://${Demo}`} target="_blank" rel="noopener noreferrer">
-                                        <FaExternalLinkAlt /> Demo
-                                    </a>
-                                )}
-                            </div>
-                        </div>
+                        <QuickNav 
+                            hasGithub={!!Github}
+                            hasDemo={!!Demo}
+                            hasVideo={hasVideo}
+                            hasGallery={hasGallery}
+                            github={Github}
+                            demo={Demo}
+                        />
                     </div>
                 </aside>
 
-                {/* Main Content */}
-                <main className="project-main">
-                    {/* Content */}
-                    {Description && (
-                        <div className="project-content">
-                            <ReactMarkdown
-                                remarkPlugins={[remarkGfm, remarkMath]}
-                                rehypePlugins={[rehypeKatex]}
-                                components={markdownComponents}
-                            >
-                                {Description}
-                            </ReactMarkdown>
-                        </div>
-                    )}
+                {/* Main Content Area */}
+                <main className="proj-main" ref={contentRef}>
+                    {/* Content Card */}
+                    <div className="proj-content-card">
+                        {Description && (
+                            <div className="proj-content">
+                                <ReactMarkdown
+                                    remarkPlugins={[remarkGfm, remarkMath]}
+                                    rehypePlugins={[rehypeKatex]}
+                                    components={markdownComponents}
+                                >
+                                    {Description}
+                                </ReactMarkdown>
+                            </div>
+                        )}
+                    </div>
 
                     {/* Video Section */}
-                    {video?.url && (
-                        <section className="project-video">
-                            <h2 className="project-section-title">
-                                <HiSparkles /> Project Demo
-                            </h2>
-                            <div className="project-video__wrapper">
-                                <video controls>
+                    {hasVideo && (
+                        <section className="proj-section" id="video">
+                            <div className="proj-section__header">
+                                <HiSparkles className="proj-section__icon" />
+                                <h2 className="proj-section__title">Project Demo</h2>
+                            </div>
+                            <div className="proj-video">
+                                <video controls poster={featuredImage}>
                                     <source src={video.url} type="video/mp4" />
                                     Your browser does not support the video tag.
                                 </video>
@@ -520,25 +645,45 @@ const ProjectPage = () => {
                         </section>
                     )}
 
-                    {/* Media Gallery */}
-                    {media && media.length > 0 && (
-                        <section className="project-gallery" id="gallery">
-                            <h2 className="project-section-title">
-                                <HiSparkles /> Project Gallery
-                            </h2>
+                    {/* Gallery Section */}
+                    {hasGallery && (
+                        <section className="proj-section" id="gallery">
+                            <div className="proj-section__header">
+                                <FaImages className="proj-section__icon" />
+                                <h2 className="proj-section__title">Project Gallery</h2>
+                            </div>
                             <MediaGallery media={media} />
                         </section>
                     )}
 
-                    {/* Back to Projects */}
-                    <div className="project-footer">
-                        <Link to="/projects" className="project-footer__back">
+                    {/* Footer Navigation */}
+                    <div className="proj-footer">
+                        <Link to="/projects" className="proj-footer__back">
                             <FaArrowLeft />
                             <span>Back to All Projects</span>
                         </Link>
                     </div>
                 </main>
             </div>
+
+            {/* Mobile TOC Toggle */}
+            {headings.length > 0 && (
+                <button 
+                    className="proj-mobile-toggle"
+                    onClick={() => setMobileMenuOpen(true)}
+                    aria-label="Open table of contents"
+                >
+                    <FaBookOpen />
+                    <span>Contents</span>
+                </button>
+            )}
+
+            {/* Mobile TOC Drawer */}
+            <MobileTOC 
+                headings={headings} 
+                isOpen={mobileMenuOpen} 
+                onClose={() => setMobileMenuOpen(false)} 
+            />
 
             <BackToTop />
         </article>
