@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Contact, Footer } from '../components';
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 import './css/contact.css';
 
 const ContactPage = () => {

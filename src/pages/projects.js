@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { fetchProjects, fetchProjectsCount } from '../api/projects';
 import './css/projects.css';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async'; 
 import { FaSearch, FaArrowRight, FaFolder, FaCode, FaRocket, FaGithub, FaExternalLinkAlt, FaTimes, FaChevronUp, FaFilter } from 'react-icons/fa';
 import { HiSparkles } from 'react-icons/hi';
 import { IoClose, IoGridOutline, IoListOutline } from 'react-icons/io5';

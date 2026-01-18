@@ -5,8 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import './css/BlogPost.css';
-import { formatDate } from '../utils/formatDate'; // Update this import path if needed
-import { Helmet } from 'react-helmet';
+import { formatDate } from '../utils/formatDate';
+import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;

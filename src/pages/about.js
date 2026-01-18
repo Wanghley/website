@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Hero, About, Timeline, Contact, Skills,Footer, WhyMe, AboutText } from '../components'
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 import NavbarSpacer from '../components/NavbarSpacer';
 
 const AboutPage = () => {
