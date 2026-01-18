@@ -205,223 +205,581 @@ section:last-child {
 
 /* ===== CV Action Buttons ===== */
 .cv-actions {
+    position: fixed;
+    top: 90px; /* Below navbar */
+    right: 30px;
+    z-index: 100;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
     gap: 10px;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #e0e0e0;
+    background: white;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid #e0e0e0;
 }
 
 .cv-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: 12px 20px;
+    border-radius: 8px;
     font-weight: 600;
+    font-size: 0.9rem;
     cursor: pointer;
     border: none;
-    transition: all 0.2s;
+    transition: all 0.3s;
+    white-space: nowrap;
 }
 
 .cv-btn.primary {
-    background-color: var(--color-primary, #46A5DD);
+    background-color: #0e4194; /* Europass Blue */
     color: white;
 }
 
 .cv-btn.primary:hover {
-    background-color: var(--color-primary-hover, #21648A);
+    background-color: #0a2f6e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(14, 65, 148, 0.3);
 }
 
 .cv-note {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: #666;
     font-style: italic;
+    text-align: center;
+    margin-top: 5px;
+    max-width: 200px;
 }
 
-.only-print {
-    display: none;
+/* Hide on mobile */
+@media (max-width: 768px) {
+    .cv-actions {
+        position: static;
+        margin: 20px auto;
+        width: fit-content;
+    }
 }
 
-/* ===== PRINT / EUROPASS STYLING ===== */
+/* ===== CLEAN COMPACT PRINT STYLING ===== */
 @media print {
-    /* 1. Page Setup */
+    /* Page Setup */
     @page {
-        size: A4;
-        margin: 1.5cm;
+        size: A4 portrait;
+        margin: 15mm 12mm 15mm 12mm;
     }
     
-    body {
-        background-color: white;
-        font-family: Arial, sans-serif;
-        font-size: 11pt;
-        color: #000;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        box-sizing: border-box !important;
+    }
+    
+    html, body {
+        background: white !important;
+        font-family: 'Arial', 'Helvetica', sans-serif !important;
+        font-size: 9pt !important;
+        line-height: 1.35 !important;
+        color: #000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        overflow: visible !important;
     }
 
-    /* 2. Hide Elements not for CV */
+    /* Hide UI Elements */
     .no-print, 
     nav, 
     footer, 
     .navbar-spacer, 
-    .hero__scroll, 
-    .cv-actions {
+    .cv-actions,
+    button,
+    .hero__scroll,
+    .europass-label,
+    svg {
         display: none !important;
     }
 
-    /* 3. Reset Layout Container */
+    /* Main Container */
     .cv-page {
-        margin: 0;
-        padding: 0;
-        box-shadow: none;
-        max-width: 100%;
-        width: 100%;
-        border: none;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        border: none !important;
+        background: white !important;
+        border-radius: 0 !important;
+        overflow: visible !important;
     }
 
-    /* 4. Europass Header Look */
-    .europass-label {
-        display: block;
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #0e4194; /* Europass Blue */
-        margin-bottom: 20px;
-        text-transform: uppercase;
-        border-bottom: 2px solid #0e4194;
-    }
-
-    /* 5. Personal Info Section */
+    /* ========== PERSONAL INFO HEADER ========== */
     .personal-info {
-        margin-bottom: 30px;
-    }
-
-    .personal-info h2 {
-        color: #0e4194;
-        text-align: left;
-        font-size: 2rem !important;
-        margin: 0;
-    }
-
-    .personal-info h3 {
-        text-align: left;
-        color: #333;
-        margin-top: 5px;
-    }
-
-    .contact-info {
-        justify-content: flex-start;
-        flex-wrap: wrap;
-        gap: 15px;
-    }
-    
-    .contact-item svg {
-        color: #0e4194;
-    }
-
-    /* 6. Section Headers (Left Column Label Style) */
-    h2 {
-        font-size: 14pt;
-        color: #0e4194;
-        margin-top: 20px;
-        margin-bottom: 15px;
-        border-bottom: 1px solid #ccc;
-        padding-bottom: 5px;
+        margin: 0 0 8pt 0 !important;
+        padding: 0 !important;
+        text-align: center !important;
+        display: block !important;
+        width: 100% !important;
+        page-break-inside: avoid;
         page-break-after: avoid;
     }
 
-    /* 7. Grid Layout for Experience/Education (The "Europass Column" trick) */
-    /* We force list items to behave like a 2-column grid */
-    
-    .experience ul, .education-list, .publications ul {
-        display: block;
+    .personal-info h2 {
+        color: #000 !important;
+        font-size: 16pt !important;
+        font-weight: 700 !important;
+        margin: 0 0 2pt 0 !important;
+        padding: 0 !important;
+        text-align: center !important;
+        border: none !important;
+        text-transform: uppercase;
+        letter-spacing: 1pt;
+        width: 100% !important;
     }
 
-    .experience li, .education-item, .publication-item {
-        display: grid;
-        grid-template-columns: 140px 1fr; /* Left col for dates, Right row for content */
-        gap: 20px;
-        margin-bottom: 15px;
-        page-break-inside: avoid; /* Prevent cutting items in half */
+    .personal-info h3 {
+        font-size: 10pt !important;
+        color: #444 !important;
+        font-weight: 400 !important;
+        margin: 0 0 6pt 0 !important;
+        padding: 0 !important;
+        text-align: center !important;
+        font-style: italic;
+        width: 100% !important;
+        border: none !important;
     }
 
-    /* Force Dates to the left column */
-    .dates {
-        grid-column: 1;
-        font-weight: bold;
-        font-size: 0.9em;
-        color: #0e4194;
-        text-align: right;
-        margin-top: 4px; /* Align with title */
-    }
-
-    /* Force details to the right column */
-    .experience-details, 
-    .education-details,
-    .publication-header {
-        grid-column: 2;
-        width: 100%;
-        display: block; /* Override default flex */
-    }
-
-    /* Markdown/Descriptions */
-    .description, .authors {
-        grid-column: 2;
-        margin-top: 5px;
-        font-size: 10pt;
-        line-height: 1.4;
-        color: #333;
-    }
-
-    /* Titles inside items */
-    .experience-details h4, 
-    .education-item h3,
-    .publication-header h3 {
-        margin: 0;
-        font-size: 12pt;
-        font-weight: bold;
-        color: #000;
-    }
-
-    .company, .institution {
-        font-weight: 600;
-        color: #555;
-        display: block;
-    }
-
-    /* Fix flex layouts inside items creating conflicts */
-    .company-date-row {
-        display: contents; /* Removes this wrapper from layout flow to let grid take over */
+    /* Contact Info Row */
+    .contact-info {
+        display: block !important;
+        text-align: center !important;
+        margin: 0 !important;
+        padding: 6pt 0 0 0 !important;
+        border-top: 0.5pt solid #000;
+        font-size: 8pt !important;
+        width: 100% !important;
+        word-wrap: break-word !important;
     }
     
-    /* 8. Specific Fixes for Certifications & Skills */
-    .certifications-list {
-        grid-template-columns: 1fr 1fr; /* 2 columns for certs to save space */
-        gap: 15px;
+    .contact-item {
+        display: inline !important;
+        font-size: 8pt !important;
+        color: #000 !important;
+        margin: 0 6pt !important;
+        padding: 0 !important;
     }
 
-    .certification-item {
-        box-shadow: none;
-        border: 1px solid #eee;
+    .contact-item p {
+        display: inline !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .contact-info a {
+        color: #000 !important;
+        text-decoration: none !important;
+    }
+
+    hr {
+        border: none !important;
+        border-top: 0.5pt solid #000 !important;
+        margin: 6pt 0 !important;
+        width: 100% !important;
+    }
+
+    /* ========== SECTION STYLING ========== */
+    section {
+        margin: 0 0 10pt 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    section:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    /* Section Titles */
+    h2 {
+        font-size: 11pt !important;
+        color: #000 !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        margin: 10pt 0 6pt 0 !important;
+        padding: 0 0 2pt 0 !important;
+        border-bottom: 1pt solid #000 !important;
+        page-break-after: avoid;
+        letter-spacing: 0.5pt;
+        width: 100% !important;
+    }
+
+    h3 {
+        font-size: 9pt !important;
+        font-weight: 600 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: none !important;
+        color: #000 !important;
+    }
+
+    h4 {
+        font-size: 9pt !important;
+        font-weight: 500 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #000 !important;
+    }
+
+    /* ========== EDUCATION ========== */
+    .education {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .education ul {
+        list-style: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .education-item {
+        margin: 0 0 8pt 0 !important;
+        padding: 0 !important;
+        page-break-inside: avoid;
+        background: none !important;
+    }
+
+    .education-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline !important;
+        margin: 0 0 1pt 0 !important;
+        width: 100% !important;
+    }
+
+    .education-header h3 {
+        font-size: 10pt !important;
+        font-weight: 600 !important;
+        color: #000 !important;
+        flex: 1 !important;
+        margin-right: 10pt !important;
+    }
+
+    .education-header .dates,
+    .education .dates {
+        font-size: 9pt !important;
+        font-weight: 400 !important;
+        color: #000 !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+    }
+
+    .education-details {
+        display: block !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .education-details-left {
+        display: inline !important;
+    }
+
+    .education-details-left p {
+        display: inline !important;
+        margin: 0 !important;
+    }
+
+    .institution {
+        font-size: 9pt !important;
+        font-weight: 500 !important;
+        color: #000 !important;
+        text-transform: none !important;
+    }
+
+    .degree {
+        font-size: 9pt !important;
+        color: #333 !important;
+        font-style: italic !important;
+    }
+
+    .location {
+        font-size: 8pt !important;
+        color: #444 !important;
+        display: block !important;
+    }
+
+    /* ========== EXPERIENCE ========== */
+    .experience {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .experience ul {
+        list-style: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .experience-category {
+        margin: 0 0 8pt 0 !important;
+    }
+
+    .experience-category > h3 {
+        font-size: 10pt !important;
+        font-weight: 600 !important;
+        color: #000 !important;
+        margin: 6pt 0 4pt 0 !important;
+        padding-bottom: 2pt !important;
+        border-bottom: 0.5pt solid #666 !important;
+        text-transform: uppercase;
+    }
+
+    .experience-category li {
+        margin: 0 0 6pt 0 !important;
+        padding: 0 !important;
         page-break-inside: avoid;
     }
-    
-    .certification-action {
-        display: none; /* Hide buttons in print */
+
+    .experience-details {
+        width: 100% !important;
+    }
+
+    .company-date-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .company {
+        font-size: 9pt !important;
+        font-weight: 600 !important;
+        color: #000 !important;
+        flex: 1 !important;
+        margin-right: 10pt !important;
+    }
+
+    .dates {
+        font-size: 8pt !important;
+        font-weight: 400 !important;
+        color: #000 !important;
+        white-space: nowrap !important;
+        flex-shrink: 0 !important;
+    }
+
+    .location-row {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline !important;
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .location-row h4 {
+        flex: 1 !important;
+        margin-right: 10pt !important;
+    }
+
+    .location-row .location {
+        flex-shrink: 0 !important;
+    }
+
+    /* ========== DESCRIPTIONS ========== */
+    .description {
+        font-size: 8pt !important;
+        line-height: 1.3 !important;
+        color: #000 !important;
+        margin: 3pt 0 0 0 !important;
+        width: 100% !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+    }
+
+    .description p {
+        margin: 2pt 0 !important;
+        word-wrap: break-word !important;
+    }
+
+    .description ul {
+        margin: 2pt 0 2pt 12pt !important;
+        padding: 0 !important;
+    }
+
+    .description li {
+        margin: 1pt 0 !important;
+        font-size: 8pt !important;
+    }
+
+    /* ========== SKILLS ========== */
+    .skills-section {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .skill-category {
+        margin: 0 0 4pt 0 !important;
+        display: block !important;
+    }
+
+    .skill-category h3 {
+        font-size: 9pt !important;
+        font-weight: 600 !important;
+        display: inline !important;
+        margin: 0 4pt 0 0 !important;
+    }
+
+    .skill-category h3::after {
+        content: ": ";
     }
 
     .skill-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
+        display: inline !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .skill-item {
+        display: inline !important;
+        font-size: 8pt !important;
+    }
+
+    .skill-item::after {
+        content: " · ";
+    }
+
+    .skill-item:last-child::after {
+        content: "";
     }
 
     .skill-tag {
-        border: 1px solid #ccc;
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 9pt;
+        border: none !important;
+        background: none !important;
+        color: #000 !important;
+        padding: 0 !important;
+        font-size: 8pt !important;
+    }
+
+    .skill-bar,
+    .skill-score,
+    .skill-level {
+        display: none !important;
+    }
+
+    /* ========== PUBLICATIONS ========== */
+    .publication-list {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .publication-item {
+        margin: 0 0 6pt 0 !important;
+        page-break-inside: avoid;
+    }
+
+    .publication-item h3 {
+        font-size: 9pt !important;
+        font-weight: 600 !important;
+        margin: 0 0 1pt 0 !important;
+        color: #000 !important;
+    }
+
+    .journal {
+        font-size: 8pt !important;
+        color: #333 !important;
+        font-style: italic !important;
+    }
+
+    .publication-date {
+        font-size: 8pt !important;
+        color: #000 !important;
+    }
+
+    .authors {
+        font-size: 8pt !important;
+        color: #333 !important;
+        line-height: 1.3 !important;
+        margin: 1pt 0 !important;
+    }
+
+    .doi-link {
+        font-size: 7pt !important;
+        color: #000 !important;
+        margin: 1pt 0 0 0 !important;
+        word-break: break-all !important;
+    }
+
+    /* ========== CERTIFICATIONS ========== */
+    .certifications {
+        margin: 0 !important;
+    }
+
+    .certifications-list {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6pt !important;
+        margin: 4pt 0 0 0 !important;
+    }
+
+    .certification-card {
+        border: 0.5pt solid #999 !important;
+        padding: 4pt !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        background: white !important;
+    }
+
+    .certification-info h3 {
+        font-size: 8pt !important;
+        font-weight: 600 !important;
+        margin: 0 0 1pt 0 !important;
+        color: #000 !important;
+    }
+
+    .certification-info span,
+    .certification-info p {
+        font-size: 7pt !important;
+        color: #333 !important;
+        margin: 0 !important;
+    }
+
+    .certification-details,
+    .certification-date {
+        font-size: 7pt !important;
+        color: #666 !important;
+    }
+
+    .certification-action,
+    .show-credential-btn,
+    .certification-logo,
+    .certification-item a {
+        display: none !important;
+    }
+
+    /* ========== GENERAL CLEANUP ========== */
+    a {
+        color: #000 !important;
+        text-decoration: none !important;
+    }
+
+    a[href^="http"]:after,
+    a[href^="mailto"]:after {
+        content: none !important;
+    }
+
+    ul, ol {
+        margin: 0 !important;
+        padding-left: 14pt !important;
+    }
+
+    li {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    img {
+        display: none !important;
     }
 }

@@ -114,22 +114,18 @@ const CVPage = () => {
                 <meta property="og:image:alt" content="Wanghley's CV" />
             </Helmet>
 
-            {/* NEW: CV Actions Bar */}
+            {/* CV Actions Bar - FIXED POSITION */}
             <div className="cv-actions no-print">
                 <button className="cv-btn primary" onClick={() => window.print()}>
-                    <FaPrint /> Print / Save as PDF
+                    <FaPrint /> Print / Save PDF
                 </button>
                 <div className="cv-note">
-                    * To save as PDF, click Print and select "Save as PDF" as the destination.
+                    Click Print, then "Save as PDF"
                 </div>
             </div>
 
-            {/* Europass Header Label (Visible only on print) */}
-            <div className="europass-label only-print">Europass Curriculum Vitae</div>
-
-            {/* <h1>Curriculum Vitae</h1> */}
             <PersonalInfo personalInfo={personalInfo} />
-             <EducationList educations={educations} />
+            <EducationList educations={educations} />
             <ExperienceList experiences={experiences} />
             <SkillsList skills={skills} />
             <PublicationList publications={publications} />
