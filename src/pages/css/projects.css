@@ -499,43 +499,59 @@
     color: #ffffff;
 }
 
-/* ===== FILTERS PANEL ===== */
+/* ===== FILTERS PANEL - REDESIGNED ===== */
 .projects-filters {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.4s var(--p-transition), margin 0.4s var(--p-transition);
-    margin-bottom: 0;
-}
-
-.projects-filters--open {
-    grid-template-rows: 1fr;
+    display: none;
+    background: var(--p-bg);
+    border: 1px solid var(--p-border);
+    border-radius: var(--p-radius);
+    padding: 0;
     margin-bottom: 1.5rem;
-}
-
-.projects-filters > div,
-.projects-filters > button {
     overflow: hidden;
 }
 
-.projects-filters--open > div,
-.projects-filters--open > button {
-    padding-top: 1rem;
+.projects-filters--open {
+    display: block;
+}
+
+.projects-filters__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem;
 }
 
 .projects-filters__group {
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.projects-filters__group--categories {
+    flex: 1;
+    min-width: 200px;
+}
+
+.projects-filters__group--sort {
+    flex-shrink: 0;
+}
+
+.projects-filters__group--actions {
+    flex-shrink: 0;
+    justify-content: flex-end;
+    align-self: flex-end;
 }
 
 .projects-filters__label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--p-text-light);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--p-text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
 }
 
+/* Category Tags */
 .projects-filters__tags {
     display: flex;
     flex-wrap: wrap;
@@ -545,21 +561,22 @@
 .projects-filters__tag {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
+    gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background: var(--p-bg);
-    border: 1px solid var(--p-border);
-    border-radius: 999px;
+    background: var(--p-bg-alt);
+    border: 1px solid transparent;
+    border-radius: 8px;
     color: var(--p-text-light);
     font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all var(--p-transition);
+    transition: all 0.2s ease;
 }
 
 .projects-filters__tag:hover {
-    border-color: var(--p-primary);
-    color: var(--p-primary);
+    background: var(--p-bg);
+    border-color: var(--p-border);
+    color: var(--p-text);
 }
 
 .projects-filters__tag.active {
@@ -575,53 +592,121 @@
     min-width: 20px;
     height: 20px;
     padding: 0 6px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
     font-size: 0.7rem;
     font-weight: 700;
 }
 
-.projects-filters__sort {
-    display: flex;
+/* Sort Dropdown - Clean Modern Style */
+.projects-filters__sort-wrapper {
+    position: relative;
+    display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--p-text-light);
 }
 
 .projects-filters__select {
-    padding: 0.5rem 2rem 0.5rem 0.75rem;
-    background: var(--p-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 0.75rem center;
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 0.625rem 2.5rem 0.625rem 1rem;
+    background: var(--p-bg-alt);
     border: 1px solid var(--p-border);
     border-radius: 8px;
     font-size: 0.875rem;
+    font-weight: 500;
     color: var(--p-text);
     cursor: pointer;
-    appearance: none;
+    transition: all 0.2s ease;
+    min-width: 160px;
+}
+
+.projects-filters__select:hover {
+    border-color: var(--p-primary);
 }
 
 .projects-filters__select:focus {
     outline: none;
     border-color: var(--p-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+.projects-filters__sort-icon {
+    position: absolute;
+    right: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--p-text-muted);
+    font-size: 0.75rem;
+    pointer-events: none;
+}
+
+/* Clear Filters Button */
 .projects-filters__clear {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
-    padding: 0.5rem 1rem;
-    background: rgba(239, 68, 68, 0.08);
-    border: none;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.3);
     border-radius: 8px;
     color: #ef4444;
     font-size: 0.8rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background var(--p-transition);
+    transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .projects-filters__clear:hover {
     background: #ef4444;
+    border-color: #ef4444;
     color: #ffffff;
+}
+
+.projects-filters__clear svg {
+    font-size: 0.7rem;
+}
+
+/* ===== RESPONSIVE FILTERS ===== */
+@media (max-width: 768px) {
+    .projects-filters__inner {
+        flex-direction: column;
+        gap: 1.25rem;
+        padding: 1rem 1.25rem;
+    }
+
+    .projects-filters__group--sort,
+    .projects-filters__group--actions {
+        align-self: stretch;
+    }
+
+    .projects-filters__select {
+        width: 100%;
+    }
+
+    .projects-filters__tags {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.25rem;
+        margin: 0 -1.25rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .projects-filters__tags::-webkit-scrollbar {
+        display: none;
+    }
+
+    .projects-filters__tag {
+        flex-shrink: 0;
+    }
+
+    .projects-filters__clear {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* ===== RESULTS COUNT ===== */
@@ -1105,8 +1190,16 @@
     .projects-filters__tags {
         overflow-x: auto;
         flex-wrap: nowrap;
-        padding-bottom: 0.5rem;
+        padding-bottom: 0.25rem;
+        margin: 0 -1.25rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .projects-filters__tags::-webkit-scrollbar {
+        display: none;
     }
 
     .projects-filters__tag {

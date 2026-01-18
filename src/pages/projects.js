@@ -428,49 +428,57 @@ const Projects = () => {
 
                     {/* Filters Panel */}
                     <div className={`projects-filters ${filtersOpen ? 'projects-filters--open' : ''}`}>
-                        <div className="projects-filters__group">
-                            <label className="projects-filters__label">Category</label>
-                            <div className="projects-filters__tags">
-                                {categories.map(category => (
-                                    <button 
-                                        key={category}
-                                        className={`projects-filters__tag ${activeCategory === category ? 'active' : ''}`}
-                                        onClick={() => setActiveCategory(category)}
+                        <div className="projects-filters__inner">
+                            {/* Categories */}
+                            <div className="projects-filters__group projects-filters__group--categories">
+                                <label className="projects-filters__label">Category</label>
+                                <div className="projects-filters__tags">
+                                    {categories.map(category => (
+                                        <button 
+                                            key={category}
+                                            className={`projects-filters__tag ${activeCategory === category ? 'active' : ''}`}
+                                            onClick={() => setActiveCategory(category)}
+                                        >
+                                            {category}
+                                            {activeCategory === category && (
+                                                <span className="projects-filters__tag-count">
+                                                    {category === 'All' 
+                                                        ? totalProjects ?? projects.length 
+                                                        : projects.filter(p => p.attributes.Category === category).length}
+                                                </span>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Sort */}
+                            <div className="projects-filters__group projects-filters__group--sort">
+                                <label className="projects-filters__label">Sort by</label>
+                                <div className="projects-filters__sort-wrapper">
+                                    <select 
+                                        value={sortBy} 
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                        className="projects-filters__select"
                                     >
-                                        {category}
-                                        {activeCategory === category && (
-                                            <span className="projects-filters__tag-count">
-                                                {category === 'All' 
-                                                    ? totalProjects ?? projects.length 
-                                                    : projects.filter(p => p.attributes.Category === category).length}
-                                            </span>
-                                        )}
+                                        <option value="newest">Newest First</option>
+                                        <option value="oldest">Oldest First</option>
+                                        <option value="alphabetical">A → Z</option>
+                                    </select>
+                                    <BsSortDown className="projects-filters__sort-icon" />
+                                </div>
+                            </div>
+
+                            {/* Clear Filters */}
+                            {hasActiveFilters && (
+                                <div className="projects-filters__group projects-filters__group--actions">
+                                    <label className="projects-filters__label">&nbsp;</label>
+                                    <button className="projects-filters__clear" onClick={clearFilters}>
+                                        <FaTimes /> Clear all
                                     </button>
-                                ))}
-                            </div>
+                                </div>
+                            )}
                         </div>
-
-                        <div className="projects-filters__group">
-                            <label className="projects-filters__label">Sort by</label>
-                            <div className="projects-filters__sort">
-                                <BsSortDown />
-                                <select 
-                                    value={sortBy} 
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                    className="projects-filters__select"
-                                >
-                                    <option value="newest">Newest First</option>
-                                    <option value="oldest">Oldest First</option>
-                                    <option value="alphabetical">A → Z</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {hasActiveFilters && (
-                            <button className="projects-filters__clear" onClick={clearFilters}>
-                                <FaTimes /> Clear filters
-                            </button>
-                        )}
                     </div>
 
                     {/* Results Count */}
