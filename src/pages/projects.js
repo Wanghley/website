@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { fetchProjects } from '../api/projects';
+import { fetchProjects, fetchProjectsCount } from '../api/projects';
 import './css/projects.css';
 import { Helmet } from 'react-helmet';
 import { FaSearch, FaArrowRight, FaFolder, FaCode, FaRocket, FaGithub, FaExternalLinkAlt, FaTimes, FaChevronUp, FaFilter } from 'react-icons/fa';
@@ -177,6 +177,7 @@ const FeaturedProject = ({ project, loading }) => {
 // Main Projects Component
 const Projects = () => {
     const [projects, setProjects] = useState([]);
+    const [totalProjects, setTotalProjects] = useState(null); // Store total count from API
     const [loading, setLoading] = useState(true);
     const [initialLoading, setInitialLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -193,7 +194,16 @@ const Projects = () => {
     const loadProjects = useCallback(async (pageNum) => {
         try {
             setLoading(true);
-            const newProjects = await fetchProjects(pageNum);
+            const response = await fetchProjects(pageNum);
+            
+            // Extract projects and pagination info
+            const newProjects = response.data;
+            const pagination = response.meta?.pagination;
+
+            // Set total count from API on first load
+            if (pageNum === 1 && pagination?.total) {
+                setTotalProjects(pagination.total);
+            }
 
             if (newProjects && newProjects.length > 0) {
                 const allCategories = new Set(['All']);
@@ -210,6 +220,11 @@ const Projects = () => {
                 filteredProjects.forEach(project => uniqueProjectIds.current.add(project.id));
                 setProjects(prevProjects => [...prevProjects, ...filteredProjects]);
                 setPage(pageNum + 1);
+
+                // Check if there are more pages
+                if (pagination && pageNum >= pagination.pageCount) {
+                    setHasMore(false);
+                }
             } else {
                 setHasMore(false);
             }
@@ -287,8 +302,11 @@ const Projects = () => {
 
     const hasActiveFilters = searchTerm || activeCategory !== 'All' || sortBy !== 'newest';
 
+    // Use totalProjects from API, fallback to loaded count
+    const projectCount = totalProjects ?? projects.length;
+
     const stats = [
-        { icon: FaFolder, value: projects.length || '—', label: 'Projects' },
+        { icon: FaFolder, value: projectCount || '—', label: 'Projects' },
         { icon: FaCode, value: '20+', label: 'Technologies' },
         { icon: FaRocket, value: '15+', label: 'Deployed' },
     ];
@@ -423,7 +441,7 @@ const Projects = () => {
                                         {activeCategory === category && (
                                             <span className="projects-filters__tag-count">
                                                 {category === 'All' 
-                                                    ? projects.length 
+                                                    ? totalProjects ?? projects.length 
                                                     : projects.filter(p => p.attributes.Category === category).length}
                                             </span>
                                         )}
@@ -461,7 +479,11 @@ const Projects = () => {
                             <span>Loading projects...</span>
                         ) : (
                             <span>
-                                <strong>{filteredAndSortedProjects.length}</strong> project{filteredAndSortedProjects.length !== 1 ? 's' : ''}
+                                Showing <strong>{filteredAndSortedProjects.length}</strong>
+                                {totalProjects && totalProjects !== filteredAndSortedProjects.length && !hasActiveFilters && (
+                                    <> of <strong>{totalProjects}</strong></>
+                                )}
+                                {' '}project{filteredAndSortedProjects.length !== 1 ? 's' : ''}
                                 {activeCategory !== 'All' && <> in <em>{activeCategory}</em></>}
                                 {searchTerm && <> matching "<em>{searchTerm}</em>"</>}
                             </span>
@@ -515,7 +537,7 @@ const Projects = () => {
                     {!hasMore && !loading && filteredAndSortedProjects.length > 0 && (
                         <div className="projects-end">
                             <HiSparkles />
-                            <span>You've seen all projects</span>
+                            <span>You've seen all {totalProjects ?? projects.length} projects</span>
                         </div>
                     )}
                 </div>
