@@ -11,7 +11,7 @@ import ExperienceList from '../components/cv/ExperienceList';
 import PublicationList from '../components/cv/PublicationList';
 import CertificationsList from '../components/CertificationCard';
 import SkillsList from '../components/cv/SkillList';
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 import NavbarSpacer from '../components/NavbarSpacer';
 import { FaPrint, FaFileDownload } from "react-icons/fa"; // Add imports
 

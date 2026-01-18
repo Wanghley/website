@@ -16,7 +16,7 @@ import Blogs from './pages/blog'; // Import the Blogs component
 import BlogPostPage from './components/BlogPost'; // Import the BlogPostPage component
 import CVPage from './pages/cv'; // Import the CVPage component
 import ContactPage from './pages/contact'; // Import the ContactPage component
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 
 function App() {
   return (

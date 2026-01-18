@@ -4,7 +4,7 @@ import { fetchBlogs } from '../api/blog';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import './css/blog.css';
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 import { FaSearch, FaTags, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
 import NavbarSpacer from '../components/NavbarSpacer';
 

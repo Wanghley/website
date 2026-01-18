@@ -1,6 +1,6 @@
 import React, { lazy, Suspense } from "react";
 import { Hero, About, Contact, Skills, GridFeatured, GridFeaturedBlog } from '../components';
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 import './css/home.css';
 
 const BlogPost = lazy(() => import('../components/BlogPost'));
