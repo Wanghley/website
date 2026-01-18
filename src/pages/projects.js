@@ -1,27 +1,23 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { fetchProjects } from '../api/projects';
 import './css/projects.css';
 import { Helmet } from 'react-helmet';
-import { FaSearch, FaTags, FaArrowRight, FaFolder, FaCode, FaRocket, FaGithub, FaExternalLinkAlt, FaTimes, FaChevronDown } from 'react-icons/fa';
-import { HiSparkles, HiOutlineViewGrid, HiOutlineViewList } from 'react-icons/hi';
-import { BiFilterAlt } from 'react-icons/bi';
-import { IoClose } from 'react-icons/io5';
+import { FaSearch, FaArrowRight, FaFolder, FaCode, FaRocket, FaGithub, FaExternalLinkAlt, FaTimes, FaChevronUp, FaFilter } from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi';
+import { IoClose, IoGridOutline, IoListOutline } from 'react-icons/io5';
+import { BsCalendar3, BsSortDown } from 'react-icons/bs';
 import NavbarSpacer from '../components/NavbarSpacer';
 import { Link } from 'react-router-dom';
 
 // Skeleton Card Component
 const SkeletonCard = ({ variant = 'grid' }) => (
-    <div className={`project-skeleton-card ${variant === 'list' ? 'project-skeleton-card--list' : ''}`}>
-        <div className="project-skeleton-image shimmer"></div>
-        <div className="project-skeleton-content">
-            <div className="project-skeleton-category shimmer"></div>
-            <div className="project-skeleton-title shimmer"></div>
-            <div className="project-skeleton-text shimmer"></div>
-            <div className="project-skeleton-text short shimmer"></div>
-            <div className="project-skeleton-tags">
-                <div className="project-skeleton-tag shimmer"></div>
-                <div className="project-skeleton-tag shimmer"></div>
-            </div>
+    <div className={`project-card project-card--skeleton ${variant === 'list' ? 'project-card--list' : ''}`}>
+        <div className="project-card__image skeleton-shimmer"></div>
+        <div className="project-card__body">
+            <div className="skeleton-line skeleton-line--sm skeleton-shimmer"></div>
+            <div className="skeleton-line skeleton-line--lg skeleton-shimmer"></div>
+            <div className="skeleton-line skeleton-line--md skeleton-shimmer"></div>
+            <div className="skeleton-line skeleton-line--md skeleton-shimmer"></div>
         </div>
     </div>
 );
@@ -32,12 +28,12 @@ const ProjectCard = ({ project, variant = 'grid', index }) => {
     const imageUrl = Featured?.data?.attributes?.formats?.medium?.url || 
                      Featured?.data?.attributes?.formats?.small?.url ||
                      Featured?.data?.attributes?.url ||
-                     'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80';
+                     'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80';
     
     const formatDate = (dateString) => {
         if (!dateString) return '';
-        const options = { year: 'numeric', month: 'short' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
     };
 
     const cardRef = useRef(null);
@@ -54,136 +50,92 @@ const ProjectCard = ({ project, variant = 'grid', index }) => {
             { threshold: 0.1, rootMargin: '50px' }
         );
 
-        if (cardRef.current) {
-            observer.observe(cardRef.current);
-        }
-
+        if (cardRef.current) observer.observe(cardRef.current);
         return () => observer.disconnect();
     }, []);
 
-    if (variant === 'list') {
-        return (
-            <Link 
-                to={`/projects/${slug}`} 
-                className={`project-card project-card--list ${isVisible ? 'visible' : ''}`}
-                ref={cardRef}
-                style={{ '--delay': `${index * 0.05}s` }}
-            >
-                <div className="project-card__image-wrapper">
+    return (
+        <article 
+            ref={cardRef}
+            className={`project-card ${variant === 'list' ? 'project-card--list' : ''} ${isVisible ? 'project-card--visible' : ''}`}
+            style={{ '--index': index }}
+        >
+            <Link to={`/projects/${slug}`} className="project-card__link">
+                <div className="project-card__image-container">
                     <img 
                         src={imageUrl} 
                         alt={Title} 
                         className="project-card__image"
                         loading="lazy"
                     />
+                    <div className="project-card__image-overlay">
+                        <span className="project-card__cta">
+                            View Project <FaArrowRight />
+                        </span>
+                    </div>
+                    {Category && (
+                        <span className="project-card__category-badge">{Category}</span>
+                    )}
                 </div>
-                <div className="project-card__content">
+                
+                <div className="project-card__body">
                     <div className="project-card__meta">
-                        {Category && (
-                            <span className="project-card__category">{Category}</span>
-                        )}
                         {Start && (
-                            <span className="project-card__date">{formatDate(Start)}</span>
+                            <time className="project-card__date">
+                                <BsCalendar3 /> {formatDate(Start)}
+                            </time>
                         )}
                     </div>
+                    
                     <h3 className="project-card__title">{Title}</h3>
+                    
                     {Teaser && (
-                        <p className="project-card__teaser">{Teaser}</p>
+                        <p className="project-card__excerpt">{Teaser}</p>
                     )}
-                    <div className="project-card__actions">
-                        <span className="project-card__link">
-                            View Details <FaArrowRight />
+                    
+                    <div className="project-card__footer">
+                        <span className="project-card__read-more">
+                            Learn more <FaArrowRight />
                         </span>
-                        {Github && (
-                            <span className="project-card__icon-link" onClick={(e) => { e.preventDefault(); window.open(Github, '_blank'); }}>
-                                <FaGithub />
-                            </span>
-                        )}
-                        {Demo && (
-                            <span className="project-card__icon-link" onClick={(e) => { e.preventDefault(); window.open(Demo, '_blank'); }}>
-                                <FaExternalLinkAlt />
-                            </span>
-                        )}
+                        
+                        <div className="project-card__actions" onClick={(e) => e.preventDefault()}>
+                            {Github && (
+                                <button 
+                                    className="project-card__action-btn"
+                                    onClick={(e) => { e.stopPropagation(); window.open(Github, '_blank'); }}
+                                    aria-label="View source code"
+                                >
+                                    <FaGithub />
+                                </button>
+                            )}
+                            {Demo && (
+                                <button 
+                                    className="project-card__action-btn"
+                                    onClick={(e) => { e.stopPropagation(); window.open(Demo, '_blank'); }}
+                                    aria-label="View live demo"
+                                >
+                                    <FaExternalLinkAlt />
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </Link>
-        );
-    }
-
-    return (
-        <Link 
-            to={`/projects/${slug}`} 
-            className={`project-card ${isVisible ? 'visible' : ''}`}
-            ref={cardRef}
-            style={{ '--delay': `${index * 0.05}s` }}
-        >
-            <div className="project-card__image-wrapper">
-                <img 
-                    src={imageUrl} 
-                    alt={Title} 
-                    className="project-card__image"
-                    loading="lazy"
-                />
-                <div className="project-card__overlay">
-                    <span className="project-card__view">
-                        <FaArrowRight /> View Project
-                    </span>
-                </div>
-                {Category && (
-                    <span className="project-card__badge">{Category}</span>
-                )}
-            </div>
-            <div className="project-card__content">
-                <div className="project-card__meta">
-                    {Start && (
-                        <span className="project-card__date">{formatDate(Start)}</span>
-                    )}
-                </div>
-                <h3 className="project-card__title">{Title}</h3>
-                {Teaser && (
-                    <p className="project-card__teaser">{Teaser}</p>
-                )}
-                <div className="project-card__footer">
-                    <span className="project-card__read-more">
-                        Explore <FaArrowRight />
-                    </span>
-                    <div className="project-card__quick-links">
-                        {Github && (
-                            <span 
-                                className="project-card__quick-link" 
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(Github, '_blank'); }}
-                                title="View Source"
-                            >
-                                <FaGithub />
-                            </span>
-                        )}
-                        {Demo && (
-                            <span 
-                                className="project-card__quick-link" 
-                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(Demo, '_blank'); }}
-                                title="Live Demo"
-                            >
-                                <FaExternalLinkAlt />
-                            </span>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </Link>
+        </article>
     );
 };
 
-// Featured Hero Card Component
-const FeaturedHeroCard = ({ project, loading }) => {
+// Featured Project Component
+const FeaturedProject = ({ project, loading }) => {
     if (loading) {
         return (
-            <div className="projects-hero__featured-skeleton">
-                <div className="skeleton-image shimmer"></div>
-                <div className="skeleton-content">
-                    <div className="skeleton-category shimmer"></div>
-                    <div className="skeleton-title shimmer"></div>
-                    <div className="skeleton-text shimmer"></div>
-                    <div className="skeleton-text short shimmer"></div>
+            <div className="featured-project featured-project--skeleton">
+                <div className="featured-project__image skeleton-shimmer"></div>
+                <div className="featured-project__content">
+                    <div className="skeleton-line skeleton-line--sm skeleton-shimmer"></div>
+                    <div className="skeleton-line skeleton-line--xl skeleton-shimmer"></div>
+                    <div className="skeleton-line skeleton-line--lg skeleton-shimmer"></div>
+                    <div className="skeleton-line skeleton-line--md skeleton-shimmer"></div>
                 </div>
             </div>
         );
@@ -194,36 +146,35 @@ const FeaturedHeroCard = ({ project, loading }) => {
     const { Title, Teaser, Category, slug, Featured, Start } = project.attributes;
     const imageUrl = Featured?.data?.attributes?.formats?.large?.url || 
                      Featured?.data?.attributes?.formats?.medium?.url || 
-                     'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80';
+                     'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800&q=80';
 
     const formatDate = (dateString) => {
         if (!dateString) return '';
-        const options = { year: 'numeric', month: 'long' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return new Date(dateString).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     };
 
     return (
-        <Link to={`/projects/${slug}`} className="projects-hero__featured-card">
-            <div className="projects-hero__featured-image">
-                <img src={imageUrl} alt={Title} />
-                <div className="projects-hero__featured-gradient"></div>
+        <Link to={`/projects/${slug}`} className="featured-project">
+            <div className="featured-project__image-wrapper">
+                <img src={imageUrl} alt={Title} className="featured-project__image" />
+                <div className="featured-project__gradient"></div>
             </div>
-            <div className="projects-hero__featured-content">
-                <div className="projects-hero__featured-meta">
-                    {Category && <span className="projects-hero__featured-category">{Category}</span>}
-                    {Start && <span className="projects-hero__featured-date">{formatDate(Start)}</span>}
+            <div className="featured-project__content">
+                <div className="featured-project__meta">
+                    {Category && <span className="featured-project__category">{Category}</span>}
+                    {Start && <time className="featured-project__date">{formatDate(Start)}</time>}
                 </div>
-                <h3>{Title}</h3>
-                <p>{Teaser}</p>
-                <span className="projects-hero__featured-link">
-                    <span>View Project</span>
-                    <FaArrowRight />
+                <h3 className="featured-project__title">{Title}</h3>
+                {Teaser && <p className="featured-project__excerpt">{Teaser}</p>}
+                <span className="featured-project__link">
+                    Explore Project <FaArrowRight />
                 </span>
             </div>
         </Link>
     );
 };
 
+// Main Projects Component
 const Projects = () => {
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -233,16 +184,11 @@ const Projects = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
     const [categories, setCategories] = useState(['All']);
-    const [isVisible, setIsVisible] = useState(false);
     const [viewMode, setViewMode] = useState('grid');
     const [sortBy, setSortBy] = useState('newest');
-    const [showFilters, setShowFilters] = useState(false);
+    const [filtersOpen, setFiltersOpen] = useState(false);
     const uniqueProjectIds = useRef(new Set());
     const searchInputRef = useRef(null);
-
-    useEffect(() => {
-        setIsVisible(true);
-    }, []);
 
     const loadProjects = useCallback(async (pageNum) => {
         try {
@@ -283,9 +229,7 @@ const Projects = () => {
     const handleScroll = useCallback(() => {
         if (loading || !hasMore) return;
         const isBottom = window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 400;
-        if (isBottom) {
-            loadProjects(page);
-        }
+        if (isBottom) loadProjects(page);
     }, [loading, hasMore, page, loadProjects]);
 
     useEffect(() => {
@@ -310,11 +254,11 @@ const Projects = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    const filteredAndSortedProjects = React.useMemo(() => {
+    const filteredAndSortedProjects = useMemo(() => {
         let result = projects.filter(project => {
-            const matchesSearch = project.attributes.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                 (project.attributes.Teaser && project.attributes.Teaser.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                                 (project.attributes.Description && project.attributes.Description.toLowerCase().includes(searchTerm.toLowerCase()));
+            const matchesSearch = 
+                project.attributes.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (project.attributes.Teaser && project.attributes.Teaser.toLowerCase().includes(searchTerm.toLowerCase()));
             
             const matchesCategory = activeCategory === 'All' || 
                                    project.attributes.Category === activeCategory;
@@ -322,7 +266,6 @@ const Projects = () => {
             return matchesSearch && matchesCategory;
         });
 
-        // Sort
         if (sortBy === 'newest') {
             result.sort((a, b) => new Date(b.attributes.Start) - new Date(a.attributes.Start));
         } else if (sortBy === 'oldest') {
@@ -336,12 +279,6 @@ const Projects = () => {
 
     const latestProject = projects.length > 0 ? projects[0] : null;
 
-    const stats = [
-        { icon: FaFolder, label: 'Projects', value: projects.length || '—' },
-        { icon: FaCode, label: 'Technologies', value: '20+' },
-        { icon: FaRocket, label: 'Deployed', value: '15+' },
-    ];
-
     const clearFilters = () => {
         setSearchTerm('');
         setActiveCategory('All');
@@ -350,208 +287,192 @@ const Projects = () => {
 
     const hasActiveFilters = searchTerm || activeCategory !== 'All' || sortBy !== 'newest';
 
+    const stats = [
+        { icon: FaFolder, value: projects.length || '—', label: 'Projects' },
+        { icon: FaCode, value: '20+', label: 'Technologies' },
+        { icon: FaRocket, value: '15+', label: 'Deployed' },
+    ];
+
     return (
         <div className="projects-page">
             <Helmet>
                 <title>Projects | Wanghley - Engineering & Innovation</title>
-                <meta name="description" content="Explore a diverse range of projects I've worked on, showcasing my skills and expertise in AI, health tech, and software engineering." />
+                <meta name="description" content="Explore a diverse range of projects showcasing skills in AI, health tech, and software engineering." />
                 <link rel="canonical" href="https://wanghley.com/projects" />
                 <meta name="keywords" content="Projects, Wanghley, Portfolio, AI, Health Tech, Software Engineering" />
-                <meta name="author" content="Wanghley" />
-                <meta name="robots" content="index, follow" />
                 <meta property="og:title" content="Wanghley's Projects" />
-                <meta property="og:description" content="Explore a diverse range of projects showcasing skills in AI, health tech, and software engineering." />
+                <meta property="og:description" content="Explore projects showcasing skills in AI, health tech, and software engineering." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://wanghley.com/projects" />
-                <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1740099778/projects/large_e851a845_4eab_40ea_adc8_11bb99b908e8_fcd76cabf2.jpg" />
-                <meta property="og:site_name" content="Wanghley – Sci&Tech" />
             </Helmet>
             
             <NavbarSpacer />
 
-            {/* Hero Section */}
-            <section className={`projects-hero ${isVisible ? 'visible' : ''}`}>
-                <div className="projects-hero__bg">
-                    <div className="projects-hero__gradient projects-hero__gradient--1"></div>
-                    <div className="projects-hero__gradient projects-hero__gradient--2"></div>
-                    <div className="projects-hero__gradient projects-hero__gradient--3"></div>
+            {/* ===== HERO SECTION ===== */}
+            <header className="projects-hero">
+                <div className="projects-hero__background">
+                    <div className="projects-hero__orb projects-hero__orb--1"></div>
+                    <div className="projects-hero__orb projects-hero__orb--2"></div>
                     <div className="projects-hero__grid"></div>
-                    <div className="projects-hero__particles">
-                        {[...Array(20)].map((_, i) => (
-                            <div key={i} className="projects-hero__particle" style={{
-                                '--x': `${Math.random() * 100}%`,
-                                '--y': `${Math.random() * 100}%`,
-                                '--duration': `${15 + Math.random() * 20}s`,
-                                '--delay': `${Math.random() * 5}s`
-                            }}></div>
-                        ))}
-                    </div>
                 </div>
 
-                <div className="projects-hero__content">
-                    <span className="projects-hero__label">
-                        <HiSparkles /> Portfolio
-                    </span>
-                    <h1 className="projects-hero__title">
-                        <span className="projects-hero__title-line">Engineering</span>
-                        <span className="projects-hero__title-accent">Innovation</span>
-                    </h1>
-                    <p className="projects-hero__subtitle">
-                        From concept to deployment — exploring the intersection of technology, health, and social impact through hands-on engineering.
-                    </p>
+                <div className="projects-hero__container">
+                    <div className="projects-hero__text">
+                        <span className="projects-hero__badge">
+                            <HiSparkles /> Portfolio
+                        </span>
+                        
+                        <h1 className="projects-hero__title">
+                            Building the <span className="projects-hero__title-highlight">Future</span>
+                        </h1>
+                        
+                        <p className="projects-hero__subtitle">
+                            From concept to deployment — exploring the intersection of technology, 
+                            health, and social impact through hands-on engineering.
+                        </p>
 
-                    <div className="projects-hero__stats">
-                        {stats.map((stat, index) => (
-                            <div key={index} className="projects-hero__stat" style={{ '--delay': `${index * 0.1}s` }}>
-                                <div className="projects-hero__stat-icon-wrapper">
+                        <div className="projects-hero__stats">
+                            {stats.map((stat, i) => (
+                                <div key={i} className="projects-hero__stat">
                                     <stat.icon className="projects-hero__stat-icon" />
+                                    <strong className="projects-hero__stat-value">{stat.value}</strong>
+                                    <span className="projects-hero__stat-label">{stat.label}</span>
                                 </div>
-                                <span className="projects-hero__stat-value">{stat.value}</span>
-                                <span className="projects-hero__stat-label">{stat.label}</span>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
 
-                    <div className="projects-hero__scroll-indicator">
-                        <span>Scroll to explore</span>
-                        <FaChevronDown className="projects-hero__scroll-icon" />
+                    <div className="projects-hero__featured">
+                        <span className="projects-hero__featured-badge">
+                            <HiSparkles /> Latest Project
+                        </span>
+                        <FeaturedProject project={latestProject} loading={initialLoading} />
                     </div>
                 </div>
+            </header>
 
-                {/* Featured Project Preview */}
-                <div className="projects-hero__featured">
-                    <span className="projects-hero__featured-label">
-                        <HiSparkles /> Latest Project
-                    </span>
-                    <FeaturedHeroCard project={latestProject} loading={initialLoading} />
-                </div>
-            </section>
-
-            {/* Main Content */}
-            <section className="projects-main">
-                <div className="projects-container">
-                    {/* Search & Filter Bar */}
-                    <div className={`projects-controls ${isVisible ? 'visible' : ''}`}>
-                        <div className="projects-controls__top">
-                            <div className="projects-search">
-                                <FaSearch className="projects-search__icon" />
-                                <input 
-                                    ref={searchInputRef}
-                                    type="text" 
-                                    placeholder="Search projects..." 
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="projects-search__input"
-                                />
-                                <kbd className="projects-search__shortcut">⌘K</kbd>
-                                {searchTerm && (
-                                    <button 
-                                        className="projects-search__clear"
-                                        onClick={() => setSearchTerm('')}
-                                        aria-label="Clear search"
-                                    >
-                                        <IoClose />
-                                    </button>
-                                )}
-                            </div>
-
-                            <div className="projects-controls__actions">
+            {/* ===== MAIN CONTENT ===== */}
+            <main className="projects-body">
+                <div className="projects-body__container">
+                    
+                    {/* Toolbar */}
+                    <div className="projects-toolbar">
+                        <div className="projects-toolbar__search">
+                            <FaSearch className="projects-toolbar__search-icon" />
+                            <input 
+                                ref={searchInputRef}
+                                type="text"
+                                placeholder="Search projects..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="projects-toolbar__search-input"
+                            />
+                            <kbd className="projects-toolbar__shortcut">⌘K</kbd>
+                            {searchTerm && (
                                 <button 
-                                    className={`projects-filter-toggle ${showFilters ? 'active' : ''}`}
-                                    onClick={() => setShowFilters(!showFilters)}
+                                    className="projects-toolbar__search-clear"
+                                    onClick={() => setSearchTerm('')}
+                                    aria-label="Clear search"
                                 >
-                                    <BiFilterAlt />
-                                    <span>Filters</span>
-                                    {hasActiveFilters && <span className="projects-filter-toggle__badge"></span>}
+                                    <IoClose />
                                 </button>
+                            )}
+                        </div>
 
-                                <div className="projects-view-toggle">
+                        <div className="projects-toolbar__actions">
+                            <button 
+                                className={`projects-toolbar__filter-btn ${filtersOpen ? 'active' : ''}`}
+                                onClick={() => setFiltersOpen(!filtersOpen)}
+                            >
+                                <FaFilter />
+                                <span>Filters</span>
+                                {hasActiveFilters && <span className="projects-toolbar__filter-dot"></span>}
+                            </button>
+
+                            <div className="projects-toolbar__view-toggle">
+                                <button 
+                                    className={`projects-toolbar__view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                                    onClick={() => setViewMode('grid')}
+                                    aria-label="Grid view"
+                                >
+                                    <IoGridOutline />
+                                </button>
+                                <button 
+                                    className={`projects-toolbar__view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                                    onClick={() => setViewMode('list')}
+                                    aria-label="List view"
+                                >
+                                    <IoListOutline />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Filters Panel */}
+                    <div className={`projects-filters ${filtersOpen ? 'projects-filters--open' : ''}`}>
+                        <div className="projects-filters__group">
+                            <label className="projects-filters__label">Category</label>
+                            <div className="projects-filters__tags">
+                                {categories.map(category => (
                                     <button 
-                                        className={`projects-view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                                        onClick={() => setViewMode('grid')}
-                                        aria-label="Grid view"
+                                        key={category}
+                                        className={`projects-filters__tag ${activeCategory === category ? 'active' : ''}`}
+                                        onClick={() => setActiveCategory(category)}
                                     >
-                                        <HiOutlineViewGrid />
+                                        {category}
+                                        {activeCategory === category && (
+                                            <span className="projects-filters__tag-count">
+                                                {category === 'All' 
+                                                    ? projects.length 
+                                                    : projects.filter(p => p.attributes.Category === category).length}
+                                            </span>
+                                        )}
                                     </button>
-                                    <button 
-                                        className={`projects-view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                                        onClick={() => setViewMode('list')}
-                                        aria-label="List view"
-                                    >
-                                        <HiOutlineViewList />
-                                    </button>
-                                </div>
+                                ))}
                             </div>
                         </div>
 
-                        {/* Expandable Filters */}
-                        <div className={`projects-controls__filters ${showFilters ? 'expanded' : ''}`}>
-                            <div className="projects-filters">
-                                <span className="projects-filters__label">
-                                    <FaTags /> Categories:
-                                </span>
-                                <div className="projects-filters__list">
-                                    {categories.map(category => (
-                                        <button 
-                                            key={category}
-                                            className={`projects-filter-btn ${activeCategory === category ? 'active' : ''}`}
-                                            onClick={() => setActiveCategory(category)}
-                                        >
-                                            {category}
-                                            {activeCategory === category && (
-                                                <span className="projects-filter-btn__count">
-                                                    {category === 'All' 
-                                                        ? projects.length 
-                                                        : projects.filter(p => p.attributes.Category === category).length
-                                                    }
-                                                </span>
-                                            )}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="projects-sort">
-                                <label className="projects-sort__label">Sort by:</label>
+                        <div className="projects-filters__group">
+                            <label className="projects-filters__label">Sort by</label>
+                            <div className="projects-filters__sort">
+                                <BsSortDown />
                                 <select 
                                     value={sortBy} 
                                     onChange={(e) => setSortBy(e.target.value)}
-                                    className="projects-sort__select"
+                                    className="projects-filters__select"
                                 >
                                     <option value="newest">Newest First</option>
                                     <option value="oldest">Oldest First</option>
-                                    <option value="alphabetical">A-Z</option>
+                                    <option value="alphabetical">A → Z</option>
                                 </select>
                             </div>
-
-                            {hasActiveFilters && (
-                                <button className="projects-clear-filters" onClick={clearFilters}>
-                                    <FaTimes /> Clear all filters
-                                </button>
-                            )}
                         </div>
+
+                        {hasActiveFilters && (
+                            <button className="projects-filters__clear" onClick={clearFilters}>
+                                <FaTimes /> Clear filters
+                            </button>
+                        )}
                     </div>
 
-                    {/* Results Info */}
-                    <div className="projects-results-info">
-                        <span className="projects-results-info__count">
-                            {initialLoading ? (
-                                <span className="projects-results-info__loading">Loading projects...</span>
-                            ) : (
-                                <>
-                                    <strong>{filteredAndSortedProjects.length}</strong> project{filteredAndSortedProjects.length !== 1 ? 's' : ''} found
-                                    {activeCategory !== 'All' && <span> in <em>{activeCategory}</em></span>}
-                                    {searchTerm && <span> matching "<em>{searchTerm}</em>"</span>}
-                                </>
-                            )}
-                        </span>
+                    {/* Results Count */}
+                    <div className="projects-results">
+                        {initialLoading ? (
+                            <span>Loading projects...</span>
+                        ) : (
+                            <span>
+                                <strong>{filteredAndSortedProjects.length}</strong> project{filteredAndSortedProjects.length !== 1 ? 's' : ''}
+                                {activeCategory !== 'All' && <> in <em>{activeCategory}</em></>}
+                                {searchTerm && <> matching "<em>{searchTerm}</em>"</>}
+                            </span>
+                        )}
                     </div>
 
                     {/* Projects Grid */}
                     {initialLoading ? (
                         <div className={`projects-grid ${viewMode === 'list' ? 'projects-grid--list' : ''}`}>
-                            {Array.from({ length: 6 }).map((_, index) => (
-                                <SkeletonCard key={index} variant={viewMode} />
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <SkeletonCard key={i} variant={viewMode} />
                             ))}
                         </div>
                     ) : filteredAndSortedProjects.length > 0 ? (
@@ -567,50 +488,40 @@ const Projects = () => {
                         </div>
                     ) : (
                         <div className="projects-empty">
-                            <div className="projects-empty__illustration">
+                            <div className="projects-empty__icon">
                                 <FaFolder />
-                                <div className="projects-empty__circles">
-                                    <div className="projects-empty__circle"></div>
-                                    <div className="projects-empty__circle"></div>
-                                    <div className="projects-empty__circle"></div>
-                                </div>
                             </div>
-                            <h3>No projects found</h3>
-                            <p>We couldn't find any projects matching your criteria. Try adjusting your search or filters.</p>
-                            <button className="projects-empty__reset" onClick={clearFilters}>
-                                <FaTimes /> Clear all filters
+                            <h3 className="projects-empty__title">No projects found</h3>
+                            <p className="projects-empty__text">
+                                Try adjusting your search or filter criteria.
+                            </p>
+                            <button className="projects-empty__btn" onClick={clearFilters}>
+                                Clear all filters
                             </button>
                         </div>
                     )}
 
-                    {/* Load More Indicator */}
+                    {/* Loading More */}
                     {loading && !initialLoading && (
                         <div className="projects-loading">
-                            <div className="projects-loading__spinner">
-                                <div className="projects-loading__dot"></div>
-                                <div className="projects-loading__dot"></div>
-                                <div className="projects-loading__dot"></div>
+                            <div className="projects-loading__dots">
+                                <span></span><span></span><span></span>
                             </div>
-                            <span>Loading more projects...</span>
+                            <p>Loading more projects...</p>
                         </div>
                     )}
 
-                    {/* End of Content */}
+                    {/* End Message */}
                     {!hasMore && !loading && filteredAndSortedProjects.length > 0 && (
                         <div className="projects-end">
-                            <div className="projects-end__content">
-                                <div className="projects-end__icon">
-                                    <HiSparkles />
-                                </div>
-                                <span>You've explored all projects</span>
-                                <p>Check back later for new additions</p>
-                            </div>
+                            <HiSparkles />
+                            <span>You've seen all projects</span>
                         </div>
                     )}
                 </div>
-            </section>
+            </main>
 
-            {/* Back to Top Button */}
+            {/* Back to Top */}
             <BackToTop />
         </div>
     );
@@ -618,28 +529,21 @@ const Projects = () => {
 
 // Back to Top Component
 const BackToTop = () => {
-    const [isVisible, setIsVisible] = useState(false);
+    const [visible, setVisible] = useState(false);
 
     useEffect(() => {
-        const toggleVisibility = () => {
-            setIsVisible(window.pageYOffset > 500);
-        };
-
+        const toggleVisibility = () => setVisible(window.pageYOffset > 500);
         window.addEventListener('scroll', toggleVisibility);
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
     return (
         <button 
-            className={`back-to-top ${isVisible ? 'visible' : ''}`}
-            onClick={scrollToTop}
+            className={`back-to-top ${visible ? 'back-to-top--visible' : ''}`}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             aria-label="Back to top"
         >
-            <FaChevronDown style={{ transform: 'rotate(180deg)' }} />
+            <FaChevronUp />
         </button>
     );
 };
