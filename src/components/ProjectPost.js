@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
@@ -17,12 +17,139 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeRaw from 'rehype-raw';
 import 'katex/dist/katex.min.css';
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 import MediaGallery from './ProjectMediaGallery';
+import mermaid from 'mermaid';
 
 const baseURL = process.env.REACT_APP_cms_base_url;
 const apiKey = process.env.REACT_APP_cms_api_token;
+
+// Initialize Mermaid once - outside component to prevent re-initialization
+let mermaidInitialized = false;
+const initializeMermaid = () => {
+    if (mermaidInitialized) return;
+    
+    mermaid.initialize({
+        startOnLoad: false,
+        theme: 'neutral',
+        securityLevel: 'loose',
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        flowchart: {
+            useMaxWidth: true,
+            htmlLabels: true,
+            curve: 'basis',
+        },
+        sequence: {
+            useMaxWidth: true,
+        },
+        themeVariables: {
+            primaryColor: '#3b82f6',
+            primaryTextColor: '#1e293b',
+            primaryBorderColor: '#2563eb',
+            lineColor: '#64748b',
+            secondaryColor: '#f1f5f9',
+            tertiaryColor: '#f8fafc',
+            background: '#ffffff',
+            mainBkg: '#ffffff',
+            nodeBorder: '#e2e8f0',
+            clusterBkg: '#f8fafc',
+            clusterBorder: '#e2e8f0',
+            titleColor: '#1e293b',
+            edgeLabelBackground: '#ffffff',
+        },
+    });
+    mermaidInitialized = true;
+};
+
+// Mermaid Diagram Component - Optimized
+const MermaidDiagram = React.memo(({ code }) => {
+    const [svg, setSvg] = useState('');
+    const [error, setError] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const idRef = useRef(`mermaid-${Math.random().toString(36).substr(2, 9)}`);
+
+    useEffect(() => {
+        if (!code) {
+            setIsLoading(false);
+            return;
+        }
+
+        let isMounted = true;
+        
+        const renderDiagram = async () => {
+            try {
+                initializeMermaid();
+                
+                // Clear any previous diagram with the same ID
+                const existingElement = document.getElementById(idRef.current);
+                if (existingElement) {
+                    existingElement.remove();
+                }
+
+                const { svg: renderedSvg } = await mermaid.render(idRef.current, code.trim());
+                
+                if (isMounted) {
+                    setSvg(renderedSvg);
+                    setError(null);
+                }
+            } catch (err) {
+                console.error('Mermaid rendering error:', err);
+                if (isMounted) {
+                    setError(err.message || 'Failed to render diagram');
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        // Small delay to prevent blocking
+        const timeoutId = setTimeout(renderDiagram, 50);
+        
+        return () => {
+            isMounted = false;
+            clearTimeout(timeoutId);
+        };
+    }, [code]);
+
+    if (isLoading) {
+        return (
+            <div className="proj-mermaid proj-mermaid--loading">
+                <div className="proj-mermaid__spinner"></div>
+                <span>Rendering diagram...</span>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="proj-mermaid proj-mermaid--error">
+                <span className="proj-mermaid__error-icon">⚠️</span>
+                <span>Failed to render diagram</span>
+                <details>
+                    <summary>Show error details</summary>
+                    <pre>{error}</pre>
+                </details>
+            </div>
+        );
+    }
+
+    if (!svg) {
+        return null;
+    }
+
+    return (
+        <div 
+            className="proj-mermaid"
+            dangerouslySetInnerHTML={{ __html: svg }}
+        />
+    );
+});
+
+MermaidDiagram.displayName = 'MermaidDiagram';
 
 // Reading time calculator
 const calculateReadingTime = (text) => {
@@ -44,12 +171,12 @@ const copyToClipboard = async (text) => {
 };
 
 // Back to Top Button Component
-const BackToTop = () => {
+const BackToTop = React.memo(() => {
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
         const toggleVisibility = () => setVisible(window.pageYOffset > 500);
-        window.addEventListener('scroll', toggleVisibility);
+        window.addEventListener('scroll', toggleVisibility, { passive: true });
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
@@ -62,10 +189,12 @@ const BackToTop = () => {
             <FaChevronUp />
         </button>
     );
-};
+});
+
+BackToTop.displayName = 'BackToTop';
 
 // Progress Bar Component
-const ReadingProgress = () => {
+const ReadingProgress = React.memo(() => {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
@@ -76,7 +205,7 @@ const ReadingProgress = () => {
             setProgress(Math.min(scrollPercent, 100));
         };
 
-        window.addEventListener('scroll', updateProgress);
+        window.addEventListener('scroll', updateProgress, { passive: true });
         updateProgress();
         return () => window.removeEventListener('scroll', updateProgress);
     }, []);
@@ -86,10 +215,12 @@ const ReadingProgress = () => {
             <div className="proj-progress__bar" style={{ width: `${progress}%` }} />
         </div>
     );
-};
+});
+
+ReadingProgress.displayName = 'ReadingProgress';
 
 // Table of Contents Component
-const TableOfContents = ({ headings, activeId }) => {
+const TableOfContents = React.memo(({ headings, activeId }) => {
     if (!headings || headings.length === 0) return null;
 
     return (
@@ -113,10 +244,12 @@ const TableOfContents = ({ headings, activeId }) => {
             </ul>
         </nav>
     );
-};
+});
+
+TableOfContents.displayName = 'TableOfContents';
 
 // Share Button Component
-const ShareButton = ({ title, url }) => {
+const ShareButton = React.memo(({ title, url, compact = false }) => {
     const [copied, setCopied] = useState(false);
 
     const handleShare = async () => {
@@ -135,13 +268,81 @@ const ShareButton = ({ title, url }) => {
         }
     };
 
+    if (compact) {
+        return (
+            <button 
+                className="proj-fab__btn" 
+                onClick={handleShare}
+                aria-label={copied ? 'Link Copied!' : 'Share'}
+                title={copied ? 'Link Copied!' : 'Share'}
+            >
+                {copied ? <FaLink /> : <FaShareAlt />}
+            </button>
+        );
+    }
+
     return (
         <button className="proj-btn proj-btn--outline" onClick={handleShare}>
             {copied ? <FaLink /> : <FaShareAlt />}
             <span>{copied ? 'Link Copied!' : 'Share'}</span>
         </button>
     );
-};
+});
+
+ShareButton.displayName = 'ShareButton';
+
+// Floating Action Bar Component - appears when scrolling past hero
+const FloatingActionBar = React.memo(({ github, demo, title, url }) => {
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            // Show after scrolling past ~400px (roughly past hero actions)
+            setVisible(window.pageYOffset > 400);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // Check initial state
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    // Don't render if no actions available
+    if (!github && !demo) return null;
+
+    return (
+        <div className={`proj-fab ${visible ? 'proj-fab--visible' : ''}`}>
+            <div className="proj-fab__container">
+                {github && (
+                    <a 
+                        href={github} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="proj-fab__btn proj-fab__btn--github"
+                        aria-label="View Source Code"
+                        title="View Source Code"
+                    >
+                        <FaGithub />
+                    </a>
+                )}
+                {demo && (
+                    <a 
+                        href={demo.includes('http') ? demo : `https://${demo}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="proj-fab__btn proj-fab__btn--demo"
+                        aria-label="View Live Demo"
+                        title="View Live Demo"
+                    >
+                        <FaExternalLinkAlt />
+                    </a>
+                )}
+                <ShareButton title={title} url={url} compact />
+            </div>
+        </div>
+    );
+});
+
+FloatingActionBar.displayName = 'FloatingActionBar';
 
 // Loading Skeleton Component
 const ProjectSkeleton = () => (
@@ -176,7 +377,7 @@ const ProjectSkeleton = () => (
 );
 
 // Mobile TOC Component
-const MobileTOC = ({ headings, isOpen, onClose }) => {
+const MobileTOC = React.memo(({ headings, isOpen, onClose }) => {
     if (!headings || headings.length === 0) return null;
 
     return (
@@ -204,16 +405,20 @@ const MobileTOC = ({ headings, isOpen, onClose }) => {
             </div>
         </>
     );
-};
+});
+
+MobileTOC.displayName = 'MobileTOC';
 
 // Quick Navigation Component
-const QuickNav = ({ hasGithub, hasDemo, hasVideo, hasGallery, github, demo }) => {
-    const items = [];
-    
-    if (hasGithub) items.push({ icon: FaGithub, label: 'Source Code', href: github, external: true });
-    if (hasDemo) items.push({ icon: FaExternalLinkAlt, label: 'Live Demo', href: demo, external: true });
-    if (hasVideo) items.push({ icon: FaPlay, label: 'Watch Demo', href: '#video', external: false });
-    if (hasGallery) items.push({ icon: FaImages, label: 'Gallery', href: '#gallery', external: false });
+const QuickNav = React.memo(({ hasGithub, hasDemo, hasVideo, hasGallery, github, demo }) => {
+    const items = useMemo(() => {
+        const result = [];
+        if (hasGithub) result.push({ icon: FaGithub, label: 'Source Code', href: github, external: true });
+        if (hasDemo) result.push({ icon: FaExternalLinkAlt, label: 'Live Demo', href: demo, external: true });
+        if (hasVideo) result.push({ icon: FaPlay, label: 'Watch Demo', href: '#video', external: false });
+        if (hasGallery) result.push({ icon: FaImages, label: 'Gallery', href: '#gallery', external: false });
+        return result;
+    }, [hasGithub, hasDemo, hasVideo, hasGallery, github, demo]);
 
     if (items.length === 0) return null;
 
@@ -236,7 +441,9 @@ const QuickNav = ({ hasGithub, hasDemo, hasVideo, hasGallery, github, demo }) =>
             </div>
         </div>
     );
-};
+});
+
+QuickNav.displayName = 'QuickNav';
 
 // Main Project Page Component
 const ProjectPage = () => {
@@ -327,7 +534,7 @@ const ProjectPage = () => {
                 '.proj-content h1[id], .proj-content h2[id], .proj-content h3[id]'
             );
             headingElements.forEach(heading => observer.observe(heading));
-        }, 200);
+        }, 300);
 
         return () => {
             clearTimeout(timer);
@@ -343,6 +550,132 @@ const ProjectPage = () => {
         document.addEventListener('keydown', handleEscape);
         return () => document.removeEventListener('keydown', handleEscape);
     }, []);
+
+    // Memoized markdown components to prevent re-creation on each render
+    const markdownComponents = useMemo(() => ({
+        // Fix: Don't wrap images in paragraphs - check if paragraph only contains an image
+        p: ({ node, children }) => {
+            // Check if this paragraph only contains an image
+            const hasOnlyImage = node.children?.length === 1 && 
+                (node.children[0].tagName === 'img' || 
+                 (node.children[0].type === 'element' && node.children[0].tagName === 'img'));
+            
+            if (hasOnlyImage) {
+                // Return children directly without wrapping in <p>
+                return <>{children}</>;
+            }
+            
+            return <p className="proj-paragraph">{children}</p>;
+        },
+        h1: ({ children }) => {
+            const text = String(children);
+            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            return <h1 id={id} className="proj-content__heading proj-content__heading--h1">{children}</h1>;
+        },
+        h2: ({ children }) => {
+            const text = String(children);
+            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            return <h2 id={id} className="proj-content__heading proj-content__heading--h2">{children}</h2>;
+        },
+        h3: ({ children }) => {
+            const text = String(children);
+            const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            return <h3 id={id} className="proj-content__heading proj-content__heading--h3">{children}</h3>;
+        },
+        code: ({ node, inline, className, children, ...props }) => {
+            const match = /language-(\w+)/.exec(className || '');
+            const language = match ? match[1] : '';
+            const codeString = String(children).replace(/\n$/, '');
+            
+            // Check if it's a Mermaid diagram
+            if (!inline && (language === 'mermaid' || language === 'mmd')) {
+                return <MermaidDiagram code={codeString} />;
+            }
+            
+            // Regular code block
+            if (!inline && language) {
+                return (
+                    <div className="proj-code-wrapper">
+                        <span className="proj-code-lang">{language}</span>
+                        <SyntaxHighlighter 
+                            style={oneDark} 
+                            language={language} 
+                            PreTag="div"
+                            className="proj-code-block"
+                            {...props}
+                        >
+                            {codeString}
+                        </SyntaxHighlighter>
+                    </div>
+                );
+            }
+            
+            // Code block without language
+            if (!inline) {
+                return (
+                    <div className="proj-code-wrapper">
+                        <SyntaxHighlighter 
+                            style={oneDark} 
+                            PreTag="div"
+                            className="proj-code-block"
+                            {...props}
+                        >
+                            {codeString}
+                        </SyntaxHighlighter>
+                    </div>
+                );
+            }
+            
+            // Inline code
+            return <code className="proj-inline-code" {...props}>{children}</code>;
+        },
+        table: ({ children }) => (
+            <div className="proj-table-wrapper">
+                <table className="proj-table">{children}</table>
+            </div>
+        ),
+        // Fix: img returns a figure element, not wrapped in anything
+        img: ({ src, alt }) => (
+            <figure className="proj-figure">
+                <img src={src} alt={alt || ''} loading="lazy" />
+                {alt && <figcaption>{alt}</figcaption>}
+            </figure>
+        ),
+        blockquote: ({ children }) => (
+            <blockquote className="proj-blockquote">
+                <div className="proj-blockquote__icon">💡</div>
+                <div className="proj-blockquote__content">{children}</div>
+            </blockquote>
+        ),
+        a: ({ href, children }) => {
+            // Check if it's an internal link
+            const isInternal = href?.startsWith('/') || href?.startsWith('#');
+            
+            if (isInternal) {
+                return (
+                    <a href={href} className="proj-link">
+                        {children}
+                    </a>
+                );
+            }
+            
+            return (
+                <a 
+                    href={href} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="proj-link"
+                >
+                    {children}
+                    <BsArrowUpRight className="proj-link__icon" />
+                </a>
+            );
+        },
+        ul: ({ children }) => <ul className="proj-list proj-list--ul">{children}</ul>,
+        ol: ({ children }) => <ol className="proj-list proj-list--ol">{children}</ol>,
+        li: ({ children }) => <li className="proj-list__item">{children}</li>,
+        hr: () => <hr className="proj-divider" />,
+    }), []);
 
     // Loading state
     if (loading) {
@@ -364,7 +697,7 @@ const ProjectPage = () => {
                         >
                             Try Again
                         </button>
-                        <Link to="/projects" className="proj-btn proj-btn--outline">
+                        <Link to="/projects" className="proj-btn proj-btn--outline-dark">
                             Back to Projects
                         </Link>
                     </div>
@@ -410,76 +743,8 @@ const ProjectPage = () => {
 
     const readingTime = calculateReadingTime(Description);
     const projectUrl = `https://wanghley.com/projects/${slug}`;
-    const hasVideo = video?.url;
+    const hasVideo = !!video?.url;
     const hasGallery = media && media.length > 0;
-
-    // Markdown components
-    const markdownComponents = {
-        h1: ({ children }) => {
-            const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            return <h1 id={id} className="proj-content__heading proj-content__heading--h1">{children}</h1>;
-        },
-        h2: ({ children }) => {
-            const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            return <h2 id={id} className="proj-content__heading proj-content__heading--h2">{children}</h2>;
-        },
-        h3: ({ children }) => {
-            const id = String(children).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-            return <h3 id={id} className="proj-content__heading proj-content__heading--h3">{children}</h3>;
-        },
-        code: ({ node, inline, className, children, ...props }) => {
-            const match = /language-(\w+)/.exec(className || '');
-            return !inline ? (
-                <div className="proj-code-wrapper">
-                    {match && <span className="proj-code-lang">{match[1]}</span>}
-                    <SyntaxHighlighter 
-                        style={oneDark} 
-                        language={match ? match[1] : ''} 
-                        PreTag="div"
-                        className="proj-code-block"
-                        {...props}
-                    >
-                        {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>
-                </div>
-            ) : (
-                <code className="proj-inline-code" {...props}>{children}</code>
-            );
-        },
-        table: ({ children }) => (
-            <div className="proj-table-wrapper">
-                <table className="proj-table">{children}</table>
-            </div>
-        ),
-        img: ({ src, alt }) => (
-            <figure className="proj-figure">
-                <img src={src} alt={alt} loading="lazy" />
-                {alt && <figcaption>{alt}</figcaption>}
-            </figure>
-        ),
-        blockquote: ({ children }) => (
-            <blockquote className="proj-blockquote">
-                <div className="proj-blockquote__icon">💡</div>
-                <div className="proj-blockquote__content">{children}</div>
-            </blockquote>
-        ),
-        a: ({ href, children }) => (
-            <a 
-                href={href} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="proj-link"
-            >
-                {children}
-                <BsArrowUpRight className="proj-link__icon" />
-            </a>
-        ),
-        ul: ({ children }) => <ul className="proj-list proj-list--ul">{children}</ul>,
-        ol: ({ children }) => <ol className="proj-list proj-list--ol">{children}</ol>,
-        li: ({ children }) => <li className="proj-list__item">{children}</li>,
-        p: ({ children }) => <p className="proj-paragraph">{children}</p>,
-        hr: () => <hr className="proj-divider" />,
-    };
 
     // Schema.org breadcrumb
     const breadcrumbSchema = {
@@ -683,6 +948,14 @@ const ProjectPage = () => {
                 headings={headings} 
                 isOpen={mobileMenuOpen} 
                 onClose={() => setMobileMenuOpen(false)} 
+            />
+
+            {/* Floating Action Bar - visible on scroll */}
+            <FloatingActionBar 
+                github={Github}
+                demo={Demo}
+                title={Title}
+                url={projectUrl}
             />
 
             <BackToTop />
