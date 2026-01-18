@@ -1,48 +1,242 @@
-import React, { useState, useEffect } from 'react';
-import { CardGrid } from '../components';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { fetchBlogs } from '../api/blog';
-import CircularProgress from '@mui/material/CircularProgress';
-import Box from '@mui/material/Box';
 import './css/blog.css';
-import { Helmet } from "react-helmet-async"; // Changed from react-helmet
-import { FaSearch, FaTags, FaCalendarAlt, FaArrowRight } from 'react-icons/fa';
+import { Helmet } from "react-helmet-async";
+import { 
+    FaSearch, FaArrowRight, FaBookOpen, FaPen, FaNewspaper, 
+    FaChevronUp, FaFilter, FaTimes, FaClock 
+} from 'react-icons/fa';
+import { HiSparkles } from 'react-icons/hi';
+import { IoClose, IoGridOutline, IoListOutline } from 'react-icons/io5';
+import { BsCalendar3, BsSortDown } from 'react-icons/bs';
 import NavbarSpacer from '../components/NavbarSpacer';
+import { Link } from 'react-router-dom';
 
+// Calculate reading time
+const calculateReadTime = (content) => {
+    if (!content) return 3;
+    const wordsPerMinute = 200;
+    const words = content.split(/\s+/).length;
+    return Math.ceil(words / wordsPerMinute);
+};
+
+// Format date helper
+const formatDateShort = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+};
+
+const formatDateLong = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+};
+
+// Skeleton Card Component
+const SkeletonCard = ({ variant = 'grid' }) => (
+    <div className={`blog-card blog-card--skeleton ${variant === 'list' ? 'blog-card--list' : ''}`}>
+        <div className="blog-card__image skeleton-shimmer"></div>
+        <div className="blog-card__body">
+            <div className="skeleton-line skeleton-line--sm skeleton-shimmer"></div>
+            <div className="skeleton-line skeleton-line--lg skeleton-shimmer"></div>
+            <div className="skeleton-line skeleton-line--md skeleton-shimmer"></div>
+            <div className="skeleton-line skeleton-line--md skeleton-shimmer"></div>
+        </div>
+    </div>
+);
+
+// Blog Card Component
+const BlogCard = ({ post, variant = 'grid', index }) => {
+    const { Title, Teaser, Categories, publishedAt, slug, Featured, Content } = post.attributes;
+    const imageUrl = Featured?.data?.attributes?.formats?.medium?.url || 
+                     Featured?.data?.attributes?.formats?.small?.url ||
+                     Featured?.data?.attributes?.url ||
+                     'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80';
+    
+    const category = Categories && Categories.length > 0 ? Categories[0] : 'Article';
+    const readTime = calculateReadTime(Content);
+
+    const cardRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect();
+                }
+            },
+            { threshold: 0.1, rootMargin: '50px' }
+        );
+
+        if (cardRef.current) observer.observe(cardRef.current);
+        return () => observer.disconnect();
+    }, []);
+
+    return (
+        <article 
+            ref={cardRef}
+            className={`blog-card ${variant === 'list' ? 'blog-card--list' : ''} ${isVisible ? 'blog-card--visible' : ''}`}
+            style={{ '--index': index }}
+        >
+            <Link to={`/blog/${slug}`} className="blog-card__link">
+                <div className="blog-card__image-container">
+                    <img 
+                        src={imageUrl} 
+                        alt={Title} 
+                        className="blog-card__image"
+                        loading="lazy"
+                    />
+                    <div className="blog-card__image-overlay">
+                        <span className="blog-card__cta">
+                            Read Article <FaArrowRight />
+                        </span>
+                    </div>
+                    <span className="blog-card__category-badge">{category}</span>
+                </div>
+                
+                <div className="blog-card__body">
+                    <div className="blog-card__meta">
+                        {publishedAt && (
+                            <time className="blog-card__date">
+                                <BsCalendar3 /> {formatDateShort(publishedAt)}
+                            </time>
+                        )}
+                        <span className="blog-card__read-time">
+                            <FaClock /> {readTime} min read
+                        </span>
+                    </div>
+                    
+                    <h3 className="blog-card__title">{Title}</h3>
+                    
+                    {Teaser && (
+                        <p className="blog-card__excerpt">{Teaser}</p>
+                    )}
+                    
+                    <div className="blog-card__footer">
+                        <span className="blog-card__read-more">
+                            Continue reading <FaArrowRight />
+                        </span>
+                    </div>
+                </div>
+            </Link>
+        </article>
+    );
+};
+
+// Featured Post Component
+const FeaturedPost = ({ post, loading }) => {
+    if (loading) {
+        return (
+            <div className="featured-post featured-post--skeleton">
+                <div className="featured-post__image-wrapper skeleton-shimmer"></div>
+                <div className="featured-post__content">
+                    <div className="skeleton-line skeleton-line--sm skeleton-shimmer"></div>
+                    <div className="skeleton-line skeleton-line--lg skeleton-shimmer"></div>
+                    <div className="skeleton-line skeleton-line--md skeleton-shimmer"></div>
+                    <div className="skeleton-line skeleton-line--md skeleton-shimmer"></div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!post) return null;
+
+    const { Title, Teaser, Categories, slug, Featured, publishedAt, Content } = post.attributes;
+    const imageUrl = Featured?.data?.attributes?.formats?.large?.url || 
+                     Featured?.data?.attributes?.formats?.medium?.url || 
+                     'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80';
+
+    const category = Categories && Categories.length > 0 ? Categories[0] : 'Article';
+    const readTime = calculateReadTime(Content);
+
+    return (
+        <Link to={`/blog/${slug}`} className="featured-post">
+            <div className="featured-post__image-wrapper">
+                <img src={imageUrl} alt={Title} className="featured-post__image" />
+                <div className="featured-post__gradient"></div>
+            </div>
+            <div className="featured-post__content">
+                <div className="featured-post__meta">
+                    <span className="featured-post__category">{category}</span>
+                    <span className="featured-post__date">{formatDateLong(publishedAt)}</span>
+                    <span className="featured-post__read-time">{readTime} min read</span>
+                </div>
+                <h3 className="featured-post__title">{Title}</h3>
+                {Teaser && <p className="featured-post__excerpt">{Teaser}</p>}
+                <span className="featured-post__link">
+                    Read Article <FaArrowRight />
+                </span>
+            </div>
+        </Link>
+    );
+};
+
+// Main Blog Component
 const Blogs = () => {
     const [posts, setPosts] = useState([]);
+    const [totalPosts, setTotalPosts] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [initialLoading, setInitialLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
     const [categories, setCategories] = useState(['All']);
-    const uniquePostIds = new Set();
+    const [viewMode, setViewMode] = useState('grid');
+    const [sortBy, setSortBy] = useState('newest');
+    const [filtersOpen, setFiltersOpen] = useState(false);
+    const loadedPostIds = useRef(new Set());
+    const searchInputRef = useRef(null);
 
-    const loadPosts = async (page) => {
+    // Load posts function
+    const loadPosts = useCallback(async (pageNum, isInitial = false) => {
+        if (loading && !isInitial) return;
+        
         try {
             setLoading(true);
-            const newPosts = await fetchBlogs(page);
+            const newPosts = await fetchBlogs(pageNum);
+            
+            if (!newPosts || newPosts.length === 0) {
+                setHasMore(false);
+                if (isInitial) {
+                    setPosts([]);
+                    setTotalPosts(0);
+                }
+                return;
+            }
 
-            if (newPosts && newPosts.length > 0) {
-                // Extract all categories for the filter
-                const allCategories = new Set(['All']);
-                newPosts.forEach(post => {
-                    if (post.attributes.Categories) {
-                        post.attributes.Categories.forEach(category => {
-                            allCategories.add(category);
-                        });
-                    }
-                });
-                setCategories(Array.from(allCategories));
+            // Extract categories from all posts
+            const allCategories = new Set(['All']);
+            newPosts.forEach(post => {
+                if (post.attributes?.Categories) {
+                    post.attributes.Categories.forEach(category => {
+                        allCategories.add(category);
+                    });
+                }
+            });
+            setCategories(Array.from(allCategories));
 
-                // Filter posts
-                const filteredPosts = newPosts.filter(
-                    post => !uniquePostIds.has(post.attributes.id)
-                );
-                filteredPosts.forEach(post => uniquePostIds.add(post.attributes.id));
-                setPosts(prevPosts => [...prevPosts, ...filteredPosts]);
-                setPage(page + 1);
+            if (isInitial) {
+                // Initial load - replace all posts
+                setPosts(newPosts);
+                loadedPostIds.current = new Set(newPosts.map(p => p.id));
+                setTotalPosts(newPosts.length);
+                setPage(2);
             } else {
+                // Pagination - add new posts, avoiding duplicates
+                const uniqueNewPosts = newPosts.filter(post => !loadedPostIds.current.has(post.id));
+                
+                if (uniqueNewPosts.length > 0) {
+                    uniqueNewPosts.forEach(post => loadedPostIds.current.add(post.id));
+                    setPosts(prevPosts => [...prevPosts, ...uniqueNewPosts]);
+                    setPage(pageNum + 1);
+                }
+            }
+
+            // Check if we have more posts to load
+            if (newPosts.length < 10) {
                 setHasMore(false);
             }
         } catch (error) {
@@ -50,153 +244,398 @@ const Blogs = () => {
             setHasMore(false);
         } finally {
             setLoading(false);
+            if (isInitial) {
+                setInitialLoading(false);
+            }
         }
-    };
+    }, [loading]);
+
+    // Initial load
+    useEffect(() => {
+        loadPosts(1, true);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Infinite scroll handler
+    const handleScroll = useCallback(() => {
+        if (loading || !hasMore || initialLoading) return;
+        
+        const scrollPosition = window.innerHeight + window.scrollY;
+        const threshold = document.documentElement.offsetHeight - 400;
+        
+        if (scrollPosition >= threshold) {
+            loadPosts(page, false);
+        }
+    }, [loading, hasMore, page, initialLoading, loadPosts]);
 
     useEffect(() => {
-        loadPosts(page);
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [handleScroll]);
+
+    // Keyboard shortcut for search
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                searchInputRef.current?.focus();
+            }
+            if (e.key === 'Escape') {
+                searchInputRef.current?.blur();
+                setFiltersOpen(false);
+            }
+        };
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    const handleScroll = () => {
-        if (loading) return;
-        const isBottom = window.innerHeight + window.scrollY >= document.documentElement.offsetHeight - 100;
-        if (isBottom && hasMore) {
-            loadPosts(page);
+    // Filter and sort posts - this is where the main logic happens
+    const filteredAndSortedPosts = useMemo(() => {
+        let result = [...posts];
+
+        // Filter by search term
+        if (searchTerm.trim()) {
+            const term = searchTerm.toLowerCase().trim();
+            result = result.filter(post => {
+                const title = post.attributes?.Title?.toLowerCase() || '';
+                const teaser = post.attributes?.Teaser?.toLowerCase() || '';
+                const content = post.attributes?.Content?.toLowerCase() || '';
+                const categories = post.attributes?.Categories || [];
+                
+                return title.includes(term) ||
+                       teaser.includes(term) ||
+                       content.includes(term) ||
+                       categories.some(cat => cat.toLowerCase().includes(term));
+            });
         }
+
+        // Filter by category
+        if (activeCategory !== 'All') {
+            result = result.filter(post => 
+                post.attributes?.Categories?.includes(activeCategory)
+            );
+        }
+
+        // Sort
+        result.sort((a, b) => {
+            const dateA = new Date(a.attributes?.publishedAt || 0);
+            const dateB = new Date(b.attributes?.publishedAt || 0);
+            const titleA = a.attributes?.Title || '';
+            const titleB = b.attributes?.Title || '';
+            
+            switch (sortBy) {
+                case 'oldest':
+                    return dateA - dateB;
+                case 'alphabetical':
+                    return titleA.localeCompare(titleB);
+                case 'newest':
+                default:
+                    return dateB - dateA;
+            }
+        });
+
+        return result;
+    }, [posts, searchTerm, activeCategory, sortBy]);
+
+    // Get the latest post for the featured section
+    const latestPost = useMemo(() => {
+        if (posts.length === 0) return null;
+        
+        // Sort by date and get the most recent
+        const sorted = [...posts].sort((a, b) => {
+            const dateA = new Date(a.attributes?.publishedAt || 0);
+            const dateB = new Date(b.attributes?.publishedAt || 0);
+            return dateB - dateA;
+        });
+        
+        return sorted[0];
+    }, [posts]);
+
+    const clearFilters = () => {
+        setSearchTerm('');
+        setActiveCategory('All');
+        setSortBy('newest');
     };
 
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, [loading, hasMore, page]);
+    const hasActiveFilters = searchTerm || activeCategory !== 'All' || sortBy !== 'newest';
 
-    // Filter posts based on search and category
-    const filteredPosts = posts.filter(post => {
-        const matchesSearch = post.attributes.Title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                             (post.attributes.Content && post.attributes.Content.toLowerCase().includes(searchTerm.toLowerCase()));
-        
-        const matchesCategory = activeCategory === 'All' || 
-                               (post.attributes.Categories && post.attributes.Categories.includes(activeCategory));
-        
-        return matchesSearch && matchesCategory;
-    });
+    // Use actual post count
+    const postCount = posts.length;
 
-    // Format date function
-    const formatDate = (dateString) => {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
-    };
-
-    // Get latest post for the header
-    const latestPost = posts.length > 0 ? posts[0] : null;
+    const stats = [
+        { icon: FaBookOpen, value: postCount || '—', label: 'Articles' },
+        { icon: FaPen, value: Math.max(0, categories.length - 1) || '—', label: 'Topics' },
+        { icon: FaNewspaper, value: '2024', label: 'Since' },
+    ];
 
     return (
-        <div className="blog-page">
+        <div className="blog-page-new">
             <Helmet>
-                <title>Wanghley's Blog</title>
-                <meta name="description" content="Discover thoughts, insights, and stories from my journey through technology and life." />
+                <title>Blog | Wanghley - Thoughts & Insights</title>
+                <meta name="description" content="Explore thoughts, insights, and stories about AI, health tech, engineering, and innovation." />
                 <link rel="canonical" href="https://wanghley.com/blog" />
-                <meta name="keywords" content="Blog, Wanghley, Technology, Insights, Stories, Experiences" />
-                <meta name="robots" content="index, follow" />
-                <meta name="author" content="Wanghley" />
-
+                <meta name="keywords" content="Blog, Wanghley, AI, Health Tech, Engineering, Insights" />
                 <meta property="og:title" content="Wanghley's Blog" />
-                <meta property="og:description" content="Discover thoughts, insights, and stories from my journey through technology and life." />
-                <meta property="og:url" content="https://wanghley.com/blog" />
-                <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1700976651/branding/Logo_Wanghley_Simbolo_Fundo_Transparente_1_min_c28472b597.png" />
+                <meta property="og:description" content="Thoughts and insights on technology, engineering, and innovation." />
                 <meta property="og:type" content="website" />
-                <meta property="og:site_name" content="Wanghley – Sci&Tech" />
-                <meta property="og:locale" content="en_US" />
-                <meta property="og:locale:alternate" content="pt_BR" />
+                <meta property="og:url" content="https://wanghley.com/blog" />
+                <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1746648815/branding/logo_applied_sq.png" />
             </Helmet>
-            <NavbarSpacer/>
-            {latestPost && (
-                <div className="blog-featured-header" style={{
-                    backgroundImage: `url(${latestPost.attributes.Featured?.data?.attributes?.formats?.large?.url || 'https://res.cloudinary.com/wanghley/image/upload/v1700976651/branding/Logo_Wanghley_Simbolo_Fundo_Transparente_1_min_c28472b597.png'})`
-                }}>
-                    <div className="blog-featured-overlay">
-                        <div className="blog-featured-content">
-                            <div className="blog-featured-meta">
-                                {latestPost.attributes.Categories && latestPost.attributes.Categories.length > 0 && (
-                                    <span className="blog-featured-category">{latestPost.attributes.Categories[0]}</span>
-                                )}
-                                <span className="blog-featured-date">
-                                    <FaCalendarAlt />
-                                    {formatDate(latestPost.attributes.publishedAt)}
-                                </span>
-                            </div>
-                            <h1 className="blog-featured-title">{latestPost.attributes.Title}</h1>
-                            <p className="blog-featured-excerpt">
-                                {latestPost.attributes.Teaser}
-                            </p>
-                            <a href={`/blog/${latestPost.attributes.slug}`} className="blog-featured-button">
-                                Read Article <FaArrowRight />
-                            </a>
+            
+            <NavbarSpacer />
+
+            {/* ===== HERO SECTION ===== */}
+            <header className="blog-hero">
+                <div className="blog-hero__background">
+                    <div className="blog-hero__orb blog-hero__orb--1"></div>
+                    <div className="blog-hero__orb blog-hero__orb--2"></div>
+                    <div className="blog-hero__grid"></div>
+                </div>
+
+                <div className="blog-hero__container">
+                    <div className="blog-hero__text">
+                        <span className="blog-hero__badge">
+                            <HiSparkles /> Blog
+                        </span>
+                        
+                        <h1 className="blog-hero__title">
+                            Writing & <span className="blog-hero__title-highlight">Thoughts</span>
+                        </h1>
+                        
+                        <p className="blog-hero__subtitle">
+                            Exploring ideas at the intersection of technology, health, 
+                            and social impact through technical deep-dives and reflections.
+                        </p>
+
+                        <div className="blog-hero__stats">
+                            {stats.map((stat, i) => (
+                                <div key={i} className="blog-hero__stat">
+                                    <stat.icon className="blog-hero__stat-icon" />
+                                    <strong className="blog-hero__stat-value">{stat.value}</strong>
+                                    <span className="blog-hero__stat-label">{stat.label}</span>
+                                </div>
+                            ))}
                         </div>
                     </div>
+
+                    <div className="blog-hero__featured">
+                        <span className="blog-hero__featured-badge">
+                            <HiSparkles /> Latest Article
+                        </span>
+                        <FeaturedPost post={latestPost} loading={initialLoading} />
+                    </div>
                 </div>
-            )}
-            
-            <div className="blog-container">
-                <div className="blog-controls-container">
-                    <h2 className="blog-section-title">All Articles</h2>
-                    <div className="blog-controls">
-                        <div className="blog-search">
+            </header>
+
+            {/* ===== MAIN CONTENT ===== */}
+            <main className="blog-body">
+                <div className="blog-body__container">
+                    
+                    {/* Toolbar */}
+                    <div className="blog-toolbar">
+                        <div className="blog-toolbar__search">
+                            <FaSearch className="blog-toolbar__search-icon" />
                             <input 
-                                type="text" 
-                                placeholder="Search articles..." 
+                                ref={searchInputRef}
+                                type="text"
+                                placeholder="Search articles..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
+                                className="blog-toolbar__search-input"
                             />
-                            <FaSearch className="search-icon" />
+                            <kbd className="blog-toolbar__shortcut">⌘K</kbd>
+                            {searchTerm && (
+                                <button 
+                                    className="blog-toolbar__search-clear"
+                                    onClick={() => setSearchTerm('')}
+                                    aria-label="Clear search"
+                                >
+                                    <IoClose />
+                                </button>
+                            )}
                         </div>
-                        
-                        <div className="blog-categories">
-                            <div className="categories-header">
-                                <FaTags className="categories-icon" />
-                                <span>Filter by:</span>
+
+                        <div className="blog-toolbar__actions">
+                            <button 
+                                className={`blog-toolbar__filter-btn ${filtersOpen ? 'active' : ''}`}
+                                onClick={() => setFiltersOpen(!filtersOpen)}
+                            >
+                                <FaFilter />
+                                <span>Filters</span>
+                                {hasActiveFilters && <span className="blog-toolbar__filter-dot"></span>}
+                            </button>
+
+                            <div className="blog-toolbar__view-toggle">
+                                <button 
+                                    className={`blog-toolbar__view-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                                    onClick={() => setViewMode('grid')}
+                                    aria-label="Grid view"
+                                >
+                                    <IoGridOutline />
+                                </button>
+                                <button 
+                                    className={`blog-toolbar__view-btn ${viewMode === 'list' ? 'active' : ''}`}
+                                    onClick={() => setViewMode('list')}
+                                    aria-label="List view"
+                                >
+                                    <IoListOutline />
+                                </button>
                             </div>
-                            <div className="categories-list">
-                                {categories.map(category => (
-                                    <button 
-                                        key={category}
-                                        className={`category-button ${activeCategory === category ? 'active' : ''}`}
-                                        onClick={() => setActiveCategory(category)}
+                        </div>
+                    </div>
+
+                    {/* Filters Panel */}
+                    <div className={`blog-filters ${filtersOpen ? 'blog-filters--open' : ''}`}>
+                        <div className="blog-filters__inner">
+                            {/* Categories */}
+                            <div className="blog-filters__group blog-filters__group--categories">
+                                <label className="blog-filters__label">Topic</label>
+                                <div className="blog-filters__tags">
+                                    {categories.map(category => (
+                                        <button 
+                                            key={category}
+                                            className={`blog-filters__tag ${activeCategory === category ? 'active' : ''}`}
+                                            onClick={() => setActiveCategory(category)}
+                                        >
+                                            {category}
+                                            {activeCategory === category && (
+                                                <span className="blog-filters__tag-count">
+                                                    {category === 'All' 
+                                                        ? posts.length 
+                                                        : posts.filter(p => p.attributes?.Categories?.includes(category)).length}
+                                                </span>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Sort */}
+                            <div className="blog-filters__group blog-filters__group--sort">
+                                <label className="blog-filters__label">Sort by</label>
+                                <div className="blog-filters__sort-wrapper">
+                                    <select 
+                                        value={sortBy} 
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                        className="blog-filters__select"
                                     >
-                                        {category}
-                                    </button>
-                                ))}
+                                        <option value="newest">Newest First</option>
+                                        <option value="oldest">Oldest First</option>
+                                        <option value="alphabetical">A → Z</option>
+                                    </select>
+                                    <BsSortDown className="blog-filters__sort-icon" />
+                                </div>
                             </div>
+
+                            {/* Clear Filters */}
+                            {hasActiveFilters && (
+                                <div className="blog-filters__group blog-filters__group--actions">
+                                    <label className="blog-filters__label">&nbsp;</label>
+                                    <button className="blog-filters__clear" onClick={clearFilters}>
+                                        <FaTimes /> Clear all
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
+
+                    {/* Results Count */}
+                    <div className="blog-results">
+                        {initialLoading ? (
+                            <span>Loading articles...</span>
+                        ) : (
+                            <span>
+                                Showing <strong>{filteredAndSortedPosts.length}</strong>
+                                {posts.length !== filteredAndSortedPosts.length && (
+                                    <> of <strong>{posts.length}</strong></>
+                                )}
+                                {' '}article{filteredAndSortedPosts.length !== 1 ? 's' : ''}
+                                {activeCategory !== 'All' && <> in <em>{activeCategory}</em></>}
+                                {searchTerm && <> matching "<em>{searchTerm}</em>"</>}
+                            </span>
+                        )}
+                    </div>
+
+                    {/* Blog Grid */}
+                    {initialLoading ? (
+                        <div className={`blog-grid ${viewMode === 'list' ? 'blog-grid--list' : ''}`}>
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <SkeletonCard key={i} variant={viewMode} />
+                            ))}
+                        </div>
+                    ) : filteredAndSortedPosts.length > 0 ? (
+                        <div className={`blog-grid ${viewMode === 'list' ? 'blog-grid--list' : ''}`}>
+                            {filteredAndSortedPosts.map((post, index) => (
+                                <BlogCard 
+                                    key={post.id} 
+                                    post={post} 
+                                    variant={viewMode}
+                                    index={index}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="blog-empty">
+                            <div className="blog-empty__icon">
+                                <FaBookOpen />
+                            </div>
+                            <h3 className="blog-empty__title">No articles found</h3>
+                            <p className="blog-empty__text">
+                                {hasActiveFilters 
+                                    ? "Try adjusting your search or filter criteria."
+                                    : "No blog posts available yet. Check back soon!"}
+                            </p>
+                            {hasActiveFilters && (
+                                <button className="blog-empty__btn" onClick={clearFilters}>
+                                    Clear all filters
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Loading More */}
+                    {loading && !initialLoading && (
+                        <div className="blog-loading">
+                            <div className="blog-loading__dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                            <p>Loading more articles...</p>
+                        </div>
+                    )}
+
+                    {/* End Message */}
+                    {!hasMore && !loading && posts.length > 0 && !hasActiveFilters && (
+                        <div className="blog-end">
+                            <HiSparkles />
+                            <span>You've seen all {posts.length} articles</span>
+                        </div>
+                    )}
                 </div>
-                
-                {filteredPosts.length > 0 ? (
-                    <div className="blog-grid">
-                        <CardGrid cardData={filteredPosts} type='blog'/>
-                    </div>
-                ) : !loading ? (
-                    <div className="no-results">
-                        <h3>No articles found</h3>
-                        <p>Try adjusting your search or category filters</p>
-                    </div>
-                ) : null}
-                
-                {loading && (
-                    <div className="loading-container">
-                        <CircularProgress />
-                    </div>
-                )}
-                
-                {!hasMore && !loading && filteredPosts.length > 0 && (
-                    <div className="end-of-content">
-                        <div className="end-line"></div>
-                        <span>You've reached the end</span>
-                        <div className="end-line"></div>
-                    </div>
-                )}
-            </div>
+            </main>
+
+            {/* Back to Top */}
+            <BackToTop />
         </div>
+    );
+};
+
+// Back to Top Component
+const BackToTop = () => {
+    const [visible, setVisible] = useState(false);
+
+    useEffect(() => {
+        const toggleVisibility = () => setVisible(window.pageYOffset > 500);
+        window.addEventListener('scroll', toggleVisibility, { passive: true });
+        return () => window.removeEventListener('scroll', toggleVisibility);
+    }, []);
+
+    return (
+        <button 
+            className={`blog-back-to-top ${visible ? 'blog-back-to-top--visible' : ''}`}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            aria-label="Back to top"
+        >
+            <FaChevronUp />
+        </button>
     );
 };
 
