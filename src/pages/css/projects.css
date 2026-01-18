@@ -1130,6 +1130,7 @@
 
     .projects-hero__text {
         align-items: center;
+        padding-top: 4rem;
     }
 
     .projects-hero__subtitle {
