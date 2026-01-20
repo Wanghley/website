@@ -736,6 +736,8 @@ section:last-child {
         font-weight: 600 !important;
         margin: 0 0 1pt 0 !important;
         color: #000 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
 
     .certification-info span,
@@ -743,19 +745,22 @@ section:last-child {
         font-size: 7pt !important;
         color: #333 !important;
         margin: 0 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
     }
 
     .certification-details,
     .certification-date {
         font-size: 7pt !important;
         color: #666 !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        max-width: 100% !important;
     }
 
-    .certification-action,
-    .show-credential-btn,
-    .certification-logo,
-    .certification-item a {
-        display: none !important;
+    .certification-details span {
+        word-break: break-all !important;
+        overflow-wrap: break-word !important;
     }
 
     /* ========== GENERAL CLEANUP ========== */
