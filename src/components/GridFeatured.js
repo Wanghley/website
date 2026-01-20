@@ -46,9 +46,12 @@ const GridFeatured = () => {
     const run = async () => {
       try {
         setLoading(true);
-        const data = await fetchProjects();
+        const response = await fetchProjects(1, 10); // Fetch first page with 10 items
         if (!alive) return;
-        setProjects(Array.isArray(data) ? data.slice(0, 5) : []);
+
+        // Fix: Access the data array from response.data
+        const projectsData = response.data || [];
+        setProjects(Array.isArray(projectsData) ? projectsData.slice(0, 5) : []);
       } catch (error) {
         console.error("Error fetching projects:", error);
         if (!alive) return;
