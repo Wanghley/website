@@ -20,8 +20,8 @@ const Navbar = () => {
     '/': 'dark',           // Homepage has dark hero
     '/about': 'light',     // About page has light background
     '/curriculum-vitae': 'light',  // CV has light background
-    '/projects': 'dark',   // Projects has dark featured header
-    '/blog': 'light',       // Blog has dark featured header
+    '/projects': 'light',   // Projects has light background
+    '/blog': 'light',       // Blog has light background
     '/contact': 'light',   // Contact has light background
   };
 
