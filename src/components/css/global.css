@@ -1,77 +1,588 @@
-@font-face {
-    font-family: "LostinSpace";
-    src: local("LostinSpace"),
-    url("../../fonts/Lost\ In\ Space\ Regular.ttf") format("truetype");
-    font-weight: regular;
-}
-@font-face {
-    font-family: "Nunito";
-    src: local("Nunito"),
-    url("../../fonts/Nunito-VariableFont_wght.ttf") format("truetype");
-    font-weight: bold;
-}
+/* ============================================================
+   GLOBAL — Base reset, fonts, element defaults, utility classes
+   Import this file once at the app root.
+   ============================================================ */
+
+@import './design-system.css';
+@import './instrumentation.css';
+
+/* ============================================================
+   FONT FACES
+   ============================================================ */
 
 @font-face {
-    font-family: "OpenSans";
-    src: url("../../fonts/OpenSans-VariableFont_wdth\,wght.ttf") format("truetype");
+  font-family: 'LostinSpace';
+  src: local('LostinSpace'),
+       url('../../fonts/Lost In Space Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
 }
 
-/* create var with color standard */
-:root {
-    --color-primary: #46A5DD;
-    --color-primary-hover: #21648A;
-    --color-secondary: #525252;
-    --color-secondary-hover: #2e2e2e;
+@font-face {
+  font-family: 'Nunito';
+  src: local('Nunito'),
+       url('../../fonts/Nunito-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
 }
 
-.primary-button{
-    background-color: #46A5DD;
-    color: #fff;
-    border-radius: 8px;
-    width: 210px;
-    height: 55px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: 0.3s ease-in-out;
-    font-size: 1.1rem;
-    border-width: 0;
+@font-face {
+  font-family: 'OpenSans';
+  src: url('../../fonts/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
 }
 
-.primary-button:not(:last-child) {
-    content: "";
-    margin-right: 50px;
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.primary-button:hover{
-    background-color: rgb(33, 100, 138);
-    cursor: pointer;
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent the browser's default white canvas from flashing
+     through any subpixel gap between the fixed navbar and content */
+  background-color: #06070e;
 }
 
-.secondary-button{
-    background-color: #525252;
-    cursor: pointer;
-    color: #fff;
-    border-radius: 8px;
-    width: 210px;
-    height: 55px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: 0.3s ease-in-out;
-    font-size: 1.1rem;
-    border-width: 0;
+body {
+  font-family:      var(--ds-font-body);
+  font-size:        var(--ds-text-base);
+  font-weight:      var(--ds-weight-regular);
+  line-height:      var(--ds-leading-normal);
+  color:            var(--ds-text-primary);
+  background-color: var(--ds-abyss);
+  overflow-x: hidden;
+  padding: 0 0 20px;
 }
 
-.secondary-button:hover{
-    background-color: #2e2e2e;
+img, video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+svg {
+  display: block;
+}
+
+a {
+  color:           var(--ds-text-link);
+  text-decoration: none;
+  transition:      color var(--ds-transition-fast);
+}
+
+a:hover {
+  color: var(--ds-text-link-hover);
+}
+
+a:focus-visible {
+  outline:        none;
+  box-shadow:     var(--ds-focus-ring);
+  border-radius:  var(--ds-radius-xs);
+}
+
+ul, ol {
+  list-style: none;
+}
+
+button {
+  cursor:     pointer;
+  border:     none;
+  background: none;
+  font:       inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline:      none;
+  box-shadow:   var(--ds-focus-ring);
+  border-radius: var(--ds-radius-sm);
+}
+
+/* ============================================================
+   TYPOGRAPHY — Element Defaults
+   ============================================================ */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family:    var(--ds-font-display);
+  font-weight:    var(--ds-weight-bold);
+  line-height:    var(--ds-leading-tight);
+  letter-spacing: var(--ds-tracking-tight);
+  color:          var(--ds-text-primary);
 }
 
 h1 {
-    font-family: "LostinSpace";
-    font-size: 3.3rem;
-    font-weight: 300;
+  font-size:   var(--ds-text-5xl);
+  font-weight: var(--ds-weight-black);
 }
 
-h2,h3,h4,h5,h6 {
-    font-family: "Nunito";
-    font-weight: bold;
+h2 {
+  font-size:   var(--ds-text-4xl);
+  font-family: var(--ds-font-ui);
+  font-weight: var(--ds-weight-bold);
+}
+
+h3 {
+  font-size:   var(--ds-text-3xl);
+  font-family: var(--ds-font-ui);
+  font-weight: var(--ds-weight-semibold);
+}
+
+h4 {
+  font-size:   var(--ds-text-2xl);
+  font-family: var(--ds-font-ui);
+  font-weight: var(--ds-weight-semibold);
+}
+
+h5 {
+  font-size:   var(--ds-text-xl);
+  font-family: var(--ds-font-ui);
+  font-weight: var(--ds-weight-medium);
+}
+
+h6 {
+  font-size:   var(--ds-text-lg);
+  font-family: var(--ds-font-ui);
+  font-weight: var(--ds-weight-medium);
+}
+
+p {
+  font-size:   var(--ds-text-base);
+  line-height: var(--ds-leading-normal);
+  color:       var(--ds-text-secondary);
+}
+
+p + p {
+  margin-top: var(--ds-space-4);
+}
+
+strong, b {
+  font-weight: var(--ds-weight-semibold);
+  color:       var(--ds-text-primary);
+}
+
+em, i {
+  font-style: italic;
+}
+
+small {
+  font-size: var(--ds-text-sm);
+  color:     var(--ds-text-muted);
+}
+
+code, kbd, pre {
+  font-family: var(--ds-font-mono);
+  font-size:   0.9em;
+}
+
+code {
+  background:    rgba(201, 168, 76, 0.08);
+  border:        1px solid var(--ds-border);
+  border-radius: var(--ds-radius-xs);
+  padding:       2px 6px;
+  color:         var(--ds-gold-bright);
+}
+
+hr {
+  border:     none;
+  height:     1px;
+  background: var(--ds-divider-gradient);
+  margin:     var(--ds-gap-xl) 0;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+/* — Base shared — */
+.btn {
+  display:        inline-flex;
+  align-items:    center;
+  justify-content: center;
+  gap:            var(--ds-space-2);
+  height:         var(--ds-btn-height-md);
+  padding:        0 var(--ds-btn-pad-x-md);
+  font-family:    var(--ds-font-ui);
+  font-size:      var(--ds-btn-font-md);
+  font-weight:    var(--ds-btn-weight);
+  letter-spacing: var(--ds-tracking-wide);
+  border-radius:  var(--ds-btn-radius);
+  border:         var(--ds-border-width-sm) solid transparent;
+  text-decoration: none;
+  white-space:    nowrap;
+  transition:     var(--ds-btn-transition);
+  cursor:         pointer;
+  position:       relative;
+  overflow:       hidden;
+}
+
+.btn:focus-visible {
+  outline:    none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+.btn--sm {
+  height:    var(--ds-btn-height-sm);
+  padding:   0 var(--ds-btn-pad-x-sm);
+  font-size: var(--ds-btn-font-sm);
+}
+
+.btn--lg {
+  height:    var(--ds-btn-height-lg);
+  padding:   0 var(--ds-btn-pad-x-lg);
+  font-size: var(--ds-btn-font-lg);
+}
+
+/* — Primary (blue fill — brand accent) — */
+.btn--primary,
+.primary-button {
+  background:   var(--blue, #3AAFF1);
+  color:        var(--text-inverse, #06070e);
+  border-color: var(--blue, #3AAFF1);
+  box-shadow:   none;
+
+  /* Legacy sizing compat */
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  height:          var(--ds-btn-height-md);
+  padding:         0 var(--ds-btn-pad-x-md);
+  font-family:     var(--font-main, 'Montserrat', sans-serif);
+  font-size:       var(--ds-text-base);
+  font-weight:     var(--ds-weight-semibold);
+  border-radius:   var(--ds-btn-radius);
+  text-decoration: none;
+  transition:      var(--ds-btn-transition);
+  cursor:          pointer;
+  border-width:    1px;
+  border-style:    solid;
+  letter-spacing:  var(--ds-tracking-wide);
+  white-space:     nowrap;
+}
+
+.btn--primary:hover,
+.primary-button:hover {
+  background:   var(--blue-bright, #68C8F7);
+  border-color: var(--blue-bright, #68C8F7);
+  box-shadow:   0 6px 20px var(--blue-glow, rgba(58,175,241,0.18));
+  transform:    translateY(-1px);
+  filter:       none;
+}
+
+.btn--primary:active,
+.primary-button:active {
+  transform:  translateY(0);
+  box-shadow: none;
+}
+
+/* — Secondary (ghost with border) — */
+.btn--secondary,
+.secondary-button {
+  background:    var(--ds-surface-raised);
+  color:         var(--ds-text-primary);
+  border-color:  var(--ds-border);
+  box-shadow:    var(--ds-elevation-1);
+
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  height:          var(--ds-btn-height-md);
+  padding:         0 var(--ds-btn-pad-x-md);
+  font-family:     var(--ds-font-ui);
+  font-size:       var(--ds-text-base);
+  font-weight:     var(--ds-weight-semibold);
+  border-radius:   var(--ds-btn-radius);
+  text-decoration: none;
+  transition:      var(--ds-btn-transition);
+  cursor:          pointer;
+  letter-spacing:  var(--ds-tracking-wide);
+  white-space:     nowrap;
+  border-width:    var(--ds-border-width-sm);
+  border-style:    solid;
+}
+
+.btn--secondary:hover,
+.secondary-button:hover {
+  background:   var(--ds-surface-hover);
+  border-color: var(--ds-border-hover);
+  color:        var(--ds-text-primary);
+  transform:    translateY(-1px);
+  box-shadow:   var(--ds-elevation-gold-1);
+}
+
+.btn--secondary:active,
+.secondary-button:active {
+  transform:  translateY(0);
+  background: var(--ds-surface-active);
+}
+
+/* — Ghost (transparent, blue text) — */
+.btn--ghost {
+  background:   transparent;
+  color:        var(--text-primary, #fff);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn--ghost:hover {
+  background:   transparent;
+  border-color: var(--blue, #3AAFF1);
+  color:        var(--blue, #3AAFF1);
+  transform:    translateY(-1px);
+}
+
+/* — Icon button (square) — */
+.btn--icon {
+  width:   var(--ds-btn-height-md);
+  height:  var(--ds-btn-height-md);
+  padding: 0;
+}
+
+.btn--icon.btn--sm {
+  width:  var(--ds-btn-height-sm);
+  height: var(--ds-btn-height-sm);
+}
+
+/* ============================================================
+   TECH PILLS / BADGES
+   ============================================================ */
+
+.pill {
+  display:        inline-flex;
+  align-items:    center;
+  gap:            var(--ds-space-1);
+  padding:        var(--ds-badge-pad-y) var(--ds-badge-pad-x);
+  background:     var(--ds-pill-bg);
+  border:         var(--ds-border-width-sm) solid var(--ds-pill-border);
+  border-radius:  var(--ds-badge-radius);
+  font-family:    var(--ds-font-mono);
+  font-size:      var(--ds-badge-font);
+  font-weight:    var(--ds-badge-weight);
+  letter-spacing: var(--ds-badge-tracking);
+  color:          var(--ds-pill-color);
+  white-space:    nowrap;
+  transition:     all var(--ds-transition-fast);
+}
+
+.pill:hover {
+  background:   var(--ds-pill-bg-hover);
+  border-color: var(--ds-pill-border-hover);
+}
+
+/* ============================================================
+   CARDS
+   ============================================================ */
+
+.card {
+  background:    var(--ds-card-bg);
+  border:        var(--ds-border-width-sm) solid var(--ds-card-border);
+  border-radius: var(--ds-card-radius);
+  padding:       var(--ds-card-pad);
+  box-shadow:    var(--ds-card-shadow);
+  transition:    var(--ds-card-transition);
+}
+
+.card:hover {
+  border-color: var(--ds-card-border-hover);
+  box-shadow:   var(--ds-card-shadow-hover);
+  transform:    translateY(-2px);
+}
+
+.card--raised {
+  background: var(--ds-card-bg-raised);
+}
+
+/* ============================================================
+   TYPOGRAPHY UTILITIES
+   ============================================================ */
+
+/* — Eyebrow label (small ALL-CAPS above headings) — */
+.eyebrow {
+  display:        block;
+  font-family:    var(--ds-eyebrow-font);
+  font-size:      var(--ds-eyebrow-size);
+  font-weight:    var(--ds-eyebrow-weight);
+  letter-spacing: var(--ds-eyebrow-tracking);
+  text-transform: uppercase;
+  color:          var(--ds-eyebrow-color);
+  margin-bottom:  var(--ds-space-3);
+}
+
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width:   20px;
+  height:  1px;
+  background: var(--blue, #3AAFF1);
+  vertical-align: middle;
+  margin-right: var(--ds-space-2);
+}
+
+/* — Gradient text — */
+.text-gradient {
+  background:         var(--ds-text-gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip:    text;
+}
+
+.text-gradient--warm {
+  background:         var(--ds-text-gradient-warm);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip:    text;
+}
+
+.text-gradient--teal {
+  background:         var(--ds-text-gradient-cool);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip:    text;
+}
+
+/* — Section heading block — */
+.section-heading {
+  display:   flex;
+  flex-direction: column;
+  gap:       var(--ds-space-3);
+  max-width: 640px;
+}
+
+.section-heading__title {
+  font-family:    var(--ds-font-display);
+  font-size:      var(--ds-text-4xl);
+  font-weight:    var(--ds-weight-bold);
+  line-height:    var(--ds-leading-tight);
+  letter-spacing: var(--ds-tracking-tight);
+  color:          var(--ds-text-primary);
+}
+
+.section-heading__subtitle {
+  font-size:   var(--ds-text-md);
+  line-height: var(--ds-leading-relaxed);
+  color:       var(--ds-text-secondary);
+}
+
+/* ============================================================
+   SCROLL REVEAL UTILITY
+   (pair with IntersectionObserver that toggles .is-visible)
+   ============================================================ */
+
+.reveal {
+  opacity:    0;
+  transform:  translateY(var(--ds-reveal-y-offset));
+  transition:
+    opacity  var(--ds-reveal-duration) var(--ds-ease-out),
+    transform var(--ds-reveal-duration) var(--ds-ease-out);
+}
+
+.reveal.is-visible {
+  opacity:   1;
+  transform: translateY(0);
+}
+
+/* Stagger children */
+.reveal-group > *:nth-child(1)  { transition-delay: calc(var(--ds-reveal-stagger) * 0); }
+.reveal-group > *:nth-child(2)  { transition-delay: calc(var(--ds-reveal-stagger) * 1); }
+.reveal-group > *:nth-child(3)  { transition-delay: calc(var(--ds-reveal-stagger) * 2); }
+.reveal-group > *:nth-child(4)  { transition-delay: calc(var(--ds-reveal-stagger) * 3); }
+.reveal-group > *:nth-child(5)  { transition-delay: calc(var(--ds-reveal-stagger) * 4); }
+.reveal-group > *:nth-child(6)  { transition-delay: calc(var(--ds-reveal-stagger) * 5); }
+
+/* ============================================================
+   GLASS SURFACE UTILITY
+   ============================================================ */
+
+.glass {
+  background:       var(--ds-glass-bg);
+  backdrop-filter:  var(--ds-blur-md);
+  -webkit-backdrop-filter: var(--ds-blur-md);
+  border:           var(--ds-border-width-sm) solid var(--ds-glass-border);
+}
+
+/* ============================================================
+   DIVIDER
+   ============================================================ */
+
+.divider {
+  width:      100%;
+  height:     1px;
+  background: var(--ds-divider-gradient);
+  border:     none;
+  margin:     0;
+}
+
+/* ============================================================
+   LAYOUT UTILITIES
+   ============================================================ */
+
+.container {
+  width:     100%;
+  max-width: var(--ds-max-width);
+  margin:    0 auto;
+  padding:   0 var(--ds-section-pad-x);
+}
+
+.container--narrow {
+  max-width: var(--ds-max-width-narrow);
+}
+
+.container--wide {
+  max-width: var(--ds-max-width-wide);
+}
+
+/* ============================================================
+   HOME PAGE — Section shell
+   ============================================================ */
+
+.home-page {
+  overflow-x: hidden;
+}
+
+.home-section {
+  position: relative;
+}
+
+.home-section--projects {
+  background: var(--ds-surface);
+}
+
+.home-section--blog {
+  background: var(--ds-gradient-void-down);
+}
+
+/* Smooth section divider line */
+.home-section::before {
+  content:    '';
+  position:   absolute;
+  top:        0;
+  left:       0;
+  right:      0;
+  height:     1px;
+  background: var(--ds-divider-gradient);
+  pointer-events: none;
+}
+
+/* ============================================================
+   LEGACY COMPAT — keeps old class names working
+   (remove after migrating all components to new classes)
+   ============================================================ */
+
+/* Map old single-word classes to new token values */
+:root {
+  --color-primary:         var(--ds-gold);
+  --color-primary-hover:   var(--ds-gold-bright);
+  --color-secondary:       var(--ds-surface-raised);
+  --color-secondary-hover: var(--ds-surface-hover);
 }

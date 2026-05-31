@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { usePostHog } from '@posthog/react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './css/ProjectPost.css';
@@ -17,7 +18,6 @@ import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
-import rehypeRaw from 'rehype-raw';
 import 'katex/dist/katex.min.css';
 import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 import MediaGallery from './ProjectMediaGallery';
@@ -220,7 +220,8 @@ const ReadingProgress = React.memo(() => {
 ReadingProgress.displayName = 'ReadingProgress';
 
 // Table of Contents Component
-const TableOfContents = React.memo(({ headings, activeId }) => {
+const TableOfContents = React.memo(({ headings, activeId, slug }) => {
+    const posthog = usePostHog();
     if (!headings || headings.length === 0) return null;
 
     return (
@@ -231,11 +232,14 @@ const TableOfContents = React.memo(({ headings, activeId }) => {
             </div>
             <ul className="proj-toc__list">
                 {headings.map((heading, index) => (
-                    <li 
-                        key={index} 
+                    <li
+                        key={index}
                         className={`proj-toc__item proj-toc__item--level-${heading.level} ${activeId === heading.id ? 'proj-toc__item--active' : ''}`}
                     >
-                        <a href={`#${heading.id}`}>
+                        <a
+                            href={`#${heading.id}`}
+                            onClick={() => posthog?.capture('project_toc_clicked', { slug, heading: heading.text, level: heading.level })}
+                        >
                             <span className="proj-toc__marker"></span>
                             {heading.text}
                         </a>
@@ -251,8 +255,10 @@ TableOfContents.displayName = 'TableOfContents';
 // Share Button Component
 const ShareButton = React.memo(({ title, url, compact = false }) => {
     const [copied, setCopied] = useState(false);
+    const posthog = usePostHog();
 
     const handleShare = async () => {
+        posthog?.capture('project_shared', { title, url });
         if (navigator.share) {
             try {
                 await navigator.share({ title, url });
@@ -448,7 +454,7 @@ QuickNav.displayName = 'QuickNav';
 // Main Project Page Component
 const ProjectPage = () => {
     const { slug } = useParams();
-    const navigate = useNavigate();
+    const posthog = usePostHog();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -456,6 +462,7 @@ const ProjectPage = () => {
     const [activeHeadingId, setActiveHeadingId] = useState('');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const contentRef = useRef(null);
+    const readCompletionTracked = useRef(false);
 
     // Scroll to top on mount and slug change
     useEffect(() => {
@@ -480,6 +487,11 @@ const ProjectPage = () => {
                 
                 const projectData = response.data.data;
                 setProject(projectData);
+                posthog?.capture('project_viewed', {
+                    slug,
+                    title: projectData?.attributes?.Title,
+                    category: projectData?.attributes?.Category,
+                });
 
                 // Extract headings for TOC
                 if (projectData?.attributes?.Description) {
@@ -500,6 +512,7 @@ const ProjectPage = () => {
             } catch (err) {
                 console.error("Error fetching project data:", err);
                 setError("Failed to load project. Please try again.");
+                posthog?.captureException(err, { slug });
             } finally {
                 setLoading(false);
             }
@@ -508,7 +521,7 @@ const ProjectPage = () => {
         if (slug) {
             fetchProject();
         }
-    }, [slug]);
+    }, [slug, posthog]);
 
     // Intersection Observer for active heading
     useEffect(() => {
@@ -550,6 +563,27 @@ const ProjectPage = () => {
         document.addEventListener('keydown', handleEscape);
         return () => document.removeEventListener('keydown', handleEscape);
     }, []);
+
+    // Reading completion tracking (fires once at 90% scroll depth)
+    useEffect(() => {
+        if (!project) return;
+        readCompletionTracked.current = false;
+        const handleScroll = () => {
+            if (readCompletionTracked.current) return;
+            const scrolled = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+            if (scrolled >= 0.9) {
+                readCompletionTracked.current = true;
+                posthog?.capture('project_read_completed', {
+                    slug,
+                    title: project?.attributes?.Title,
+                    category: project?.attributes?.Category,
+                    reading_time_min: calculateReadingTime(project?.attributes?.Description),
+                });
+            }
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [project, posthog, slug]);
 
     // Memoized markdown components to prevent re-creation on each render
     const markdownComponents = useMemo(() => ({
@@ -827,22 +861,24 @@ const ProjectPage = () => {
                     {/* Action Buttons */}
                     <div className="proj-hero__actions">
                         {Github && (
-                            <a 
-                                href={Github} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
+                            <a
+                                href={Github}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="proj-btn proj-btn--white"
+                                onClick={() => posthog?.capture('project_github_clicked', { slug, title: Title })}
                             >
                                 <FaGithub />
                                 <span>View Source</span>
                             </a>
                         )}
                         {Demo && (
-                            <a 
-                                href={Demo.includes('http') ? Demo : `https://${Demo}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
+                            <a
+                                href={Demo.includes('http') ? Demo : `https://${Demo}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="proj-btn proj-btn--primary"
+                                onClick={() => posthog?.capture('project_demo_clicked', { slug, title: Title })}
                             >
                                 <FaExternalLinkAlt />
                                 <span>Live Demo</span>
@@ -865,7 +901,7 @@ const ProjectPage = () => {
                 {/* Sidebar */}
                 <aside className="proj-sidebar">
                     <div className="proj-sidebar__sticky">
-                        <TableOfContents headings={headings} activeId={activeHeadingId} />
+                        <TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} />
                         <QuickNav 
                             hasGithub={!!Github}
                             hasDemo={!!Demo}
@@ -902,7 +938,11 @@ const ProjectPage = () => {
                                 <h2 className="proj-section__title">Project Demo</h2>
                             </div>
                             <div className="proj-video">
-                                <video controls poster={featuredImage}>
+                                <video
+                                    controls
+                                    poster={featuredImage}
+                                    onPlay={() => posthog?.capture('project_video_played', { slug, title: Title })}
+                                >
                                     <source src={video.url} type="video/mp4" />
                                     Your browser does not support the video tag.
                                 </video>
@@ -912,7 +952,20 @@ const ProjectPage = () => {
 
                     {/* Gallery Section */}
                     {hasGallery && (
-                        <section className="proj-section" id="gallery">
+                        <section
+                            className="proj-section"
+                            id="gallery"
+                            ref={(el) => {
+                                if (!el) return;
+                                const obs = new IntersectionObserver(([entry]) => {
+                                    if (entry.isIntersecting) {
+                                        posthog?.capture('project_gallery_viewed', { slug, title: Title, image_count: media.length });
+                                        obs.disconnect();
+                                    }
+                                }, { threshold: 0.3 });
+                                obs.observe(el);
+                            }}
+                        >
                             <div className="proj-section__header">
                                 <FaImages className="proj-section__icon" />
                                 <h2 className="proj-section__title">Project Gallery</h2>

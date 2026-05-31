@@ -5,16 +5,16 @@
 
 /* CSS Custom Properties - Dark Theme (default) */
 :root {
-  --nav-height: 80px;
+  --nav-height: 100px;
   --nav-height-scrolled: 64px;
   --nav-bg: transparent;
-  --nav-bg-scrolled: rgba(8, 12, 21, 0.95);
-  --nav-blur: 20px;
+  --nav-bg-scrolled: rgba(6, 7, 14, 0.88);
+  --nav-blur: 24px;
   --nav-text: #ffffff;
-  --nav-text-muted: #cbd5e1;
-  --nav-accent: #06b6d4;
-  --nav-accent-glow: rgba(6, 182, 212, 0.4);
-  --nav-border: rgba(255, 255, 255, 0.12);
+  --nav-text-muted: #8fa0b4;
+  --nav-accent: #3AAFF1;
+  --nav-accent-glow: rgba(58, 175, 241, 0.30);
+  --nav-border: rgba(255, 255, 255, 0.08);
   --nav-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --nav-z-index: 1000;
 }
@@ -29,45 +29,47 @@
   right: 0;
   z-index: var(--nav-z-index);
   background: var(--nav-bg);
-  transition: 
+  border: none;      /* kill any Tailwind-preflight border */
+  outline: none;
+  transition:
     background var(--nav-transition),
     backdrop-filter var(--nav-transition),
-    box-shadow var(--nav-transition);
+    box-shadow var(--nav-transition),
+    border-color var(--nav-transition);
 }
 
 /* ========================================
    Theme Variations
    ======================================== */
 
-/* Dark theme - light text on dark/transparent background */
+/* Dark theme - light text (used everywhere now) */
 .nav--dark {
   --nav-text: #ffffff;
-  --nav-text-muted: #cbd5e1;
-  --nav-border: rgba(255, 255, 255, 0.12);
+  --nav-text-muted: #8fa0b4;
+  --nav-border: rgba(255, 255, 255, 0.08);
 }
 
-/* Light theme - dark text on light/transparent background */
-.nav--light {
-  --nav-text: #1e293b;
-  --nav-text-muted: #64748b;
-  --nav-border: rgba(0, 0, 0, 0.08);
+/* At rest: fully transparent — merges with whatever dark background is behind it */
+.nav--glass:not(.nav--scrolled) {
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none;
+  box-shadow: none;
 }
 
-.nav--light .nav__toggle-bar {
-  background: #1e293b;
-}
-
-/* When scrolled, always use dark background with light text */
+/* Scrolled: more opaque, stronger blur, visible cyan accent line */
 .nav--scrolled {
   --nav-text: #ffffff;
-  --nav-text-muted: #cbd5e1;
-  --nav-border: rgba(255, 255, 255, 0.12);
-  background: var(--nav-bg-scrolled);
-  backdrop-filter: blur(var(--nav-blur));
-  -webkit-backdrop-filter: blur(var(--nav-blur));
-  box-shadow: 
-    0 1px 0 var(--nav-border),
-    0 4px 20px rgba(0, 0, 0, 0.15);
+  --nav-text-muted: #8fa0b4;
+  --nav-border: rgba(58, 175, 241, 0.15);
+  background: rgba(6, 7, 14, 0.86);
+  backdrop-filter: blur(28px) saturate(1.6);
+  -webkit-backdrop-filter: blur(28px) saturate(1.6);
+  border-bottom: 1px solid rgba(58, 175, 241, 0.14);
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.45),
+    0 1px 0 rgba(58, 175, 241, 0.12);
 }
 
 .nav--scrolled .nav__toggle-bar {
@@ -123,20 +125,23 @@
 }
 
 .nav__logo-text {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--nav-text);
-  letter-spacing: -0.02em;
   opacity: 0;
   transform: translateX(-8px);
-  transition: 
-    opacity var(--nav-transition), 
+  transition:
+    opacity var(--nav-transition),
     transform var(--nav-transition),
     color var(--nav-transition);
 }
 
-.nav--scrolled .nav__logo-text {
-  opacity: 0;
+.nav--scrolled .nav__logo-text,
+.nav--glass .nav__logo-text {
+  opacity: 1;
   transform: translateX(0);
 }
 
@@ -160,48 +165,42 @@
   position: relative;
   display: flex;
   align-items: center;
-  padding: 10px 16px;
+  padding: 8px 14px;
   color: var(--nav-text-muted);
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-decoration: none;
-  border-radius: 10px;
-  transition: 
+  border-radius: 4px;
+  transition:
     color var(--nav-transition),
     background var(--nav-transition);
 }
 
 .nav__link:hover {
-  color: var(--nav-text);
-  background: rgba(128, 128, 128, 0.1);
-}
-
-.nav--dark .nav__link:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.nav--light .nav__link:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.nav--scrolled .nav__link:hover {
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--nav-accent);
+  background: rgba(58, 175, 241, 0.07);
+  text-shadow: 0 0 14px rgba(58, 175, 241, 0.55);
 }
 
 .nav__link--active {
-  color: var(--nav-text);
+  color: var(--nav-accent);
+  text-shadow: 0 0 10px rgba(58, 175, 241, 0.40);
 }
 
 .nav__link-indicator {
   position: absolute;
-  bottom: 6px;
+  bottom: 5px;
   left: 50%;
   transform: translateX(-50%) scaleX(0);
-  width: 20px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--nav-accent), #3b82f6);
+  width: 28px;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent 0%, var(--nav-accent) 30%, var(--nav-accent) 70%, transparent 100%);
   border-radius: 1px;
-  transition: transform var(--nav-transition);
+  box-shadow: 0 0 8px var(--nav-accent-glow), 0 0 16px rgba(58, 175, 241, 0.20);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .nav__link:hover .nav__link-indicator,
@@ -222,37 +221,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   color: var(--nav-text-muted);
-  font-size: 1.1rem;
-  border-radius: 10px;
-  background: rgba(128, 128, 128, 0.08);
-  border: 1px solid var(--nav-border);
-  transition: 
+  font-size: 1rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition:
     color var(--nav-transition),
     background var(--nav-transition),
     border-color var(--nav-transition),
-    transform var(--nav-transition);
-}
-
-.nav--dark .nav__social {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.nav--light .nav__social {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.nav--scrolled .nav__social {
-  background: rgba(255, 255, 255, 0.08);
+    transform var(--nav-transition),
+    box-shadow var(--nav-transition);
 }
 
 .nav__social:hover {
   color: var(--nav-accent);
-  background: rgba(6, 182, 212, 0.15);
-  border-color: rgba(6, 182, 212, 0.4);
+  background: rgba(58, 175, 241, 0.10);
+  border-color: rgba(58, 175, 241, 0.40);
   transform: translateY(-2px);
+  box-shadow: 0 0 16px rgba(58, 175, 241, 0.20), 0 4px 12px rgba(0, 0, 0, 0.30);
 }
 
 /* ========================================
@@ -286,12 +275,7 @@
   transform-origin: center;
 }
 
-/* Light theme toggle bars */
-.nav--light .nav__toggle-bar {
-  background: #1e293b;
-}
-
-/* Scrolled state - always white bars */
+/* Toggle bars — always white (nav is always dark) */
 .nav--scrolled .nav__toggle-bar {
   background: #ffffff;
 }
@@ -334,14 +318,9 @@
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   z-index: calc(var(--nav-z-index) + 5);
-  transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  /* transform/transition handled by Framer Motion AnimatePresence */
   overflow-y: auto;
   overscroll-behavior: contain;
-}
-
-.mobile-menu--open {
-  transform: translateX(0);
 }
 
 .mobile-menu__content {
@@ -402,16 +381,18 @@
 }
 
 .mobile-menu__link--active {
-  background: rgba(6, 182, 212, 0.1);
-  border-color: rgba(6, 182, 212, 0.2);
+  background: rgba(58, 175, 241, 0.08);
+  border-color: rgba(58, 175, 241, 0.18);
 }
 
 .mobile-menu__number {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: #06b6d4;
-  opacity: 0.6;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #3AAFF1;
+  opacity: 0.7;
   min-width: 24px;
+  letter-spacing: 0.08em;
 }
 
 .mobile-menu__label {
@@ -477,9 +458,9 @@
 
 .mobile-menu__social:hover,
 .mobile-menu__social:focus {
-  color: #06b6d4;
-  background: rgba(6, 182, 212, 0.1);
-  border-color: rgba(6, 182, 212, 0.3);
+  color: #3AAFF1;
+  background: rgba(58, 175, 241, 0.08);
+  border-color: rgba(58, 175, 241, 0.25);
   transform: translateY(-2px);
 }
 
@@ -500,16 +481,7 @@
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   z-index: calc(var(--nav-z-index) + 2);
-  opacity: 0;
-  visibility: hidden;
-  transition: 
-    opacity 0.3s ease,
-    visibility 0.3s ease;
-}
-
-.nav-backdrop--visible {
-  opacity: 1;
-  visibility: visible;
+  /* opacity/visibility handled by Framer Motion AnimatePresence */
 }
 
 /* ========================================
@@ -594,6 +566,31 @@
 
   .nav__logo-text {
     display: none;
+  }
+}
+
+/* ========================================
+   Channel indicator (homepage scroll progress)
+   ======================================== */
+.nav__channel {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--nav-accent);
+  opacity: 0.85;
+  padding: 3px 8px;
+  border: 1px solid rgba(58, 175, 241, 0.20);
+  border-radius: 2px;
+  white-space: nowrap;
+  transition: opacity var(--nav-transition);
+  display: none; /* hidden on mobile */
+}
+
+@media (min-width: 1025px) {
+  .nav__channel {
+    display: inline-block;
   }
 }
 

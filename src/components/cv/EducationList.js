@@ -9,7 +9,6 @@
 import React from 'react';
 
 import '../css/EducationList.css';
-import education from '../../api/education';
 import ReactMarkdown from 'react-markdown';
 
 const EducationList = ({ educations }) => {

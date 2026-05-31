@@ -1,0 +1,459 @@
+/* ============================================================
+   INSTRUMENTATION — Shared primitives for the editorial/
+   instrumented homepage. Reticle corners, telemetry labels,
+   hairline rules, tickers, channel marks, CRT displays.
+   Import once via global.css.
+   ============================================================ */
+
+/* ============================================================
+   TELEMETRY LABEL — mono uppercase micro text
+   Used for channel IDs, timestamps, status pills, coordinates.
+   ============================================================ */
+
+.telemetry,
+.telemetry-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-telemetry, 0.65rem);
+  font-weight: 500;
+  letter-spacing: var(--tracking-telemetry, 0.14em);
+  text-transform: uppercase;
+  color: var(--blue, #3AAFF1);
+  line-height: 1;
+}
+
+.telemetry--muted {
+  color: var(--text-muted, #5A6575);
+}
+
+.telemetry--light {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.telemetry--dark {
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.telemetry--green { color: var(--green, #6FCF97); }
+.telemetry--amber { color: var(--amber, #F5A623); }
+.telemetry--red   { color: var(--red-pvc, #E84A5F); }
+
+/* Hairline prefix dash before telemetry text */
+.telemetry::before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.telemetry--no-prefix::before { display: none; }
+
+/* Live dot indicator */
+.telemetry__dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  animation: telemetryPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes telemetryPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(0.85); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .telemetry__dot { animation: none; opacity: 1; }
+}
+
+/* ============================================================
+   CHANNEL MARK — section eyebrow with CH:XX prefix
+   Used as the structured label above each section heading.
+   ============================================================ */
+
+.channel-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.875rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-telemetry, 0.65rem);
+  font-weight: 600;
+  letter-spacing: var(--tracking-telemetry, 0.14em);
+  text-transform: uppercase;
+  color: var(--blue, #3AAFF1);
+  line-height: 1;
+}
+
+.channel-mark__id {
+  font-weight: 700;
+  color: var(--blue, #3AAFF1);
+}
+
+.channel-mark__sep {
+  width: 24px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.5;
+  flex-shrink: 0;
+}
+
+.channel-mark__title {
+  color: var(--text-secondary, #B0BAC4);
+  font-weight: 500;
+}
+
+.channel-mark--dark .channel-mark__title { color: rgba(13, 14, 26, 0.7); }
+.channel-mark--green { color: var(--green, #6FCF97); }
+.channel-mark--green .channel-mark__id { color: var(--green, #6FCF97); }
+
+/* ============================================================
+   RETICLE CORNERS — 4 L-shaped brackets on a container
+   Use as overlay; container needs position: relative.
+   Animate inward on `.reticle--armed` (added via JS on mount).
+   ============================================================ */
+
+.reticle {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.reticle__corner {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 1.5px solid var(--blue, #3AAFF1);
+  opacity: 0;
+  transition:
+    transform 0.6s var(--ease-smooth, cubic-bezier(0.25, 0.46, 0.45, 0.94)),
+    opacity 0.4s ease;
+}
+
+.reticle__corner--tl { top: 0; left: 0;
+  border-right: none; border-bottom: none;
+  transform: translate(-12px, -12px); }
+.reticle__corner--tr { top: 0; right: 0;
+  border-left: none; border-bottom: none;
+  transform: translate(12px, -12px); }
+.reticle__corner--bl { bottom: 0; left: 0;
+  border-right: none; border-top: none;
+  transform: translate(-12px, 12px); }
+.reticle__corner--br { bottom: 0; right: 0;
+  border-left: none; border-top: none;
+  transform: translate(12px, 12px); }
+
+.reticle--armed .reticle__corner {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+.reticle--armed .reticle__corner--tl { transition-delay: 0.0s; }
+.reticle--armed .reticle__corner--tr { transition-delay: 0.1s; }
+.reticle--armed .reticle__corner--bl { transition-delay: 0.2s; }
+.reticle--armed .reticle__corner--br { transition-delay: 0.3s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reticle__corner { transition: opacity 0.2s ease; transform: none; }
+  .reticle--armed .reticle__corner { transform: none; }
+}
+
+/* ============================================================
+   HAIRLINE RULES
+   ============================================================ */
+
+.hairline {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--hairline-dark, rgba(255, 255, 255, 0.08));
+  border: none;
+}
+
+.hairline--light { background: var(--hairline-light, rgba(0, 0, 0, 0.08)); }
+.hairline--blue  { background: var(--hairline-blue, rgba(58, 175, 241, 0.20)); }
+
+.hairline-v {
+  width: 1px;
+  background: var(--hairline-dark, rgba(255, 255, 255, 0.08));
+}
+
+/* Pull-quote brackets — horizontal hairline above/below */
+.bracket-rule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.bracket-rule::before,
+.bracket-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--hairline-dark, rgba(255, 255, 255, 0.08));
+}
+
+.bracket-rule--light::before,
+.bracket-rule--light::after {
+  background: var(--hairline-light, rgba(0, 0, 0, 0.08));
+}
+
+/* ============================================================
+   TICKER — horizontal auto-scrolling marquee
+   .ticker is the viewport, .ticker__track is the moving content.
+   The content should be duplicated (rendered twice) so the
+   animation appears seamless.
+   ============================================================ */
+
+.ticker {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+}
+
+.ticker__track {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  animation: tickerScroll 40s linear infinite;
+}
+
+.ticker:hover .ticker__track {
+  animation-play-state: paused;
+}
+
+.ticker__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-telemetry, 0.65rem);
+  letter-spacing: var(--tracking-telemetry, 0.14em);
+  text-transform: uppercase;
+  color: var(--text-secondary, #B0BAC4);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ticker__sep {
+  color: var(--blue, #3AAFF1);
+  opacity: 0.6;
+}
+
+.ticker--light .ticker__item { color: rgba(13, 14, 26, 0.6); }
+.ticker--light .ticker__sep  { color: var(--blue, #3AAFF1); }
+
+@keyframes tickerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker__track { animation: none; }
+}
+
+/* ============================================================
+   CRT DISPLAY — green phosphor monitor effect
+   Used by signature project stat cards.
+   ============================================================ */
+
+.crt-display {
+  position: relative;
+  background: #02110A;
+  border: 1px solid rgba(111, 207, 151, 0.30);
+  box-shadow:
+    inset 0 0 24px rgba(111, 207, 151, 0.08),
+    0 0 0 1px rgba(111, 207, 151, 0.05);
+  overflow: hidden;
+}
+
+.crt-display::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(111, 207, 151, 0.06) 0px,
+    rgba(111, 207, 151, 0.06) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.crt-display::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.35) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.crt-display > * {
+  position: relative;
+  z-index: 3;
+}
+
+.crt-display__value {
+  font-family: var(--font-display, 'Orbitron', monospace);
+  font-weight: 900;
+  color: var(--green, #6FCF97);
+  text-shadow: 0 0 12px rgba(111, 207, 151, 0.45);
+  line-height: 1;
+}
+
+/* ============================================================
+   SCAN-STRIPE REVEAL — used on hero portrait
+   3 vertical clip-path stripes that slide in on `.armed`.
+   ============================================================ */
+
+.scan-stripe {
+  position: relative;
+  overflow: hidden;
+}
+
+.scan-stripe__slice {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.7s var(--ease-smooth, cubic-bezier(0.25, 0.46, 0.45, 0.94)),
+    transform 0.9s var(--ease-smooth, cubic-bezier(0.25, 0.46, 0.45, 0.94));
+}
+
+.scan-stripe__slice--1 { clip-path: polygon(0 0, 33.34% 0, 33.34% 100%, 0 100%); }
+.scan-stripe__slice--2 { clip-path: polygon(33.33% 0, 66.67% 0, 66.67% 100%, 33.33% 100%); }
+.scan-stripe__slice--3 { clip-path: polygon(66.66% 0, 100% 0, 100% 100%, 66.66% 100%); }
+
+.scan-stripe--armed .scan-stripe__slice {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scan-stripe--armed .scan-stripe__slice--1 { transition-delay: 0.0s; }
+.scan-stripe--armed .scan-stripe__slice--2 { transition-delay: 0.18s; }
+.scan-stripe--armed .scan-stripe__slice--3 { transition-delay: 0.36s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scan-stripe__slice { transition: opacity 0.2s ease; transform: none; }
+  .scan-stripe--armed .scan-stripe__slice { transform: none; }
+}
+
+/* ============================================================
+   STATUS BADGES — color-coded by deployment state
+   ============================================================ */
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-telemetry, 0.65rem);
+  font-weight: 700;
+  letter-spacing: var(--tracking-telemetry, 0.14em);
+  text-transform: uppercase;
+  padding: 0.3rem 0.6rem;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  background: rgba(0, 0, 0, 0.25);
+  line-height: 1;
+}
+
+.status-badge__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.status-badge--deployed { color: var(--green, #6FCF97); }
+.status-badge--research { color: var(--blue, #3AAFF1); }
+.status-badge--archived { color: var(--text-muted, #5A6575); }
+.status-badge--pinned   { color: var(--amber, #F5A623); }
+.status-badge--live     { color: var(--red-pvc, #E84A5F); }
+
+.status-badge--live .status-badge__dot {
+  animation: telemetryPulse 1.2s ease-in-out infinite;
+}
+
+/* ============================================================
+   COUNT-UP — used by stat values that animate from 0
+   Pair with JS that updates innerText; this just sets style.
+   ============================================================ */
+
+.count-up {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============================================================
+   GLOBAL HOME PAGE LAYOUT TWEAKS
+   ============================================================ */
+
+.home-page-instrumented {
+  position: relative;
+}
+
+/* Hide the old auto-divider when we manage dividers ourselves */
+.home-page-instrumented .home-section::before {
+  display: none;
+}
+
+/* ============================================================
+   SCROLL-REVEAL — Entrance animation system for section panels.
+   Add .reveal-fade, .reveal-up, or .reveal-slide to any element.
+   JS adds .revealed when IntersectionObserver fires at 0.12.
+   ============================================================ */
+
+.reveal-up {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.reveal-up.revealed {
+  opacity: 1;
+  transform: none;
+}
+
+.reveal-fade {
+  opacity: 0;
+  transition: opacity 0.65s ease;
+}
+
+.reveal-fade.revealed {
+  opacity: 1;
+}
+
+/* Stagger: nth-child delays applied via inline --reveal-delay var */
+[style*="--reveal-delay"].reveal-up,
+[style*="--reveal-delay"].reveal-fade {
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up,
+  .reveal-fade {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

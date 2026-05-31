@@ -9,7 +9,6 @@ const expertiseToStars = {
     Advanced: 4,
 };
 
-const generateStars = (expertise) => '★'.repeat(expertiseToStars[expertise] || 0);
 
 const SkillsList = ({ skills }) => {
     if (typeof skills !== 'object' || !skills) return <p>No skills available.</p>;

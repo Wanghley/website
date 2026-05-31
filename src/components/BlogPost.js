@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { usePostHog } from '@posthog/react';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './css/BlogPost.css';
@@ -8,7 +9,7 @@ import {
     FaTag, FaCalendarAlt, FaArrowLeft, FaChevronUp, 
     FaShareAlt, FaLink, FaClock, FaBookOpen, FaUser
 } from "react-icons/fa";
-import { HiSparkles, HiOutlineBookOpen } from 'react-icons/hi';
+import { HiOutlineBookOpen } from 'react-icons/hi';
 import { BsArrowUpRight, BsChevronRight } from 'react-icons/bs';
 import { IoClose } from 'react-icons/io5';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -92,7 +93,8 @@ const ReadingProgress = React.memo(() => {
 ReadingProgress.displayName = 'ReadingProgress';
 
 // Table of Contents Component
-const TableOfContents = React.memo(({ headings, activeId }) => {
+const TableOfContents = React.memo(({ headings, activeId, slug }) => {
+    const posthog = usePostHog();
     if (!headings || headings.length === 0) return null;
 
     return (
@@ -103,11 +105,14 @@ const TableOfContents = React.memo(({ headings, activeId }) => {
             </div>
             <ul className="blog-toc__list">
                 {headings.map((heading, index) => (
-                    <li 
-                        key={index} 
+                    <li
+                        key={index}
                         className={`blog-toc__item blog-toc__item--level-${heading.level} ${activeId === heading.id ? 'blog-toc__item--active' : ''}`}
                     >
-                        <a href={`#${heading.id}`}>
+                        <a
+                            href={`#${heading.id}`}
+                            onClick={() => posthog?.capture('blog_toc_clicked', { slug, heading: heading.text, level: heading.level })}
+                        >
                             <span className="blog-toc__marker"></span>
                             {heading.text}
                         </a>
@@ -123,8 +128,10 @@ TableOfContents.displayName = 'TableOfContents';
 // Share Button Component
 const ShareButton = React.memo(({ title, url }) => {
     const [copied, setCopied] = useState(false);
+    const posthog = usePostHog();
 
     const handleShare = async () => {
+        posthog?.capture('blog_post_shared', { title, url });
         if (navigator.share) {
             try {
                 await navigator.share({ title, url });
@@ -213,8 +220,9 @@ MobileTOC.displayName = 'MobileTOC';
 
 // Related Posts Component
 const RelatedPosts = React.memo(({ posts, currentSlug }) => {
+    const posthog = usePostHog();
     const filteredPosts = posts.filter(post => post.attributes?.slug !== currentSlug).slice(0, 3);
-    
+
     if (filteredPosts.length === 0) return null;
 
     return (
@@ -225,12 +233,18 @@ const RelatedPosts = React.memo(({ posts, currentSlug }) => {
                     const imageUrl = post.attributes?.Featured?.data?.attributes?.formats?.small?.url ||
                                      post.attributes?.Featured?.data?.attributes?.url ||
                                      'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=400&q=80';
-                    
+
                     return (
-                        <Link 
+                        <Link
                             key={post.id || index}
                             to={`/blog/${post.attributes?.slug}`}
                             className="blog-related__item"
+                            onClick={() => posthog?.capture('blog_related_post_clicked', {
+                                from_slug: currentSlug,
+                                to_slug: post.attributes?.slug,
+                                title: post.attributes?.Title,
+                                index,
+                            })}
                         >
                             <div className="blog-related__image">
                                 <img src={imageUrl} alt={post.attributes?.Title} loading="lazy" />
@@ -254,6 +268,7 @@ RelatedPosts.displayName = 'RelatedPosts';
 // Main Blog Post Component
 const BlogPostPage = () => {
     const { slug } = useParams();
+    const posthog = usePostHog();
     const [blogPost, setBlogPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -262,6 +277,7 @@ const BlogPostPage = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [relatedPosts, setRelatedPosts] = useState([]);
     const contentRef = useRef(null);
+    const readCompletionTracked = useRef(false);
 
     // Scroll to top on mount and slug change
     useEffect(() => {
@@ -286,6 +302,11 @@ const BlogPostPage = () => {
                 
                 const postData = response.data.data;
                 setBlogPost(postData);
+                posthog?.capture('blog_post_viewed', {
+                    slug,
+                    title: postData?.attributes?.Title,
+                    category: postData?.attributes?.Categories?.[0],
+                });
 
                 // Extract headings for TOC
                 if (postData?.attributes?.Content) {
@@ -318,6 +339,7 @@ const BlogPostPage = () => {
             } catch (err) {
                 console.error("Error fetching blog post:", err);
                 setError("Failed to load article. Please try again.");
+                posthog?.captureException(err, { slug });
             } finally {
                 setLoading(false);
             }
@@ -326,7 +348,7 @@ const BlogPostPage = () => {
         if (slug) {
             fetchBlogPost();
         }
-    }, [slug]);
+    }, [slug, posthog]);
 
     // Intersection Observer for active heading
     useEffect(() => {
@@ -368,6 +390,27 @@ const BlogPostPage = () => {
         document.addEventListener('keydown', handleEscape);
         return () => document.removeEventListener('keydown', handleEscape);
     }, []);
+
+    // Reading completion tracking (fires once at 90% scroll depth)
+    useEffect(() => {
+        if (!blogPost) return;
+        readCompletionTracked.current = false;
+        const handleScroll = () => {
+            if (readCompletionTracked.current) return;
+            const scrolled = (window.scrollY + window.innerHeight) / document.documentElement.scrollHeight;
+            if (scrolled >= 0.9) {
+                readCompletionTracked.current = true;
+                posthog?.capture('blog_read_completed', {
+                    slug,
+                    title: blogPost?.attributes?.Title,
+                    reading_time_min: calculateReadingTime(blogPost?.attributes?.Content),
+                    categories: blogPost?.attributes?.Categories,
+                });
+            }
+        };
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [blogPost, posthog, slug]);
 
     // Memoized markdown components
     const markdownComponents = useMemo(() => ({
@@ -670,7 +713,7 @@ const BlogPostPage = () => {
                 {/* Sidebar */}
                 <aside className="blog-sidebar">
                     <div className="blog-sidebar__sticky">
-                        <TableOfContents headings={headings} activeId={activeHeadingId} />
+                        <TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} />
                         <RelatedPosts posts={relatedPosts} currentSlug={slug} />
                     </div>
                 </aside>
