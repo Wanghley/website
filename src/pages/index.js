@@ -6,7 +6,6 @@ import {
   Skills,
   GridFeatured,
   GridFeaturedBlog,
-  TechArchitecture,
   GambiarraImpact,
 } from '../components';
 import { Helmet } from "react-helmet-async";
@@ -61,7 +60,7 @@ const Home = () => {
             <About />
             <GambiarraImpact />
             <Skills />
-            <TechArchitecture />
+            {/* <TechArchitecture /> */}
 
             <section className="home-section home-section--projects">
                 <GridFeatured />
