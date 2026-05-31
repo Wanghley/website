@@ -1,0 +1,125 @@
+/* ============================================================
+   ChannelRail — fixed left vertical channel indicator
+   Hidden on mobile (< 1024px).
+   ============================================================ */
+
+.channel-rail {
+  position: fixed;
+  top: 50%;
+  left: 24px;
+  transform: translateY(-50%);
+  z-index: 90;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.channel-rail__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  pointer-events: auto;
+}
+
+.channel-rail__label {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.55rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.50);
+  padding-left: 4px;
+  margin-bottom: 0.25rem;
+}
+
+.channel-rail__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.channel-rail__item {
+  position: relative;
+}
+
+.channel-rail__link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.18rem 0;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.32);
+  text-decoration: none;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.channel-rail__link:hover {
+  color: rgba(255, 255, 255, 0.85);
+  transform: translateX(2px);
+}
+
+.channel-rail__id {
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.channel-rail__title {
+  opacity: 0;
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.3s ease, max-width 0.35s ease;
+}
+
+.channel-rail__link:hover .channel-rail__title {
+  opacity: 1;
+  max-width: 200px;
+}
+
+.channel-rail__tick {
+  display: block;
+  width: 18px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.4;
+  flex-shrink: 0;
+  transition: width 0.3s var(--ease-smooth, cubic-bezier(0.25, 0.46, 0.45, 0.94)),
+              opacity 0.25s ease,
+              background-color 0.25s ease;
+}
+
+/* — Active channel — */
+.channel-rail__item--active .channel-rail__link {
+  color: var(--blue, #3AAFF1);
+}
+
+.channel-rail__item--active .channel-rail__title {
+  opacity: 1;
+  max-width: 200px;
+}
+
+.channel-rail__item--active .channel-rail__tick {
+  width: 32px;
+  opacity: 1;
+  background: var(--blue, #3AAFF1);
+  box-shadow: 0 0 8px rgba(58, 175, 241, 0.6);
+}
+
+/* — Responsive — */
+@media (max-width: 1100px) {
+  .channel-rail { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .channel-rail__link,
+  .channel-rail__title,
+  .channel-rail__tick {
+    transition: none;
+  }
+}
