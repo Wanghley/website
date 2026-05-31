@@ -40,7 +40,6 @@ const WhyMe = () => {
     }, {});
     console.log(uniqueElements);
 
-    const carouselData = Object.values(uniqueElements).map(({ name, position, text }) => `${name}, ${position}, ${text}`);
 
     return (
         <div>
