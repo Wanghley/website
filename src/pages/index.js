@@ -1,44 +1,81 @@
-import React, { lazy, Suspense } from "react";
-import { Hero, About, Contact, Skills, GridFeatured, GridFeaturedBlog } from '../components';
-import { Helmet } from "react-helmet-async"; // Changed from react-helmet
+import React from "react";
+import {
+  Hero,
+  About,
+  Contact,
+  Skills,
+  GridFeatured,
+  GridFeaturedBlog,
+  TechArchitecture,
+  GambiarraImpact,
+  ChannelRail,
+  SectionDivider,
+} from '../components';
+import { Helmet } from "react-helmet-async";
 import './css/home.css';
-
-const BlogPost = lazy(() => import('../components/BlogPost'));
 
 const Home = () => {
     return (
-        <div className="home-page">
+        <div className="home-page home-page-instrumented">
             <Helmet>
-                <title>Wanghley – Sci & Tech | Engineer, Entrepreneur, Innovator</title>
-                <meta name="description" content="Wanghley is a tech innovator and engineer passionate about AI, health tech, and social impact. Explore projects, blog posts, and more." />
-                <meta name="keywords" content="Wanghley, Engineer, AI, Health Tech, Duke University, Portfolio, Projects" />
+                <title>Wanghley Martins | Edge AI Engineer & Biomedical AI Researcher | Duke University</title>
+                <meta name="description" content="Wanghley Martins is an Edge AI engineer and biomedical AI researcher at Duke University (Karsh Scholar) building intelligent health systems — from TinyML on STM32 microcontrollers to cloud-scale MLOps pipelines." />
+                <meta name="keywords" content="Wanghley Martins, Edge AI, TinyML, Biomedical AI, Embedded ML, STM32, Arrhythmia Detection, Health Tech, Duke University, Karsh Scholar, Silicon to Cloud, FPGA, ARM Cortex, RTOS, ONNX" />
                 <link rel="canonical" href="https://wanghley.com/" />
-                <meta name="author" content="Wanghley" />
+                <meta name="author" content="Wanghley Martins" />
                 <meta name="robots" content="index, follow" />
 
-                <meta property="og:title" content="Wanghley – Sci & Tech" />
-                <meta property="og:description" content="Discover Wanghley's journey, skills, and experiences. Learn more about the person behind the projects." />
+                <meta property="og:title" content="Wanghley Martins | Edge AI Engineer & Biomedical AI Researcher" />
+                <meta property="og:description" content="Building intelligent health systems from silicon to cloud. Edge AI, TinyML, and biomedical engineering research at Duke University." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://wanghley.com/" />
                 <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1746648815/branding/logo_applied_sq.png" />
-                <meta property="og:site_name" content="Wanghley – Sci & Tech" />
+                <meta property="og:site_name" content="Wanghley Martins – Edge AI & Health Tech" />
                 <meta property="og:locale" content="en_US" />
+
+                <script type="application/ld+json">{`
+                    {
+                        "@context": "https://schema.org",
+                        "@type": "Person",
+                        "name": "Wanghley Martins",
+                        "url": "https://wanghley.com",
+                        "jobTitle": "Edge AI Engineer & Biomedical AI Researcher",
+                        "description": "Edge AI engineer and biomedical AI researcher building intelligent health systems from silicon to cloud.",
+                        "affiliation": {
+                            "@type": "EducationalOrganization",
+                            "name": "Duke University",
+                            "url": "https://duke.edu"
+                        },
+                        "alumniOf": {
+                            "@type": "EducationalOrganization",
+                            "name": "Duke University"
+                        },
+                        "knowsAbout": ["Edge AI", "TinyML", "Biomedical Engineering", "Embedded Systems", "Machine Learning", "Health Tech", "FPGA", "ARM Cortex", "RTOS"],
+                        "sameAs": [
+                            "https://linkedin.com/in/wanghley",
+                            "https://github.com/wanghley",
+                            "https://scholar.google.com/citations?user=sN2iKrkAAAAJ"
+                        ]
+                    }
+                `}</script>
             </Helmet>
-            
+            <ChannelRail />
             <Hero />
-            
             <About />
-            
+            <GambiarraImpact />
+            <TechArchitecture />
             <Skills />
-            
+
             <section className="home-section home-section--projects">
+                <SectionDivider channel="05" title="FIELD REPORTS" variant="light" />
                 <GridFeatured />
             </section>
-            
+
             <section className="home-section home-section--blog">
+                <SectionDivider channel="06" title="FIELD NOTES" variant="dark" accent="amber" />
                 <GridFeaturedBlog />
             </section>
-            
+
             <Contact />
         </div>
     );
