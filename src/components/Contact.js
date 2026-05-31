@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { usePostHog } from '@posthog/react';
 import './css/Contact.css';
 import { 
   FaEnvelope, 
@@ -13,9 +14,9 @@ import {
   FaRocket,
   FaHandshake
 } from 'react-icons/fa';
-import { HiSparkles } from 'react-icons/hi';
 
 const Contact = () => {
+  const posthog = usePostHog();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -26,8 +27,9 @@ const Contact = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [focusedField, setFocusedField] = useState(null);
   const [submitError, setSubmitError] = useState(null);
-  const [contactFormStartedAt, setContactFormStartedAt] = useState(Date.now());
-  const [newsletterStartedAt, setNewsletterStartedAt] = useState(Date.now());
+  const [contactFormStartedAt] = useState(Date.now);
+  const [newsletterStartedAt] = useState(Date.now);
+  const formStartedTracked = React.useRef(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -41,7 +43,7 @@ const Contact = () => {
       { threshold: 0.1 }
     );
 
-    const section = document.getElementById('contact');
+    const section = document.getElementById('ch-07');
     if (section) observer.observe(section);
 
     return () => {
@@ -137,15 +139,20 @@ const Contact = () => {
         setIsSubmitted(true);
         setFormData({ name: '', email: '', message: '' });
         setSubmitError(null);
+        posthog?.capture('contact_form_submitted', {
+          message_length: message.length,
+        });
       } else {
         // Surface API-level errors (e.g., invalid key or SMTP misconfig)
         const msg = data.message || 'Submission failed.';
         console.error("Web3Forms Error:", msg, data);
         setSubmitError(msg);
+        posthog?.capture('contact_form_error', { error: msg });
       }
     } catch (error) {
       console.error('Network Error:', error);
       setSubmitError('Network error. Please try again later or email me directly.');
+      posthog?.capture('contact_form_error', { error: 'network_error' });
     } finally {
       setIsSubmitting(false);
     }
@@ -177,6 +184,7 @@ const Contact = () => {
       return;
     }
 
+    posthog?.capture('newsletter_subscribed');
     // Redirect to Substack subscribe with pre-filled email
     window.open(`https://wanghley.substack.com/?email=${encodeURIComponent(email)}&utm_campaign=contact_form_subscribe_portfolio`, '_blank', 'noopener');
   };
@@ -209,10 +217,10 @@ const Contact = () => {
   ];
 
   return (
-    <section 
-      className={`contact-section ${isVisible ? 'contact-section--visible' : ''}`} 
-      id="contact"
-      aria-label="Contact"
+    <section
+      className={`contact-section ${isVisible ? 'contact-section--visible' : ''}`}
+      id="ch-07"
+      aria-label="Transmit — Contact"
     >
       {/* Background Elements */}
       <div className="contact-section__bg" aria-hidden="true">
@@ -225,16 +233,38 @@ const Contact = () => {
         {/* Header */}
         <header className="contact-section__header">
           <span className="contact-section__label">
-            <HiSparkles aria-hidden="true" />
-            Let's Connect
+            <span className="contact-section__label-id">CH:07</span>
+            <span className="contact-section__label-sep" />
+            TRANSMIT · CHANNEL OPEN
           </span>
           <h2 className="contact-section__title">
-            Ready to Build Something<br />
-            <span className="contact-section__title-accent">Extraordinary?</span>
+            Open the<br />
+            <span className="contact-section__title-accent">channel.</span>
           </h2>
           <p className="contact-section__subtitle">
-            Whether you have a project in mind, want to collaborate, or just want to say hi—I'd love to hear from you.
+            Project in mind, collaboration, or just want to say hi —
+            transmissions are received within 24 hours.
           </p>
+
+          {/* Telemetry meta bar */}
+          <div className="contact-section__meta" aria-hidden="true">
+            <span className="contact-section__meta-row">
+              <span className="contact-section__meta-key">FREQ</span>
+              <span className="contact-section__meta-val">2.4&nbsp;GHz</span>
+            </span>
+            <span className="contact-section__meta-divider" />
+            <span className="contact-section__meta-row">
+              <span className="contact-section__meta-key">STATUS</span>
+              <span className="contact-section__meta-val contact-section__meta-val--green">
+                <span className="contact-section__meta-dot" />AVAILABLE
+              </span>
+            </span>
+            <span className="contact-section__meta-divider" />
+            <span className="contact-section__meta-row">
+              <span className="contact-section__meta-key">LATENCY</span>
+              <span className="contact-section__meta-val">&lt; 24h</span>
+            </span>
+          </div>
         </header>
 
         <div className="contact-section__content">
@@ -256,12 +286,13 @@ const Contact = () => {
             {/* Quick Action Cards */}
             <div className="contact-section__quick-actions">
               {quickLinks.map((link, index) => (
-                <a 
+                <a
                   key={index}
                   href={link.href}
                   target={link.href.startsWith('http') ? '_blank' : undefined}
                   rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                   className="contact-section__quick-card"
+                  onClick={() => posthog?.capture('contact_quick_action_clicked', { label: link.label, href: link.href })}
                 >
                   <div className="contact-section__quick-icon">{link.icon}</div>
                   <div className="contact-section__quick-info">
@@ -285,6 +316,7 @@ const Contact = () => {
                     rel="noopener noreferrer"
                     className="contact-section__social-link"
                     aria-label={social.label}
+                    onClick={() => posthog?.capture('social_link_clicked', { platform: social.label })}
                   >
                     {social.icon}
                   </a>
@@ -322,7 +354,13 @@ const Contact = () => {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('name')}
+                        onFocus={() => {
+                          setFocusedField('name');
+                          if (!formStartedTracked.current) {
+                            formStartedTracked.current = true;
+                            posthog?.capture('contact_form_started', { first_field: 'name' });
+                          }
+                        }}
                         onBlur={() => setFocusedField(null)}
                         required
                         minLength={2}
@@ -343,7 +381,13 @@ const Contact = () => {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('email')}
+                        onFocus={() => {
+                          setFocusedField('email');
+                          if (!formStartedTracked.current) {
+                            formStartedTracked.current = true;
+                            posthog?.capture('contact_form_started', { first_field: 'email' });
+                          }
+                        }}
                         onBlur={() => setFocusedField(null)}
                         required
                         maxLength={254}
@@ -362,7 +406,13 @@ const Contact = () => {
                         name="message"
                         value={formData.message}
                         onChange={handleChange}
-                        onFocus={() => setFocusedField('message')}
+                        onFocus={() => {
+                          setFocusedField('message');
+                          if (!formStartedTracked.current) {
+                            formStartedTracked.current = true;
+                            posthog?.capture('contact_form_started', { first_field: 'message' });
+                          }
+                        }}
                         onBlur={() => setFocusedField(null)}
                         required
                         minLength={10}
@@ -382,12 +432,13 @@ const Contact = () => {
                       {isSubmitting ? (
                         <>
                           <span className="contact-section__spinner" aria-hidden="true" />
-                          Sending...
+                          TRANSMITTING…
                         </>
                       ) : (
                         <>
                           <FaPaperPlane aria-hidden="true" />
-                          Send Message
+                          TRANSMIT
+                          <span className="contact-section__submit-arrow" aria-hidden="true">→</span>
                         </>
                       )}
                     </button>
