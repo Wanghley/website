@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo-white.svg';
-import logoDark from '../assets/logo-colorful.png';
 import { FaLinkedinIn, FaInstagram, FaGithub, FaXTwitter } from 'react-icons/fa6';
 import './css/Navbar.css';
 
@@ -9,29 +9,17 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('');
-  const [theme, setTheme] = useState('dark'); // 'dark' or 'light'
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const navRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Define which pages have dark headers (navbar should be light text)
-  // and which have light backgrounds (navbar should be dark text)
-  const pageThemes = {
-    '/': 'dark',           // Homepage has dark hero
-    '/about': 'light',     // About page has light background
-    '/curriculum-vitae': 'light',  // CV has light background
-    '/projects': 'light',   // Projects has light background
-    '/blog': 'light',       // Blog has light background
-    '/contact': 'light',   // Contact has light background
-  };
-
-  // Navigation items configuration
   const navItems = [
     { path: '/about', label: 'About', number: '01' },
     { path: '/curriculum-vitae', label: 'CV', mobileLabel: 'Curriculum Vitae', number: '02' },
     { path: '/projects', label: 'Projects', number: '03' },
     { path: '/blog', label: 'Blog', number: '04' },
-    { path: '/', label: 'Contact', section: 'contact', number: '05' },
+    { path: '/', label: 'Contact', section: 'ch-07', number: '05' },
   ];
 
   const socialLinks = [
@@ -41,53 +29,43 @@ const Navbar = () => {
     { icon: FaXTwitter, url: 'https://twitter.com/wanghley', label: 'X (Twitter)' },
   ];
 
-  // Determine theme based on current path
   useEffect(() => {
-    const path = location.pathname;
-    
-    // Check for exact match first
-    if (pageThemes[path]) {
-      setTheme(pageThemes[path]);
-    } 
-    // Check for dynamic routes (blog posts, project posts)
-    else if (path.startsWith('/blog/')) {
-      setTheme('dark'); // Blog posts have dark headers
-    } else if (path.startsWith('/projects/')) {
-      setTheme('dark'); // Project posts have dark headers
-    } else {
-      setTheme('light'); // Default to light for unknown pages
-    }
-  }, [location.pathname]);
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReducedMotion(mq.matches);
+    const handler = (e) => setPrefersReducedMotion(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
-  // Switch to dark navbar style when scrolled (always readable)
   const handleScroll = useCallback(() => {
     const scrollY = window.scrollY;
     setIsScrolled(scrollY > 50);
 
-    // Section detection only on homepage
     if (location.pathname === '/') {
-      const sections = ['hero', 'about', 'skills', 'projects', 'blog', 'contact'];
+      const sections = ['ch-00', 'ch-01', 'ch-02', 'ch-03', 'ch-04', 'ch-05', 'ch-06', 'ch-07'];
       const viewportHeight = window.innerHeight;
-      
+      let found = '';
+
       for (const sectionId of sections) {
         const element = document.getElementById(sectionId);
         if (element) {
           const rect = element.getBoundingClientRect();
           const sectionMiddle = rect.top + rect.height / 2;
-          
+
           if (sectionMiddle >= 0 && sectionMiddle <= viewportHeight * 0.6) {
-            setActiveSection(sectionId);
+            found = sectionId;
             break;
           }
         }
       }
+      setActiveSection(found || 'ch-00');
     }
   }, [location.pathname]);
 
   // Throttled scroll listener
   useEffect(() => {
     let ticking = false;
-    
+
     const scrollListener = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
@@ -99,8 +77,8 @@ const Navbar = () => {
     };
 
     window.addEventListener('scroll', scrollListener, { passive: true });
-    handleScroll(); // Initial check
-    
+    handleScroll();
+
     return () => window.removeEventListener('scroll', scrollListener);
   }, [handleScroll]);
 
@@ -132,16 +110,12 @@ const Navbar = () => {
   // Close menu on escape key
   useEffect(() => {
     const handleEscape = (e) => {
-      if (e.key === 'Escape' && isMenuOpen) {
-        setIsMenuOpen(false);
-      }
+      if (e.key === 'Escape' && isMenuOpen) setIsMenuOpen(false);
     };
-    
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isMenuOpen]);
 
-  // Smart navigation handler
   const handleNavigation = useCallback((e, item) => {
     e.preventDefault();
     setIsMenuOpen(false);
@@ -152,31 +126,23 @@ const Navbar = () => {
         const navHeight = navRef.current?.offsetHeight || 80;
         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
         const offsetPosition = elementPosition - navHeight - 20;
-
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
       }
     };
 
     if (item.section) {
-      // Section navigation
       if (location.pathname === '/') {
         scrollToSection(item.section);
       } else {
         navigate('/');
-        // Wait for navigation then scroll
         setTimeout(() => scrollToSection(item.section), 150);
       }
     } else {
-      // Page navigation
       navigate(item.path);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [location.pathname, navigate]);
 
-  // Check if nav item is active
   const isActive = useCallback((item) => {
     if (item.section) {
       return location.pathname === '/' && activeSection === item.section;
@@ -184,11 +150,9 @@ const Navbar = () => {
     return location.pathname === item.path;
   }, [location.pathname, activeSection]);
 
-  // Logo click handler
   const handleLogoClick = (e) => {
     e.preventDefault();
     setIsMenuOpen(false);
-    
     if (location.pathname === '/') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -196,28 +160,33 @@ const Navbar = () => {
     }
   };
 
-  // Determine which logo to use
-  const currentLogo = (theme === 'light' && !isScrolled) ? logoDark : logo;
+  const mobileMenuVariants = {
+    hidden: { x: '100%' },
+    show: { x: 0, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } },
+    exit: { x: '100%', transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] } },
+  };
 
   return (
     <>
-      <nav 
+      <motion.nav
         ref={navRef}
-        className={`nav ${isScrolled ? 'nav--scrolled' : ''} ${isMenuOpen ? 'nav--open' : ''} nav--${theme}`}
+        initial={prefersReducedMotion ? false : { y: -24, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className={`nav ${isScrolled ? 'nav--scrolled' : ''} ${isMenuOpen ? 'nav--open' : ''} nav--dark nav--glass`}
         role="navigation"
         aria-label="Main navigation"
-        data-theme={theme}
+        data-theme="dark"
       >
         <div className="nav__container">
           {/* Logo */}
-          <a 
-            href="/" 
-            className="nav__logo" 
+          <a
+            href="/"
+            className="nav__logo"
             onClick={handleLogoClick}
             aria-label="Wanghley - Home"
           >
-            <img src={currentLogo} alt="" className="nav__logo-img" aria-hidden="true" />
-            <span className="nav__logo-text">Wanghley</span>
+            <img src={logo} alt="" className="nav__logo-img" aria-hidden="true" />
           </a>
 
           {/* Desktop Navigation */}
@@ -237,6 +206,7 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
+
 
           {/* Desktop Social Links */}
           <div className="nav__socials" aria-label="Social media links">
@@ -267,78 +237,94 @@ const Navbar = () => {
             <span className="nav__toggle-bar" aria-hidden="true" />
           </button>
         </div>
-      </nav>
+      </motion.nav>
 
-      {/* Mobile Menu */}
-      <div
-        id="mobile-menu"
-        className={`mobile-menu ${isMenuOpen ? 'mobile-menu--open' : ''}`}
-        aria-hidden={!isMenuOpen}
-      >
-        <div className="mobile-menu__content">
-          {/* Close button inside the menu */}
-          <button
-            className="mobile-menu__close"
-            onClick={() => setIsMenuOpen(false)}
-            aria-label="Close menu"
+      {/* Mobile Menu — AnimatePresence handles mount/unmount */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            id="mobile-menu"
+            className="mobile-menu mobile-menu--open"
+            variants={mobileMenuVariants}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            aria-modal="true"
+            role="dialog"
+            aria-label="Navigation menu"
           >
-            <span className="mobile-menu__close-bar" aria-hidden="true" />
-            <span className="mobile-menu__close-bar" aria-hidden="true" />
-          </button>
-
-          {/* Mobile Navigation */}
-          <ul className="mobile-menu__list">
-            {navItems.map((item, index) => (
-              <li 
-                key={item.path + (item.section || '')} 
-                className="mobile-menu__item"
-                style={{ '--item-index': index }}
+            <div className="mobile-menu__content">
+              {/* Close button */}
+              <button
+                className="mobile-menu__close"
+                onClick={() => setIsMenuOpen(false)}
+                aria-label="Close menu"
               >
-                <a
-                  href={item.section ? `#${item.section}` : item.path}
-                  className={`mobile-menu__link ${isActive(item) ? 'mobile-menu__link--active' : ''}`}
-                  onClick={(e) => handleNavigation(e, item)}
-                  tabIndex={isMenuOpen ? 0 : -1}
-                >
-                  <span className="mobile-menu__number">{item.number}</span>
-                  <span className="mobile-menu__label">{item.mobileLabel || item.label}</span>
-                  <span className="mobile-menu__arrow" aria-hidden="true">→</span>
-                </a>
-              </li>
-            ))}
-          </ul>
+                <span className="mobile-menu__close-bar" aria-hidden="true" />
+                <span className="mobile-menu__close-bar" aria-hidden="true" />
+              </button>
 
-          {/* Mobile Social Links */}
-          <div className="mobile-menu__footer">
-            <p className="mobile-menu__social-label">Let's connect</p>
-            <div className="mobile-menu__socials">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.label}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mobile-menu__social"
-                  aria-label={social.label}
-                  tabIndex={isMenuOpen ? 0 : -1}
-                >
-                  <social.icon aria-hidden="true" />
-                </a>
-              ))}
+              {/* Mobile Navigation */}
+              <ul className="mobile-menu__list">
+                {navItems.map((item, index) => (
+                  <li
+                    key={item.path + (item.section || '')}
+                    className="mobile-menu__item"
+                    style={{ '--item-index': index }}
+                  >
+                    <a
+                      href={item.section ? `#${item.section}` : item.path}
+                      className={`mobile-menu__link ${isActive(item) ? 'mobile-menu__link--active' : ''}`}
+                      onClick={(e) => handleNavigation(e, item)}
+                    >
+                      <span className="mobile-menu__number">{item.number}</span>
+                      <span className="mobile-menu__label">{item.mobileLabel || item.label}</span>
+                      <span className="mobile-menu__arrow" aria-hidden="true">→</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Mobile Social Links */}
+              <div className="mobile-menu__footer">
+                <p className="mobile-menu__social-label">Let's connect</p>
+                <div className="mobile-menu__socials">
+                  {socialLinks.map((social) => (
+                    <a
+                      key={social.label}
+                      href={social.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mobile-menu__social"
+                      aria-label={social.label}
+                    >
+                      <social.icon aria-hidden="true" />
+                    </a>
+                  ))}
+                </div>
+                <p className="mobile-menu__copyright">
+                  © {new Date().getFullYear()} Wanghley Martins
+                </p>
+              </div>
             </div>
-            <p className="mobile-menu__copyright">
-              © {new Date().getFullYear()} Wanghley Martins
-            </p>
-          </div>
-        </div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Backdrop */}
-      <div
-        className={`nav-backdrop ${isMenuOpen ? 'nav-backdrop--visible' : ''}`}
-        onClick={() => setIsMenuOpen(false)}
-        aria-hidden="true"
-      />
+      {/* Backdrop — AnimatePresence handles fade in/out */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            className="nav-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setIsMenuOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 };
