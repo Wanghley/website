@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { usePostHog } from "@posthog/react";
 import { fetchProjects } from "../api/projects";
 import "./css/GridFeaturedProjects.css";
 
@@ -14,7 +15,6 @@ const getProjectImage = (project) => {
   );
 };
 
-// Fallback abstract images for projects without images
 const getFallbackImage = (index) => {
   const fallbacks = [
     "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&q=80",
@@ -31,7 +31,29 @@ const getProjectHref = (project) => {
   return slug ? `/projects/${slug}` : "/projects";
 };
 
+/* Deterministic build ID per project — uses slug or index */
+const getBuildId = (project, index) => {
+  const base = (project?.attributes?.slug || `proj-${index}`)
+    .replace(/[^a-z0-9]/gi, "")
+    .toUpperCase()
+    .slice(0, 4)
+    .padEnd(4, "X");
+  const year = 2024 + (index % 2);
+  const seq = String(index + 1).padStart(3, "0");
+  return `BLD-${year}-${seq} · ${base}`;
+};
+
+/* Derive a status from category (purely visual, no real meaning) */
+const getStatus = (project, index) => {
+  const cat = (project?.attributes?.Category || "").toLowerCase();
+  if (cat.includes("research") || cat.includes("paper")) return { label: "RESEARCH", className: "deployed--research" };
+  if (cat.includes("archive") || cat.includes("legacy")) return { label: "ARCHIVED", className: "deployed--archived" };
+  if (index === 0) return { label: "LIVE", className: "deployed--live" };
+  return { label: "DEPLOYED", className: "deployed--green" };
+};
+
 const GridFeatured = () => {
+  const posthog = usePostHog();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
@@ -46,10 +68,8 @@ const GridFeatured = () => {
     const run = async () => {
       try {
         setLoading(true);
-        const response = await fetchProjects(1, 10); // Fetch first page with 10 items
+        const response = await fetchProjects(1, 10);
         if (!alive) return;
-
-        // Fix: Access the data array from response.data
         const projectsData = response.data || [];
         setProjects(Array.isArray(projectsData) ? projectsData.slice(0, 5) : []);
       } catch (error) {
@@ -71,10 +91,10 @@ const GridFeatured = () => {
 
   return (
     <section
+      id="ch-05"
       className={`eng-showroom ${isVisible ? "eng-showroom--visible" : ""}`}
-      aria-label="Selected Engineering Projects"
+      aria-label="Field Reports — Selected Engineering Projects"
     >
-      {/* Background effects */}
       <div className="eng-showroom__bg" aria-hidden="true">
         <div className="eng-showroom__grid-pattern" />
         <div className="eng-showroom__glow eng-showroom__glow--1" />
@@ -84,24 +104,36 @@ const GridFeatured = () => {
       <div className="eng-showroom__container">
         {/* Left Column - Header & CTA */}
         <div className="eng-showroom__header">
-          <span className="eng-showroom__label">Portfolio</span>
-          <h2 className="eng-showroom__title">Selected Engineering</h2>
+          <span className="eng-showroom__label">
+            <span className="eng-showroom__label-id">CH:05</span>
+            <span className="eng-showroom__label-sep" />
+            FIELD REPORTS
+          </span>
+          <h2 className="eng-showroom__title">
+            Builds in<br />production.
+          </h2>
           <p className="eng-showroom__subtitle">
             End-to-end systems built with precision. From custom silicon to cloud infrastructure.
           </p>
 
-          <a className="eng-showroom__cta" href="/projects">
-            <span>View All Projects</span>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
+          <div className="eng-showroom__meta">
+            <span className="eng-showroom__meta-row">
+              <span className="eng-showroom__meta-key">UNITS</span>
+              <span className="eng-showroom__meta-val">{items.length || "—"}</span>
+            </span>
+            <span className="eng-showroom__meta-row">
+              <span className="eng-showroom__meta-key">DOMAIN</span>
+              <span className="eng-showroom__meta-val">SILICON → CLOUD</span>
+            </span>
+            <span className="eng-showroom__meta-row">
+              <span className="eng-showroom__meta-key">REGION</span>
+              <span className="eng-showroom__meta-val">GLOBAL</span>
+            </span>
+          </div>
+
+          <a className="eng-showroom__cta" href="/projects" onClick={() => posthog?.capture('home_projects_cta_clicked')}>
+            <span>VIEW ALL PROJECTS</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </a>
@@ -131,6 +163,8 @@ const GridFeatured = () => {
                 const category = project?.attributes?.Category;
                 const image = getProjectImage(project) || getFallbackImage(index);
                 const isHero = index === 0;
+                const buildId = getBuildId(project, index);
+                const status = getStatus(project, index);
 
                 return (
                   <a
@@ -139,16 +173,40 @@ const GridFeatured = () => {
                     className={`eng-showroom__card ${isHero ? "eng-showroom__card--hero" : ""}`}
                     role="listitem"
                     aria-label={`Open project: ${title}`}
+                    style={{ '--card-idx': index }}
+                    onClick={() => posthog?.capture('featured_project_clicked', { title, category, index })}
                   >
+                    {/* Telemetry strip on top */}
+                    <div className="eng-showroom__card-telemetry">
+                      <span className="eng-showroom__card-build">{buildId}</span>
+                      <span className={`eng-showroom__card-status eng-showroom__card-status--${status.className}`}>
+                        <span className="eng-showroom__card-status-dot" />
+                        {status.label}
+                      </span>
+                    </div>
+
                     {/* Image */}
                     <div className="eng-showroom__card-image">
                       <img src={image} alt="" loading="lazy" />
                       <div className="eng-showroom__card-overlay" />
+                      {isHero && (
+                        <div className="eng-showroom__card-signal" aria-hidden="true">
+                          <svg viewBox="0 0 120 24" preserveAspectRatio="none">
+                            <path
+                              d="M0 12 L10 12 L14 6 L18 18 L22 12 L40 12 L44 4 L48 20 L52 12 L70 12 L74 8 L78 16 L82 12 L100 12 L104 6 L108 18 L112 12 L120 12"
+                              fill="none"
+                              stroke="#3AAFF1"
+                              strokeWidth="1.4"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                        </div>
+                      )}
                     </div>
 
                     {/* Content */}
                     <div className="eng-showroom__card-content">
-                      {/* Category Badge */}
                       {category && (
                         <div className="eng-showroom__card-tags">
                           <span className="eng-showroom__tag">{category}</span>
@@ -162,23 +220,13 @@ const GridFeatured = () => {
                       )}
 
                       <span className="eng-showroom__card-link">
-                        Explore
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
+                        EXPLORE
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                           <path d="M5 12h14M12 5l7 7-7 7" />
                         </svg>
                       </span>
                     </div>
 
-                    {/* Glow effect on hover */}
                     <div className="eng-showroom__card-glow" aria-hidden="true" />
                   </a>
                 );
