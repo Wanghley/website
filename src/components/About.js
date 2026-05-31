@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import './css/About.css'
-import { FaPlay } from 'react-icons/fa'
+import { FaPlay, FaTimes } from 'react-icons/fa'
 
 const CREDENTIALS = [
   { name: 'Karsh Scholar',     sub: 'Duke · Full Merit' },
@@ -17,7 +17,7 @@ const CREDENTIALS = [
 
 const About = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -38,13 +38,24 @@ const About = () => {
     return () => { if (section) observer.unobserve(section); };
   }, []);
 
+  /* Lock body scroll + close on Escape when modal is open */
+  useEffect(() => {
+    if (!isModalOpen) return;
+    const handleEsc = (e) => { if (e.key === 'Escape') setIsModalOpen(false); };
+    document.addEventListener('keydown', handleEsc);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+      document.body.style.overflow = '';
+    };
+  }, [isModalOpen]);
+
   return (
     <section
       className={`about section-light ${isVisible ? 'about--visible' : ''} ${prefersReducedMotion ? 'about--reduced-motion' : ''}`}
       id="ch-01"
       aria-label="About Wanghley Martins — Origin Story"
     >
-      {/* Faint blueprint grid background for visual texture */}
       <div className="about__bg" aria-hidden="true" />
 
       <div className="container">
@@ -56,53 +67,43 @@ const About = () => {
 
         <div className={`about-grid ${isVisible ? 'reveal in' : 'reveal'}`}>
 
-          {/* Left 30 — TEDx card (compact, vertical) */}
+          {/* Left — pitch video + stats */}
           <aside className="about__media">
             <div className="about__media-meta">
-              <span className="about__meta-label">FOOTAGE</span>
-              <span className="about__meta-value">FILM 23.4</span>
+              <span className="about__meta-label">INTRO BRIEF</span>
+              <span className="about__meta-value">1 MIN</span>
             </div>
 
-            <div className="tedx-card" onClick={() => setIsVideoPlaying(true)}>
+            <div className="tedx-card" onClick={() => setIsModalOpen(true)} role="button" tabIndex={0}
+              onKeyDown={e => e.key === 'Enter' && setIsModalOpen(true)}>
               <div className="tedx-thumb">
-                {!isVideoPlaying ? (
-                  <>
-                    <img
-                      src="https://img.youtube.com/vi/FOkCz0W5pgw/maxresdefault.jpg"
-                      alt="TEDxDuke 2023 — The Art of Innovation"
-                      className="tedx-thumb-img"
-                      loading="lazy"
-                    />
-                    <div className="tedx-play">
-                      <button
-                        className="tedx-play-btn"
-                        aria-label="Play TEDx video: The Art of Innovation"
-                        type="button"
-                        onClick={e => { e.stopPropagation(); setIsVideoPlaying(true); }}
-                      >
-                        <FaPlay aria-hidden="true" />
-                      </button>
-                    </div>
-                  </>
-                ) : (
-                  <iframe
-                    className="tedx-iframe"
-                    src="https://www.youtube.com/embed/FOkCz0W5pgw?autoplay=1&rel=0"
-                    title="TEDxDuke 2023 — The Art of Innovation"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                  />
-                )}
+                <img
+                  src="https://img.youtube.com/vi/FOkCz0W5pgw/maxresdefault.jpg"
+                  alt="Wanghley Martins — 60-second introduction"
+                  className="tedx-thumb-img"
+                  loading="lazy"
+                />
+                <div className="tedx-thumb-overlay" aria-hidden="true" />
+                <span className="tedx-duration" aria-hidden="true">1:00</span>
+                <div className="tedx-play">
+                  <button
+                    className="tedx-play-btn"
+                    aria-label="Play 60-second introduction video (opens fullscreen)"
+                    type="button"
+                    onClick={e => { e.stopPropagation(); setIsModalOpen(true); }}
+                  >
+                    <FaPlay aria-hidden="true" />
+                  </button>
+                </div>
               </div>
               <div className="tedx-label">
-                <span className="tedx-ey">TEDxDuke · 2023</span>
-                <p className="tedx-title">&ldquo;The Art of Innovation&rdquo;</p>
+                <span className="tedx-ey">WATCH FIRST · 60 SECONDS</span>
+                <p className="tedx-title">Watch the 60-Second Brief</p>
               </div>
             </div>
           </aside>
 
-          {/* Right 70 — narrative + pull quote */}
+          {/* Right — narrative + pull quote */}
           <div className="about__narrative">
             <h2 className="about-heading">
               Bridging Physical Constraints<br />with <em>Digital Intelligence.</em>
@@ -131,16 +132,14 @@ const About = () => {
             </figure>
 
             <a href="/contact" className="about-link">
-              <span className="about-link__bracket">[</span>
               START A COLLABORATION
               <span className="about-link__arrow">→</span>
-              <span className="about-link__bracket">]</span>
             </a>
           </div>
 
         </div>
 
-        {/* Credentials ticker — full-width, below grid */}
+        {/* Credentials ticker */}
         <div className="about__creds">
           <div className="about__creds-head">
             <span className="about__creds-label">
@@ -163,6 +162,36 @@ const About = () => {
           </div>
         </div>
       </div>
+
+      {/* Cinematic fullscreen modal */}
+      {isModalOpen && (
+        <div
+          className="about__modal"
+          onClick={() => setIsModalOpen(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-label="60-second introduction video"
+        >
+          <button
+            className="about__modal-close"
+            onClick={() => setIsModalOpen(false)}
+            aria-label="Close video"
+            type="button"
+          >
+            <FaTimes aria-hidden="true" />
+          </button>
+          <div className="about__modal-content" onClick={e => e.stopPropagation()}>
+            <iframe
+              className="about__modal-iframe"
+              src="https://www.youtube.com/embed/FOkCz0W5pgw?autoplay=1&rel=0"
+              title="Wanghley Martins — 60-second introduction"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 };
