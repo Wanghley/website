@@ -8,7 +8,6 @@ import {
   GridFeaturedBlog,
   TechArchitecture,
   GambiarraImpact,
-  ChannelRail,
 } from '../components';
 import { Helmet } from "react-helmet-async";
 import './css/home.css';
@@ -58,7 +57,6 @@ const Home = () => {
                     }
                 `}</script>
             </Helmet>
-            <ChannelRail />
             <Hero />
             <About />
             <GambiarraImpact />
