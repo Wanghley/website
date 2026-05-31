@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './css/About.css';
-import style from './css/markdown-styles.module.css';
 import './css/AboutText.css';
 
 const AboutText = () => {
@@ -293,7 +292,7 @@ const AboutText = () => {
     const renderHatnote = () => (
         <div className="hatnote">
             <span>
-                This article is about <strong>Wanghley</strong> the individual. For other uses, including quantumly entangled or alternate-universe Wanghleys, see <a href="#">Wanghley (disambiguation)</a>.
+                This article is about <strong>Wanghley</strong> the individual. For other uses, including quantumly entangled or alternate-universe Wanghleys, see <a href="/about">Wanghley (disambiguation)</a>.
             </span>
         </div>
     );
