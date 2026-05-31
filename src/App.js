@@ -18,8 +18,10 @@ import { Navbar, Footer } from './components';
 import { NotFound } from './components';
 import Blogs from './pages/blog'; // Import the Blogs component
 import BlogPostPage from './components/BlogPost'; // Import the BlogPostPage component
-import CVPage from './pages/cv'; // Import the CVPage component
-import ContactPage from './pages/contact'; // Import the ContactPage component
+import CVPage from './pages/cv';
+import ContactPage from './pages/contact';
+import Privacy from './pages/privacy';
+import DataPolicy from './pages/data-policy';
 
 function PostHogPageView() {
   const location = useLocation();
@@ -44,6 +46,8 @@ function App() {
         <Route path="/projects/:slug" element={<ProjectPage />} /> 
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/curriculum-vitae" element={<CVPage />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/data-policy" element={<DataPolicy />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
