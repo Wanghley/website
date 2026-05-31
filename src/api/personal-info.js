@@ -19,6 +19,7 @@ export async function fetchPersonalInfo() {
     }
 }
 
-export default { fetchPersonalInfo };
+const personalInfoApi = { fetchPersonalInfo };
+export default personalInfoApi;
 
 

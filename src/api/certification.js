@@ -31,6 +31,7 @@ export async function fetchAllCertifications(limit = 10, sortBy = "date", sortOr
 }
 
 
-export default { fetchAllCertifications };
+const certificationApi = { fetchAllCertifications };
+export default certificationApi;
 
 
