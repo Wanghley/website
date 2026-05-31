@@ -107,7 +107,7 @@ const TechArchitecture = () => {
   return (
     <section
       ref={sectionRef}
-      id="ch-03"
+      id="ch-04"
       className={`ta ${isVisible ? 'ta--visible' : ''} ${prefersReducedMotion ? 'ta--reduced-motion' : ''}`}
       aria-label="Silicon to Cloud technical architecture"
     >
@@ -120,7 +120,7 @@ const TechArchitecture = () => {
       <div className="ta__container">
         <header className="ta__header">
           <span className="ta__label">
-            <span className="ta__label-id">CH:03</span>
+            <span className="ta__label-id">CH:04</span>
             <span className="ta__label-sep" />
             STACK ARCHITECTURE
           </span>

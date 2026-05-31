@@ -62,8 +62,8 @@ const Home = () => {
             <Hero />
             <About />
             <GambiarraImpact />
-            <TechArchitecture />
             <Skills />
+            <TechArchitecture />
 
             <section className="home-section home-section--projects">
                 <GridFeatured />
