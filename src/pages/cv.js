@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { usePostHog } from '@posthog/react';
 import { fetchPersonalInfo } from '../api/personal-info';
 import { fetchAllEducations } from '../api/education';
 import { fetchAllExperiences } from '../api/experience';
 import { fetchAllPublications } from '../api/publication';
 import { fetchAllCertifications } from '../api/certification';
-import { getSkills, getSkillsgrouped } from "../api/skills";
+import { getSkillsgrouped } from "../api/skills";
 import PersonalInfo from '../components/cv/PersonalInfo';
 import EducationList from '../components/cv/EducationList';
 import ExperienceList from '../components/cv/ExperienceList';
@@ -13,12 +14,12 @@ import CertificationsList from '../components/CertificationCard';
 import SkillsList from '../components/cv/SkillList';
 import { Helmet } from "react-helmet-async"; // Changed from react-helmet
 import NavbarSpacer from '../components/NavbarSpacer';
-import { FaPrint, FaFileDownload } from "react-icons/fa"; // Add imports
+import { FaPrint } from "react-icons/fa";
 
-import '../components/css/global.css';
 import './css/cv.css';
 
 const CVPage = () => {
+    const posthog = usePostHog();
     const [personalInfo, setPersonalInfo] = useState(null);
     const [educations, setEducations] = useState([]);
     const [experiences, setExperiences] = useState([]);
@@ -46,6 +47,12 @@ const CVPage = () => {
                 setPublications(publicationsData);
                 setCertifications(certificationsData || []);
                 setSkills(skillsData);
+                posthog?.capture('cv_viewed', {
+                  has_publications: publicationsData?.length > 0,
+                  has_certifications: certificationsData?.length > 0,
+                  education_count: educationsData?.length,
+                  experience_count: experiencesData?.length,
+                });
 
             } catch (err) {
                 setError(err);
@@ -55,7 +62,7 @@ const CVPage = () => {
         };
 
         fetchData();
-    }, []);
+    }, [posthog]);
 
     if (loading) {
         return (
@@ -116,7 +123,7 @@ const CVPage = () => {
 
             {/* CV Actions Bar - FIXED POSITION */}
             <div className="cv-actions no-print">
-                <button className="cv-btn primary" onClick={() => window.print()}>
+                <button className="cv-btn primary" onClick={() => { posthog?.capture('cv_print_clicked'); window.print(); }}>
                     <FaPrint /> Print / Save PDF
                 </button>
                 <div className="cv-note">
