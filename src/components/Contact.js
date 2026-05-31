@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { usePostHog } from '@posthog/react';
 import './css/Contact.css';
-import { 
-  FaEnvelope, 
-  FaPaperPlane, 
-  FaCalendarAlt, 
-  FaLinkedin, 
-  FaGithub, 
-  FaTwitter,
+import {
+  FaEnvelope,
+  FaPaperPlane,
+  FaCalendarAlt,
+  FaLinkedin,
+  FaGithub,
+  FaGraduationCap,
   FaCheckCircle,
   FaArrowRight,
   FaLightbulb,
@@ -213,7 +213,7 @@ const Contact = () => {
   const socials = [
     { icon: <FaLinkedin />, href: "https://linkedin.com/in/wanghley", label: "LinkedIn" },
     { icon: <FaGithub />, href: "https://github.com/wanghley", label: "GitHub" },
-    { icon: <FaTwitter />, href: "https://twitter.com/wanghley", label: "Twitter" }
+    { icon: <FaGraduationCap />, href: "http://lattes.cnpq.br/2402272123510102", label: "Lattes" }
   ];
 
   return (
