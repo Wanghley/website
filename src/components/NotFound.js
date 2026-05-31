@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { Navbar, Footer } from '../components'
 import { useEffect } from 'react';
 import error from '../assets/404.svg'
 import './css/notFound.css'

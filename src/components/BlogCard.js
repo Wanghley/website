@@ -15,21 +15,20 @@ const BlogCard = ({
 }) => {
     const truncatedTeaser = truncateText(teaser, 100);
     const blogLink = `${slug}`;
-    const displayedCategories = categories.slice(0, 3).join(', '); // Join categories with comma
 
     return (
         <article className="cardblog">
             <Link to={blogLink} className="cardblog__link">
                 <div className="cardblog__img" style={{ backgroundImage: `url(${imageUrl})` }}>
                     <div className="cardblog__date">{formatDate(date)}</div>
-                {categories.length > 0 && (
-                    <div className="cardblog__categories">
-                        <p className="cardblog__categories-text">{displayedCategories}</p>
-                    </div>
-                )}
                 </div>
             </Link>
             <div className="cardblog__info">
+                {categories.length > 0 && (
+                    <div className="cardblog__category-pill">
+                        {categories[0]}
+                    </div>
+                )}
                 <Link to={blogLink} className="cardblog__icon" title="Read Full Post">
                     <h3 className="cardblog__title">{title}</h3>
                 </Link>
