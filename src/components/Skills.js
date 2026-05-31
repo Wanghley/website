@@ -4,39 +4,28 @@ import SkillFilterChips from "./SkillFilterChips";
 import { fetchFeaturedSkills } from "../api/skills";
 import "./css/Skills.css";
 
+const INITIAL_COUNT = 12;
+
 const Skills = () => {
   const posthog = usePostHog();
   const [featuredSkills, setFeaturedSkills] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     setPrefersReducedMotion(motionQuery.matches);
-
     const handleMotionChange = (e) => setPrefersReducedMotion(e.matches);
     motionQuery.addEventListener("change", handleMotionChange);
-
-    const mobileQuery = window.matchMedia("(max-width: 600px)");
-    setIsMobile(mobileQuery.matches);
-
-    const handleMobileChange = (e) => setIsMobile(e.matches);
-    mobileQuery.addEventListener("change", handleMobileChange);
-
     setIsVisible(true);
-
-    return () => {
-      motionQuery.removeEventListener("change", handleMotionChange);
-      mobileQuery.removeEventListener("change", handleMobileChange);
-    };
+    return () => motionQuery.removeEventListener("change", handleMotionChange);
   }, []);
 
   useEffect(() => {
     let alive = true;
-
     const run = async () => {
       try {
         setLoading(true);
@@ -51,28 +40,34 @@ const Skills = () => {
         if (alive) setLoading(false);
       }
     };
-
     run();
-    return () => {
-      alive = false;
-    };
+    return () => { alive = false; };
   }, []);
 
   const categories = useMemo(
-    () => [...new Set(featuredSkills.map((skill) => skill.type).filter(Boolean))],
+    () => [...new Set(featuredSkills.map((s) => s.type).filter(Boolean))],
     [featuredSkills]
   );
 
-  const maxSkills = isMobile ? 8 : 24;
+  const filteredSkills = useMemo(() =>
+    selectedCategory === "All"
+      ? featuredSkills
+      : featuredSkills.filter((s) => s.type === selectedCategory),
+    [featuredSkills, selectedCategory]
+  );
 
-  const displayedSkills = useMemo(() => {
-    const list =
-      selectedCategory === "All"
-        ? featuredSkills
-        : featuredSkills.filter((skill) => skill.type === selectedCategory);
+  const displayedSkills = useMemo(() =>
+    expanded ? filteredSkills : filteredSkills.slice(0, INITIAL_COUNT),
+    [filteredSkills, expanded]
+  );
 
-    return list.slice(0, maxSkills);
-  }, [featuredSkills, selectedCategory, maxSkills]);
+  const hiddenCount = Math.max(0, filteredSkills.length - INITIAL_COUNT);
+
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category);
+    setExpanded(false);
+    posthog?.capture("skill_category_filtered", { category });
+  };
 
   return (
     <section
@@ -108,26 +103,16 @@ const Skills = () => {
             <SkillFilterChips
               categories={categories}
               selected={selectedCategory}
-              onSelect={(category) => {
-                setSelectedCategory(category);
-                posthog?.capture('skill_category_filtered', { category });
-              }}
+              onSelect={handleCategorySelect}
             />
           </div>
         </header>
 
         <div className="skills__panel" role="region" aria-label="Skills browser">
-          <div className="skills__matrix-head">
-            <span className="skills__col-head skills__col-head--name">MODULE</span>
-            <span className="skills__col-head skills__col-head--level">LEVEL</span>
-            <span className="skills__col-head skills__col-head--bar">PROFICIENCY</span>
-            <span className="skills__col-head skills__col-head--score">VAL</span>
-          </div>
-
           {loading ? (
-            <div className="skills__skeleton" aria-label="Loading skills">
-              {Array.from({ length: isMobile ? 6 : 12 }).map((_, i) => (
-                <div className="skills__skeleton-row" key={i} />
+            <div className="skills__skeleton">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div className="skills__skeleton-chip" key={i} />
               ))}
             </div>
           ) : displayedSkills.length === 0 ? (
@@ -136,57 +121,54 @@ const Skills = () => {
               <p>Try a different channel.</p>
             </div>
           ) : (
-            <ul className="skills__matrix" aria-label="Skill modules">
+            <ul className="skills__grid" aria-label="Skill modules">
               {displayedSkills.map((skill, i) => {
-                const score = Number(skill?.score) || 0;
                 const level = (skill?.level ?? "unknown").toLowerCase();
+                const isNew = expanded && i >= INITIAL_COUNT;
                 return (
                   <li
-                    className="skills__row"
                     key={`${skill?.name ?? "skill"}-${i}`}
-                    style={{ "--skill-delay": `${i * 30}ms` }}
+                    className={`skills__chip skills__chip--${level}`}
+                    style={{
+                      "--chip-delay": isNew
+                        ? `${(i - INITIAL_COUNT) * 20}ms`
+                        : `${i * 22}ms`,
+                    }}
                   >
-                    <div className="skills__cell skills__cell--name">
-                      <span className="skills__idx">{String(i + 1).padStart(2, "0")}</span>
-                      {skill?.icon ? (
-                        <img
-                          className="skills__icon"
-                          src={skill.icon}
-                          alt=""
-                          loading="lazy"
-                        />
-                      ) : (
-                        <span className="skills__icon skills__icon--fallback" aria-hidden="true" />
-                      )}
-                      <span className="skills__name">{skill?.name ?? "Untitled"}</span>
-                    </div>
-
-                    <div className="skills__cell skills__cell--level">
-                      <span className={`skills__level skills__level--${level}`}>
-                        {skill?.level ?? "—"}
-                      </span>
-                    </div>
-
-                    <div className="skills__cell skills__cell--bar">
-                      <div
-                        className="skills__bar"
-                        role="progressbar"
-                        aria-label={`${skill?.name ?? "Skill"} proficiency`}
-                        aria-valuenow={score}
-                        aria-valuemin={0}
-                        aria-valuemax={100}
-                      >
-                        <div className="skills__bar-fill" style={{ width: `${score}%` }} />
-                      </div>
-                    </div>
-
-                    <div className="skills__cell skills__cell--score">
-                      <span className="skills__score">{score}</span>
-                    </div>
+                    {skill?.icon ? (
+                      <img
+                        className="skills__chip-icon"
+                        src={skill.icon}
+                        alt=""
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="skills__chip-icon skills__chip-icon--fallback" aria-hidden="true" />
+                    )}
+                    <span className="skills__chip-name">{skill?.name ?? "Untitled"}</span>
+                    <span className="skills__chip-dot" aria-hidden="true" />
                   </li>
                 );
               })}
             </ul>
+          )}
+
+          {!loading && !expanded && hiddenCount > 0 && (
+            <div className="skills__expand-row">
+              <button
+                className="skills__expand"
+                onClick={() => {
+                  setExpanded(true);
+                  posthog?.capture("skills_expanded", {
+                    revealed: hiddenCount,
+                    category: selectedCategory,
+                  });
+                }}
+              >
+                <span>SHOW {hiddenCount} MORE</span>
+                <span className="skills__expand-arrow" aria-hidden="true">↓</span>
+              </button>
+            </div>
           )}
         </div>
 
