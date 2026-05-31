@@ -1,41 +1,43 @@
 import React, { useState, useEffect } from "react";
+import { usePostHog } from "@posthog/react";
 import { fetchBlogs } from "../api/blog";
 import "./css/FeaturedBlogGrid.css";
 
-// Calculate read time from content
 const getReadTime = (content) => {
-  if (!content) return "3 min read";
+  if (!content) return "3 MIN READ";
   const wordsPerMinute = 200;
   const words = content.split(/\s+/).length;
   const minutes = Math.ceil(words / wordsPerMinute);
-  return `${minutes} min read`;
+  return `${minutes} MIN READ`;
 };
 
-// Format date to editorial style
-const formatDate = (date) => {
-  if (!date) return "";
-  const options = { month: "short", day: "numeric" };
-  return new Date(date).toLocaleDateString("en-US", options);
+const formatDateline = (date) => {
+  if (!date) return "—";
+  const d = new Date(date);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}.${mm}.${dd}`;
 };
 
-// Get tag/category style
 const getTagStyle = (category) => {
   const styles = {
-    tutorial: "editorial__tag--tutorial",
-    guide: "editorial__tag--tutorial",
+    tutorial:        "editorial__tag--tutorial",
+    guide:           "editorial__tag--tutorial",
     "system design": "editorial__tag--system",
-    architecture: "editorial__tag--system",
-    opinion: "editorial__tag--opinion",
-    rant: "editorial__tag--opinion",
-    research: "editorial__tag--research",
-    ai: "editorial__tag--research",
-    default: "editorial__tag--default",
+    architecture:    "editorial__tag--system",
+    opinion:         "editorial__tag--opinion",
+    rant:            "editorial__tag--opinion",
+    research:        "editorial__tag--research",
+    ai:              "editorial__tag--research",
+    default:         "editorial__tag--default",
   };
   const key = (category || "").toLowerCase();
   return styles[key] || styles.default;
 };
 
 const GridFeaturedBlog = () => {
+  const posthog = usePostHog();
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
@@ -81,30 +83,30 @@ const GridFeaturedBlog = () => {
 
   return (
     <section
+      id="ch-06"
       className={`editorial ${isVisible ? "editorial--visible" : ""}`}
-      aria-label="Writing & Thoughts"
+      aria-label="Field Notes — Writing & Thoughts"
     >
       <div className="editorial__container">
         {/* Header */}
         <div className="editorial__header">
-          <span className="editorial__label">Blog</span>
-          <h2 className="editorial__title">Writing & Thoughts</h2>
-          <p className="editorial__subtitle">
-            Insights on Edge AI, engineering challenges, and the future of health tech.
-          </p>
+          <div className="editorial__head-left">
+            <span className="editorial__label">
+              <span className="editorial__label-id">CH:06</span>
+              <span className="editorial__label-sep" />
+              FIELD NOTES · LOGBOOK
+            </span>
+            <h2 className="editorial__title">
+              The engineering<br />notebook.
+            </h2>
+            <p className="editorial__subtitle">
+              Insights on Edge AI, hardware constraints, and the future of health tech.
+            </p>
+          </div>
 
-          <a className="editorial__cta" href="/blog">
-            <span>View All Articles</span>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
+          <a className="editorial__cta" href="/blog" onClick={() => posthog?.capture('home_blog_cta_clicked')}>
+            <span>VIEW ALL NOTES</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </a>
@@ -123,8 +125,8 @@ const GridFeaturedBlog = () => {
             </div>
           ) : blogPosts.length === 0 ? (
             <div className="editorial__empty">
-              <h3>No articles found</h3>
-              <p>New posts coming soon.</p>
+              <h3>No notes yet</h3>
+              <p>New entries coming soon.</p>
             </div>
           ) : (
             <div className="editorial__bento" role="list">
@@ -138,6 +140,7 @@ const GridFeaturedBlog = () => {
                 const published = post?.attributes?.publishedAt || post?.attributes?.published;
                 const image = getPostImage(post);
                 const isHero = index === 0;
+                const noteId = `LOG-${String(index + 1).padStart(3, "0")}`;
 
                 return (
                   <a
@@ -146,15 +149,37 @@ const GridFeaturedBlog = () => {
                     className={`editorial__card ${isHero ? "editorial__card--hero" : ""}`}
                     role="listitem"
                     aria-label={`Read article: ${title}`}
+                    style={{ '--card-idx': index }}
+                    onClick={() => posthog?.capture('home_featured_blog_clicked', {
+                      title,
+                      slug,
+                      category: categories[0] || null,
+                      index,
+                      is_hero: isHero,
+                    })}
                   >
+                    {/* Telemetry header row */}
+                    <div className="editorial__card-head">
+                      <span className="editorial__card-id">{noteId}</span>
+                      <span className="editorial__card-dateline">
+                        {formatDateline(published)} · DURHAM, NC
+                      </span>
+                      {isHero && (
+                        <span className="editorial__card-pinned">
+                          <span className="editorial__card-pinned-dot" />
+                          PINNED NOTE
+                        </span>
+                      )}
+                    </div>
+
                     {/* Image */}
                     <div className="editorial__card-image">
                       <img src={image} alt="" loading="lazy" />
+                      <div className="editorial__card-overlay" />
                     </div>
 
                     {/* Content */}
                     <div className="editorial__card-content">
-                      {/* Tags */}
                       {categories.length > 0 && (
                         <div className="editorial__card-tags">
                           {categories.slice(0, 2).map((cat, i) => (
@@ -171,11 +196,9 @@ const GridFeaturedBlog = () => {
                         <p className="editorial__card-excerpt">{excerpt}</p>
                       )}
 
-                      {/* Metadata */}
                       <div className="editorial__card-meta">
-                        <span className="editorial__card-date">{formatDate(published)}</span>
-                        <span className="editorial__card-separator">•</span>
                         <span className="editorial__card-readtime">{getReadTime(content)}</span>
+                        <span className="editorial__card-arrow">→</span>
                       </div>
                     </div>
                   </a>
