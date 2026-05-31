@@ -1,5 +1,5 @@
 const { SitemapStream, streamToPromise } = require('sitemap');
-const { createWriteStream, promises: fs } = require('fs');
+const { promises: fs } = require('fs');
 const axios = require('axios');
 const path = require('path');
 require('dotenv').config();

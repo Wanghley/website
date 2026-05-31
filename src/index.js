@@ -4,13 +4,24 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { HelmetProvider } from 'react-helmet-async';
+import posthog from 'posthog-js';
+import { PostHogProvider, PostHogErrorBoundary } from '@posthog/react';
+
+posthog.init(process.env.REACT_APP_POSTHOG_KEY, {
+  api_host: process.env.REACT_APP_POSTHOG_HOST,
+  defaults: '2026-01-30',
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <HelmetProvider>
-      <App />
-    </HelmetProvider>
+    <PostHogProvider client={posthog}>
+      <PostHogErrorBoundary>
+        <HelmetProvider>
+          <App />
+        </HelmetProvider>
+      </PostHogErrorBoundary>
+    </PostHogProvider>
   </React.StrictMode>
 );
 
