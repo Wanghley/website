@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { usePostHog } from "@posthog/react";
 import SkillFilterChips from "./SkillFilterChips";
 import { fetchFeaturedSkills } from "../api/skills";
 import "./css/Skills.css";
 
 const Skills = () => {
+  const posthog = usePostHog();
   const [featuredSkills, setFeaturedSkills] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [loading, setLoading] = useState(true);
@@ -61,7 +63,7 @@ const Skills = () => {
     [featuredSkills]
   );
 
-  const maxSkills = isMobile ? 6 : 18;
+  const maxSkills = isMobile ? 8 : 24;
 
   const displayedSkills = useMemo(() => {
     const list =
@@ -74,93 +76,124 @@ const Skills = () => {
 
   return (
     <section
-      className={`skills ${isVisible ? "skills--visible" : ""} ${
+      id="ch-04"
+      className={`skills section-light ${isVisible ? "skills--visible" : ""} ${
         prefersReducedMotion ? "skills--reduced-motion" : ""
       }`}
-      aria-label="Featured skills"
+      aria-label="Capability matrix"
     >
       <div className="skills__bg" aria-hidden="true">
-        <div className="skills__orb skills__orb--1" />
-        <div className="skills__orb skills__orb--2" />
-        <div className="skills__grid" />
+        <div className="skills__schema" />
       </div>
 
       <div className="skills__container">
         <header className="skills__header">
-          <span className="skills__label">Skills</span>
-          <h2 className="skills__title">Featured Skills</h2>
-          <p className="skills__subtitle">
-            A curated snapshot of the tools and domains I use to ship real systems—edge to cloud.
-          </p>
-        </header>
+          <div className="skills__title-block">
+            <span className="skills__label">
+              <span className="skills__label-id">CH:04</span>
+              <span className="skills__label-sep" />
+              CAPABILITY MATRIX
+            </span>
+            <h2 className="skills__title">
+              The instruments<br />on the bench.
+            </h2>
+            <p className="skills__subtitle">
+              A working set of tools and domains. Filter by channel —
+              edge silicon to cloud orchestration.
+            </p>
+          </div>
 
-        <div className="skills__panel" role="region" aria-label="Skills browser">
           <div className="skills__filters" aria-label="Skill filters">
+            <span className="skills__filters-label">CHANNEL SELECTOR</span>
             <SkillFilterChips
               categories={categories}
               selected={selectedCategory}
-              onSelect={setSelectedCategory}
+              onSelect={(category) => {
+                setSelectedCategory(category);
+                posthog?.capture('skill_category_filtered', { category });
+              }}
             />
           </div>
+        </header>
 
-          <div className="skills__grid-wrap">
-            {loading ? (
-              <div className="skills__skeleton" aria-label="Loading skills">
-                {Array.from({ length: isMobile ? 6 : 12 }).map((_, i) => (
-                  <div className="skills__skeleton-card" key={i} />
-                ))}
-              </div>
-            ) : displayedSkills.length === 0 ? (
-              <div className="skills__empty">
-                <h3>No skills found</h3>
-                <p>Try a different category.</p>
-              </div>
-            ) : (
-              <div className="skills-grid" aria-label="Skill cards">
-                {displayedSkills.map((skill, i) => (
-                  <article className="skill-card" key={`${skill?.name ?? "skill"}-${i}`}>
-                    <div className="skill-card__top">
+        <div className="skills__panel" role="region" aria-label="Skills browser">
+          <div className="skills__matrix-head">
+            <span className="skills__col-head skills__col-head--name">MODULE</span>
+            <span className="skills__col-head skills__col-head--level">LEVEL</span>
+            <span className="skills__col-head skills__col-head--bar">PROFICIENCY</span>
+            <span className="skills__col-head skills__col-head--score">VAL</span>
+          </div>
+
+          {loading ? (
+            <div className="skills__skeleton" aria-label="Loading skills">
+              {Array.from({ length: isMobile ? 6 : 12 }).map((_, i) => (
+                <div className="skills__skeleton-row" key={i} />
+              ))}
+            </div>
+          ) : displayedSkills.length === 0 ? (
+            <div className="skills__empty">
+              <h3>No skills found</h3>
+              <p>Try a different channel.</p>
+            </div>
+          ) : (
+            <ul className="skills__matrix" aria-label="Skill modules">
+              {displayedSkills.map((skill, i) => {
+                const score = Number(skill?.score) || 0;
+                const level = (skill?.level ?? "unknown").toLowerCase();
+                return (
+                  <li
+                    className="skills__row"
+                    key={`${skill?.name ?? "skill"}-${i}`}
+                    style={{ "--skill-delay": `${i * 30}ms` }}
+                  >
+                    <div className="skills__cell skills__cell--name">
+                      <span className="skills__idx">{String(i + 1).padStart(2, "0")}</span>
                       {skill?.icon ? (
                         <img
+                          className="skills__icon"
                           src={skill.icon}
-                          alt={skill?.name ? `${skill.name} icon` : "Skill icon"}
+                          alt=""
                           loading="lazy"
                         />
                       ) : (
-                        <div className="skill-card__icon-fallback" aria-hidden="true" />
+                        <span className="skills__icon skills__icon--fallback" aria-hidden="true" />
                       )}
-                      <span className="skill-card__name">{skill?.name ?? "Untitled"}</span>
+                      <span className="skills__name">{skill?.name ?? "Untitled"}</span>
                     </div>
 
-                    <div className="skill-meta">
-                      <small className={`level ${(skill?.level ?? "unknown").toLowerCase()}`}>
+                    <div className="skills__cell skills__cell--level">
+                      <span className={`skills__level skills__level--${level}`}>
                         {skill?.level ?? "—"}
-                      </small>
+                      </span>
+                    </div>
 
+                    <div className="skills__cell skills__cell--bar">
                       <div
-                        className="skill-bar"
+                        className="skills__bar"
                         role="progressbar"
                         aria-label={`${skill?.name ?? "Skill"} proficiency`}
-                        aria-valuenow={Number(skill?.score) || 0}
+                        aria-valuenow={score}
                         aria-valuemin={0}
                         aria-valuemax={100}
                       >
-                        <div className="skill-bar-fill" style={{ width: `${Number(skill?.score) || 0}%` }} />
+                        <div className="skills__bar-fill" style={{ width: `${score}%` }} />
                       </div>
                     </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </div>
+
+                    <div className="skills__cell skills__cell--score">
+                      <span className="skills__score">{score}</span>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
 
         <footer className="skills__footer">
-          <a className="skills__cta" href="/curriculum-vitae" aria-label="View my full CV">
-            View full CV
-            <span className="skills__cta-arrow" aria-hidden="true">
-              →
-            </span>
+          <a className="skills__cta" href="/projects">
+            VIEW ALL PROJECTS
+            <span className="skills__cta-arrow" aria-hidden="true">→</span>
           </a>
         </footer>
       </div>
