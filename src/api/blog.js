@@ -21,6 +21,7 @@ export async function fetchBlogs(page=1, limit=10, sortBy = "published", sortOrd
     }
 }
 
-export default { fetchBlogs };
+const blogApi = { fetchBlogs };
+export default blogApi;
 
 

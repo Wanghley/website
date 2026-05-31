@@ -31,6 +31,7 @@ export async function fetchAllEducations(limit = 10, sortBy = "start", sortOrder
 }
 
 
-export default { fetchAllEducations };
+const educationApi = { fetchAllEducations };
+export default educationApi;
 
 

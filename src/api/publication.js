@@ -33,4 +33,5 @@ export async function fetchAllPublications(limit = 10, sortBy = "publication", s
     }
 }
 
-export default { fetchAllPublications };
+const publicationApi = { fetchAllPublications };
+export default publicationApi;

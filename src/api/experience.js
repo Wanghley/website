@@ -33,6 +33,7 @@ export async function fetchAllExperiences(limit = 100, sortBy = "start", sortOrd
 }
 
 
-export default { fetchAllExperiences };
+const experienceApi = { fetchAllExperiences };
+export default experienceApi;
 
 

@@ -41,6 +41,7 @@ export async function fetchProjectsCount() {
     }
 }
 
-export default { fetchProjects, fetchProjectsCount };
+const projectsApi = { fetchProjects, fetchProjectsCount };
+export default projectsApi;
 
 
