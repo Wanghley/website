@@ -1,0 +1,384 @@
+/* ===== GambiarraImpact — CH:02 Impact Telemetry ===== */
+
+.gi {
+    position: relative;
+    padding: clamp(4rem, 6vw, 6rem) 0 0;
+    background: var(--void, #06070e);
+    overflow: hidden;
+}
+
+.gi--reduced-motion,
+.gi--reduced-motion * {
+    animation: none !important;
+    transition: none !important;
+}
+
+/* Blueprint grid — dual scale for engineering depth */
+.gi__blueprint {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(58, 175, 241, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58, 175, 241, 0.06) 1px, transparent 1px),
+        linear-gradient(rgba(58, 175, 241, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(58, 175, 241, 0.025) 1px, transparent 1px);
+    background-size: 120px 120px, 120px 120px, 40px 40px, 40px 40px;
+    pointer-events: none;
+}
+
+.gi__orb {
+    position: absolute;
+    top: 30%;
+    left: 8%;
+    width: 360px;
+    height: 360px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(58, 175, 241, 0.10), transparent 65%);
+    filter: blur(60px);
+    pointer-events: none;
+}
+
+/* ===== Container — pillar (40px) + main ===== */
+.gi__container {
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+/* ===== Mission log pillar (vertical left rail inside section) ===== */
+.gi__pillar {
+    position: sticky;
+    top: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1rem 0;
+    border-left: 1px solid rgba(58, 175, 241, 0.20);
+    margin-left: 8px;
+}
+
+.gi__pillar-id {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--blue, #3AAFF1);
+    white-space: nowrap;
+}
+
+.gi__pillar-bar {
+    width: 1px;
+    height: 60px;
+    background: linear-gradient(180deg, var(--blue, #3AAFF1), transparent);
+}
+
+.gi__pillar-status {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 0.55rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--green, #6FCF97);
+    white-space: nowrap;
+}
+
+.gi__pillar-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green, #6FCF97);
+    box-shadow: 0 0 6px rgba(111, 207, 151, 0.6);
+    animation: giPillarPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes giPillarPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0.35; }
+}
+
+.gi__pillar-coord {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.30);
+}
+
+/* ===== Main column ===== */
+.gi__main {
+    min-width: 0;
+}
+
+/* ===== Header ===== */
+.gi__header {
+    margin-bottom: 3rem;
+    opacity: 0;
+    transform: translateY(24px);
+}
+
+.gi--visible .gi__header {
+    animation: giFadeUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) 0.05s forwards;
+}
+
+.gi__channel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.50);
+    margin-bottom: 1.25rem;
+}
+
+.gi__channel-id {
+    color: var(--blue, #3AAFF1);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+}
+
+.gi__channel-sep {
+    display: inline-block;
+    width: 20px;
+    height: 1px;
+    background: var(--blue, #3AAFF1);
+    opacity: 0.55;
+}
+
+.gi__heading {
+    font-family: var(--font-display, 'Orbitron', monospace);
+    font-size: clamp(2.5rem, 2rem + 2.5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--text-primary, #fff);
+    margin: 0 0 1rem;
+    position: relative;
+    padding-left: 1.25rem;
+}
+
+/* Editorial accent bar — mirrors the hero role heading treatment */
+.gi__heading::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.15em;
+    bottom: 0.15em;
+    width: 3px;
+    background: linear-gradient(180deg, var(--blue, #3AAFF1) 0%, rgba(58, 175, 241, 0.25) 100%);
+    border-radius: 2px;
+}
+
+.gi__subheading {
+    font-family: var(--font-main, 'Montserrat', sans-serif);
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--text-secondary, #B0BAC4);
+    max-width: 620px;
+    margin: 0;
+    line-height: 1.75;
+}
+
+/* ===== Stat grid ===== */
+.gi__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Instrument-readout stat card ===== */
+.gi__stat {
+    position: relative;
+    background: linear-gradient(180deg, rgba(20, 22, 40, 0.85) 0%, rgba(15, 17, 32, 0.85) 100%);
+    border: 1px solid rgba(58, 175, 241, 0.18);
+    border-radius: 3px;
+    padding: 1.5rem 1.5rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    cursor: default;
+    transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    opacity: 0;
+    transform: translateY(24px);
+    overflow: hidden;
+}
+
+.gi__stat::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--blue, #3AAFF1) 0%, rgba(58, 175, 241, 0.3) 70%, transparent 100%);
+    opacity: 0.7;
+    box-shadow: 0 0 8px rgba(58, 175, 241, 0.4);
+    transition: opacity 0.3s ease;
+}
+
+.gi--visible .gi__stat {
+    animation: giFadeUp 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) var(--gi-delay, 0s) forwards;
+}
+
+.gi__stat:hover {
+    border-color: rgba(58, 175, 241, 0.65);
+    box-shadow: 0 0 36px rgba(58, 175, 241, 0.20), inset 0 0 20px rgba(58, 175, 241, 0.03);
+    transform: translateY(-4px);
+}
+
+.gi__stat:hover::before {
+    opacity: 1;
+    box-shadow: 0 0 14px rgba(58, 175, 241, 0.65);
+}
+
+.gi__stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.gi__stat-channel {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(58, 175, 241, 0.65);
+}
+
+.gi__spark { opacity: 0.7; }
+
+.gi__stat-value {
+    font-family: var(--font-display, 'Orbitron', monospace);
+    font-size: clamp(2.1rem, 1.6rem + 2vw, 3.4rem);
+    font-weight: 900;
+    line-height: 1;
+    color: transparent;
+    background: linear-gradient(135deg, var(--blue, #3AAFF1) 0%, var(--blue-bright, #68C8F7) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    white-space: nowrap;
+    display: block;
+    margin-bottom: 0.15rem;
+}
+
+.gi__stat-label {
+    font-family: var(--font-main, 'Montserrat', sans-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary, #fff);
+    margin-bottom: 0.15rem;
+}
+
+.gi__stat-time {
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 0.55rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.30);
+    margin-bottom: 0.5rem;
+}
+
+.gi__stat-detail {
+    font-family: var(--font-main, 'Montserrat', sans-serif);
+    font-size: 0.78rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-muted, #5A6575);
+    line-height: 1.45;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(58, 175, 241, 0.10);
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.25s ease, max-height 0.3s ease, padding 0.3s ease;
+}
+
+.gi__stat:hover .gi__stat-detail {
+    opacity: 1;
+    max-height: 60px;
+}
+
+/* ===== Ticker wrapper ===== */
+.gi__ticker-wrap {
+    margin-top: clamp(3rem, 5vw, 4.5rem);
+    border-top: 1px solid rgba(58, 175, 241, 0.20);
+    border-bottom: 1px solid rgba(58, 175, 241, 0.20);
+    padding: 1.25rem 0;
+    background: linear-gradient(180deg, rgba(58, 175, 241, 0.03), transparent);
+    position: relative;
+    z-index: 2;
+}
+
+.gi__ticker-wrap .ticker__item {
+    color: rgba(255, 255, 255, 0.55);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+}
+
+.gi__ticker-wrap .ticker__sep {
+    color: var(--blue, #3AAFF1);
+    opacity: 0.8;
+}
+
+@keyframes giFadeUp {
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Responsive ===== */
+@media screen and (max-width: 1023px) {
+    .gi__container { grid-template-columns: 1fr; gap: 1.5rem; }
+    .gi__pillar { display: none; }
+    .gi__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media screen and (max-width: 479px) {
+    .gi__container { padding: 0 1.25rem; }
+    .gi__grid { grid-template-columns: 1fr; }
+    .gi__stat { padding: 1.25rem; }
+}
+
+/* ===== High Contrast ===== */
+@media (prefers-contrast: high) {
+    .gi { background: #000; }
+    .gi__stat-value {
+        background: none;
+        -webkit-text-fill-color: var(--blue, #3AAFF1);
+        color: var(--blue, #3AAFF1);
+    }
+}
+
+/* ===== Print ===== */
+@media print {
+    .gi { background: white; padding: 20px; }
+    .gi__blueprint, .gi__orb, .gi__ticker-wrap { display: none; }
+    .gi__stat-value {
+        background: none;
+        -webkit-text-fill-color: #2280B8;
+        color: #2280B8;
+    }
+    .gi__header, .gi__stat { animation: none; opacity: 1; transform: none; }
+}
