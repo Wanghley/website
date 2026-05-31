@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+      - run: yarn install --frozen-lockfile
       - run: yarn generate-sitemap && yarn build
         env:
           REACT_APP_WEB3FORMS_ACCESS_KEY: ${{ secrets.REACT_APP_WEB3FORMS_ACCESS_KEY }}
