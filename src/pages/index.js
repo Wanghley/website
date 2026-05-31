@@ -9,7 +9,6 @@ import {
   TechArchitecture,
   GambiarraImpact,
   ChannelRail,
-  SectionDivider,
 } from '../components';
 import { Helmet } from "react-helmet-async";
 import './css/home.css';
@@ -67,12 +66,10 @@ const Home = () => {
             <Skills />
 
             <section className="home-section home-section--projects">
-                <SectionDivider channel="05" title="FIELD REPORTS" variant="light" />
                 <GridFeatured />
             </section>
 
             <section className="home-section home-section--blog">
-                <SectionDivider channel="06" title="FIELD NOTES" variant="dark" accent="amber" />
                 <GridFeaturedBlog />
             </section>
 

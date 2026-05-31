@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { fetchProjects, fetchProjectsCount } from '../api/projects';
+import { usePostHog } from '@posthog/react';
+import { fetchProjects } from '../api/projects';
 import './css/projects.css';
 import { Helmet } from 'react-helmet-async'; 
 import { FaSearch, FaArrowRight, FaFolder, FaCode, FaRocket, FaGithub, FaExternalLinkAlt, FaTimes, FaChevronUp, FaFilter } from 'react-icons/fa';
@@ -24,6 +25,7 @@ const SkeletonCard = ({ variant = 'grid' }) => (
 
 // Project Card Component
 const ProjectCard = ({ project, variant = 'grid', index }) => {
+    const posthog = usePostHog();
     const { Title, Teaser, Category, Start, slug, Featured, Github, Demo } = project.attributes;
     const imageUrl = Featured?.data?.attributes?.formats?.medium?.url || 
                      Featured?.data?.attributes?.formats?.small?.url ||
@@ -60,7 +62,11 @@ const ProjectCard = ({ project, variant = 'grid', index }) => {
             className={`project-card ${variant === 'list' ? 'project-card--list' : ''} ${isVisible ? 'project-card--visible' : ''}`}
             style={{ '--index': index }}
         >
-            <Link to={`/projects/${slug}`} className="project-card__link">
+            <Link
+                to={`/projects/${slug}`}
+                className="project-card__link"
+                onClick={() => posthog?.capture('project_card_clicked', { title: Title, slug, category: Category, index, variant })}
+            >
                 <div className="project-card__image-container">
                     <img 
                         src={imageUrl} 
@@ -100,18 +106,18 @@ const ProjectCard = ({ project, variant = 'grid', index }) => {
                         
                         <div className="project-card__actions" onClick={(e) => e.preventDefault()}>
                             {Github && (
-                                <button 
+                                <button
                                     className="project-card__action-btn"
-                                    onClick={(e) => { e.stopPropagation(); window.open(Github, '_blank'); }}
+                                    onClick={(e) => { e.stopPropagation(); posthog?.capture('project_github_quick_clicked', { title: Title, slug }); window.open(Github, '_blank'); }}
                                     aria-label="View source code"
                                 >
                                     <FaGithub />
                                 </button>
                             )}
                             {Demo && (
-                                <button 
+                                <button
                                     className="project-card__action-btn"
-                                    onClick={(e) => { e.stopPropagation(); window.open(Demo, '_blank'); }}
+                                    onClick={(e) => { e.stopPropagation(); posthog?.capture('project_demo_quick_clicked', { title: Title, slug }); window.open(Demo, '_blank'); }}
                                     aria-label="View live demo"
                                 >
                                     <FaExternalLinkAlt />
@@ -127,6 +133,7 @@ const ProjectCard = ({ project, variant = 'grid', index }) => {
 
 // Featured Project Component
 const FeaturedProject = ({ project, loading }) => {
+    const posthog = usePostHog();
     if (loading) {
         return (
             <div className="featured-project featured-project--skeleton">
@@ -154,7 +161,11 @@ const FeaturedProject = ({ project, loading }) => {
     };
 
     return (
-        <Link to={`/projects/${slug}`} className="featured-project">
+        <Link
+            to={`/projects/${slug}`}
+            className="featured-project"
+            onClick={() => posthog?.capture('project_featured_clicked', { title: Title, slug, category: Category })}
+        >
             <div className="featured-project__image-wrapper">
                 <img src={imageUrl} alt={Title} className="featured-project__image" />
                 <div className="featured-project__gradient"></div>
@@ -176,6 +187,7 @@ const FeaturedProject = ({ project, loading }) => {
 
 // Main Projects Component
 const Projects = () => {
+    const posthog = usePostHog();
     const [projects, setProjects] = useState([]);
     const [totalProjects, setTotalProjects] = useState(null); // Store total count from API
     const [loading, setLoading] = useState(true);
@@ -377,12 +389,18 @@ const Projects = () => {
                     <div className="projects-toolbar">
                         <div className="projects-toolbar__search">
                             <FaSearch className="projects-toolbar__search-icon" />
-                            <input 
+                            <input
                                 ref={searchInputRef}
                                 type="text"
                                 placeholder="Search projects..."
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setSearchTerm(val);
+                                    if (val.trim().length >= 3) {
+                                        posthog?.capture('project_searched', { search_term: val.trim() });
+                                    }
+                                }}
                                 className="projects-toolbar__search-input"
                             />
                             <kbd className="projects-toolbar__shortcut">⌘K</kbd>
@@ -408,16 +426,16 @@ const Projects = () => {
                             </button>
 
                             <div className="projects-toolbar__view-toggle">
-                                <button 
+                                <button
                                     className={`projects-toolbar__view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                                    onClick={() => setViewMode('grid')}
+                                    onClick={() => { setViewMode('grid'); posthog?.capture('project_view_mode_changed', { mode: 'grid' }); }}
                                     aria-label="Grid view"
                                 >
                                     <IoGridOutline />
                                 </button>
-                                <button 
+                                <button
                                     className={`projects-toolbar__view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                                    onClick={() => setViewMode('list')}
+                                    onClick={() => { setViewMode('list'); posthog?.capture('project_view_mode_changed', { mode: 'list' }); }}
                                     aria-label="List view"
                                 >
                                     <IoListOutline />
@@ -434,10 +452,10 @@ const Projects = () => {
                                 <label className="projects-filters__label">Category</label>
                                 <div className="projects-filters__tags">
                                     {categories.map(category => (
-                                        <button 
+                                        <button
                                             key={category}
                                             className={`projects-filters__tag ${activeCategory === category ? 'active' : ''}`}
-                                            onClick={() => setActiveCategory(category)}
+                                            onClick={() => { setActiveCategory(category); posthog?.capture('project_filter_applied', { category }); }}
                                         >
                                             {category}
                                             {activeCategory === category && (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { usePostHog } from '@posthog/react';
 import { fetchBlogs } from '../api/blog';
 import './css/blog.css';
 import { Helmet } from "react-helmet-async";
@@ -47,6 +48,7 @@ const SkeletonCard = ({ variant = 'grid' }) => (
 
 // Blog Card Component
 const BlogCard = ({ post, variant = 'grid', index }) => {
+    const posthog = usePostHog();
     const { Title, Teaser, Categories, publishedAt, slug, Featured, Content } = post.attributes;
     const imageUrl = Featured?.data?.attributes?.formats?.medium?.url || 
                      Featured?.data?.attributes?.formats?.small?.url ||
@@ -80,7 +82,11 @@ const BlogCard = ({ post, variant = 'grid', index }) => {
             className={`blog-card ${variant === 'list' ? 'blog-card--list' : ''} ${isVisible ? 'blog-card--visible' : ''}`}
             style={{ '--index': index }}
         >
-            <Link to={`/blog/${slug}`} className="blog-card__link">
+            <Link
+                to={`/blog/${slug}`}
+                className="blog-card__link"
+                onClick={() => posthog?.capture('blog_card_clicked', { title: Title, slug, category, index, variant })}
+            >
                 <div className="blog-card__image-container">
                     <img 
                         src={imageUrl} 
@@ -127,6 +133,7 @@ const BlogCard = ({ post, variant = 'grid', index }) => {
 
 // Featured Post Component
 const FeaturedPost = ({ post, loading }) => {
+    const posthog = usePostHog();
     if (loading) {
         return (
             <div className="featured-post featured-post--skeleton">
@@ -152,7 +159,11 @@ const FeaturedPost = ({ post, loading }) => {
     const readTime = calculateReadTime(Content);
 
     return (
-        <Link to={`/blog/${slug}`} className="featured-post">
+        <Link
+            to={`/blog/${slug}`}
+            className="featured-post"
+            onClick={() => posthog?.capture('blog_featured_clicked', { title: Title, slug, category })}
+        >
             <div className="featured-post__image-wrapper">
                 <img src={imageUrl} alt={Title} className="featured-post__image" />
                 <div className="featured-post__gradient"></div>
@@ -175,8 +186,8 @@ const FeaturedPost = ({ post, loading }) => {
 
 // Main Blog Component
 const Blogs = () => {
+    const posthog = usePostHog();
     const [posts, setPosts] = useState([]);
-    const [totalPosts, setTotalPosts] = useState(null);
     const [loading, setLoading] = useState(true);
     const [initialLoading, setInitialLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -202,7 +213,6 @@ const Blogs = () => {
                 setHasMore(false);
                 if (isInitial) {
                     setPosts([]);
-                    setTotalPosts(0);
                 }
                 return;
             }
@@ -222,7 +232,6 @@ const Blogs = () => {
                 // Initial load - replace all posts
                 setPosts(newPosts);
                 loadedPostIds.current = new Set(newPosts.map(p => p.id));
-                setTotalPosts(newPosts.length);
                 setPage(2);
             } else {
                 // Pagination - add new posts, avoiding duplicates
@@ -434,12 +443,18 @@ const Blogs = () => {
                     <div className="blog-toolbar">
                         <div className="blog-toolbar__search">
                             <FaSearch className="blog-toolbar__search-icon" />
-                            <input 
+                            <input
                                 ref={searchInputRef}
                                 type="text"
                                 placeholder="Search articles..."
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    setSearchTerm(val);
+                                    if (val.trim().length >= 3) {
+                                        posthog?.capture('blog_searched', { search_term: val.trim() });
+                                    }
+                                }}
                                 className="blog-toolbar__search-input"
                             />
                             <kbd className="blog-toolbar__shortcut">⌘K</kbd>
@@ -465,16 +480,16 @@ const Blogs = () => {
                             </button>
 
                             <div className="blog-toolbar__view-toggle">
-                                <button 
+                                <button
                                     className={`blog-toolbar__view-btn ${viewMode === 'grid' ? 'active' : ''}`}
-                                    onClick={() => setViewMode('grid')}
+                                    onClick={() => { setViewMode('grid'); posthog?.capture('blog_view_mode_changed', { mode: 'grid' }); }}
                                     aria-label="Grid view"
                                 >
                                     <IoGridOutline />
                                 </button>
-                                <button 
+                                <button
                                     className={`blog-toolbar__view-btn ${viewMode === 'list' ? 'active' : ''}`}
-                                    onClick={() => setViewMode('list')}
+                                    onClick={() => { setViewMode('list'); posthog?.capture('blog_view_mode_changed', { mode: 'list' }); }}
                                     aria-label="List view"
                                 >
                                     <IoListOutline />
@@ -491,10 +506,13 @@ const Blogs = () => {
                                 <label className="blog-filters__label">Topic</label>
                                 <div className="blog-filters__tags">
                                     {categories.map(category => (
-                                        <button 
+                                        <button
                                             key={category}
                                             className={`blog-filters__tag ${activeCategory === category ? 'active' : ''}`}
-                                            onClick={() => setActiveCategory(category)}
+                                            onClick={() => {
+                                                setActiveCategory(category);
+                                                posthog?.capture('blog_category_filtered', { category });
+                                            }}
                                         >
                                             {category}
                                             {activeCategory === category && (
@@ -513,9 +531,9 @@ const Blogs = () => {
                             <div className="blog-filters__group blog-filters__group--sort">
                                 <label className="blog-filters__label">Sort by</label>
                                 <div className="blog-filters__sort-wrapper">
-                                    <select 
-                                        value={sortBy} 
-                                        onChange={(e) => setSortBy(e.target.value)}
+                                    <select
+                                        value={sortBy}
+                                        onChange={(e) => { setSortBy(e.target.value); posthog?.capture('blog_sort_changed', { sort_by: e.target.value }); }}
                                         className="blog-filters__select"
                                     >
                                         <option value="newest">Newest First</option>
