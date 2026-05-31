@@ -76,7 +76,7 @@ const Skills = () => {
 
   return (
     <section
-      id="ch-04"
+      id="ch-03"
       className={`skills section-light ${isVisible ? "skills--visible" : ""} ${
         prefersReducedMotion ? "skills--reduced-motion" : ""
       }`}
@@ -90,7 +90,7 @@ const Skills = () => {
         <header className="skills__header">
           <div className="skills__title-block">
             <span className="skills__label">
-              <span className="skills__label-id">CH:04</span>
+              <span className="skills__label-id">CH:03</span>
               <span className="skills__label-sep" />
               CAPABILITY MATRIX
             </span>
