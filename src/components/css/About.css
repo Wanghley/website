@@ -8,7 +8,6 @@
   /* Gradient bridges: dark section colors bleed in at top (void) and bottom (abyss) */
   padding: clamp(5rem, 7vw, 8rem) 0 clamp(5rem, 7vw, 8rem);
   overflow: hidden;
-  margin-top: -30px;
 }
 
 /* Top bridge: void (#09090f) → transparent */
