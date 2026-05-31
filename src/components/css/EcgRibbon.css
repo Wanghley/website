@@ -1,0 +1,99 @@
+/* ============================================================
+   EcgRibbon — live ECG waveform canvas with PVC arrhythmia state
+   ============================================================ */
+
+.ecg-ribbon {
+  position: relative;
+  width: 100%;
+  background: #02110A;
+  border-top: 1px solid rgba(111, 207, 151, 0.30);
+  border-bottom: 1px solid rgba(111, 207, 151, 0.30);
+  overflow: hidden;
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.ecg-ribbon--pvc {
+  border-color: rgba(232, 74, 95, 0.55);
+  box-shadow:
+    inset 0 0 30px rgba(232, 74, 95, 0.10),
+    0 0 0 1px rgba(232, 74, 95, 0.10);
+}
+
+.ecg-ribbon__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: #02110A;
+}
+
+.ecg-ribbon__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 1.25rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ecg-ribbon__channel,
+.ecg-ribbon__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: rgba(168, 230, 193, 0.75);
+  text-shadow: 0 0 6px rgba(2, 17, 10, 0.9);
+}
+
+.ecg-ribbon__status {
+  color: var(--green, #6FCF97);
+}
+
+.ecg-ribbon--pvc .ecg-ribbon__status {
+  color: var(--red-pvc, #E84A5F);
+  animation: ecgPvcBlink 0.55s ease-in-out infinite;
+}
+
+.ecg-ribbon__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green, #6FCF97);
+  box-shadow: 0 0 8px rgba(111, 207, 151, 0.7);
+  flex-shrink: 0;
+  animation: ecgDotPulse 1s ease-in-out infinite;
+}
+
+.ecg-ribbon--pvc .ecg-ribbon__dot {
+  background: var(--red-pvc, #E84A5F);
+  box-shadow: 0 0 10px rgba(232, 74, 95, 0.8);
+  animation-duration: 0.4s;
+}
+
+@keyframes ecgDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.7); }
+}
+
+@keyframes ecgPvcBlink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+@media (max-width: 768px) {
+  .ecg-ribbon__overlay { padding: 0.45rem 0.85rem; }
+  .ecg-ribbon__channel,
+  .ecg-ribbon__status { font-size: 0.5rem; letter-spacing: 0.12em; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ecg-ribbon__dot,
+  .ecg-ribbon--pvc .ecg-ribbon__status { animation: none; }
+}
