@@ -1,3 +1,30 @@
+@import "tailwindcss";
+
+/* Dark background applied before any component CSS loads —
+   prevents the browser's white canvas from showing through
+   the gap between the fixed navbar and the hero section. */
+html {
+  background-color: #06070e;
+}
+
+body {
+  background-color: #0a0b14;
+}
+
+@theme {
+  --color-cyber-blue: #3AAFF1;
+  --color-cyber-blue-dim: #2280B8;
+  --color-cyber-blue-glow: rgba(58, 175, 241, 0.18);
+  --color-cyber-navy: #050B14;
+  --color-cyber-dark: #09090F;
+  --color-cyber-green: #6FCF97;
+  --color-cyber-text: #B0BAC4;
+  --color-cyber-muted: #5A6575;
+  --font-display: 'Orbitron', monospace;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-main: 'Space Grotesk', sans-serif;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

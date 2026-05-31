@@ -1,9 +1,13 @@
 import './App.css';
+import './components/css/global.css';
+import { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
+  useLocation,
 } from "react-router-dom";
+import { usePostHog } from '@posthog/react';
 
 
 import Home from './pages/index';
@@ -16,11 +20,20 @@ import Blogs from './pages/blog'; // Import the Blogs component
 import BlogPostPage from './components/BlogPost'; // Import the BlogPostPage component
 import CVPage from './pages/cv'; // Import the CVPage component
 import ContactPage from './pages/contact'; // Import the ContactPage component
-import { Helmet } from "react-helmet-async"; // Changed from react-helmet
+
+function PostHogPageView() {
+  const location = useLocation();
+  const posthog = usePostHog();
+  useEffect(() => {
+    posthog?.capture('$pageview', { $current_url: window.location.href });
+  }, [location.pathname, posthog]);
+  return null;
+}
 
 function App() {
   return (
     <Router>
+      <PostHogPageView />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
