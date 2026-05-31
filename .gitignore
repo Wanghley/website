@@ -19,6 +19,16 @@
 .env.test.local
 .env.production.local
 
+# local AI / assistant artifacts
+/.agents/
+/.claude/
+skills-lock.json
+
+# generated notes / design dumps
+PORTFOLIO_FIXES.md
+posthog-setup-report.md
+docs/design/
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
