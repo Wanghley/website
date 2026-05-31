@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './css/About.css'
 import { FaPlay, FaTimes } from 'react-icons/fa'
+import { usePostHog } from '@posthog/react'
 
 const CREDENTIALS = [
   { name: 'Karsh Scholar',     sub: 'Duke · Full Merit' },
@@ -16,6 +17,7 @@ const CREDENTIALS = [
 ];
 
 const About = () => {
+  const posthog = usePostHog();
   const [isVisible, setIsVisible] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
@@ -74,7 +76,7 @@ const About = () => {
               <span className="about__meta-value">1 MIN</span>
             </div>
 
-            <div className="tedx-card" onClick={() => setIsModalOpen(true)} role="button" tabIndex={0}
+            <div className="tedx-card" onClick={() => { setIsModalOpen(true); posthog?.capture('about_video_opened', { source: 'card' }); }} role="button" tabIndex={0}
               onKeyDown={e => e.key === 'Enter' && setIsModalOpen(true)}>
               <div className="tedx-thumb">
                 <img
@@ -90,7 +92,7 @@ const About = () => {
                     className="tedx-play-btn"
                     aria-label="Play 60-second introduction video (opens fullscreen)"
                     type="button"
-                    onClick={e => { e.stopPropagation(); setIsModalOpen(true); }}
+                    onClick={e => { e.stopPropagation(); setIsModalOpen(true); posthog?.capture('about_video_opened', { source: 'play_button' }); }}
                   >
                     <FaPlay aria-hidden="true" />
                   </button>
@@ -131,7 +133,7 @@ const About = () => {
               </figcaption>
             </figure>
 
-            <a href="/contact" className="about-link">
+            <a href="/contact" className="about-link" onClick={() => posthog?.capture('about_collaboration_clicked')}>
               START A COLLABORATION
               <span className="about-link__arrow">→</span>
             </a>
