@@ -54,6 +54,9 @@ body {
 
 .home-section--projects {
   background: var(--ds-surface);
+  /* Skip rendering until near the viewport on mobile */
+  content-visibility: auto;
+  contain-intrinsic-size: 0 700px;
 }
 
 .home-section--blog {
@@ -62,6 +65,8 @@ body {
     var(--ds-void)  0%,
     var(--ds-abyss) 100%
   );
+  content-visibility: auto;
+  contain-intrinsic-size: 0 600px;
 }
 
 .home-section--contact {

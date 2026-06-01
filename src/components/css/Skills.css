@@ -401,9 +401,65 @@
   .skills__filters { align-items: flex-start; }
 }
 
-@media (max-width: 600px) {
+/* ===== Mobile: swipeable horizontal snap carousel ===== */
+@media (max-width: 768px) {
   .skills__container { padding: 0 1.25rem; }
-  .skills__grid { gap: 0.4rem; padding: 1.1rem; }
+
+  /* Panel: relative so the right-edge fade is positioned correctly */
+  .skills__panel {
+    position: relative;
+    will-change: transform;
+  }
+
+  /* Right-edge gradient hint — signals more content to swipe */
+  .skills__panel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 56px;
+    background: linear-gradient(270deg, rgba(247, 248, 250, 0.95) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 1;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* Grid becomes horizontal snap carousel */
+  .skills__grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    padding: 1.1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;    /* prevent browser back-gesture hijack */
+    will-change: transform;
+    transform: translateZ(0);          /* hardware-accelerate the layer */
+    -webkit-overflow-scrolling: touch;
+    /* Hide scrollbar */
+    scrollbar-width: none;
+  }
+  .skills__grid::-webkit-scrollbar { display: none; }
+
+  /* Each chip: snap target, non-shrinkable so they stay individual */
+  .skills__chip {
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    min-width: clamp(120px, 38vw, 180px);
+    min-height: 44px;                  /* comfortable touch target height */
+    justify-content: flex-start;
+  }
+
+  /* Active state for tap feedback */
+  .skills__chip:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 6px rgba(58, 175, 241, 0.12);
+    transition-duration: 60ms;
+  }
+}
+
+@media (max-width: 600px) {
   .skills__chip-name { font-size: 0.76rem; }
 }
 

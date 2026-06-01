@@ -63,6 +63,8 @@ body {
   background-color: var(--ds-abyss);
   overflow-x: hidden;
   padding: 0 0 20px;
+  /* Remove 300ms tap delay; prevent accidental double-tap zoom on iOS */
+  touch-action: manipulation;
 }
 
 img, video {
