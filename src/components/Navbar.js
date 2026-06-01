@@ -1,19 +1,52 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import logo from '../assets/logo-white.svg';
+import logoWhite from '../assets/logo-white.svg';
+import logoColor from '../assets/logo-colorful.png';
 import { FaLinkedinIn, FaInstagram, FaGithub, FaGraduationCap } from 'react-icons/fa6';
 import { SiGooglescholar } from 'react-icons/si';
 import './css/Navbar.css';
+
+// ─── Navbar theme per route ───────────────────────────────────────────────────
+// 'transparent' → invisible at top of page, dark glass when scrolled  (dark hero pages)
+// 'light'       → frosted white always, dark text                      (light-bg pages)
+// 'dark'        → dark solid always, white text                        (dark-bg pages)
+const NAVBAR_THEMES = {
+  '/':                  'transparent',
+  '/about':             'light',
+  '/curriculum-vitae':  'light',
+  '/projects':          'dark',
+  '/blog':              'dark',
+  '/contact':           'dark',
+  '/privacy':           'light',
+  '/data-policy':       'light',
+};
+
+function getNavbarTheme(pathname) {
+  if (NAVBAR_THEMES[pathname]) return NAVBAR_THEMES[pathname];
+  if (pathname.startsWith('/projects/')) return 'dark';
+  if (pathname.startsWith('/blog/'))     return 'dark';
+  return 'light';
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const navRef = useRef(null);
 
+  const navTheme = getNavbarTheme(location.pathname);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // Non-home pages have light backgrounds — start solid immediately
-  const [isScrolled, setIsScrolled] = useState(location.pathname !== '/');
+  // isScrolled drives re-renders on scroll; the CSS class uses visiblyScrolled below
+  const [isScrolled, setIsScrolled] = useState(navTheme !== 'transparent');
+
+  // Compute the scrolled appearance synchronously every render.
+  // This avoids a one-frame flash of the wrong background when navigating between pages:
+  // navTheme updates immediately from location.pathname, but isScrolled is stale state.
+  // Reading window.scrollY directly gives the correct value on every render.
+  const visiblyScrolled =
+    navTheme !== 'transparent' || (typeof window !== 'undefined' && window.scrollY > 50);
   const [activeSection, setActiveSection] = useState('');
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
@@ -43,9 +76,9 @@ const Navbar = () => {
 
   const handleScroll = useCallback(() => {
     const scrollY = window.scrollY;
-    // Home page: transparent at top, solid when scrolled.
-    // All other pages: always solid (they have light backgrounds).
-    setIsScrolled(location.pathname !== '/' || scrollY > 50);
+    // transparent theme: clear at top, opaque once scrolled.
+    // light/dark themes: always opaque.
+    setIsScrolled(navTheme !== 'transparent' || scrollY > 50);
 
     if (location.pathname === '/') {
       const sections = ['ch-00', 'ch-01', 'ch-02', 'ch-03', 'ch-04', 'ch-05', 'ch-06', 'ch-07'];
@@ -66,7 +99,7 @@ const Navbar = () => {
       }
       setActiveSection(found || 'ch-00');
     }
-  }, [location.pathname]);
+  }, [location.pathname, navTheme]);
 
   // Throttled scroll listener
   useEffect(() => {
@@ -109,9 +142,10 @@ const Navbar = () => {
 
   // Close menu on route change; re-evaluate scroll state for the new page
   useEffect(() => {
+    const theme = getNavbarTheme(location.pathname);
     setIsMenuOpen(false);
     setActiveSection('');
-    setIsScrolled(location.pathname !== '/' || window.scrollY > 50);
+    setIsScrolled(theme !== 'transparent' || window.scrollY > 50);
   }, [location.pathname]);
 
   // Close menu on escape key
@@ -125,6 +159,8 @@ const Navbar = () => {
 
   const handleNavigation = useCallback((e, item) => {
     e.preventDefault();
+    // Blur the clicked element so focus ring clears immediately after tap/click
+    e.currentTarget.blur();
     setIsMenuOpen(false);
 
     const scrollToSection = (sectionId) => {
@@ -180,7 +216,7 @@ const Navbar = () => {
         initial={prefersReducedMotion ? false : { y: -24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className={`nav ${isScrolled ? 'nav--scrolled' : ''} ${isMenuOpen ? 'nav--open' : ''} nav--dark nav--glass`}
+        className={`nav nav--theme-${navTheme} ${visiblyScrolled ? 'nav--scrolled' : ''} ${isMenuOpen ? 'nav--open' : ''}`}
         role="navigation"
         aria-label="Main navigation"
         data-theme="dark"
@@ -193,7 +229,7 @@ const Navbar = () => {
             onClick={handleLogoClick}
             aria-label="Wanghley - Home"
           >
-            <img src={logo} alt="" className="nav__logo-img" aria-hidden="true" />
+            <img src={navTheme === 'light' ? logoColor : logoWhite} alt="" className="nav__logo-img" aria-hidden="true" />
           </a>
 
           {/* Desktop Navigation */}

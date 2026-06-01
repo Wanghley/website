@@ -40,41 +40,108 @@
 
 /* ========================================
    Theme Variations
+   Three themes are available — select per page via NAVBAR_THEMES in Navbar.js:
+     'transparent' → clear at top of hero, dark glass on scroll
+     'light'       → frosted white always, dark text
+     'dark'        → dark solid always, white text
    ======================================== */
 
-/* Dark theme - light text (used everywhere now) */
-.nav--dark {
-  --nav-text: #ffffff;
-  --nav-text-muted: #8fa0b4;
-  --nav-border: rgba(255, 255, 255, 0.08);
+/* ── TRANSPARENT theme (home page / hero pages) ── */
+.nav--theme-transparent {
+  --nav-text:        #ffffff;
+  --nav-text-muted:  #b0bec5;
+  --nav-accent:      #3AAFF1;
+  --nav-accent-glow: rgba(58, 175, 241, 0.30);
 }
 
-/* At rest: fully transparent — merges with whatever dark background is behind it */
-.nav--glass:not(.nav--scrolled) {
-  background: transparent;
-  backdrop-filter: none;
+/* At rest: fully invisible — hero background shows through */
+.nav--theme-transparent:not(.nav--scrolled) {
+  background:         transparent;
+  backdrop-filter:    none;
   -webkit-backdrop-filter: none;
-  border-bottom: none;
-  box-shadow: none;
+  border-bottom:      none;
+  box-shadow:         none;
 }
 
-/* Scrolled: more opaque, stronger blur, visible cyan accent line */
-.nav--scrolled {
-  --nav-text: #ffffff;
-  --nav-text-muted: #8fa0b4;
-  --nav-border: rgba(58, 175, 241, 0.15);
-  background: rgba(6, 7, 14, 0.86);
-  backdrop-filter: blur(28px) saturate(1.6);
+/* Scrolled: dark glass with subtle cyan accent line */
+.nav--theme-transparent.nav--scrolled {
+  background:         rgba(6, 7, 14, 0.88);
+  backdrop-filter:    blur(28px) saturate(1.6);
   -webkit-backdrop-filter: blur(28px) saturate(1.6);
-  border-bottom: 1px solid rgba(58, 175, 241, 0.14);
+  border-bottom:      1px solid rgba(58, 175, 241, 0.12);
   box-shadow:
-    0 4px 32px rgba(0, 0, 0, 0.45),
-    0 1px 0 rgba(58, 175, 241, 0.12);
+    0 4px 24px rgba(0, 0, 0, 0.40),
+    0 1px 0   rgba(58, 175, 241, 0.10);
 }
 
-.nav--scrolled .nav__toggle-bar {
-  background: #ffffff;
+.nav--theme-transparent .nav__toggle-bar { background: #ffffff; }
+
+/* ── LIGHT theme (about, cv, privacy, etc.) ── */
+.nav--theme-light {
+  --nav-text:        #1a1b2e;
+  --nav-text-muted:  #4B5563;
+  --nav-accent:      #3AAFF1;
+  --nav-accent-glow: rgba(58, 175, 241, 0.18);
+  background:         rgba(255, 255, 255, 0.94);
+  backdrop-filter:    blur(20px) saturate(1.8);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  border-bottom:      1px solid rgba(0, 0, 0, 0.07);
+  box-shadow:         0 1px 16px rgba(0, 0, 0, 0.07);
 }
+
+.nav--theme-light.nav--scrolled {
+  background:         rgba(255, 255, 255, 0.97);
+  backdrop-filter:    blur(24px) saturate(2);
+  -webkit-backdrop-filter: blur(24px) saturate(2);
+  border-bottom:      1px solid rgba(0, 0, 0, 0.09);
+  box-shadow:         0 2px 20px rgba(0, 0, 0, 0.08);
+}
+
+.nav--theme-light .nav__link        { color: var(--nav-text-muted); }
+.nav--theme-light .nav__link:hover  { color: var(--nav-accent); background: rgba(58, 175, 241, 0.07); text-shadow: none; }
+.nav--theme-light .nav__link--active { color: var(--nav-accent); text-shadow: none; }
+
+.nav--theme-light .nav__social {
+  color: #4B5563;
+  background: rgba(0, 0, 0, 0.03);
+  border-color: rgba(0, 0, 0, 0.08);
+}
+.nav--theme-light .nav__social:hover {
+  color: var(--nav-accent);
+  background: rgba(58, 175, 241, 0.07);
+  border-color: rgba(58, 175, 241, 0.28);
+  box-shadow: 0 0 10px rgba(58, 175, 241, 0.14), 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.nav--theme-light .nav__toggle-bar               { background: #1a1b2e; }
+.nav--theme-light.nav--open .nav__toggle-bar,
+.nav--theme-light .nav__toggle--active .nav__toggle-bar { background: #1a1b2e !important; }
+
+.nav--theme-light .nav__logo-img { height: 36px; }
+
+/* ── DARK theme (projects, blog, contact, etc.) ── */
+.nav--theme-dark {
+  --nav-text:        #ffffff;
+  --nav-text-muted:  #8fa0b4;
+  --nav-accent:      #3AAFF1;
+  --nav-accent-glow: rgba(58, 175, 241, 0.28);
+  background:         rgba(6, 7, 14, 0.92);
+  backdrop-filter:    blur(24px) saturate(1.5);
+  -webkit-backdrop-filter: blur(24px) saturate(1.5);
+  border-bottom:      1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:         0 2px 20px rgba(0, 0, 0, 0.35);
+}
+
+.nav--theme-dark.nav--scrolled {
+  background:    rgba(6, 7, 14, 0.95);
+  border-bottom: 1px solid rgba(58, 175, 241, 0.10);
+  box-shadow:    0 4px 28px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(58, 175, 241, 0.08);
+}
+
+.nav--theme-dark .nav__toggle-bar { background: #ffffff; }
+
+/* Legacy aliases — kept for any older CSS references */
+.nav--on-light { /* maps to theme-light */ }
 
 /* ========================================
    Container
@@ -185,9 +252,22 @@
   text-shadow: 0 0 14px rgba(58, 175, 241, 0.55);
 }
 
+/* Tap/click: scale slightly and clear immediately — prevents "stuck" visual */
+.nav__link:active {
+  transform: scale(0.96);
+  transition-duration: 60ms;
+  outline: none;
+}
+
 .nav__link--active {
   color: var(--nav-accent);
   text-shadow: 0 0 10px rgba(58, 175, 241, 0.40);
+}
+
+/* Remove persistent glow on active links for light-theme nav */
+.nav--theme-light .nav__link--active,
+.nav--on-light .nav__link--active {
+  text-shadow: none;
 }
 
 .nav__link-indicator {
@@ -275,10 +355,7 @@
   transform-origin: center;
 }
 
-/* Toggle bars — always white (nav is always dark) */
-.nav--scrolled .nav__toggle-bar {
-  background: #ffffff;
-}
+/* Toggle bars are coloured per-theme above; no generic override needed */
 
 /* IMPORTANT: When menu is open, always use white bars regardless of theme */
 .nav--open .nav__toggle-bar,
@@ -678,9 +755,14 @@
    High Contrast Mode
    ======================================== */
 @media (prefers-contrast: high) {
-  .nav--scrolled {
+  .nav--theme-transparent.nav--scrolled,
+  .nav--theme-dark, .nav--theme-dark.nav--scrolled {
     background: rgba(0, 0, 0, 0.98);
     border-bottom: 2px solid #fff;
+  }
+  .nav--theme-light, .nav--theme-light.nav--scrolled {
+    background: #ffffff;
+    border-bottom: 2px solid #000;
   }
 
   .nav__link--active,
