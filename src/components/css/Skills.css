@@ -8,7 +8,6 @@
   font-family: var(--font-main, 'Montserrat', sans-serif);
   overflow: hidden;
   padding: clamp(5rem, 7vw, 8rem) 0;
-  margin-top: -30px;
 }
 
 /* Top bridge: dark section → transparent */
