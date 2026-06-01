@@ -7,7 +7,7 @@ const AboutPage = () => {
     
 
     return (
-        <div style={{ background: '#f8f9fb', minHeight: '100vh' }}>
+        <div style={{ background: 'var(--ds-abyss, #0a0b14)', minHeight: '100vh' }}>
         <Helmet>
             <title>About Wanghley Martins | Edge AI Engineer & Duke Karsh Scholar</title>
             <meta name="description" content="Wanghley Martins is a Duke University Karsh Scholar and Edge AI engineer specializing in TinyML, biomedical AI, and embedded health systems. From a pig farm in Brazil to deploying arrhythmia detection on STM32 microcontrollers." />
