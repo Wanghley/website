@@ -25,7 +25,6 @@ const AboutPage = () => {
             <meta property="og:locale" content="en_US" />
             <meta property="og:locale:alternate" content="pt_BR" />
         </Helmet>
-        <NavbarSpacer/>
         <AboutText />
         <Contact />
         </div>
