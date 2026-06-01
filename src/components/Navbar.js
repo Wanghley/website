@@ -13,7 +13,7 @@ import './css/Navbar.css';
 // 'dark'        → dark solid always, white text                        (dark-bg pages)
 const NAVBAR_THEMES = {
   '/':                  'transparent',
-  '/about':             'light',
+  '/about':             'dark',
   '/curriculum-vitae':  'light',
   '/projects':          'dark',
   '/blog':              'dark',
