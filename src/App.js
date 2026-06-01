@@ -35,6 +35,14 @@ const PageLoader = () => (
   </div>
 );
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 function PostHogPageView() {
   const location = useLocation();
   const posthog = usePostHog();
@@ -47,6 +55,7 @@ function PostHogPageView() {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <PostHogPageView />
       <Navbar />
       <Suspense fallback={<PageLoader />}>
