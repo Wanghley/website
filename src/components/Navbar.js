@@ -163,9 +163,9 @@ const Navbar = () => {
   };
 
   const mobileMenuVariants = {
-    hidden: { x: '100%' },
-    show: { x: 0, transition: { duration: 0.4, ease: [0.4, 0, 0.2, 1] } },
-    exit: { x: '100%', transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] } },
+    hidden: { y: '100%' },
+    show: { y: 0, transition: { duration: 0.38, ease: [0.32, 0.72, 0, 1] } },
+    exit: { y: '100%', transition: { duration: 0.30, ease: [0.32, 0.72, 0, 1] } },
   };
 
   return (
