@@ -25,36 +25,56 @@ const AboutText = () => {
             const referencesSectionMatch = aboutContent.match(/## References\s+([\s\S]+)$/);
             const referencesSection = referencesSectionMatch ? referencesSectionMatch[1] : '';
             
-            // Extract references with more robust pattern
-            const referenceRegex = /\[(\d+)\](?::|-)?\s*(.*?)(?=\n\s*\[\d+\](?::|-)|\n\s*$|$)/gs;
+            // Extract references — handle both [N]: and [^N]: formats
+            const referenceRegex = /\[\^?(\d+)\](?::|-)?\s*(.*?)(?=\n\s*\[\^?\d+\](?::|-)|\n\s*$|$)/gs;
             const refs = [];
             let match;
-            
+
             while ((match = referenceRegex.exec(referencesSection)) !== null) {
                 refs.push({
                     id: match[1],
                     text: match[2].trim()
                 });
             }
-            
+
             // Remove the entire references section from content
             let cleanedContent = aboutContent;
             if (referencesSectionMatch) {
                 cleanedContent = aboutContent.replace(/## References[\s\S]+$/, '').trim();
             }
-            
+
+            // Also collect inline footnote definitions [^N]: text outside the references section
+            const inlineFootnoteRegex = /^\[\^(\d+)\]:\s*(.+)$/gm;
+            let fnMatch;
+            while ((fnMatch = inlineFootnoteRegex.exec(cleanedContent)) !== null) {
+                if (!refs.some(r => r.id === fnMatch[1])) {
+                    refs.push({ id: fnMatch[1], text: fnMatch[2].trim() });
+                }
+            }
+            // Remove inline footnote definition lines from content
+            cleanedContent = cleanedContent.replace(/^\[\^(\d+)\]:\s*.+$/gm, '').trim();
+
             // Clean up any HTML link remnants that might be at the end
             cleanedContent = cleanedContent.replace(/\[\d+\]\([^)]+\)/g, '');
-            
-            // Fix citation formats - use standard markdown links
+
+            // Convert [N] numeric citations to links
             cleanedContent = cleanedContent.replace(/\[(\d+)\](?:-|\s+)?/g, (match, refId) => {
-                // Check if this reference exists
                 if (refs.some(ref => ref.id === refId)) {
-                    // Create a standard markdown link
                     return `[[${refId}]](#reference-${refId})`;
                 }
-                return match; // Keep the original if not a reference
+                return match;
             });
+
+            // Convert [^N] footnote references to citation links
+            cleanedContent = cleanedContent.replace(/\[\^(\d+)\]/g, (match, refId) => {
+                if (refs.some(ref => ref.id === refId)) {
+                    return `[[${refId}]](#reference-${refId})`;
+                }
+                return match;
+            });
+
+            // Sort refs numerically
+            refs.sort((a, b) => parseInt(a.id) - parseInt(b.id));
             
             setAbout(cleanedContent);
             setReferences(refs);
@@ -206,6 +226,12 @@ const AboutText = () => {
                 <img src={src} alt={alt} className="about-page__image" />
                 {alt && <figcaption className="about-page__figcaption">{alt}</figcaption>}
             </figure>
+        ),
+        // Wrap tables for horizontal scroll on narrow viewports
+        table: ({ children }) => (
+            <div className="about-page__table-wrapper">
+                <table className="about-page__table">{children}</table>
+            </div>
         ),
         // Text handling can stay simple
         text: ({ children }) => children
