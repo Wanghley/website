@@ -47,8 +47,10 @@ const AboutText = () => {
             const inlineFootnoteRegex = /^\[\^(\d+)\]:\s*(.+)$/gm;
             let fnMatch;
             while ((fnMatch = inlineFootnoteRegex.exec(cleanedContent)) !== null) {
-                if (!refs.some(r => r.id === fnMatch[1])) {
-                    refs.push({ id: fnMatch[1], text: fnMatch[2].trim() });
+                const matchId = fnMatch[1];
+                const matchText = fnMatch[2];
+                if (!refs.some(r => r.id === matchId)) {
+                    refs.push({ id: matchId, text: matchText.trim() });
                 }
             }
             // Remove inline footnote definition lines from content
