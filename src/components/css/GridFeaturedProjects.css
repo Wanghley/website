@@ -783,39 +783,116 @@
 }
 
 @media (max-width: 768px) {
+  /* Remove section h-padding — we'll add it to header & bento individually */
   .eng-showroom {
-    padding: 60px 5%;
+    padding: 60px 0;
+    overflow: hidden;  /* clip bg decoration only — bento scrolls internally */
   }
 
   .eng-showroom__title {
     font-size: 1.8rem;
   }
 
-  .eng-showroom__bento {
-    grid-template-columns: 1fr;
+  /* Switch container from grid to block so grid's min-width:auto can't expand */
+  .eng-showroom__container {
+    display: block;
+    max-width: 100%;
+    padding: 0 5%;
   }
 
+  /* Header: standard padding restored via container */
+  .eng-showroom__header {
+    margin-bottom: 24px;
+  }
+
+  .eng-showroom__cta {
+    width: auto;
+  }
+
+  /* ── Horizontal swipe carousel ── */
+  /* The content wrapper breaks OUT of the padded container */
+  .eng-showroom__content {
+    /* Negative margins to span full section width, bypassing container padding */
+    margin-left: -5%;
+    margin-right: -5%;
+    width: calc(100% + 10%);
+    position: relative;
+    /* min-width: 0 prevents grid/flex child expansion */
+    min-width: 0;
+    overflow: hidden;  /* needed for ::after fade */
+  }
+
+  /* Right-edge gradient fade — signals more cards */
+  .eng-showroom__content::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 52px;
+    background: linear-gradient(to left, #06070e 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .eng-showroom__bento {
+    display: flex;
+    flex-wrap: nowrap;
+    /* Explicit width + border-box is the key fix — constrains the flex container
+       so it doesn't expand to fit all cards (which would overflow the page) */
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    gap: 12px;
+    padding: 4px 5% 12px;
+    scrollbar-width: none;
+  }
+  .eng-showroom__bento::-webkit-scrollbar { display: none; }
+
+  .eng-showroom__card,
   .eng-showroom__card--hero {
-    grid-column: span 1;
-    min-height: 320px;
+    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 78vw;
+    max-width: 320px;
+    min-height: 280px;
+    grid-column: unset;
   }
 
   .eng-showroom__skeleton--hero {
-    grid-column: span 1;
-  }
-
-  .eng-showroom__card {
-    min-height: 300px;
+    grid-column: unset;
+    flex-shrink: 0;
+    width: 78vw;
+    max-width: 320px;
+    min-height: 280px;
   }
 
   .eng-showroom__empty {
-    grid-column: span 1;
+    grid-column: unset;
+    width: 100%;
   }
 }
 
 @media (max-width: 480px) {
   .eng-showroom {
-    padding: 50px 4%;
+    padding: 50px 0;
+  }
+
+  .eng-showroom__container {
+    padding: 0 4%;
+  }
+
+  .eng-showroom__content {
+    margin-left: -4%;
+    margin-right: -4%;
+    width: calc(100% + 8%);
+  }
+
+  .eng-showroom__bento {
+    padding: 4px 4% 12px;
   }
 
   .eng-showroom__title {
@@ -826,9 +903,10 @@
     font-size: 0.95rem;
   }
 
-  .eng-showroom__cta {
-    width: 100%;
-    justify-content: center;
+  .eng-showroom__card,
+  .eng-showroom__card--hero {
+    width: 84vw;
+    min-height: 260px;
   }
 
   .eng-showroom__card-content {
@@ -840,7 +918,7 @@
   }
 
   .eng-showroom__card--hero .eng-showroom__card-title {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
   }
 }
 
