@@ -1,6 +1,7 @@
 import React from "react";
 import { Contact } from '../components';
-import { Helmet } from "react-helmet-async"; // Changed from react-helmet
+import { Helmet } from "react-helmet-async";
+import NavbarSpacer from '../components/NavbarSpacer';
 import './css/contact.css';
 
 const ContactPage = () => {
@@ -23,6 +24,7 @@ const ContactPage = () => {
             <meta property="og:locale" content="en_US" />
             <meta property="og:locale:alternate" content="pt_BR" />
         </Helmet>
+            <NavbarSpacer />
             <Contact/>
         </>
     );
