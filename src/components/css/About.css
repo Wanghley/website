@@ -152,7 +152,7 @@
     0 24px 56px rgba(58, 175, 241, 0.28),
     0 8px 20px rgba(0, 0, 0, 0.14),
     0 0 0 1px rgba(58, 175, 241, 0.45);
-  transform: translateY(-4px);
+  /* transform applied only on hover-capable devices — see @media (hover: hover) block */
   animation: none;
 }
 
@@ -477,7 +477,7 @@
 }
 
 .about-link:hover {
-  transform: translateY(-3px);
+  /* transform applied only on hover-capable devices — see @media (hover: hover) block */
   border-color: var(--blue, #3AAFF1);
   background: #16213e;
   color: #fff;
@@ -507,9 +507,7 @@
   transition: transform 0.25s var(--ease-spring, cubic-bezier(0.34, 1.56, 0.64, 1));
 }
 
-.about-link:hover .about-link__arrow {
-  transform: translateX(5px);
-}
+/* Arrow hover transform: only on pointer devices — in @media (hover: hover) block */
 
 /* ===== Cinematic fullscreen modal ===== */
 .about__modal {
@@ -657,18 +655,95 @@
 }
 
 @media (max-width: 767px) {
+  /* Tighter section padding — reduce scroll fatigue */
+  .about {
+    padding: clamp(3rem, 5vw, 5rem) 0;
+  }
+
   .about-grid {
     grid-template-columns: 1fr;
     align-items: start;
-    gap: 2.5rem;
+    gap: 2rem;
   }
-  .about__media { max-width: 480px; }
-  .tedx-thumb { min-height: 240px; }
-  .about__quote-body { font-size: clamp(1.75rem, 1.5rem + 2vw, 2.5rem); padding-left: 1rem; }
+
+  /* Video card: full-width, appears first above the text */
+  .about__media {
+    width: 100%;
+    max-width: 100%;
+    order: -1;   /* ensure it stays above narrative even if grid reorders */
+  }
+  .tedx-thumb {
+    min-height: 220px;
+  }
+
+  /* Blockquote: smaller font on phones */
+  .about__quote-body {
+    font-size: clamp(1.25rem, 1.1rem + 1.5vw, 2rem);
+    padding-left: 1rem;
+  }
   .about__quote-cite { padding-left: 1rem; }
   .about__creds-head { flex-direction: column; align-items: flex-start; }
+
+  /* Collaboration CTA: full-width on mobile, 48px touch target */
+  .about-link {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+
   .about__modal-content { width: 96vw; }
   .about__modal-close { top: 1rem; right: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .tedx-thumb { min-height: 180px; }
+  .about-link { padding: 0.9rem 1.2rem; font-size: 0.72rem; }
+}
+
+/* Touch-device hover guard — prevent sticky hover transforms on touchscreens */
+@media (hover: hover) {
+  .tedx-card:hover {
+    border-color: var(--blue, #3AAFF1);
+    box-shadow:
+      0 24px 56px rgba(58, 175, 241, 0.28),
+      0 8px 20px rgba(0, 0, 0, 0.14),
+      0 0 0 1px rgba(58, 175, 241, 0.45);
+    transform: translateY(-4px);
+    animation: none;
+  }
+  .tedx-card:hover .tedx-thumb-img { transform: scale(1.04); }
+  .tedx-card:hover .tedx-play-btn {
+    transform: scale(1.12);
+    background: var(--blue-bright, #68C8F7);
+  }
+  .tedx-card:hover .tedx-play::after {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .about-link:hover {
+    transform: translateY(-3px);
+    border-color: var(--blue, #3AAFF1);
+    background: #16213e;
+    color: #fff;
+    box-shadow:
+      0 12px 34px rgba(58, 175, 241, 0.35),
+      0 0 0 1px rgba(58, 175, 241, 0.30);
+    animation: none;
+  }
+  .about-link:hover::after {
+    transform: translateX(110%);
+  }
+  .about-link:hover .about-link__arrow {
+    transform: translateX(5px);
+  }
+}
+
+/* Active (tap) states for touch feedback */
+.tedx-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 4px 14px rgba(58, 175, 241, 0.15);
+  animation: none;
+  transition-duration: 80ms;
 }
 
 /* ===== Print ===== */
