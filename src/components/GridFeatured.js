@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { usePostHog } from "@posthog/react";
 import { fetchProjects } from "../api/projects";
+import { cloudinarySrc, cloudinarySrcSet, CARD_SIZES } from "../utils/cloudinaryImage";
 import "./css/GridFeaturedProjects.css";
 
 const getProjectImage = (project) => {
@@ -187,7 +188,14 @@ const GridFeatured = () => {
 
                     {/* Image */}
                     <div className="eng-showroom__card-image">
-                      <img src={image} alt="" loading="lazy" />
+                      <img
+                        src={cloudinarySrc(image, { width: 800 })}
+                        srcSet={cloudinarySrcSet(image, [400, 800, 1200])}
+                        sizes={CARD_SIZES}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
                       <div className="eng-showroom__card-overlay" />
                       {isHero && (
                         <div className="eng-showroom__card-signal" aria-hidden="true">
