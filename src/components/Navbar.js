@@ -38,13 +38,15 @@ const Navbar = () => {
   const navTheme = getNavbarTheme(location.pathname);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  // isScrolled drives re-renders on scroll; the CSS class uses visiblyScrolled below
-  const [isScrolled, setIsScrolled] = useState(navTheme !== 'transparent');
+  // setIsScrolled exists purely to trigger re-renders when scroll crosses the threshold.
+  // We intentionally don't read the state value — visiblyScrolled reads window.scrollY
+  // directly so it is always accurate on the first render after navigation (no stale state).
+  // eslint-disable-next-line no-unused-vars
+  const [, setIsScrolled] = useState(false);
 
-  // Compute the scrolled appearance synchronously every render.
-  // This avoids a one-frame flash of the wrong background when navigating between pages:
-  // navTheme updates immediately from location.pathname, but isScrolled is stale state.
-  // Reading window.scrollY directly gives the correct value on every render.
+  // Synchronous per-render computation: navTheme changes immediately from location.pathname;
+  // window.scrollY is the live position. Together they eliminate the one-frame flash that
+  // occurred when navigating back to '/' while isScrolled was still true from a solid-theme page.
   const visiblyScrolled =
     navTheme !== 'transparent' || (typeof window !== 'undefined' && window.scrollY > 50);
   const [activeSection, setActiveSection] = useState('');

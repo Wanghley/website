@@ -66,7 +66,7 @@ const CVPage = () => {
 
     if (loading) {
         return (
-            <>
+            <div className="cv-page-wrapper">
                 <NavbarSpacer />
                 <div className="cv-page">
                     {/* Personal Info Skeleton */}
@@ -94,14 +94,14 @@ const CVPage = () => {
                         </section>
                     ))}
                 </div>
-            </>
+            </div>
         );
     }
-    
+
     if (error) return <p>Error loading data: {error.message}</p>;
 
     return (
-        <>
+        <div className="cv-page-wrapper">
         <NavbarSpacer/>
         <div className="cv-page">
             <Helmet>
@@ -141,7 +141,7 @@ const CVPage = () => {
                 <CertificationsList certifications={certifications} />
             </section>
         </div>
-    </>
+        </div>
     );
 };
 
