@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { usePostHog } from "@posthog/react";
 import { fetchBlogs } from "../api/blog";
+import { cloudinarySrc, cloudinarySrcSet, CARD_SIZES } from "../utils/cloudinaryImage";
 import "./css/FeaturedBlogGrid.css";
 
 const getReadTime = (content) => {
@@ -174,7 +175,14 @@ const GridFeaturedBlog = () => {
 
                     {/* Image */}
                     <div className="editorial__card-image">
-                      <img src={image} alt="" loading="lazy" />
+                      <img
+                        src={cloudinarySrc(image, { width: 800 })}
+                        srcSet={cloudinarySrcSet(image, [400, 800, 1200])}
+                        sizes={CARD_SIZES}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                      />
                       <div className="editorial__card-overlay" />
                     </div>
 
