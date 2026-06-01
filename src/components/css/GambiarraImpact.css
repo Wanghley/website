@@ -5,6 +5,9 @@
     padding: clamp(4rem, 6vw, 6rem) 0 0;
     background: var(--void, #06070e);
     overflow: hidden;
+    /* Skip rendering until near the viewport — improves mobile paint performance */
+    content-visibility: auto;
+    contain-intrinsic-size: 0 600px;
 }
 
 .gi--reduced-motion,
@@ -356,9 +359,25 @@
 }
 
 @media screen and (max-width: 479px) {
-    .gi__container { padding: 0 1.25rem; }
-    .gi__grid { grid-template-columns: 1fr; }
-    .gi__stat { padding: 1.25rem; }
+    .gi__container { padding: 0 1rem; }
+    /* Keep 2 columns — one stat per column, far less scrolling */
+    .gi__grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+    }
+    .gi__stat {
+        padding: 1rem 0.875rem 0.875rem;
+    }
+    /* Scale value down so it fits in a half-width card */
+    .gi__stat-value {
+        font-size: clamp(1.5rem, 6vw, 2.4rem);
+    }
+    /* Hide verbose detail text in the compact grid */
+    .gi__stat-detail { display: none; }
+    .gi__spark { width: 44px; }
+    /* Tighten header */
+    .gi__heading { font-size: clamp(2rem, 8vw, 2.8rem); padding-left: 1rem; }
+    .gi__header { margin-bottom: 1.5rem; }
 }
 
 /* ===== High Contrast ===== */

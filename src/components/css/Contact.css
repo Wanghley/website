@@ -615,36 +615,121 @@
 
 @media (max-width: 768px) {
   .contact-section {
-    padding: 70px 5%;
+    padding: 60px 4%;
   }
 
   .contact-section__header {
-    margin-bottom: 40px;
+    margin-bottom: 32px;
   }
 
   .contact-section__title {
     font-size: 2rem;
   }
 
+  /* Form card — tighter, full-width */
   .contact-section__form-card {
-    padding: 28px;
-    border-radius: 20px;
+    padding: 24px 20px;
+    border-radius: 16px;
   }
 
+  /* Submit: full-width on mobile, 48px target height */
+  .contact-section__submit {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    padding: 14px 20px;
+  }
+
+  /* Hide verbose "Why Reach Out?" benefits on mobile — form is self-evident */
+  .contact-section__benefits {
+    display: none;
+  }
+
+  /* Quick action cards: horizontal compact row instead of stacked */
+  .contact-section__quick-actions {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .contact-section__quick-card {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 14px 10px;
+    gap: 6px;
+    flex: 1;
+    min-height: 80px;
+  }
+
+  .contact-section__quick-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .contact-section__quick-info {
+    align-items: center;
+  }
+
+  .contact-section__quick-label {
+    font-size: 0.75rem;
+  }
+
+  .contact-section__quick-desc {
+    display: none;          /* too small for the compact card */
+  }
+
+  .contact-section__quick-arrow {
+    display: none;
+  }
+
+  /* Socials: larger tap targets */
+  .contact-section__social-link {
+    width: 44px;
+    height: 44px;
+    font-size: 1.15rem;
+  }
+
+  /* Newsletter: compact */
   .contact-section__newsletter {
-    padding: 28px;
+    padding: 22px 20px;
+    border-radius: 14px;
+  }
+
+  .contact-section__newsletter-title {
+    font-size: 1rem;
+  }
+
+  .contact-section__newsletter-desc {
+    font-size: 0.82rem;
   }
 
   .contact-section__newsletter-form {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 12px;
   }
 
   .contact-section__newsletter-input {
-    width: 100%;
+    flex: 1;
+    min-height: 44px;
+    font-size: 0.85rem;
+    padding: 0 12px;
   }
 
   .contact-section__newsletter-btn {
-    width: 100%;
+    min-height: 44px;
+    padding: 0 16px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  /* Telemetry meta bar: wrap on narrow screens */
+  .contact-section__meta {
+    flex-wrap: wrap;
+    gap: 8px;
     justify-content: center;
   }
 }
@@ -659,25 +744,29 @@
   }
 
   .contact-section__subtitle {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
 
   .contact-section__form-card {
-    padding: 24px;
-  }
-
-  .contact-section__benefits,
-  .contact-section__quick-card {
-    padding: 20px;
+    padding: 20px 16px;
   }
 
   .contact-section__input,
   .contact-section__textarea {
     padding: 12px 14px;
+    font-size: 1rem;          /* prevent iOS zoom on focus */
   }
 
-  .contact-section__submit {
-    padding: 14px 24px;
+  /* Newsletter: stack on very small phones */
+  .contact-section__newsletter-form {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .contact-section__newsletter-input,
+  .contact-section__newsletter-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 
