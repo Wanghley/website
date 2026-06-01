@@ -1,439 +1,1166 @@
-/* ===== CV Page — Curriculum Vitae ===== */
+/* ==========================================================
+   CV Page — Premium Editorial Academic
+   Design tokens from global design system:
+     --font-mono  : 'JetBrains Mono'
+     --font-main  : 'Space Grotesk'
+     --blue       : #3AAFF1
+   ========================================================== */
 
-/* ── Page wrapper: light canvas so dark body never bleeds through ── */
+/* ── Page shell ─────────────────────────────────────────── */
 .cv-page-wrapper {
-    background: #f8f9fb;
-    min-height: 100vh;
-    padding-bottom: 60px;
+  background: #f4f6f9;
+  min-height: 100vh;
 }
 
-/* ── Main card ── */
-.cv-page {
-    max-width: 980px;
-    margin: 0 auto;
-    padding: 40px 36px;
-    background-color: #ffffff;
-    box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.06),
-        0 8px 24px rgba(0, 0, 0, 0.08);
+/* ── Two-column layout ──────────────────────────────────── */
+.cv-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 0;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 80px;
+  align-items: start;
+}
+
+/* ============================================================
+   LEFT NAVIGATION
+   ============================================================ */
+.cv-nav {
+  position: sticky;
+  top: calc(var(--nav-height, 100px) + 20px);
+  padding-right: 24px;
+}
+
+.cv-nav__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.cv-nav__label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: 14px;
+  padding-left: 16px;
+}
+
+.cv-nav__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  border-left: 2px solid #e5e7eb;
+}
+
+.cv-nav__item {
+  position: relative;
+}
+
+.cv-nav__link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px 8px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7280;
+  text-decoration: none;
+  border-left: 2px solid transparent;
+  margin-left: -2px;
+  transition: color 0.18s, border-color 0.18s, background 0.18s;
+  border-radius: 0 6px 6px 0;
+  position: relative;
+}
+
+.cv-nav__link:hover {
+  color: #1a1b2e;
+  background: rgba(58, 175, 241, 0.06);
+}
+
+.cv-nav__link--active {
+  color: #3AAFF1 !important;
+  border-left-color: #3AAFF1 !important;
+  background: rgba(58, 175, 241, 0.07);
+}
+
+.cv-nav__link--active .cv-nav__number {
+  color: #3AAFF1;
+  opacity: 1;
+}
+
+.cv-nav__number {
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #d1d5db;
+  min-width: 18px;
+  opacity: 0.8;
+  transition: color 0.18s;
+}
+
+.cv-nav__dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.4;
+  flex-shrink: 0;
+  transition: opacity 0.18s, transform 0.18s;
+}
+
+.cv-nav__link--active .cv-nav__dot {
+  opacity: 1;
+  background: #3AAFF1;
+  transform: scale(1.3);
+}
+
+.cv-nav__text {
+  flex: 1;
+}
+
+.cv-nav__arrow {
+  font-size: 0.5rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.cv-nav__link:hover .cv-nav__arrow,
+.cv-nav__link--active .cv-nav__arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.cv-nav__link--skeleton {
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+.cv-nav__divider {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 4px 0 20px;
+}
+
+/* ── Print button ── */
+.cv-print-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  background: #3AAFF1;
+  color: #06070e;
+  border: none;
+  border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  margin-bottom: 8px;
+}
+
+.cv-print-btn:hover {
+  background: #2280B8;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(58, 175, 241, 0.30);
+}
+
+.cv-print-btn:active {
+  transform: scale(0.97);
+  transition-duration: 60ms;
+}
+
+.cv-print-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+  pointer-events: none;
+}
+
+.cv-print-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  color: #9ca3af;
+  text-align: center;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+
+/* ============================================================
+   MAIN CARD
+   ============================================================ */
+.cv-main {
+  min-width: 0;
+}
+
+.cv-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.05),
+    0 8px 32px rgba(0,0,0,0.07);
+  overflow: hidden;
+}
+
+.cv-section {
+  padding: 40px 48px;
+  scroll-margin-top: calc(var(--nav-height, 100px) + 28px);
+}
+
+.cv-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, #e5e7eb 20%, #e5e7eb 80%, transparent 100%);
+  margin: 0 48px;
+}
+
+/* ── Section head ── */
+.cv-section__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.cv-section__head::before {
+  content: '';
+  width: 3px;
+  height: 18px;
+  background: #3AAFF1;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.cv-section__title {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: #1a1b2e !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+/* ── Certifications grid (actual grid is on .certifications-list ul) ── */
+.cv-certifications-grid {
+  /* grid defined on inner ul via override below */
+}
+
+/* ── Error state ── */
+.cv-error {
+  max-width: 500px;
+  margin: 60px auto;
+  text-align: center;
+  padding: 40px;
+  background: #fff;
+  border-radius: 12px;
+  color: #374151;
+}
+
+.cv-error button {
+  margin-top: 16px;
+  padding: 10px 24px;
+  background: #3AAFF1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ============================================================
+   SKELETON LOADING
+   ============================================================ */
+.cv-layout--loading .cv-nav__list { opacity: 0.5; pointer-events: none; }
+
+@keyframes cv-shimmer {
+  0%   { background-position: -800px 0; }
+  100% { background-position:  800px 0; }
+}
+
+.cv-skeleton {
+  animation: cv-shimmer 1.6s infinite linear;
+  background: linear-gradient(to right, #f0f1f3 4%, #e8e9ec 25%, #f0f1f3 36%);
+  background-size: 800px 100%;
+  border-radius: 4px;
+}
+
+.cv-skeleton__header   { padding: 40px 48px 32px; }
+.cv-skeleton--title    { height: 36px; width: 60%; margin-bottom: 12px; }
+.cv-skeleton--subtitle { height: 20px; width: 40%; margin-bottom: 20px; }
+.cv-skeleton__contacts { display: flex; gap: 16px; flex-wrap: wrap; }
+.cv-skeleton--contact  { height: 16px; width: 130px; }
+.cv-skeleton__divider  { height: 1px; background: #e5e7eb; margin: 0 48px; }
+.cv-skeleton__section  { padding: 36px 48px 0; }
+.cv-skeleton--section-title { height: 14px; width: 120px; margin-bottom: 28px; }
+.cv-skeleton__item     { margin-bottom: 28px; }
+.cv-skeleton--item-head { height: 18px; width: 55%; margin-bottom: 8px; }
+.cv-skeleton--item-sub  { height: 14px; width: 35%; margin-bottom: 12px; }
+.cv-skeleton--item-body { height: 13px; width: 100%; margin-bottom: 6px; }
+.cv-skeleton--short     { width: 70% !important; }
+
+/* ============================================================
+   COMPONENT OVERRIDES — scoped inside .cv-card
+   These replace the generic component CSS for the CV context.
+   ============================================================ */
+
+/* ── Personal Info ── */
+.cv-card .personal-info {
+  padding: 0;
+  margin: 0;
+  gap: 0;
+  font-family: var(--font-main, 'Space Grotesk', sans-serif);
+}
+
+.cv-card .personal-info h2 {
+  font-family: var(--font-display, 'Orbitron', monospace);
+  font-size: 2.2rem !important;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #0f1117;
+  text-align: center;
+  margin: 0 0 6px 0;
+}
+
+.cv-card .personal-info h3 {
+  font-family: var(--font-main, 'Space Grotesk', sans-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  color: #6b7280;
+  text-align: center;
+  margin: 0 0 20px;
+  letter-spacing: 0.02em;
+}
+
+.cv-card .contact-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  justify-content: center;
+  margin-top: 0;
+  width: 100%;
+}
+
+.cv-card .contact-info a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.cv-card .contact-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #4b5563;
+  transition: color 0.15s;
+}
+
+.cv-card .contact-item:hover {
+  color: #3AAFF1;
+}
+
+.cv-card .contact-item svg {
+  font-size: 0.8rem;
+  color: #3AAFF1;
+  flex-shrink: 0;
+}
+
+.cv-card .personal-info hr {
+  display: none;
+}
+
+/* ── Shared section head for sub-components ── */
+.cv-card .education h2,
+.cv-card .experience h2,
+.cv-card .skills-list h2,
+.cv-card .publications h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  color: #1a1b2e !important;
+  margin: 0 0 28px !important;
+  padding-bottom: 14px !important;
+  border-bottom: 1px solid #f0f2f5 !important;
+}
+
+.cv-card .education h2::before,
+.cv-card .experience h2::before,
+.cv-card .skills-list h2::before,
+.cv-card .publications h2::before {
+  content: '';
+  width: 3px;
+  height: 18px;
+  background: #3AAFF1;
+  border-radius: 2px;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* ── Education ── */
+.cv-card .education {
+  font-family: var(--font-main, 'Space Grotesk', sans-serif);
+  padding: 0;
+  margin: 0;
+  max-width: none;
+}
+
+.cv-card .education ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-left: 2px solid #e5e7eb;
+  padding-left: 24px;
+}
+
+.cv-card .education-item {
+  position: relative;
+  padding: 0 0 32px 0;
+  margin: 0;
+  background: none;
+}
+
+.cv-card .education-item:last-child {
+  padding-bottom: 0;
+}
+
+/* Timeline dot */
+.cv-card .education-item::before {
+  content: '';
+  position: absolute;
+  left: -31px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border: 2px solid #3AAFF1;
+  border-radius: 50%;
+}
+
+.cv-card .education-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+.cv-card .education-header h3 {
+  font-family: var(--font-main, 'Space Grotesk', sans-serif) !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: #1a1b2e !important;
+  margin: 0 !important;
+  text-transform: none;
+}
+
+.cv-card .dates {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.cv-card .education-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.cv-card .education-details-left {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+
+.cv-card .institution {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cv-card .degree {
+  font-size: 0.88rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.cv-card .education .location {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: #9ca3af;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.cv-card .education .description {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+
+.cv-card .education .description p { margin: 0 0 6px; }
+.cv-card .education .description p:last-child { margin-bottom: 0; }
+.cv-card .education .description ul { margin: 4px 0 4px 18px; padding: 0; }
+.cv-card .education .description li { margin: 2px 0; }
+
+/* ── Experience ── */
+.cv-card .experience {
+  font-family: var(--font-main, 'Space Grotesk', sans-serif);
+  padding: 0;
+  margin: 0;
+  max-width: none;
+}
+
+.cv-card .experience-category {
+  margin-bottom: 32px;
+}
+
+.cv-card .experience-category:last-child {
+  margin-bottom: 0;
+}
+
+.cv-card .experience-category > h3 {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.62rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.20em !important;
+  text-transform: uppercase !important;
+  color: #9ca3af !important;
+  margin: 0 0 16px !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.cv-card .experience-category ul {
+  list-style: none;
+  padding: 0 0 0 24px;
+  margin: 0;
+  border-left: 2px solid #e5e7eb;
+}
+
+.cv-card .experience-category li {
+  position: relative;
+  padding: 0 0 28px 0;
+  margin: 0;
+  border: none !important;
+  background: none !important;
+  transform: none !important;
+}
+
+.cv-card .experience-category li:last-child {
+  padding-bottom: 0;
+}
+
+.cv-card .experience-category li::before {
+  content: '';
+  position: absolute;
+  left: -31px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border: 2px solid #3AAFF1;
+  border-radius: 50%;
+}
+
+.cv-card .company-date-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 2px;
+}
+
+.cv-card .company {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #1a1b2e;
+}
+
+.cv-card .location-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.cv-card .location-row h4 {
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  font-style: italic;
+  color: #6b7280 !important;
+  margin: 0 !important;
+}
+
+.cv-card .experience .location {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: #9ca3af;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.cv-card .experience .description {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: #4b5563;
+  margin: 0;
+}
+
+.cv-card .experience .description p { margin: 0 0 6px; }
+.cv-card .experience .description p:last-child { margin-bottom: 0; }
+.cv-card .experience .description ul { margin: 4px 0 4px 18px; padding: 0; }
+.cv-card .experience .description li { margin: 2px 0; }
+
+/* Empty category: hide if no items */
+.cv-card .experience-category:has(ul:empty) { display: none; }
+
+/* ── Skills ── */
+.cv-card .skills-list {
+  font-family: var(--font-main, 'Space Grotesk', sans-serif);
+  padding: 0;
+  margin: 0;
+}
+
+.cv-card .skills-list__category {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 12px 20px;
+  align-items: start;
+  margin-bottom: 16px;
+}
+
+.cv-card .skills-list__category:last-child { margin-bottom: 0; }
+
+.cv-card .skills-list__category h3 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #374151;
+  margin: 0;
+  padding-top: 4px;
+}
+
+.cv-card .skills-list__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-card .skills-list__skill-name {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+  border-radius: 100px;
+  font-family: var(--font-main, 'Space Grotesk', sans-serif);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #374151;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.cv-card .skills-list__skill-name:hover {
+  background: rgba(58,175,241,0.08);
+  border-color: rgba(58,175,241,0.35);
+  color: #2280B8;
+}
+
+/* ── Publications ── */
+.cv-card .publications {
+  font-family: var(--font-main, 'Space Grotesk', sans-serif);
+  padding: 0;
+  margin: 0;
+}
+
+.cv-card .publications ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  counter-reset: pub-counter;
+}
+
+.cv-card .publication-item {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 0 14px;
+  padding: 0 0 22px 0;
+  border: none;
+  counter-increment: pub-counter;
+}
+
+.cv-card .publication-item:last-child { padding-bottom: 0; }
+
+.cv-card .publication-item::before {
+  content: counter(pub-counter);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #3AAFF1;
+  padding-top: 3px;
+  text-align: right;
+}
+
+.cv-card .publication-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 0;
+}
+
+.cv-card .publication-header h3 {
+  font-size: 0.92rem !important;
+  font-weight: 600 !important;
+  color: #1a1b2e !important;
+  margin: 0 0 2px !important;
+  line-height: 1.4;
+}
+
+.cv-card .journal {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: #6b7280;
+  font-style: normal;
+  letter-spacing: 0.03em;
+}
+
+.cv-card .publication-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: #9ca3af;
+  margin-left: 8px;
+}
+
+.cv-card .authors {
+  font-size: 0.82rem;
+  color: #6b7280;
+  line-height: 1.4;
+  margin-top: 4px;
+}
+
+.cv-card .doi-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: #3AAFF1;
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 0.15s;
+}
+
+.cv-card .doi-link:hover {
+  color: #2280B8;
+  text-decoration: underline;
+}
+
+/* ── Certifications (CertificationCard component) ── */
+.cv-certifications-grid .certifications-list { all: unset; display: contents; }
+.cv-certifications-grid .certifications-list ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.cv-certifications-grid .certifications-list li { display: contents; }
+
+.cv-certifications-grid .certification-card {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
+
+.cv-certifications-grid .certification-card:hover {
+  border-color: rgba(58,175,241,0.35);
+  box-shadow: 0 2px 12px rgba(58,175,241,0.10);
+}
+
+.cv-certifications-grid .certification-info h3 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1a1b2e;
+  margin: 0 0 2px;
+  line-height: 1.35;
+}
+
+.cv-certifications-grid .certification-info span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: #6b7280;
+  letter-spacing: 0.04em;
+}
+
+.cv-certifications-grid .certification-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cv-certifications-grid .certification-details span,
+.cv-certifications-grid .certification-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  color: #9ca3af;
+}
+
+.cv-certifications-grid .certification-action { margin-top: auto; }
+
+.cv-certifications-grid .show-credential-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid #3AAFF1;
+  border-radius: 6px;
+  color: #3AAFF1;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.cv-certifications-grid .show-credential-btn:hover {
+  background: #3AAFF1;
+  color: #fff;
+}
+
+.cv-certifications-grid .show-credential-btn.disabled {
+  border-color: #e5e7eb;
+  color: #9ca3af;
+  pointer-events: none;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .cv-layout {
+    grid-template-columns: 1fr;
+    padding: 16px 16px 60px;
+  }
+
+  .cv-nav {
+    position: static;
+    padding: 0;
+  }
+
+  .cv-nav__inner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
-    border: 1px solid #e8eaed;
-    /* Pull the card up to sit just below the NavbarSpacer */
-    margin-top: 24px;
-}
-
-section:last-child {
-    margin-bottom: 0;
-}
-
-/* ── Section headings scoped to CV card ── */
-.cv-page h1 {
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: #1a1b2e;
+    padding: 14px 16px;
     margin-bottom: 16px;
-}
+  }
 
-.cv-page h2 {
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: #1a1b2e;
-    margin-bottom: 12px;
-}
-
-/* Personal Information */
-.personal-info {
+  .cv-nav__label { display: none; }
+  .cv-nav__list {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
-    margin-bottom: 30px;
-}
-
-.personal-info .info-item {
-    flex: 1;
-    min-width: 250px;
-    font-size: 1.05rem;
-}
-
-.personal-info h2 {
-    margin-bottom: 8px;
-    font-size: 1.4rem;
-}
-
-.personal-info .info-item p {
-    margin: 4px 0;
-}
-
-/* Education / Experience / Publication Lists */
-.education-list,
-.experience-list,
-.publication-list,
-.certifications-list {
-    list-style: none;
-    padding-left: 0;
-    margin: 0;
-}
-
-.education-item,
-.experience-item,
-.publication-item,
-.certification-item {
-    margin-bottom: 14px;
-}
-
-.education-item h3,
-.experience-item h3,
-.publication-item h3 {
-    font-size: 1.15rem;
-    margin-bottom: 4px;
-    color: #1a1b2e;
-}
-
-.education-item p,
-.experience-item p,
-.publication-item p {
-    font-size: 0.95rem;
-    color: #5a6470;
-}
-
-/* Certifications grid */
-.certifications-list {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-top: 16px;
-}
-
-.certification-item {
-    background-color: #f6f8fa;
-    padding: 14px;
-    border-radius: 8px;
-    border: 1px solid #e1e4e8;
-}
-
-.certification-item h3 {
-    font-size: 1.1rem;
-    color: #1a1b2e;
-    margin-bottom: 4px;
-}
-
-.certification-item p {
-    color: #5a6470;
-    font-size: 0.92rem;
-}
-
-.certification-item a {
-    background-color: #3AAFF1;
-    color: #fff;
-    padding: 7px 14px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 0.85rem;
-    display: inline-block;
-    transition: background 0.2s, transform 0.2s;
-    margin-top: 10px;
-}
-
-.certification-item a:hover {
-    background-color: #2280B8;
-    transform: translateY(-1px);
-}
-
-/* Skeleton Loading */
-@keyframes shimmer {
-    0%   { background-position: -1000px 0; }
-    100% { background-position:  1000px 0; }
-}
-
-.skeleton {
-    animation: shimmer 2s infinite linear;
-    background: linear-gradient(to right, #f0f1f3 4%, #e5e7ea 25%, #f0f1f3 36%);
-    background-size: 1000px 100%;
-    border-radius: 4px;
-}
-
-.skeleton-title  { height: 32px; margin-bottom: 16px; width: 250px; }
-
-.skeleton-block {
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    border: 1px solid #eee;
-}
-
-.skeleton-header { height: 24px; width: 60%; margin-bottom: 12px; }
-.skeleton-meta   { height: 16px; width: 40%; margin-bottom: 16px; }
-.skeleton-text   { height: 14px; width: 100%; margin-bottom: 8px; }
-.skeleton-text:last-child { width: 80%; }
-
-.skeleton-personal-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 40px;
-    width: 100%;
-}
-
-.skeleton-avatar-text { width: 50%; height: 40px; }
-.skeleton-avatar-sub  { width: 30%; height: 20px; }
-
-/* ── CV Action Buttons ── */
-.cv-actions {
-    position: fixed;
-    top: calc(var(--nav-height, 100px) + 12px);
-    right: 28px;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: 14px 16px;
-    border-radius: 12px;
-    box-shadow:
-        0 2px 8px rgba(0, 0, 0, 0.10),
-        0 0 0 1px rgba(0, 0, 0, 0.06);
-}
-
-.cv-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-family: var(--font-mono, 'JetBrains Mono', monospace);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    cursor: pointer;
+    gap: 4px;
     border: none;
-    transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-    white-space: nowrap;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+  }
+
+  .cv-nav__link {
+    border-left: none;
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin: 0;
+    border: 1px solid #e5e7eb;
+  }
+
+  .cv-nav__link--active {
+    border-color: rgba(58,175,241,0.40) !important;
+    background: rgba(58,175,241,0.08);
+  }
+
+  .cv-nav__number,
+  .cv-nav__dot,
+  .cv-nav__arrow { display: none; }
+
+  .cv-nav__divider { display: none; }
+
+  .cv-print-btn {
+    width: auto;
+    padding: 8px 16px;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .cv-print-hint { display: none; }
+
+  .cv-section { padding: 28px 20px; }
+  .cv-divider { margin: 0 20px; }
 }
 
-.cv-btn.primary {
-    background-color: #3AAFF1;
-    color: #06070e;
+@media (max-width: 600px) {
+  .cv-card .skills-list__category {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .cv-card .education-details,
+  .cv-card .company-date-row,
+  .cv-card .location-row {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .cv-card .dates,
+  .cv-card .experience .location,
+  .cv-card .education .location {
+    text-align: left;
+  }
+
+  .cv-certifications-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.cv-btn.primary:hover {
-    background-color: #2280B8;
-    color: #fff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(58, 175, 241, 0.30);
-}
-
-.cv-btn.primary:active {
-    transform: scale(0.97);
-    transition-duration: 60ms;
-}
-
-.cv-note {
-    font-size: 0.68rem;
-    color: #6b7280;
-    font-style: italic;
-    text-align: center;
-    max-width: 180px;
-    line-height: 1.4;
-}
-
-/* Mobile: float the action bar inline */
-@media (max-width: 768px) {
-    .cv-actions {
-        position: static;
-        margin: 16px auto 0;
-        width: fit-content;
-    }
-
-    .cv-page {
-        padding: 24px 18px;
-        margin-top: 16px;
-        border-radius: 8px;
-    }
-}
-
-/* ===== PRINT ===== */
+/* ============================================================
+   PRINT
+   ============================================================ */
 @media print {
-    @page {
-        size: A4 portrait;
-        margin: 15mm 12mm 15mm 12mm;
-    }
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm 14mm 12mm;
+  }
 
-    * {
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-        box-sizing: border-box !important;
-    }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 
-    html, body {
-        background: white !important;
-        font-family: 'Arial', 'Helvetica', sans-serif !important;
-        font-size: 9pt !important;
-        line-height: 1.35 !important;
-        color: #000 !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        overflow: visible !important;
-    }
+  html, body {
+    background: white !important;
+    font-size: 9pt !important;
+    line-height: 1.35 !important;
+    color: #000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
-    .no-print, nav, footer, .navbar-spacer,
-    .cv-actions, button, svg { display: none !important; }
+  .no-print,
+  nav, footer,
+  .navbar-spacer,
+  .cv-nav,
+  button { display: none !important; }
 
-    .cv-page-wrapper { background: white !important; padding: 0 !important; }
+  .cv-page-wrapper { background: white !important; }
 
-    .cv-page {
-        margin: 0 !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-        max-width: 100% !important;
-        width: 100% !important;
-        border: none !important;
-        background: white !important;
-        border-radius: 0 !important;
-    }
+  .cv-layout {
+    display: block !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 
-    .personal-info {
-        margin: 0 0 8pt 0 !important;
-        padding: 0 !important;
-        text-align: center !important;
-        display: block !important;
-    }
+  .cv-main { display: block !important; }
 
-    .personal-info h2 {
-        color: #000 !important;
-        font-size: 16pt !important;
-        font-weight: 700 !important;
-        margin: 0 0 2pt 0 !important;
-        text-align: center !important;
-        text-transform: uppercase;
-        letter-spacing: 1pt;
-    }
+  .cv-card {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+  }
 
-    .personal-info h3 {
-        font-size: 10pt !important;
-        color: #444 !important;
-        font-weight: 400 !important;
-        margin: 0 0 6pt 0 !important;
-        text-align: center !important;
-        font-style: italic;
-    }
+  .cv-section {
+    padding: 0 0 10pt 0 !important;
+    scroll-margin-top: 0 !important;
+    break-inside: avoid;
+  }
 
-    .contact-info {
-        display: block !important;
-        text-align: center !important;
-        margin: 0 !important;
-        padding: 6pt 0 0 0 !important;
-        border-top: 0.5pt solid #000;
-        font-size: 8pt !important;
-    }
+  .cv-divider {
+    height: 0.5pt !important;
+    background: #999 !important;
+    margin: 0 0 8pt 0 !important;
+  }
 
-    .contact-item {
-        display: inline !important;
-        font-size: 8pt !important;
-        color: #000 !important;
-        margin: 0 6pt !important;
-    }
+  .cv-card .personal-info h2 {
+    font-size: 18pt !important;
+    text-align: center !important;
+    margin-bottom: 3pt !important;
+    font-family: 'Arial', sans-serif !important;
+  }
 
-    .contact-item p { display: inline !important; margin: 0 !important; }
-    .contact-info a { color: #000 !important; text-decoration: none !important; }
+  .cv-card .personal-info h3 {
+    font-size: 10pt !important;
+    text-align: center !important;
+    margin-bottom: 6pt !important;
+  }
 
-    hr {
-        border: none !important;
-        border-top: 0.5pt solid #000 !important;
-        margin: 6pt 0 !important;
-        width: 100% !important;
-    }
+  .cv-card .contact-item {
+    font-size: 7.5pt !important;
+    gap: 4px !important;
+  }
 
-    section {
-        margin: 0 0 10pt 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-    }
+  .cv-card .education h2,
+  .cv-card .experience h2,
+  .cv-card .skills-list h2,
+  .cv-card .publications h2,
+  .cv-section__title {
+    font-size: 8pt !important;
+    margin-bottom: 6pt !important;
+    padding-bottom: 3pt !important;
+    border-bottom-color: #000 !important;
+    letter-spacing: 0.18em !important;
+  }
 
-    h2 {
-        font-size: 11pt !important;
-        color: #000 !important;
-        font-weight: 700 !important;
-        text-transform: uppercase;
-        margin: 10pt 0 6pt 0 !important;
-        padding: 0 0 2pt 0 !important;
-        border-bottom: 1pt solid #000 !important;
-        page-break-after: avoid;
-        letter-spacing: 0.5pt;
-    }
+  .cv-card .education ul,
+  .cv-card .experience-category ul {
+    border-left: 1pt solid #ccc !important;
+    padding-left: 10pt !important;
+  }
 
-    h3 { font-size: 9pt !important; font-weight: 600 !important; margin: 0 !important; color: #000 !important; }
-    h4 { font-size: 9pt !important; font-weight: 500 !important; margin: 0 !important; color: #000 !important; }
+  .cv-card .education-item,
+  .cv-card .experience-category li {
+    padding-bottom: 8pt !important;
+  }
 
-    /* Education */
-    .education ul { list-style: none !important; margin: 0 !important; padding: 0 !important; }
-    .education-item { margin: 0 0 8pt 0 !important; padding: 0 !important; page-break-inside: avoid; background: none !important; }
-    .education-header { display: flex !important; justify-content: space-between !important; align-items: baseline !important; margin: 0 0 1pt 0 !important; }
-    .education-header h3 { font-size: 10pt !important; font-weight: 600 !important; flex: 1 !important; margin-right: 10pt !important; }
-    .education-header .dates, .education .dates { font-size: 9pt !important; white-space: nowrap !important; flex-shrink: 0 !important; }
-    .institution { font-size: 9pt !important; font-weight: 500 !important; }
-    .degree { font-size: 9pt !important; font-style: italic !important; }
-    .location { font-size: 8pt !important; display: block !important; }
+  .cv-card .education-item::before,
+  .cv-card .experience-category li::before {
+    left: -15pt !important;
+    width: 6pt !important;
+    height: 6pt !important;
+    top: 3pt !important;
+    border-color: #000 !important;
+  }
 
-    /* Experience */
-    .experience ul { list-style: none !important; margin: 0 !important; padding: 0 !important; }
-    .experience-category { margin: 0 0 8pt 0 !important; }
-    .experience-category > h3 { font-size: 10pt !important; margin: 6pt 0 4pt 0 !important; border-bottom: 0.5pt solid #666 !important; text-transform: uppercase; }
-    .experience-category li { margin: 0 0 6pt 0 !important; page-break-inside: avoid; }
-    .company-date-row { display: flex !important; justify-content: space-between !important; align-items: baseline !important; }
-    .company { font-size: 9pt !important; font-weight: 600 !important; flex: 1 !important; margin-right: 10pt !important; }
-    .dates { font-size: 8pt !important; white-space: nowrap !important; flex-shrink: 0 !important; }
-    .location-row { display: flex !important; justify-content: space-between !important; }
-    .location-row h4 { flex: 1 !important; margin-right: 10pt !important; }
+  .cv-card .education-header h3,
+  .cv-card .company {
+    font-size: 9pt !important;
+  }
 
-    /* Descriptions */
-    .description { font-size: 8pt !important; line-height: 1.3 !important; margin: 3pt 0 0 0 !important; word-wrap: break-word !important; }
-    .description p { margin: 2pt 0 !important; }
-    .description ul { margin: 2pt 0 2pt 12pt !important; }
-    .description li { margin: 1pt 0 !important; font-size: 8pt !important; }
+  .cv-card .institution,
+  .cv-card .degree,
+  .cv-card .location-row h4,
+  .cv-card .authors {
+    font-size: 8pt !important;
+  }
 
-    /* Skills */
-    .skill-category { margin: 0 0 4pt 0 !important; display: block !important; }
-    .skill-category h3 { font-size: 9pt !important; display: inline !important; margin: 0 4pt 0 0 !important; }
-    .skill-category h3::after { content: ": "; }
-    .skill-list { display: inline !important; }
-    .skill-item { display: inline !important; font-size: 8pt !important; }
-    .skill-item::after { content: " · "; }
-    .skill-item:last-child::after { content: ""; }
-    .skill-tag { border: none !important; background: none !important; color: #000 !important; padding: 0 !important; font-size: 8pt !important; }
-    .skill-bar, .skill-score, .skill-level { display: none !important; }
+  .cv-card .dates,
+  .cv-card .experience .location,
+  .cv-card .education .location {
+    font-size: 7.5pt !important;
+    color: #444 !important;
+  }
 
-    /* Publications */
-    .publication-item { margin: 0 0 6pt 0 !important; page-break-inside: avoid; }
-    .publication-item h3 { font-size: 9pt !important; margin: 0 0 1pt 0 !important; }
-    .journal { font-size: 8pt !important; font-style: italic !important; }
-    .publication-date { font-size: 8pt !important; }
-    .authors { font-size: 8pt !important; line-height: 1.3 !important; margin: 1pt 0 !important; }
-    .doi-link { font-size: 7pt !important; word-break: break-all !important; }
+  .cv-card .description {
+    font-size: 8pt !important;
+    color: #222 !important;
+  }
 
-    /* Certifications */
-    .certifications-list {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 6pt !important;
-        margin: 4pt 0 0 0 !important;
-    }
-    .certification-card { border: 0.5pt solid #999 !important; padding: 4pt !important; border-radius: 0 !important; box-shadow: none !important; page-break-inside: avoid; background: white !important; }
-    .certification-info h3 { font-size: 8pt !important; margin: 0 0 1pt 0 !important; word-wrap: break-word !important; }
-    .certification-info span, .certification-info p { font-size: 7pt !important; margin: 0 !important; word-wrap: break-word !important; }
-    .certification-details, .certification-date { font-size: 7pt !important; word-wrap: break-word !important; }
+  .cv-card .skills-list__category {
+    grid-template-columns: 110pt 1fr !important;
+    margin-bottom: 5pt !important;
+    gap: 4pt !important;
+  }
 
-    a { color: #000 !important; text-decoration: none !important; }
-    a[href^="http"]:after, a[href^="mailto"]:after { content: none !important; }
-    ul, ol { margin: 0 !important; padding-left: 14pt !important; }
-    li { margin: 0 !important; padding: 0 !important; }
-    img { display: none !important; }
+  .cv-card .skills-list__category h3 {
+    font-size: 8pt !important;
+  }
+
+  .cv-card .skills-list__skill-name {
+    font-size: 7.5pt !important;
+    padding: 2pt 6pt !important;
+    border-color: #ccc !important;
+    background: none !important;
+    border-radius: 4pt !important;
+  }
+
+  .cv-card .publication-item {
+    padding-bottom: 8pt !important;
+  }
+
+  .cv-card .publication-item::before {
+    font-size: 7pt !important;
+  }
+
+  .cv-card .publication-header h3 {
+    font-size: 8pt !important;
+  }
+
+  .cv-card .journal,
+  .cv-card .publication-date,
+  .cv-card .doi-link {
+    font-size: 7pt !important;
+    color: #444 !important;
+  }
+
+  .cv-certifications-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 4pt !important;
+  }
+
+  .cv-certifications-grid .certification-card {
+    background: none !important;
+    border: 0.5pt solid #bbb !important;
+    padding: 4pt !important;
+  }
+
+  .cv-certifications-grid .certification-info h3 { font-size: 7.5pt !important; }
+  .cv-certifications-grid .certification-info span,
+  .cv-certifications-grid .certification-details span { font-size: 6.5pt !important; }
+  .cv-certifications-grid .certification-action { display: none !important; }
+
+  .cv-card .experience-category { margin-bottom: 8pt !important; }
+
+  a { color: #000 !important; text-decoration: none !important; }
+  img { display: none !important; }
 }
