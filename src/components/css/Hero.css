@@ -1,8 +1,8 @@
 /* ===== Hero — Instrumented Editorial (Blue / Orbitron / Cinematic) ===== */
 
-/* Single source of truth: consume the DS token, no local re-declaration */
+/* Bridge hero to the navbar token so they always stay in sync */
 :root {
-  --navbar-height: var(--ds-navbar-height, 80px);
+  --navbar-height: var(--nav-height, 100px);
 }
 
 /* ===== Section ===== */
