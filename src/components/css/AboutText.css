@@ -8,6 +8,10 @@
     max-width: 1400px;
     line-height: 1.6;
     min-height: 100vh;
+    /* Fill the full page with a consistent light background so the dark body
+       never bleeds through around or beneath the card */
+    background: #f8f9fb;
+    padding: 24px 20px 60px;
 }
 
 .about-page__layout {

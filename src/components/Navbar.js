@@ -7,13 +7,15 @@ import { SiGooglescholar } from 'react-icons/si';
 import './css/Navbar.css';
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-  const navRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const navRef = useRef(null);
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Non-home pages have light backgrounds — start solid immediately
+  const [isScrolled, setIsScrolled] = useState(location.pathname !== '/');
+  const [activeSection, setActiveSection] = useState('');
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   const navItems = [
     { path: '/about', label: 'About', number: '01' },
@@ -41,7 +43,9 @@ const Navbar = () => {
 
   const handleScroll = useCallback(() => {
     const scrollY = window.scrollY;
-    setIsScrolled(scrollY > 50);
+    // Home page: transparent at top, solid when scrolled.
+    // All other pages: always solid (they have light backgrounds).
+    setIsScrolled(location.pathname !== '/' || scrollY > 50);
 
     if (location.pathname === '/') {
       const sections = ['ch-00', 'ch-01', 'ch-02', 'ch-03', 'ch-04', 'ch-05', 'ch-06', 'ch-07'];
@@ -103,10 +107,11 @@ const Navbar = () => {
     };
   }, [isMenuOpen]);
 
-  // Close menu on route change
+  // Close menu on route change; re-evaluate scroll state for the new page
   useEffect(() => {
     setIsMenuOpen(false);
     setActiveSection('');
+    setIsScrolled(location.pathname !== '/' || window.scrollY > 50);
   }, [location.pathname]);
 
   // Close menu on escape key
