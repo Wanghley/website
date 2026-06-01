@@ -401,7 +401,7 @@
 .hero .btn-primary:hover {
   background: var(--blue-bright, #68C8F7);
   border-color: var(--blue-bright, #68C8F7);
-  transform: translateY(-2px);
+  /* transform applied only on hover-capable devices — see @media (hover: hover) block */
   box-shadow:
     0 6px 24px rgba(58, 175, 241, 0.35),
     0 0   16px rgba(58, 175, 241, 0.20);
@@ -423,7 +423,7 @@
   border-color: var(--blue, #3AAFF1);
   color: var(--blue, #3AAFF1);
   background: rgba(58, 175, 241, 0.06);
-  transform: translateY(-2px);
+  /* transform applied only on hover-capable devices — see @media (hover: hover) block */
   box-shadow: 0 0 12px rgba(58, 175, 241, 0.12), inset 0 0 12px rgba(58, 175, 241, 0.04);
 }
 .hero .btn-ghost:active {
@@ -496,9 +496,9 @@
 }
 .hero-social .nav-icon:hover {
   color: var(--blue, #3AAFF1);
-  transform: translateY(-2px);
   background: transparent;
   border-color: transparent;
+  /* transform applied only on hover-capable devices — see @media (hover: hover) block */
 }
 
 /* ===== Section hints ===== */
@@ -732,14 +732,72 @@
   .hero-desc { max-width: none; }
 }
 
+@media (max-width: 768px) {
+  /* Ensure CTAs stack full-width and meet 48px touch-target minimum */
+  .hero-ctas {
+    flex-direction: column;
+  }
+  .hero .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+}
+
 @media (max-width: 480px) {
   #hero, #ch-00, .hero { padding-top: 70px; }
   .hero-telemetry-strip { display: none; }
   .hero-grid { padding: 2.5rem 0 3rem; gap: 1.5rem; }
-  .hero-ctas { flex-direction: column; }
-  .hero .btn { width: 100%; justify-content: center; }
-  .hero-portrait-cinematic { height: 280px; }
+  .hero-portrait-cinematic { height: 240px; }
   .hero-portrait-annot { font-size: 0.5rem; }
+}
+
+/* Extra small phones: tighten headline and CTA spacing */
+@media (max-width: 380px) {
+  .hero-name { font-size: 2.4rem; }
+  .hero .btn { padding: 0.7rem 1rem; font-size: 0.68rem; }
+  .hero-portrait-cinematic { height: 220px; }
+}
+
+/* Social nav-icon touch targets on mobile */
+@media (max-width: 768px) {
+  .hero-social .nav-icon {
+    width: 48px;
+    height: 48px;
+  }
+  /* Hint buttons: minimum 48px tap area via padding */
+  .hint {
+    padding: 0.75rem 0.25rem;
+    min-height: 48px;
+  }
+}
+
+/* ===== Hover: only on pointer devices — prevents sticky :hover on touch ===== */
+@media (hover: hover) {
+  .hero .btn-primary:hover {
+    background: var(--blue-bright, #68C8F7);
+    border-color: var(--blue-bright, #68C8F7);
+    transform: translateY(-2px);
+    box-shadow:
+      0 6px 24px rgba(58, 175, 241, 0.35),
+      0 0   16px rgba(58, 175, 241, 0.20);
+    color: var(--text-inverse, #06070e);
+  }
+  .hero .btn-ghost:hover {
+    border-color: var(--blue, #3AAFF1);
+    color: var(--blue, #3AAFF1);
+    background: rgba(58, 175, 241, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 0 12px rgba(58, 175, 241, 0.12), inset 0 0 12px rgba(58, 175, 241, 0.04);
+  }
+  .hero-social .nav-icon:hover {
+    color: var(--blue, #3AAFF1);
+    transform: translateY(-2px);
+  }
+  .hint.eng:hover { color: var(--blue, #3AAFF1); }
+  .hint.eng:hover .hint-arrow { transform: translateY(3px); }
+  .hint.photo:hover { color: var(--purple, #9B59B6); }
+  .hint.photo:hover .hint-arrow { transform: translateX(3px); }
 }
 
 @media screen and (max-width: 896px) and (max-height: 500px) and (orientation: landscape) {
