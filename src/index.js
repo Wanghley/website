@@ -9,7 +9,10 @@ import { PostHogProvider, PostHogErrorBoundary } from '@posthog/react';
 
 posthog.init(process.env.REACT_APP_POSTHOG_KEY, {
   api_host: process.env.REACT_APP_POSTHOG_HOST,
-  defaults: '2026-01-30',
+  ui_host: 'https://us.posthog.com',
+  defaults: '2026-05-30',
+  person_profiles: 'identified_only',
+  enabled: process.env.NODE_ENV === 'production' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1',
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
