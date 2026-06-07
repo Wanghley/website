@@ -1,142 +1,197 @@
+<!-- PROJECT SHIELDS -->
+<a name="readme-top"></a>
+[![Contributors][contributors-shield]][contributors-url]
+[![Forks][forks-shield]][forks-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Issues][issues-shield]][issues-url]
+[![MIT License][license-shield]][license-url]
+[![LinkedIn][linkedin-shield]][linkedin-url]
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/wanghley)
+
+<!-- PROJECT LOGO -->
+<br />
 <div align="center">
   <a href="https://wanghley.com">
-    <img src="src/assets/logo-colorful.png" alt="wanghley.com" width="120" />
+    <img src="src/assets/logo-colorful.png" alt="Logo" width="200">
   </a>
 
-  <h1>wanghley.com</h1>
+  <h3 align="center">wanghley.com</h3>
 
-  <p>
-    Personal portfolio of <strong>Wanghley Martins</strong> — Edge AI Engineer, Biomedical AI Researcher, TEDx Speaker.<br/>
-    Built from silicon to cloud.
-  </p>
-
-  <p>
-    <a href="https://wanghley.com"><strong>wanghley.com »</strong></a>
-  </p>
-
-  <p>
+  <p align="center">
+    Personal portfolio of Wanghley Martins — Edge AI Engineer, Biomedical AI Researcher & TEDx Speaker.
+    <br />
+    <a href="https://wanghley.com"><strong>Visit the site »</strong></a>
+    <br />
+    <br />
     <a href="https://github.com/Wanghley/website/issues/new?labels=bug">Report Bug</a>
     ·
     <a href="https://github.com/Wanghley/website/issues/new?labels=enhancement">Request Feature</a>
     ·
     <a href="https://wanghley.com/blog">Blog</a>
   </p>
-
-  <br/>
-
-  [![Release](https://img.shields.io/github/v/tag/Wanghley/website?label=release&style=flat-square&color=0f172a)](https://github.com/Wanghley/website/releases)
-  [![Commits](https://img.shields.io/github/commit-activity/m/Wanghley/website?style=flat-square&color=0f172a)](https://github.com/Wanghley/website/commits/main)
-  [![License](https://img.shields.io/github/license/Wanghley/website?style=flat-square&color=0f172a)](LICENSE)
-  [![Stars](https://img.shields.io/github/stars/Wanghley/website?style=flat-square&color=0f172a)](https://github.com/Wanghley/website/stargazers)
-  [![Deploy](https://img.shields.io/badge/hosted%20on-Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black)](https://firebase.google.com)
-
 </div>
+
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#about-the-project">About The Project</a></li>
+    <li><a href="#built-with">Built With</a></li>
+    <li><a href="#getting-started">Getting Started</a></li>
+    <li><a href="#project-structure">Project Structure</a></li>
+    <li><a href="#configuration">Configuration</a></li>
+    <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#acknowledgments">Acknowledgments</a></li>
+  </ol>
+</details>
 
 ---
 
-## Demo
+<!-- ABOUT THE PROJECT -->
+## About The Project
 
-<!-- ┌──────────────────────────────────────────────────────────────────────────┐
-     │  DEMO VIDEO                                                              │
-     │  Record a walkthrough (Loom / OBS / QuickTime) and upload to YouTube.   │
-     │                                                                          │
-     │  YouTube embed — replace YOUR_VIDEO_ID:                                 │
-     │                                                                          │
-     │  [![Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)]  │
-     │  (https://youtu.be/YOUR_VIDEO_ID)                                        │
-     │                                                                          │
-     │  Or embed a GIF/MP4 directly:                                            │
-     │  <video src="docs/demo.mp4" autoplay loop muted width="100%"></video>    │
-     └──────────────────────────────────────────────────────────────────────────┘ -->
+<!-- ┌─────────────────────────────────────────────────────────────────────┐
+     │  DEMO VIDEO / SCREENSHOT                                            │
+     │  Replace the block below with a real embed once you have one.       │
+     │                                                                     │
+     │  YouTube:                                                           │
+     │  [![Demo](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)]  │
+     │  (https://youtu.be/VIDEO_ID)                                        │
+     │                                                                     │
+     │  Or a direct screenshot:                                            │
+     │  [![Product screenshot][product-screenshot]](https://wanghley.com) │
+     └─────────────────────────────────────────────────────────────────────┘ -->
 
-> **Add a demo video here.** Record a 30–60 s walkthrough of the homepage and paste the YouTube embed or GIF above.
+> **Add a screenshot or demo video above** — capture the homepage at 1440 × 900 and save it to `docs/screenshots/homepage.png`, then uncomment the screenshot line.
 
-<br/>
+This is the source code for [wanghley.com](https://wanghley.com), a fully custom personal portfolio built from scratch. The site covers research, projects, a Markdown-powered blog, an interactive CV, and a contact form — all wrapped in a cohesive dark design system with a WebGL hero and fluid animations.
 
-## Screenshots
+Key highlights:
 
-<!-- Replace the placeholder paths below once you capture real screenshots.
-     Suggested workflow:
-       yarn start → DevTools → device toolbar (1440 × 900) → right-click → "Capture screenshot"
-     Save to docs/screenshots/ and commit. -->
+- **3D WebGL Hero** — particle/neural-mesh animation rendered with Three.js & React Three Fiber, overlaid with a live ECG ribbon
+- **Rich Markdown content** — blog posts and project write-ups with KaTeX math, Mermaid diagrams, GFM footnotes, and syntax highlighting
+- **Interactive CV** — sticky section navigator, print-ready layout, animated skill radar chart
+- **Zero-backend contact form** — delivered through EmailJS, no server needed
+- **First-party analytics** — PostHog with a reverse proxy to avoid ad-blocker interference
+- **Auto-generated XML sitemaps** — one per content type, built from live Strapi CMS data
 
-| Homepage | About | CV |
-|:---:|:---:|:---:|
-| ![Homepage](docs/screenshots/homepage.png) | ![About](docs/screenshots/about.png) | ![CV](docs/screenshots/cv.png) |
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-| Projects | Blog | Contact |
-|:---:|:---:|:---:|
-| ![Projects](docs/screenshots/projects.png) | ![Blog](docs/screenshots/blog.png) | ![Contact](docs/screenshots/contact.png) |
+---
 
-> **To add screenshots:** run `yarn start`, capture each page at 1440 × 900, save to `docs/screenshots/`, and commit.
+<!-- BUILT WITH -->
+## Built With
 
-<br/>
+<img src="https://img.shields.io/badge/React_18-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" style="vertical-align:top; margin:4px">
+<img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" style="vertical-align:top; margin:4px">
+<img src="https://img.shields.io/badge/Framer_Motion-EF0082?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" style="vertical-align:top; margin:4px">
+<img src="https://img.shields.io/badge/MUI_v7-007FFF?style=for-the-badge&logo=mui&logoColor=white" alt="MUI" style="vertical-align:top; margin:4px">
+<img src="https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" style="vertical-align:top; margin:4px">
+<img src="https://img.shields.io/badge/React_Router_v6-CA4245?style=for-the-badge&logo=react-router&logoColor=white" alt="React Router" style="vertical-align:top; margin:4px">
+<img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" style="vertical-align:top; margin:4px">
+<img src="https://img.shields.io/badge/PostHog-F54E00?style=for-the-badge&logo=posthog&logoColor=white" alt="PostHog" style="vertical-align:top; margin:4px">
+<img src="https://img.shields.io/badge/EmailJS-EA4335?style=for-the-badge&logo=gmail&logoColor=white" alt="EmailJS" style="vertical-align:top; margin:4px">
 
-## Features
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-- **3D Hero** — WebGL particle/neural-mesh animation via Three.js & React Three Fiber, with live ECG ribbon overlay
-- **Fluid Animations** — page transitions, staggered reveals, and micro-interactions powered by Framer Motion
-- **Rich Markdown** — blog posts and project write-ups with KaTeX math, Mermaid diagrams, GFM footnotes, and syntax highlighting
-- **Interactive CV** — sticky section navigator, print-ready layout, and animated skill radar chart
-- **Dark Design System** — cohesive `abyss` palette, Wikipedia-style About page, responsive typography
-- **Contact via EmailJS** — serverless email delivery with no backend required
-- **Analytics** — PostHog product analytics with first-party reverse proxy
-- **SEO** — `react-helmet-async` meta tags, Open Graph, and auto-generated XML sitemaps per content type
-- **Optimized Build** — code-split React SPA deployed to Firebase Hosting global CDN
+---
 
-<br/>
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| **Framework** | [React 18](https://react.dev) · Create React App |
-| **3D / Canvas** | [Three.js](https://threejs.org) · [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) · [Drei](https://github.com/pmndrs/drei) |
-| **Animation** | [Framer Motion](https://www.framer.com/motion/) |
-| **UI Library** | [MUI v7](https://mui.com) · [React Bootstrap](https://react-bootstrap.github.io) · [RSuite](https://rsuitejs.com) |
-| **Styling** | [Tailwind CSS v4](https://tailwindcss.com) · [Styled Components](https://styled-components.com) |
-| **Markdown** | [react-markdown](https://github.com/remarkjs/react-markdown) · remark-gfm · rehype-katex · [Mermaid](https://mermaid.js.org) |
-| **Charts** | [Chart.js](https://www.chartjs.org) · react-chartjs-2 |
-| **Email** | [EmailJS](https://www.emailjs.com) |
-| **Analytics** | [PostHog](https://posthog.com) |
-| **Routing** | [React Router v6](https://reactrouter.com) |
-| **Hosting** | [Firebase Hosting](https://firebase.google.com/docs/hosting) |
-
-<br/>
-
+<!-- GETTING STARTED -->
 ## Getting Started
 
 ### Prerequisites
 
 - **Node.js** ≥ 18 — [download](https://nodejs.org)
-- **Yarn** 1.x — `npm install -g yarn`
-- **Firebase CLI** (deploy only) — `npm install -g firebase-tools`
+- **Yarn** 1.x
+
+  ```sh
+  npm install -g yarn
+  ```
+
+- **Firebase CLI** *(deploy only)*
+
+  ```sh
+  npm install -g firebase-tools
+  ```
 
 ### Installation
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/Wanghley/website.git
-cd website
+1. Clone the repository
+   ```sh
+   git clone https://github.com/Wanghley/website.git
+   ```
+2. Install dependencies
+   ```sh
+   cd website
+   yarn install
+   ```
+3. Create your environment file
+   ```sh
+   cp .env.example .env.local
+   ```
+   Fill in your EmailJS and PostHog keys — see [Configuration](#configuration).
 
-# 2. Install dependencies
-yarn install
+4. Start the development server
+   ```sh
+   yarn start
+   ```
+   Open [http://localhost:3000](http://localhost:3000). The app hot-reloads on every save.
 
-# 3. Set up environment variables
-cp .env.example .env.local
-# → fill in your EmailJS and PostHog keys (see Configuration below)
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-# 4. Start the development server
-yarn start
+---
+
+<!-- PROJECT STRUCTURE -->
+## Project Structure
+
+```
+website/
+├── public/               # Static assets & pre-generated sitemaps
+├── src/
+│   ├── api/              # Strapi CMS data-fetching utilities
+│   ├── assets/           # Images, logos, fonts
+│   ├── components/       # Reusable UI components
+│   │   ├── Hero.js       # Three.js WebGL hero + ECG ribbon
+│   │   ├── About.js      # Wikipedia-style dark card layout
+│   │   ├── Skills.js     # Radar chart + filterable skill cards
+│   │   ├── BlogPost.js   # Markdown renderer (KaTeX, Mermaid)
+│   │   └── ...
+│   ├── pages/            # Route-level page components
+│   │   ├── index.js      # Homepage (Hero → About → Skills → …)
+│   │   ├── about.js      # /about
+│   │   ├── cv.js         # /cv  (sticky nav + print)
+│   │   ├── projects.js   # /projects
+│   │   ├── blog.js       # /blog
+│   │   └── contact.js    # /contact
+│   ├── utils/            # Helpers (markdown, analytics, SEO)
+│   ├── App.js            # Router + layout shell
+│   └── index.js          # Entry point + PostHog init
+├── .github/workflows/    # Firebase Hosting CI/CD
+├── firebase.json         # SPA rewrite rules
+└── package.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) — the app hot-reloads on save.
+### Available Scripts
 
-<br/>
+| Command | Description |
+|---|---|
+| `yarn start` | Development server at `localhost:3000` |
+| `yarn build` | Production build → `build/` |
+| `yarn test` | Run tests with React Testing Library |
+| `yarn generate-sitemap` | Regenerate XML sitemaps from live Strapi data |
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+<!-- CONFIGURATION -->
 ## Configuration
 
-Create a `.env.local` file at the project root with the following keys:
+Create `.env.local` at the project root:
 
 ```env
 # EmailJS  →  https://www.emailjs.com/docs
@@ -147,116 +202,125 @@ REACT_APP_EMAILJS_PUBLIC_KEY=your_public_key
 # PostHog  →  https://posthog.com/docs
 REACT_APP_POSTHOG_KEY=phc_your_project_key
 REACT_APP_POSTHOG_HOST=https://us.i.posthog.com
+
+# Strapi CMS  →  https://strapi.io/documentation
+REACT_APP_cms_base_url=https://your-strapi-instance.com
+REACT_APP_cms_api_token=your_api_token
 ```
 
 > All keys are prefixed with `REACT_APP_` so Create React App inlines them at build time. **Never commit `.env.local`.**
 
-<br/>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Project Structure
+---
 
-```
-website/
-├── public/                 # Static assets & pre-generated sitemaps
-├── src/
-│   ├── api/                # Strapi CMS data-fetching utilities
-│   ├── assets/             # Images, logos, fonts
-│   ├── components/         # Reusable UI components
-│   │   ├── Hero.js         # Three.js WebGL hero + ECG ribbon
-│   │   ├── About.js        # Wikipedia-style dark card layout
-│   │   ├── Skills.js       # Radar chart + filterable skill cards
-│   │   ├── BlogPost.js     # Full markdown renderer (KaTeX, Mermaid)
-│   │   ├── ProjectPost.js  # Project detail with media gallery
-│   │   └── ...
-│   ├── pages/              # Route-level page components
-│   │   ├── index.js        # Homepage  (Hero → About → Skills → …)
-│   │   ├── about.js        # /about
-│   │   ├── cv.js           # /cv  (sticky nav + print)
-│   │   ├── projects.js     # /projects
-│   │   ├── blog.js         # /blog
-│   │   └── contact.js      # /contact
-│   ├── utils/              # Helpers (markdown, analytics, SEO)
-│   ├── App.js              # Router + layout shell
-│   └── index.js            # Entry point + PostHog init
-├── firebase.json           # Firebase Hosting SPA rewrite rules
-├── package.json
-└── yarn.lock
-```
-
-<br/>
-
-## Available Scripts
-
-| Command | Description |
-|---|---|
-| `yarn start` | Development server at `localhost:3000` |
-| `yarn build` | Production build → `build/` |
-| `yarn test` | Run tests with React Testing Library |
-| `yarn generate-sitemap` | Regenerate XML sitemaps from live Strapi data |
-
-<br/>
-
+<!-- DEPLOYMENT -->
 ## Deployment
 
-The site deploys to **Firebase Hosting** via the Firebase CLI.
+The site is hosted on **Firebase Hosting** and deploys automatically on every push to `main` via GitHub Actions.
 
-```bash
-# 1. Build for production
-yarn build
+To deploy manually:
 
-# 2. Authenticate (first time)
-firebase login
+1. Build for production
+   ```sh
+   yarn build
+   ```
+2. Authenticate with Firebase *(first time only)*
+   ```sh
+   firebase login
+   ```
+3. Deploy
+   ```sh
+   firebase deploy --only hosting
+   ```
 
-# 3. Deploy
-firebase deploy --only hosting
-```
+The `firebase.json` SPA rewrite rule sends all unmatched paths to `index.html` so React Router handles client-side navigation.
 
-The `firebase.json` SPA rewrite rule sends all unmatched paths to `index.html` so React Router handles navigation on the client.
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-<br/>
+---
 
+<!-- ROADMAP -->
 ## Roadmap
 
+- [x] 3D WebGL hero with ECG ribbon overlay
+- [x] Markdown blog with KaTeX and Mermaid support
+- [x] Interactive CV with sticky navigator and radar chart
+- [x] PostHog analytics with first-party reverse proxy
+- [x] Auto-generated XML sitemaps per content type
 - [ ] Dark / light theme toggle
-- [ ] CMS-driven project pages (full Strapi integration)
 - [ ] Full-text search across blog and projects
+- [ ] CMS-driven project pages (full Strapi integration)
 - [ ] Internationalization (EN / PT-BR)
 - [ ] Automated Lighthouse CI on every push
 
-See [open issues](https://github.com/Wanghley/website/issues) for the full list of planned features and known bugs.
+See the [open issues](https://github.com/Wanghley/website/issues) for a full list of proposed features and known bugs.
 
-<br/>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+---
+
+<!-- CONTRIBUTING -->
 ## Contributing
 
 Contributions are welcome — especially bug fixes and accessibility improvements.
 
-```bash
-# 1. Fork the repo and create a feature branch
-git checkout -b fix/your-fix-name
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) (`git commit -m 'feat: add AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-# 2. Commit using Conventional Commits
-git commit -m "fix: short description"
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-# 3. Push and open a Pull Request
-git push origin fix/your-fix-name
-```
+---
 
-Please follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) for all commit messages.
-
-<br/>
-
+<!-- LICENSE -->
 ## License
 
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
+Distributed under the MIT License. See `LICENSE` for more information.
 
-<br/>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+---
+
+<!-- CONTACT -->
 ## Contact
 
-**Wanghley Martins** — [wanghley.com](https://wanghley.com) · [wanghleys@gmail.com](mailto:wanghleys@gmail.com)
+Wanghley Soares Martins — [@wanghley](https://instagram.com/wanghley) — wanghleys@gmail.com
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Wanghley-0077B5?style=flat-square&logo=linkedin)](https://linkedin.com/in/wanghley)
-[![GitHub](https://img.shields.io/badge/GitHub-Wanghley-181717?style=flat-square&logo=github)](https://github.com/Wanghley)
+Project Link: [https://github.com/Wanghley/website](https://github.com/Wanghley/website)
 
-<div align="right"><a href="#readme-top">↑ back to top</a></div>
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+<!-- ACKNOWLEDGMENTS -->
+## Acknowledgments
+
+* [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) — Three.js in React, made easy
+* [Framer Motion](https://www.framer.com/motion/) — production-grade animation library
+* [PostHog](https://posthog.com) — open-source product analytics
+* [EmailJS](https://www.emailjs.com) — client-side email without a backend
+* [Shields.io](https://shields.io) — badge generation
+* [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) — commit message standard
+* [Firebase Hosting](https://firebase.google.com/docs/hosting) — global CDN & SPA hosting
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors/Wanghley/website?style=for-the-badge
+[contributors-url]: https://github.com/Wanghley/website/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/Wanghley/website?style=for-the-badge
+[forks-url]: https://github.com/Wanghley/website/network/members
+[stars-shield]: https://img.shields.io/github/stars/Wanghley/website?style=for-the-badge
+[stars-url]: https://github.com/Wanghley/website/stargazers
+[issues-shield]: https://img.shields.io/github/issues/Wanghley/website?style=for-the-badge
+[issues-url]: https://github.com/Wanghley/website/issues
+[license-shield]: https://img.shields.io/github/license/Wanghley/website?style=for-the-badge
+[license-url]: https://github.com/Wanghley/website/blob/main/LICENSE
+[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
+[linkedin-url]: https://linkedin.com/in/wanghley
+[product-screenshot]: docs/screenshots/homepage.png
