@@ -212,6 +212,22 @@ const Hero = () => {
         document.getElementById('ch-01')?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     };
 
+    const scrollToContact = () => {
+        const el = document.getElementById('ch-07');
+        const behavior = prefersReducedMotion ? 'auto' : 'smooth';
+        if (el) {
+            el.scrollIntoView({ behavior });
+            try { el.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
+            // update the URL hash without jumping
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, '', '#ch-07');
+            }
+        } else {
+            // Not present (user might be on a different route) — navigate to home with hash
+            window.location.href = '/' + '#ch-07';
+        }
+    };
+
     return (
         <section
             id="ch-00"
@@ -266,7 +282,7 @@ const Hero = () => {
                         <motion.div className="hero-name" variants={textItem}>
                             WANGHLEY
                             <span className="hero-name__subscript" aria-hidden="true">
-                                MARTINS · &apos;04 · BR→US · 13 PUBLICATIONS
+                                SOARES MARTINS
                             </span>
                         </motion.div>
 
@@ -279,14 +295,21 @@ const Hero = () => {
                         </motion.p>
 
                         <motion.div className="hero-ctas" variants={textItem}>
-                            <a href="/contact" className="btn btn-primary">
-                                <span className="hero-cta__bracket">[</span>
-                                DISCUSS A PROJECT
+                            <button
+                                type="button"
+                                className="btn btn-primary btn-cta"
+                                aria-label="Contact me"
+                                onClick={scrollToContact}
+                            >
+                                Contact Me
                                 <span className="hero-cta__arrow">→</span>
-                                <span className="hero-cta__bracket">]</span>
-                            </a>
-                            <a href="/projects" className="btn btn-ghost">
-                                EXPLORE ARCHITECTURES
+                            </button>
+                            <a
+                                href="/projects"
+                                className="btn btn-secondary"
+                                aria-label="See my past projects"
+                            >
+                                See My Projects
                             </a>
                         </motion.div>
 
