@@ -35,7 +35,7 @@ const About = () => {
       { threshold: 0.1 }
     );
 
-    const section = document.getElementById('ch-01');
+    const section = document.getElementById('about');
     if (section) observer.observe(section);
     return () => { if (section) observer.unobserve(section); };
   }, []);
@@ -55,7 +55,7 @@ const About = () => {
   return (
     <section
       className={`about section-light ${isVisible ? 'about--visible' : ''} ${prefersReducedMotion ? 'about--reduced-motion' : ''}`}
-      id="ch-01"
+      id="about"
       aria-label="About Wanghley Martins — Origin Story"
     >
       <div className="about__bg" aria-hidden="true" />

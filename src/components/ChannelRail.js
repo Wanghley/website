@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './css/ChannelRail.css';
 
 const CHANNELS = [
-  { id: '00', title: 'ORIGIN',        target: 'ch-00' },
-  { id: '01', title: 'STORY',         target: 'ch-01' },
-  { id: '02', title: 'IMPACT',        target: 'ch-02' },
-  { id: '03', title: 'CAPABILITY',    target: 'ch-03' },
-  { id: '04', title: 'ARCH',          target: 'ch-04' },
-  { id: '05', title: 'FIELD REPORTS', target: 'ch-05' },
-  { id: '06', title: 'FIELD NOTES',   target: 'ch-06' },
-  { id: '07', title: 'TRANSMIT',      target: 'ch-07' },
+  { id: '00', title: 'ORIGIN',        target: 'home' },
+  { id: '01', title: 'STORY',         target: 'about' },
+  { id: '02', title: 'IMPACT',        target: 'impact' },
+  { id: '03', title: 'CAPABILITY',    target: 'skills' },
+  { id: '04', title: 'ARCH',          target: 'architectures' },
+  { id: '05', title: 'FIELD REPORTS', target: 'projects' },
+  { id: '06', title: 'FIELD NOTES',   target: 'blog' },
+  { id: '07', title: 'TRANSMIT',      target: 'contact' },
 ];
 
 const ChannelRail = () => {

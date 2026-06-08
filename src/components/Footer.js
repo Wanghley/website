@@ -67,7 +67,7 @@ const Footer = () => {
                   { to: '/curriculum-vitae', label: 'Curriculum Vitae' },
                   { to: '/projects',         label: 'Projects' },
                   { to: '/blog',             label: 'Blog' },
-                  { to: '/#ch-07',           label: 'Contact' },
+                  { to: '/#contact',           label: 'Contact' },
                 ].map(({ to, label }) => (
                   <li key={to}><Link to={to} className="footer__link">{label}</Link></li>
                 ))}

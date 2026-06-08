@@ -57,7 +57,7 @@ const Navbar = () => {
     { path: '/curriculum-vitae', label: 'CV', mobileLabel: 'Curriculum Vitae', number: '02' },
     { path: '/projects', label: 'Projects', number: '03' },
     { path: '/blog', label: 'Blog', number: '04' },
-    { path: '/', label: 'Contact', section: 'ch-07', number: '05' },
+    { path: '/', label: 'Contact', section: 'contact', number: '05' },
   ];
 
   const socialLinks = [
@@ -83,7 +83,7 @@ const Navbar = () => {
     setIsScrolled(navTheme !== 'transparent' || scrollY > 50);
 
     if (location.pathname === '/') {
-      const sections = ['ch-00', 'ch-01', 'ch-02', 'ch-03', 'ch-04', 'ch-05', 'ch-06', 'ch-07'];
+      const sections = ['home', 'about', 'impact', 'skills', 'architectures', 'projects', 'blog', 'contact'];
       const viewportHeight = window.innerHeight;
       let found = '';
 
@@ -99,7 +99,7 @@ const Navbar = () => {
           }
         }
       }
-      setActiveSection(found || 'ch-00');
+      setActiveSection(found || 'home');
     }
   }, [location.pathname, navTheme]);
 

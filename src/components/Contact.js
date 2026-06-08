@@ -43,7 +43,7 @@ const Contact = () => {
       { threshold: 0.1 }
     );
 
-    const section = document.getElementById('ch-07');
+    const section = document.getElementById('contact');
     if (section) observer.observe(section);
 
     return () => {
@@ -219,7 +219,7 @@ const Contact = () => {
   return (
     <section
       className={`contact-section ${isVisible ? 'contact-section--visible' : ''}`}
-      id="ch-07"
+      id="contact"
       aria-label="Transmit — Contact"
     >
       {/* Background Elements */}

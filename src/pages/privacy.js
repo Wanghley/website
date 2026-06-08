@@ -168,7 +168,7 @@ const Privacy = () => (
             <p>
               Questions about this privacy policy? Email{' '}
               <a href="mailto:me@wanghley.com">me@wanghley.com</a> or use the{' '}
-              <Link to="/#ch-07">contact form</Link>.
+              <Link to="/#contact">contact form</Link>.
             </p>
           </section>
 

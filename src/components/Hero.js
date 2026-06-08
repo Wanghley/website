@@ -209,28 +209,28 @@ const Hero = () => {
     }, [prefersReducedMotion]);
 
     const scrollToCh01 = () => {
-        document.getElementById('ch-01')?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+        document.getElementById('about')?.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' });
     };
 
     const scrollToContact = () => {
-        const el = document.getElementById('ch-07');
+        const el = document.getElementById('contact');
         const behavior = prefersReducedMotion ? 'auto' : 'smooth';
         if (el) {
             el.scrollIntoView({ behavior });
             try { el.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
             // update the URL hash without jumping
             if (window.history && window.history.replaceState) {
-                window.history.replaceState(null, '', '#ch-07');
+                window.history.replaceState(null, '', '#contact');
             }
         } else {
             // Not present (user might be on a different route) — navigate to home with hash
-            window.location.href = '/' + '#ch-07';
+            window.location.href = '/' + '#contact';
         }
     };
 
     return (
         <section
-            id="ch-00"
+            id="home"
             className={`hero hero--instrumented${armed ? ' hero--armed' : ''}`}
             aria-label="Introduction to Wanghley Martins"
         >

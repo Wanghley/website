@@ -139,7 +139,7 @@ const GambiarraImpact = () => {
     return (
         <section
             ref={sectionRef}
-            id="ch-02"
+            id="impact"
             className={`gi ${visible ? 'gi--visible' : ''} ${reduced ? 'gi--reduced-motion' : ''}`}
             aria-labelledby="gi-heading"
         >

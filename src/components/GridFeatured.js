@@ -92,7 +92,7 @@ const GridFeatured = () => {
 
   return (
     <section
-      id="ch-05"
+      id="projects"
       className={`eng-showroom ${isVisible ? "eng-showroom--visible" : ""}`}
       aria-label="Field Reports — Selected Engineering Projects"
     >

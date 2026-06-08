@@ -84,7 +84,7 @@ const GridFeaturedBlog = () => {
 
   return (
     <section
-      id="ch-06"
+      id="blog"
       className={`editorial ${isVisible ? "editorial--visible" : ""}`}
       aria-label="Field Notes — Writing & Thoughts"
     >
