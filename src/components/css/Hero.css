@@ -7,7 +7,7 @@
 
 /* ===== Section ===== */
 #hero,
-#ch-00,
+#home,
 .hero {
   min-height: 100svh;
   background: radial-gradient(ellipse 90% 85% at 65% 38%, #0e1128 0%, #09090f 55%, #050609 100%);
@@ -787,7 +787,7 @@
 }
 
 @media (max-width: 480px) {
-  #hero, #ch-00, .hero { padding-top: 70px; }
+  #hero, #home, .hero { padding-top: 70px; }
   .hero-telemetry-strip { display: none; }
   .hero-grid { padding: 2.5rem 0 3rem; gap: 1.5rem; }
   .hero-portrait-cinematic { height: 240px; }

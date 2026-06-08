@@ -107,7 +107,7 @@ const TechArchitecture = () => {
   return (
     <section
       ref={sectionRef}
-      id="ch-04"
+      id="architectures"
       className={`ta ${isVisible ? 'ta--visible' : ''} ${prefersReducedMotion ? 'ta--reduced-motion' : ''}`}
       aria-label="Silicon to Cloud technical architecture"
     >

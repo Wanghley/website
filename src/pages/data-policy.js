@@ -153,7 +153,7 @@ const DataPolicy = () => (
             <h2>9. Contact</h2>
             <p>
               Questions? Email <a href="mailto:me@wanghley.com">me@wanghley.com</a> or
-              use the <Link to="/#ch-07">contact form</Link>.
+              use the <Link to="/#contact">contact form</Link>.
             </p>
           </section>
 

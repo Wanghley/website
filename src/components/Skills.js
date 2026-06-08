@@ -71,7 +71,7 @@ const Skills = () => {
 
   return (
     <section
-      id="ch-03"
+      id="skills"
       className={`skills section-light ${isVisible ? "skills--visible" : ""} ${
         prefersReducedMotion ? "skills--reduced-motion" : ""
       }`}

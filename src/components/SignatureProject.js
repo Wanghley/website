@@ -47,7 +47,7 @@ const SignatureProject = () => {
   return (
     <section
       ref={ref}
-      id="ch-04"
+      id="architectures"
       className={`sp ${isVisible ? 'sp--visible' : ''} ${prefersReducedMotion ? 'sp--reduced-motion' : ''}`}
       aria-label="Signature project: arrhythmia detection"
     >
