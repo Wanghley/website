@@ -356,7 +356,7 @@ const Hero = () => {
 
                         <motion.div className="hero-hints" variants={textItem}>
                             <button className="hint eng" onClick={scrollToCh01} type="button">
-                                Engineering <span className="hint-arrow">↓</span>
+                                Meet me <span className="hint-arrow">↓</span>
                             </button>
                             <span className="hint-sep" aria-hidden="true" />
                             <a href="/photography" className="hint photo">
