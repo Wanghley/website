@@ -1,10 +1,24 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion'
 import './css/Hero.css'
 import { FaGithub, FaLinkedin } from 'react-icons/fa'
 import { SiGooglescholar } from 'react-icons/si'
 import profileImage from '../assets/54015060324_813dcb695e_o-2-3.jpg'
-import EcgRibbon from './EcgRibbon'
+
+const WORDS = [
+  'Edge AI',
+  'TinyML',
+  'Embedded Systems',
+  'Health Tech',
+  'Custom Silicon',
+  'FPGA Pipelines',
+  'Neural Nets on MCUs',
+  'Wearable Sensors',
+  'Intelligent Systems',
+  'Real-Time DSP',
+  'ARM Cortex',
+  'the Future',
+]
 
 const textContainer = {
   hidden: {},
@@ -19,7 +33,15 @@ const textItem = {
 const Hero = () => {
     const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
     const [armed, setArmed] = useState(false);
+    const [wordIdx, setWordIdx] = useState(0);
     const canvasRef = useRef(null);
+    const ctaRef = useRef(null);
+
+    // Magnetic CTA spring motion values
+    const rawX = useMotionValue(0);
+    const rawY = useMotionValue(0);
+    const magX = useSpring(rawX, { stiffness: 280, damping: 26 });
+    const magY = useSpring(rawY, { stiffness: 280, damping: 26 });
 
     useEffect(() => {
         const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -34,6 +56,13 @@ const Hero = () => {
         const id = setTimeout(() => setArmed(true), 220);
         return () => clearTimeout(id);
     }, []);
+
+    /* Word cycler — advances every 2.2 s, disabled under reduced motion */
+    useEffect(() => {
+        if (prefersReducedMotion) return;
+        const id = setInterval(() => setWordIdx(i => (i + 1) % WORDS.length), 2200);
+        return () => clearInterval(id);
+    }, [prefersReducedMotion]);
 
     // Three.js hero background animation
     useEffect(() => {
@@ -228,6 +257,20 @@ const Hero = () => {
         }
     };
 
+    const handleCtaMove = (e) => {
+        if (prefersReducedMotion || !ctaRef.current) return;
+        const rect = ctaRef.current.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        rawX.set(Math.max(-8, Math.min(8, (e.clientX - cx) * 0.35)));
+        rawY.set(Math.max(-8, Math.min(8, (e.clientY - cy) * 0.35)));
+    };
+
+    const handleCtaLeave = () => {
+        rawX.set(0);
+        rawY.set(0);
+    };
+
     return (
         <section
             id="home"
@@ -276,49 +319,61 @@ const Hero = () => {
                     >
                         <motion.div className="hero-credential" variants={textItem}>
                             <span className="hero-credential__sep" aria-hidden="true" />
-                            Engineer<span className="dot">·</span>Researcher<span className="dot">·</span>Entrepreneur<span className="dot">·</span>Speaker
+                            ENGINEER · RESEARCHER · MAKER · INVENTOR · DESIGNER
                         </motion.div>
 
                         <motion.div className="hero-name" variants={textItem}>
                             WANGHLEY
-                            <span className="hero-name__subscript" aria-hidden="true">
+                            {/* <span className="hero-name__subscript" aria-hidden="true">
                                 SOARES MARTINS
+                            </span> */}
+                        </motion.div>
+
+                        {/* Kinetic word cycler — the motion focal point */}
+                        <motion.div
+                            className="hero-cycler"
+                            variants={textItem}
+                            aria-label={`I build ${WORDS[wordIdx]}`}
+                        >
+                            <span className="hero-cycler__lead">I build</span>
+                            <span className="hero-cycler__word-box" aria-live="polite" aria-atomic="true">
+                                <AnimatePresence mode="wait">
+                                    <motion.span
+                                        key={wordIdx}
+                                        className="hero-cycler__word"
+                                        initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+                                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                                        exit={{ opacity: 0, y: -14, filter: 'blur(4px)' }}
+                                        transition={{ duration: 0.38, ease: [0.25, 0.46, 0.45, 0.94] }}
+                                    >
+                                        {WORDS[wordIdx]} ▸
+                                    </motion.span>
+                                </AnimatePresence>
                             </span>
                         </motion.div>
 
-                        <motion.h1 className="hero-role" variants={textItem}>
-                            Building Intelligent Systems
-                        </motion.h1>
-
-                        <motion.p className="hero-desc" variants={textItem}>
-                            I project custom hardware, edge ML, and signal processing engineered to production standards and deployed where it matters.
-                        </motion.p>
-
                         <motion.div className="hero-ctas" variants={textItem}>
-                            <button
+                            <motion.button
+                                ref={ctaRef}
                                 type="button"
                                 className="btn btn-primary btn-cta"
+                                aria-label="See my work"
+                                onClick={scrollToCh01}
+                                onPointerMove={handleCtaMove}
+                                onPointerLeave={handleCtaLeave}
+                                style={{ x: magX, y: magY }}
+                            >
+                                See My Work
+                                <span className="hero-cta__arrow">→</span>
+                            </motion.button>
+                            <button
+                                type="button"
+                                className="btn btn-ghost"
                                 aria-label="Contact me"
                                 onClick={scrollToContact}
                             >
-                                Contact Me
-                                <span className="hero-cta__arrow">→</span>
+                                Contact
                             </button>
-                            <a
-                                href="/projects"
-                                className="btn btn-secondary"
-                                aria-label="See my past projects"
-                            >
-                                See My Projects
-                            </a>
-                        </motion.div>
-
-                        <motion.div className="hero-trust" variants={textItem}>
-                            <span>Ph.D. Student @ Rice</span>
-                            <span className="hero-trust__sep" aria-hidden="true" />
-                            <span>ECE + CS @ Duke</span>
-                            <span className="hero-trust__sep" aria-hidden="true" />
-                            <span>Entrepreneur</span>
                         </motion.div>
 
                         <motion.nav className="hero-social" variants={textItem} aria-label="Social media links">
@@ -356,12 +411,8 @@ const Hero = () => {
 
                         <motion.div className="hero-hints" variants={textItem}>
                             <button className="hint eng" onClick={scrollToCh01} type="button">
-                                Meet me <span className="hint-arrow">↓</span>
+                                Scroll to explore <span className="hint-arrow">↓</span>
                             </button>
-                            <span className="hint-sep" aria-hidden="true" />
-                            <a href="/photography" className="hint photo">
-                                Photography <span className="hint-arrow">→</span>
-                            </a>
                         </motion.div>
                     </motion.div>
 
@@ -411,10 +462,6 @@ const Hero = () => {
                 </div>
             </div>
 
-            {/* Full-bleed baseline waveform anchored to hero bottom */}
-            <div className="hero-baseline" aria-hidden="true">
-                <EcgRibbon height={28} />
-            </div>
         </section>
     );
 };
