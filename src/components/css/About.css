@@ -5,31 +5,8 @@
   background: #F7F8FA;
   color: #0d0e1a;
   font-family: var(--font-main, 'Montserrat', sans-serif);
-  /* Gradient bridges: dark section colors bleed in at top (void) and bottom (abyss) */
   padding: clamp(5rem, 7vw, 8rem) 0 clamp(5rem, 7vw, 8rem);
   overflow: hidden;
-}
-
-/* Top bridge: void (#09090f) → transparent */
-.about::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 100px;
-  background: linear-gradient(180deg, #09090f 10%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Bottom bridge: transparent → dark surface (#0c0e1e = GambiarraImpact bg) */
-.about::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 100px;
-  background: linear-gradient(0deg, #0c0e1e 10%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
 }
 
 .about.section-light {
@@ -37,7 +14,7 @@
   color: #0d0e1a;
 }
 
-/* Faint architectural grid — z-index 1 keeps it above the ::before/::after gradient bridges */
+/* Faint architectural grid */
 .about__bg {
   position: absolute;
   inset: 0;
