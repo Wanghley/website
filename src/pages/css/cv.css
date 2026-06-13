@@ -866,6 +866,7 @@
   padding: 16px;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
   gap: 8px;
   transition: border-color 0.18s, box-shadow 0.18s;
 }
@@ -875,12 +876,26 @@
   box-shadow: 0 2px 12px rgba(58,175,241,0.10);
 }
 
+.cv-certifications-grid .certification-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: initial;
+  min-width: 0;
+  margin-right: 0;
+}
+
 .cv-certifications-grid .certification-info h3 {
   font-size: 0.88rem;
   font-weight: 700;
   color: #1a1b2e;
   margin: 0 0 2px;
   line-height: 1.35;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: initial;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .cv-certifications-grid .certification-info span {
@@ -888,12 +903,17 @@
   font-size: 0.65rem;
   color: #6b7280;
   letter-spacing: 0.04em;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: initial;
+  overflow-wrap: break-word;
 }
 
 .cv-certifications-grid .certification-details {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  padding-right: 0;
 }
 
 .cv-certifications-grid .certification-details span,
