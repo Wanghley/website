@@ -10,28 +10,6 @@
   padding: clamp(5rem, 7vw, 8rem) 0;
 }
 
-/* Top bridge: dark section → transparent */
-.skills::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 100px;
-  background: linear-gradient(180deg, #0c0e1e 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Bottom bridge: transparent → dark section */
-.skills::after {
-  content: '';
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 100px;
-  background: linear-gradient(0deg, #06070e 0%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
 .skills--reduced-motion,
 .skills--reduced-motion * {
   animation: none !important;
