@@ -5,28 +5,11 @@ const CertificationCard = ({ certification }) => {
   const { name, organization, date, url, credID } = certification.attributes;
   const isUrlValid = url && url.trim() !== '';
   const showTooltip = credID && credID.length > 10;
-  
-  // Format name with line break if longer than 50 characters
-  const formatName = (name) => {
-    if (name.length > 90) {
-      const breakPoint = name.lastIndexOf(' ', 90);
-      if (breakPoint > 0) {
-        return (
-          <>
-            {name.substring(0, breakPoint)}
-            <br />
-            {name.substring(breakPoint + 1)}
-          </>
-        );
-      }
-    }
-    return name;
-  };
-  
+
   return (
     <div className="certification-card">
       <div className="certification-info">
-        <h3>{formatName(name)}</h3>
+        <h3>{name}</h3>
         <span>{organization}</span>
       </div>
       <div className="certification-details">
