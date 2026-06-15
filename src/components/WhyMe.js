@@ -3,7 +3,7 @@ import Carousel from "react-multi-carousel";
 import axios from "axios";
 
 const WhyMe = () => {
-    const baseURL = process.env.REACT_APP_testimonials_api_url;
+    const baseURL = `${process.env.REACT_APP_cms_base_url}/api/testimonials`;
     const [data, setData] = useState(null);
     const [nextPage, setNextPage] = useState(1);
 

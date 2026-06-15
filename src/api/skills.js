@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = process.env.REACT_APP_skills_api_url;
+const baseURL = `${process.env.REACT_APP_cms_base_url}/api/skills`;
 const apiKey = process.env.REACT_APP_cms_api_token;
 
 async function fetchFeaturedSkills() {
