@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = process.env.REACT_APP_timeline_api_url;
+const baseURL = `${process.env.REACT_APP_cms_base_url}/api/timelines`;
 
 export async function fetchTimeline(nextPage = 1, prevData = null) {
   try {
