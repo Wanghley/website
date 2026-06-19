@@ -253,7 +253,7 @@ const Hero = () => {
             }
         } else {
             // Not present (user might be on a different route) — navigate to home with hash
-            window.location.href = '/' + '#contact';
+            window.location.href = '/#contact';
         }
     };
 

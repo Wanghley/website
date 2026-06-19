@@ -6,12 +6,12 @@ import {
   FaArrowRight,
   FaArrowDown,
   FaChevronDown,
+  FaAws
 } from 'react-icons/fa';
 import {
   SiTensorflow,
   SiPython,
   SiCplusplus,
-  SiAmazon,
   SiDocker,
   SiArduino,
   SiRaspberrypi,
@@ -54,7 +54,7 @@ const techStack = [
     title: 'Cloud & Strategy',
     subtitle: 'Scale & Ship',
     waveform: 'sine',
-    icon: <SiAmazon />,
+    icon: <FaAws />,
     items: [
       { name: 'Python', icon: <SiPython /> },
       { name: 'Docker', icon: <SiDocker /> },
