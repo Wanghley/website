@@ -271,6 +271,35 @@
   --ds-glass-bg-warm: rgba(20, 16, 12, 0.72);
   --ds-glass-border:  rgba(245, 240, 232, 0.08);
 
+  /* — Glassmorphism v2 — tint = brand #313131 over the void — */
+  --ds-glass-tint:          #313131;
+  --ds-glass-fill:          rgba(49, 49, 49, 0.55);
+  --ds-glass-fill-strong:   rgba(49, 49, 49, 0.74);
+  --ds-glass-fill-faint:    rgba(49, 49, 49, 0.30);
+  --ds-glass-blur:          blur(20px) saturate(150%);
+  --ds-glass-blur-heavy:    blur(36px) saturate(160%);
+  --ds-glass-rim:           rgba(255, 255, 255, 0.10);
+  --ds-glass-rim-lit:       rgba(58, 175, 241, 0.34);
+  --ds-glass-sheen:         linear-gradient(180deg, rgba(255, 255, 255, .08) 0%, transparent 42%);
+  --ds-glass-shadow:
+    0 28px 70px -24px rgba(0, 0, 0, .9),
+    inset 0 1px 0 rgba(255, 255, 255, .07);
+  --ds-glass-shadow-lit:
+    0 28px 70px -24px rgba(0, 0, 0, .9),
+    0 0 0 1px var(--ds-glass-rim-lit),
+    0 0 42px -10px var(--ds-gold-glow),
+    inset 0 1px 0 rgba(255, 255, 255, .09);
+
+  /* — Tenebrism — single-source spotlight falloff — */
+  --ds-chiaroscuro:
+    radial-gradient(120% 90% at 50% 0%,
+      rgba(58, 175, 241, .16) 0%,
+      rgba(49, 49, 49, .10) 34%,
+      transparent 68%);
+  --ds-vignette:
+    radial-gradient(120% 120% at 50% 45%,
+      transparent 42%, rgba(0, 0, 0, .72) 100%);
+
   /* — Gradients — */
   --ds-gradient-gold:
     linear-gradient(135deg, #3AAFF1 0%, #68C8F7 100%);

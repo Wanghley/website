@@ -410,11 +410,6 @@
   position: relative;
 }
 
-/* Hide the old auto-divider when we manage dividers ourselves */
-.home-page-instrumented .home-section::before {
-  display: none;
-}
-
 /* ============================================================
    SCROLL-REVEAL — Entrance animation system for section panels.
    Add .reveal-fade, .reveal-up, or .reveal-slide to any element.

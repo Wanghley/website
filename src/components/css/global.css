@@ -514,6 +514,160 @@ hr {
 }
 
 /* ============================================================
+   GLASSMORPHISM PANELS — tenebrist chamber v1
+   Tint = brand #313131 over the void. Rim ignites #3AAFF1 when
+   the panel is focal/active. Always paired with .glass-sheen for
+   the top highlight that reads as a real pane of glass.
+   ============================================================ */
+
+.glass-panel {
+  position:                relative;
+  background:               var(--ds-glass-fill);
+  backdrop-filter:          var(--ds-glass-blur);
+  -webkit-backdrop-filter:  var(--ds-glass-blur);
+  border:                   1px solid var(--ds-glass-rim);
+  border-radius:            var(--ds-radius-lg, 16px);
+  box-shadow:               var(--ds-glass-shadow);
+  isolation:                isolate;
+}
+
+.glass-panel--lit {
+  background:               var(--ds-glass-fill-strong);
+  backdrop-filter:          var(--ds-glass-blur-heavy);
+  -webkit-backdrop-filter:  var(--ds-glass-blur-heavy);
+  border-color:             var(--ds-glass-rim-lit);
+  box-shadow:               var(--ds-glass-shadow-lit);
+}
+
+.glass-panel--faint {
+  background:               var(--ds-glass-fill-faint);
+  border-color:             var(--ds-glass-rim);
+  box-shadow:               none;
+}
+
+/* Top highlight — the "pane of glass" cue. Applied as a pseudo-layer
+   so it never clips content or interferes with backdrop-filter. */
+.glass-sheen {
+  position: relative;
+}
+
+.glass-sheen::before {
+  content:        '';
+  position:       absolute;
+  inset:          0;
+  border-radius:  inherit;
+  background:     var(--ds-glass-sheen);
+  pointer-events: none;
+  z-index:        0;
+}
+
+/* .glass-panel sets isolation:isolate, so in-flow children default to
+   z-index:auto and paint UNDER a sibling pseudo-element with z-index:1 —
+   the sheen highlight was covering panel content (e.g. the hero headline)
+   until this rule lifted the content above it. */
+.glass-sheen > * {
+  position: relative;
+  z-index:  1;
+}
+
+/* Tenebrism spotlight — single warm/blue light source falling off
+   into the void. Layer behind content (z-index 0), above the page bg. */
+.chiaroscuro {
+  position: relative;
+}
+
+.chiaroscuro::before {
+  content:        '';
+  position:       absolute;
+  inset:          0;
+  background:     var(--ds-chiaroscuro);
+  pointer-events: none;
+  z-index:        0;
+}
+
+.vignette {
+  position: relative;
+}
+
+.vignette::after {
+  content:        '';
+  position:       absolute;
+  inset:          0;
+  background:     var(--ds-vignette);
+  pointer-events: none;
+  z-index:        1;
+}
+
+/* Firefox / older Safari without backdrop-filter support: fall back
+   to a solid elevated surface so panels stay legible. */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-panel,
+  .glass-panel--lit,
+  .glass-panel--faint {
+    background: var(--ds-surface-raised);
+  }
+}
+
+/* Pointer-tracked radial highlight — paired with components/bits/SpotlightCard.js,
+   which sets --spot-x/--spot-y/--spot-o imperatively on pointermove so a grid
+   of many tiles stays cheap (no per-frame React re-render). */
+.spotlight-card {
+  --spot-x: 50%;
+  --spot-y: 50%;
+  --spot-o: 0;
+  --spot-color: var(--ds-gold-glow, rgba(58, 175, 241, 0.25));
+  position: relative;
+  overflow: hidden;
+}
+
+.spotlight-card::before {
+  content:        '';
+  position:       absolute;
+  inset:          0;
+  background:     radial-gradient(280px circle at var(--spot-x) var(--spot-y),
+                    var(--spot-color) 0%, transparent 70%);
+  opacity:        var(--spot-o);
+  transition:     opacity 0.35s ease;
+  pointer-events: none;
+  z-index:        0;
+}
+
+.spotlight-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-card::before { transition: none; }
+}
+
+/* Pointer-tracked light leak — a full-bleed section wants a softer,
+   blend-mode glow rather than SpotlightCard's contained radial (which
+   also carries overflow:hidden + z-index semantics unwanted on a section
+   root). Same imperative --leak-x/--leak-y-on-pointermove technique;
+   consumers set them directly rather than through a shared hook, since
+   there's normally at most one light-leak layer active per section. */
+.light-leak {
+  --leak-x: 50%;
+  --leak-y: 50%;
+  --leak-o: 0;
+  --leak-color: var(--ds-gold-glow, rgba(58, 175, 241, 0.25));
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(480px circle at var(--leak-x) var(--leak-y),
+                var(--leak-color) 0%, transparent 70%);
+  opacity: var(--leak-o);
+  mix-blend-mode: screen;
+  transition: opacity 0.4s ease;
+  z-index: 2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .light-leak { transition: none; }
+}
+
+/* ============================================================
    DIVIDER
    ============================================================ */
 
