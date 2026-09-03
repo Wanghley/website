@@ -20,77 +20,51 @@ body {
 
 /* ============================================================
    SECTION WRAPPERS
+   The five-act homepage: HeroChamber(#home) / SignalChain(#identity) /
+   VentureShowcase(#ventures) / SkillField(#matrix) / ClosingTransmit(#transmit).
+
+   Pass 1 drew a uniform 1px hairline between every section — visually
+   restating "every section is a box." Removed. Transitions between
+   sections are now varied and section-specific, authored where the
+   section itself lives: Hero→Identity overlaps (SignalChain pulls up
+   with a negative margin-top against Hero's transparent-bottom scrim),
+   Identity→Ventures is a hard cut, Ventures→Matrix is a full-bleed clip
+   (Matrix has no top treatment of its own), Matrix→Closing is the tonal
+   inversion (Closing's light band is the transition).
    ============================================================ */
 
 .home-page {
   overflow-x: hidden;
 }
 
-.home-section {
-  position: relative;
+/* ScrollTrigger measures VentureShowcase's pinned track by its rendered
+   scrollWidth — content-visibility:auto (which skips layout until near
+   the viewport) would make that measurement wrong on first load. Kept as
+   a standing note even though no rule currently targets #ventures here —
+   the trap is easy to reintroduce by adding content-visibility back to
+   any pinned section's own CSS. */
+
+/* ============================================================
+   HOME GRID — shared 12-column composition system
+   Every redesigned section places content on this grid instead of a
+   centered `.container`, and deliberately never repeats the same
+   column span/bleed pattern as its neighbor (see the plan's composition
+   rules). `.bleed-l`/`.bleed-r` cancel the grid's inline padding on one
+   side so content can run to the true viewport edge.
+   ============================================================ */
+
+.home-grid {
+  --home-grid-pad: clamp(16px, 4vw, 72px);
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: clamp(12px, 1.6vw, 28px);
+  padding-inline: var(--home-grid-pad);
 }
 
-/* Section-specific backgrounds */
-.home-section--about {
-  background: var(--ds-abyss);
+.bleed-l {
+  margin-left: calc(-1 * var(--home-grid-pad));
 }
 
-.home-section--impact {
-  background: var(--ds-void);
-}
-
-.home-section--architecture {
-  background: var(--ds-surface-0);
-}
-
-.home-section--signature {
-  background: var(--ds-void);
-}
-
-.home-section--skills {
-  background: var(--ds-abyss);
-}
-
-.home-section--projects {
-  background: var(--ds-surface);
-  /* Skip rendering until near the viewport on mobile */
-  content-visibility: auto;
-  contain-intrinsic-size: 0 700px;
-}
-
-.home-section--blog {
-  background: linear-gradient(
-    180deg,
-    var(--ds-void)  0%,
-    var(--ds-abyss) 100%
-  );
-  content-visibility: auto;
-  contain-intrinsic-size: 0 600px;
-}
-
-.home-section--contact {
-  background: var(--ds-void);
-}
-
-/* Thin blue-tinted divider line between sections */
-.home-section::before {
-  content:    '';
-  position:   absolute;
-  inset:      0 0 auto 0;
-  height:     1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--hairline-blue, rgba(58, 175, 241, 0.12)) 20%,
-    rgba(58, 175, 241, 0.18) 50%,
-    var(--hairline-blue, rgba(58, 175, 241, 0.12)) 80%,
-    transparent 100%
-  );
-  pointer-events: none;
-  z-index:    var(--ds-z-raised);
-}
-
-/* First section (Hero) never shows a top divider */
-.home-section:first-of-type::before {
-  display: none;
+.bleed-r {
+  margin-right: calc(-1 * var(--home-grid-pad));
 }

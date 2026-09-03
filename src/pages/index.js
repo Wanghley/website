@@ -1,12 +1,10 @@
 import React from "react";
 import {
-  Hero,
-  About,
-  Contact,
-  Skills,
-  GridFeatured,
-  GridFeaturedBlog,
-  GambiarraImpact,
+  HeroChamber,
+  SignalChain,
+  VentureShowcase,
+  SkillField,
+  ClosingTransmit,
 } from '../components';
 import { Helmet } from "react-helmet-async";
 import './css/home.css';
@@ -56,21 +54,11 @@ const Home = () => {
                     }
                 `}</script>
             </Helmet>
-            <Hero />
-            <About />
-            <GambiarraImpact />
-            <Skills />
-            {/* <TechArchitecture /> */}
-
-            <section className="home-section home-section--projects">
-                <GridFeatured />
-            </section>
-
-            <section className="home-section home-section--blog">
-                <GridFeaturedBlog />
-            </section>
-
-            <Contact />
+            <HeroChamber />
+            <SignalChain />
+            <VentureShowcase />
+            <SkillField />
+            <ClosingTransmit />
         </div>
     );
 };
