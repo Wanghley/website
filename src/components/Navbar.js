@@ -5,6 +5,7 @@ import logoWhite from '../assets/logo-white.svg';
 import logoColor from '../assets/logo-colorful.png';
 import { FaLinkedinIn, FaInstagram, FaGithub, FaGraduationCap } from 'react-icons/fa6';
 import { SiGooglescholar } from 'react-icons/si';
+import { useLenis } from '../lib/LenisRoot';
 import './css/Navbar.css';
 
 // ─── Navbar theme per route ───────────────────────────────────────────────────
@@ -34,6 +35,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const navRef = useRef(null);
+  const lenis = useLenis();
 
   const navTheme = getNavbarTheme(location.pathname);
 
@@ -57,7 +59,7 @@ const Navbar = () => {
     { path: '/curriculum-vitae', label: 'CV', mobileLabel: 'Curriculum Vitae', number: '02' },
     { path: '/projects', label: 'Projects', number: '03' },
     { path: '/blog', label: 'Blog', number: '04' },
-    { path: '/', label: 'Contact', section: 'contact', number: '05' },
+    { path: '/contact', label: 'Contact', number: '05' },
   ];
 
   const socialLinks = [
@@ -83,7 +85,7 @@ const Navbar = () => {
     setIsScrolled(navTheme !== 'transparent' || scrollY > 50);
 
     if (location.pathname === '/') {
-      const sections = ['home', 'about', 'impact', 'skills', 'architectures', 'projects', 'blog', 'contact'];
+      const sections = ['home', 'identity', 'ventures', 'matrix', 'transmit'];
       const viewportHeight = window.innerHeight;
       let found = '';
 
@@ -167,8 +169,11 @@ const Navbar = () => {
 
     const scrollToSection = (sectionId) => {
       const element = document.getElementById(sectionId);
-      if (element) {
-        const navHeight = navRef.current?.offsetHeight || 80;
+      if (!element) return;
+      const navHeight = navRef.current?.offsetHeight || 80;
+      if (lenis) {
+        lenis.scrollTo(element, { offset: -(navHeight + 20), duration: 1.2 });
+      } else {
         const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
         const offsetPosition = elementPosition - navHeight - 20;
         window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
@@ -186,7 +191,7 @@ const Navbar = () => {
       navigate(item.path);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [location.pathname, navigate]);
+  }, [location.pathname, navigate, lenis]);
 
   const isActive = useCallback((item) => {
     if (item.section) {
@@ -199,7 +204,11 @@ const Navbar = () => {
     e.preventDefault();
     setIsMenuOpen(false);
     if (location.pathname === '/') {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (lenis) {
+        lenis.scrollTo(0, { duration: 1.2 });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } else {
       navigate('/');
     }

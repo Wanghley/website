@@ -8,6 +8,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import { usePostHog } from '@posthog/react';
+import LenisRoot, { useLenis } from './lib/LenisRoot';
 
 // Eagerly import the shell — Navbar/Footer/Home must be fast on first paint
 import Home from './pages/index';
@@ -37,9 +38,16 @@ const PageLoader = () => (
 
 function ScrollToTop() {
   const { pathname } = useLocation();
+  const lenis = useLenis();
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
+    if (lenis) {
+      // Lenis owns scroll position now — a bare window.scrollTo would fight
+      // its smoothing loop and the page would appear to snap back.
+      lenis.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, lenis]);
   return null;
 }
 
@@ -55,25 +63,27 @@ function PostHogPageView() {
 function App() {
   return (
     <Router>
-      <ScrollToTop />
-      <PostHogPageView />
-      <Navbar />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/blog" element={<Blogs />} />
-          <Route path="/projects/:slug" element={<ProjectPage />} />
-          <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/curriculum-vitae" element={<CVPage />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/data-policy" element={<DataPolicy />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
-      <Footer />
+      <LenisRoot>
+        <ScrollToTop />
+        <PostHogPageView />
+        <Navbar />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/blog" element={<Blogs />} />
+            <Route path="/projects/:slug" element={<ProjectPage />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
+            <Route path="/curriculum-vitae" element={<CVPage />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/data-policy" element={<DataPolicy />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+        <Footer />
+      </LenisRoot>
     </Router>
   );
 }
