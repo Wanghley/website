@@ -1,0 +1,20 @@
+/* ============================================================
+   AMBIENT BACKDROP — shader layer wrapper
+   ============================================================ */
+
+.ambient-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--ds-void, #06070e);
+}
+
+/* CSS gradient shown immediately on mount, and left in place as the
+   permanent final state whenever the WebGL canvas is gated off
+   (reduced motion, low-end device, or before it scrolls into view). */
+.ambient-backdrop__fallback {
+  position: absolute;
+  inset: 0;
+  background: var(--ds-chiaroscuro);
+}
