@@ -1,0 +1,113 @@
+/* ============================================================
+   CLOSING TRANSMIT — CH:04 · CHANNEL OPEN
+   The page's one tonal inversion — full-bleed light band after four dark
+   sections, the sharpest contrast beat available. No form (the form lives
+   on /contact); this is a slim, confident closing CTA.
+
+   Layout is a simple stack, not the shared 12-col grid: the headline is
+   allowed to run past the right edge (nowrap, nowrap text always overflows
+   toward the reading direction) exactly like the Hero's WANGHLEY, and the
+   CTAs sit in their own row *below* it — putting them side-by-side in the
+   same grid row is what caused them to visually overlap the bleeding text.
+   ============================================================ */
+
+.closing-transmit {
+  position: relative;
+  background: var(--ds-text-primary); /* #f5f0e8 — the warm parchment token, used here as a background */
+  color: var(--ds-text-inverse); /* #06070e */
+  padding: clamp(4rem, 12vh, 8rem) 0;
+  overflow: hidden;
+}
+
+.closing-transmit__grid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding-inline: var(--home-grid-pad, clamp(16px, 4vw, 72px));
+}
+
+.closing-transmit__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0; /* let the nowrap heading overflow the flex item instead of stretching it */
+}
+
+.closing-transmit__heading {
+  margin: 0;
+  font-family: var(--ds-font-display);
+  font-weight: 800;
+  font-size: clamp(3rem, 13vw, 11rem);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+}
+
+.closing-transmit__heading-part {
+  display: inline-block;
+  color: var(--ds-text-inverse);
+}
+
+.closing-transmit__heading-part--accent {
+  color: var(--ds-gold-dim);
+}
+
+.closing-transmit__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.closing-transmit__meta .telemetry--dark {
+  color: rgba(6, 7, 14, 0.6);
+}
+
+.closing-transmit__meta .telemetry__dot {
+  background: var(--ds-success);
+}
+
+.closing-transmit__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.closing-transmit__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.closing-transmit__cta--ghost {
+  border-color: rgba(6, 7, 14, 0.25);
+  color: var(--ds-text-inverse);
+}
+
+.closing-transmit__cta--ghost:hover {
+  border-color: rgba(6, 7, 14, 0.5);
+  background: rgba(6, 7, 14, 0.05);
+}
+
+.closing-transmit__cta-icon {
+  margin-left: 0.5em;
+}
+
+.closing-transmit__cta--ghost .closing-transmit__cta-icon {
+  margin-left: 0;
+  margin-right: 0.5em;
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 640px) {
+  .closing-transmit__heading {
+    font-size: clamp(2.5rem, 15vw, 4rem);
+    white-space: normal;
+  }
+
+  .closing-transmit__ctas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

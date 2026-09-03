@@ -1,0 +1,208 @@
+/* ============================================================
+   SKILL FIELD — CH:03 · CAPABILITY MATRIX
+   Full-bleed, unpinned. Sticky mono index (col 1/5, the a11y source of
+   truth — never display:none) + a force-directed canvas field bleeding
+   past the right edge (col 5/13). The section title runs vertical and
+   near-invisible as background texture instead of a centered header —
+   the third distinct column arrangement across the redesigned sections.
+   ============================================================ */
+
+.skill-field {
+  position: relative;
+  background: var(--ds-abyss);
+  min-height: 100svh;
+  padding: clamp(4rem, 10vh, 8rem) 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.skill-field__title {
+  position: absolute;
+  inset-block: 0;
+  right: clamp(4px, 1.5vw, 24px);
+  writing-mode: vertical-rl;
+  display: flex;
+  align-items: center;
+  font-family: var(--ds-font-display);
+  font-size: clamp(4rem, 9vw, 11rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.035);
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.skill-field__grid {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  align-items: start;
+}
+
+/* ─── Index (a11y source of truth) ─── */
+
+.skill-field__index {
+  grid-column: 1 / 5;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4, 16px);
+}
+
+.skill-field__heading {
+  margin: 0;
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-4xl);
+  font-weight: 800;
+  line-height: var(--ds-leading-tight);
+  color: var(--ds-text-primary);
+}
+
+.skill-field__subtitle {
+  margin: 0;
+  color: var(--ds-text-secondary);
+  line-height: var(--ds-leading-relaxed);
+  max-width: 34ch;
+}
+
+.skill-field__filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.skill-field__loading {
+  color: var(--ds-text-muted);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-wide);
+  text-transform: uppercase;
+}
+
+.skill-field__index-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-4, 16px);
+  max-height: 44vh;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.skill-field__index-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.skill-field__index-group-label {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ds-gold);
+}
+
+.skill-field__index-group-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skill-field__index-btn {
+  background: none;
+  border: 1px solid var(--ds-border-subtle);
+  border-radius: var(--ds-radius-full);
+  padding: 0.35rem 0.85rem;
+  font-family: var(--ds-font-ui);
+  font-size: var(--ds-text-sm);
+  color: var(--ds-text-secondary);
+  cursor: pointer;
+  transition:
+    border-color var(--ds-duration-fast) ease,
+    color var(--ds-duration-fast) ease,
+    background var(--ds-duration-fast) ease;
+}
+
+.skill-field__index-btn:hover,
+.skill-field__index-btn:focus-visible,
+.skill-field__index-btn.is-active {
+  border-color: var(--ds-glass-rim-lit);
+  color: var(--ds-gold-bright);
+  background: var(--ds-glass-fill-faint);
+}
+
+.skill-field__readout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding-top: var(--ds-space-4, 16px);
+  border-top: 1px solid var(--ds-border-subtle);
+  min-height: 4.5rem;
+}
+
+.skill-field__readout-line {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-wide);
+  color: var(--ds-text-secondary);
+}
+
+.skill-field__readout-line a {
+  color: var(--ds-gold);
+}
+
+/* ─── Canvas field ─── */
+
+.skill-field__canvas {
+  grid-column: 5 / 13;
+  position: relative;
+  min-height: 460px;
+  height: 60vh;
+  max-height: 640px;
+}
+
+.skill-field__canvas-el {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── Responsive: canvas area collapses, index list becomes the whole UI —
+   this is also literally the fallback state when the canvas is device-
+   gated off, so it must look intentional, not broken. ─── */
+
+@media (max-width: 1023px) {
+  .skill-field__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skill-field__index {
+    grid-column: 1 / -1;
+  }
+
+  .skill-field__index-list {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .skill-field__canvas {
+    display: none;
+  }
+
+  .skill-field__title {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .skill-field__heading {
+    font-size: var(--ds-text-3xl);
+  }
+}

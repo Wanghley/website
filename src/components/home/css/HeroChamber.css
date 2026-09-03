@@ -1,0 +1,345 @@
+/* ============================================================
+   HERO CHAMBER — CH:00 · ORIGIN
+   Pass 2: the shader is the background, not hidden behind a glass card.
+   Oversized bleeding type drives the layout; the portrait dissolves into
+   the void rather than sitting in a rounded rectangle.
+   ============================================================ */
+
+.hero-chamber {
+  --navbar-height: var(--nav-height, 100px);
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--ds-void);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero-chamber__backdrop {
+  z-index: 0;
+}
+
+/* Gradient scrim only — no fill, no backdrop-filter, no border, no radius.
+   Legibility for the text stage without hiding the shader everywhere else. */
+.hero-chamber__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 22% 62%,
+      rgba(6, 7, 14, .86) 0%, rgba(6, 7, 14, .45) 45%, transparent 72%),
+    linear-gradient(180deg,
+      rgba(6, 7, 14, .7) 0%, transparent 28%, transparent 62%, rgba(6, 7, 14, .9) 100%);
+}
+
+.hero-chamber .light-leak {
+  z-index: 2;
+}
+
+/* ─── Portrait — an element, not a card ─── */
+
+.hero-chamber__portrait {
+  position: absolute;
+  z-index: 2;
+  inset-block: -8vh -6vh;
+  right: 6vw;
+  width: clamp(260px, 34vw, 560px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+.hero-chamber__portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  -webkit-mask-image: linear-gradient(180deg,
+    transparent 0%, #000 16%, #000 74%, transparent 100%);
+          mask-image: linear-gradient(180deg,
+    transparent 0%, #000 16%, #000 74%, transparent 100%);
+  filter: grayscale(.42) contrast(1.12) saturate(.9);
+  transition: filter .6s var(--ds-ease-out);
+}
+
+.hero-chamber:hover .hero-chamber__portrait-img {
+  filter: grayscale(0) contrast(1.05);
+}
+
+.hero-chamber__portrait-annot {
+  position: absolute;
+  left: 1rem;
+  bottom: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ds-text-on-surface);
+}
+
+.hero-chamber__portrait-annot-dash {
+  width: 14px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+/* ─── HUD — visible at all widths, not just desktop ─── */
+
+.hero-chamber__hud {
+  position: absolute;
+  top: calc(var(--navbar-height) + 24px);
+  left: 0;
+  right: 0;
+  z-index: 4;
+}
+
+.hero-chamber__hud-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem 2.5rem;
+  align-items: center;
+  padding-inline: clamp(16px, 4vw, 72px);
+}
+
+.hero-chamber__hud-seg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ds-text-secondary);
+}
+
+.hero-chamber__hud-id {
+  color: var(--ds-gold);
+  font-weight: 700;
+}
+
+.hero-chamber__hud-dash {
+  width: 14px;
+  height: 1px;
+  background: var(--ds-gold);
+  opacity: 0.7;
+}
+
+.hero-chamber__hud-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ds-success);
+}
+
+/* The lat/long readout — the one HUD element that drops on small screens,
+   everything else in the top rail stays visible (see bug fix #4 in the plan). */
+.hero-chamber__meta {
+  position: absolute;
+  right: clamp(16px, 4vw, 72px);
+  bottom: 2rem;
+  z-index: 4;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-widest);
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+}
+
+/* ─── Stage — type drives layout, not a card ─── */
+
+.hero-chamber__stage {
+  position: relative;
+  z-index: 3;
+  min-width: 0;
+  padding-top: calc(var(--navbar-height) + 5rem);
+}
+
+.hero-chamber__content {
+  padding-inline: clamp(16px, 4vw, 72px);
+  max-width: min(64vw, 900px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-chamber__eyebrow {
+  margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
+}
+
+.hero-chamber__name-text {
+  display: block;
+  margin: 0 0 clamp(0.75rem, 2vw, 1.5rem) calc(-0.055em);
+  font-family: var(--ds-font-display);
+  font-weight: 900;
+  font-size: clamp(3.2rem, 19vw, 17rem);
+  line-height: 0.80;
+  letter-spacing: -0.055em;
+  color: var(--ds-text-primary);
+  white-space: nowrap;
+  /* As a flex item of .hero-chamber__content, this nowrap headline's
+     automatic min-width otherwise equals its own (very wide) min-content
+     size — forcing .hero-chamber__content and .hero-chamber__stage wider
+     than the viewport up the whole chain, the same flexbox-track bug
+     class as pass 1's grid-track overflow. min-width:0 lets the container
+     respect max-width:100% properly; the headline still visually bleeds
+     past it via normal overflow, which is the intended effect — it's just
+     no longer dragging its siblings (eyebrow/CTAs/social) off-screen too. */
+  min-width: 0;
+  will-change: transform, opacity, letter-spacing;
+}
+
+.hero-chamber__cycler {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-family: var(--ds-font-ui);
+  font-size: clamp(var(--ds-text-xl), 3vw, var(--ds-text-3xl));
+  color: var(--ds-text-secondary);
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  min-height: 1.6em;
+}
+
+.hero-chamber__cycler-lead {
+  flex-shrink: 0;
+}
+
+.hero-chamber__cycler-box {
+  position: relative;
+  display: inline-block;
+}
+
+.hero-chamber__cycler-word {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--ds-gold-bright);
+  text-shadow: 0 0 28px var(--ds-gold-glow);
+}
+
+.hero-chamber__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: clamp(1.75rem, 4vw, 3rem);
+}
+
+.hero-chamber__cta-arrow {
+  display: inline-block;
+  margin-left: 0.5em;
+  transition: transform var(--ds-duration-fast) ease;
+}
+
+.hero-chamber__cta:hover .hero-chamber__cta-arrow {
+  transform: translateX(4px);
+}
+
+.hero-chamber__social {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.hero-chamber__social-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--ds-radius-full);
+  border: 1px solid var(--ds-glass-rim);
+  color: var(--ds-text-secondary);
+  font-size: 1rem;
+  transition:
+    border-color var(--ds-duration-fast) ease,
+    color var(--ds-duration-fast) ease,
+    transform var(--ds-duration-fast) ease;
+}
+
+.hero-chamber__social-icon:hover {
+  border-color: var(--ds-glass-rim-lit);
+  color: var(--ds-gold-bright);
+  transform: translateY(-2px);
+}
+
+/* ─── Scroll hint ─── */
+
+.hero-chamber__hint {
+  position: absolute;
+  left: clamp(16px, 4vw, 72px);
+  bottom: 2rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+  transition: color var(--ds-duration-fast) ease;
+}
+
+.hero-chamber__hint:hover {
+  color: var(--ds-gold-bright);
+}
+
+.hero-chamber__hint-arrow {
+  animation: heroChamberHintBounce 1.8s ease-in-out infinite;
+}
+
+@keyframes heroChamberHintBounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(4px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-chamber__hint-arrow { animation: none; }
+  .hero-chamber__name-text { will-change: auto; }
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 1200px) {
+  .hero-chamber__content {
+    max-width: min(78vw, 700px);
+  }
+
+  .hero-chamber__portrait {
+    width: clamp(200px, 30vw, 380px);
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-chamber__meta {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-chamber__portrait {
+    inset-block: 0 -4vh;
+    right: -4vw;
+    width: 60vw;
+    opacity: 0.4;
+  }
+
+  .hero-chamber__content {
+    max-width: 100%;
+  }
+
+  .hero-chamber__name-text {
+    font-size: clamp(3rem, 21vw, 6.5rem);
+  }
+
+  .hero-chamber__hint {
+    left: clamp(16px, 4vw, 40px);
+  }
+}

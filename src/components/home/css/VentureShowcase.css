@@ -1,0 +1,414 @@
+/* ============================================================
+   VENTURE SHOWCASE — CH:02 · FIELD DEPLOYMENTS
+   Desktop: GSAP-pinned horizontal scroll (JS sets the pin + scrub
+   on .venture-showcase, translating .venture-showcase__track).
+   Mobile (<1024px): native scroll-snap rail — no pin, no GSAP.
+   ============================================================ */
+
+.venture-showcase {
+  position: relative;
+  overflow: hidden;
+  background: var(--ds-void);
+  height: 100svh; /* was 100vh — iOS URL-bar resize overflow, worse on a pinned section */
+  display: flex;
+  align-items: center;
+}
+
+.venture-showcase__track {
+  display: flex;
+  align-items: stretch;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding: 0 clamp(1.5rem, 5vw, 6rem);
+  width: max-content;
+  will-change: transform;
+}
+
+/* ─── Panels ─── */
+
+.venture-showcase__panel {
+  flex-shrink: 0;
+  /* --rhythm/--shift set inline per index (VentureShowcase.js) — the track
+     stops being five identical-width clones in a row. */
+  width: calc(min(62vw, 480px) * var(--rhythm, 1));
+  transform: translateY(var(--shift, 0));
+  display: flex;
+  transition: width 0.4s ease;
+}
+
+.venture-showcase__panel--intro {
+  width: min(60vw, 460px);
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--ds-space-4, 16px);
+}
+
+.venture-showcase__title {
+  margin: 0;
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-4xl);
+  font-weight: 800;
+  line-height: var(--ds-leading-tight);
+  color: var(--ds-text-primary);
+}
+
+.venture-showcase__subtitle {
+  margin: 0;
+  color: var(--ds-text-secondary);
+  line-height: var(--ds-leading-relaxed);
+  max-width: 40ch;
+}
+
+.venture-showcase__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.venture-showcase__meta-row {
+  display: flex;
+  gap: 0.75rem;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-wide);
+}
+
+.venture-showcase__meta-key {
+  color: var(--ds-text-muted);
+  text-transform: uppercase;
+  width: 5rem;
+}
+
+.venture-showcase__meta-val {
+  color: var(--ds-gold);
+}
+
+.venture-showcase__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-sm);
+  font-weight: 600;
+  letter-spacing: var(--ds-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ds-gold);
+  transition: gap var(--ds-duration-fast, 0.2s) ease;
+}
+
+.venture-showcase__cta:hover { gap: 0.85rem; }
+
+.venture-showcase__swipe-hint {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  color: var(--ds-text-muted);
+}
+
+/* ─── Project card ─── */
+
+/* --card-light (0..1) is written every frame by VentureShowcase.js's
+   chiaroscuro effect — cards physically brighten crossing screen-center
+   and fall toward void at the edges, executing the .chiaroscuro concept
+   the design system names but (until now) never implemented anywhere. */
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.venture-card {
+  --card-light: 0.3;
+  --angle: 0deg;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: var(--ds-radius-xl, 24px);
+  padding: 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  filter: brightness(calc(0.82 + var(--card-light) * 0.3));
+  box-shadow:
+    0 0 calc(var(--card-light) * 46px) rgba(58, 175, 241, calc(var(--card-light) * 0.28));
+  transition:
+    border-color var(--ds-duration-base, 0.28s) ease,
+    box-shadow var(--ds-duration-base, 0.28s) ease,
+    transform var(--ds-duration-base, 0.28s) ease;
+}
+
+/* Rotating conic-gradient rim — replaces the page-wide translateY(-4px)
+   hover every other card on the page uses. ::after (not ::before) because
+   SpotlightCard already owns ::before for its pointer-tracked highlight. */
+.venture-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from var(--angle),
+    transparent 0%, var(--ds-gold-bright) 12%, transparent 26%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.venture-card:hover,
+.venture-card:focus-visible,
+.venture-card.is-expanded {
+  border-color: var(--ds-glass-rim-lit);
+}
+
+.venture-card:hover::after,
+.venture-card:focus-visible::after,
+.venture-card.is-expanded::after {
+  opacity: 1;
+  animation: ventureCardSpin 3s linear infinite;
+}
+
+@keyframes ventureCardSpin {
+  to { --angle: 360deg; }
+}
+
+/* @property isn't universally supported (older Firefox) — without it the
+   conic-gradient still renders, it just won't animate smoothly. Give
+   those browsers a static lit rim instead of a half-broken spin. */
+@supports not (background: paint(x)) {
+  .venture-card::after { animation: none; }
+  .venture-card:hover,
+  .venture-card:focus-visible,
+  .venture-card.is-expanded {
+    box-shadow: var(--ds-glass-shadow-lit);
+  }
+}
+
+.venture-card.is-expanded {
+  transform: scale(1.04);
+  z-index: 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .venture-card::after { animation: none; }
+}
+
+.venture-card__telemetry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-wide);
+  text-transform: uppercase;
+}
+
+.venture-card__build { color: var(--ds-text-muted); }
+
+.venture-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.venture-card__status--live { color: var(--ds-error); }
+.venture-card__status--deployed { color: var(--ds-success); }
+.venture-card__status--research { color: var(--ds-gold); }
+.venture-card__status--archived { color: var(--ds-text-muted); }
+
+.venture-card__image {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--ds-radius-md);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.venture-card__image-el {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.venture-card:hover .venture-card__image-el {
+  transform: scale(1.05);
+}
+
+.venture-card__image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.venture-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.venture-card__tag {
+  align-self: flex-start;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-wide);
+  text-transform: uppercase;
+  color: var(--ds-gold);
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--ds-glass-rim);
+  border-radius: var(--ds-radius-full);
+}
+
+.venture-card__title {
+  margin: 0;
+  font-size: var(--ds-text-xl);
+  font-weight: 700;
+  color: var(--ds-text-primary);
+}
+
+.venture-card__teaser {
+  margin: 0;
+  color: var(--ds-text-secondary);
+  font-size: var(--ds-text-sm);
+  line-height: var(--ds-leading-normal);
+}
+
+.venture-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  font-weight: 700;
+  letter-spacing: var(--ds-tracking-wide);
+  color: var(--ds-text-secondary);
+}
+
+.venture-card__link-arrow {
+  transition: transform var(--ds-duration-fast, 0.2s) ease;
+}
+
+.venture-card:hover .venture-card__link-arrow {
+  transform: translateX(4px);
+}
+
+/* ─── Expanded state — in-place, no modal/portal/FLIP ─── */
+
+.venture-card__brief {
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+.venture-card__case-study {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-gold);
+  color: var(--ds-text-inverse, #06070e);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  font-weight: 700;
+  letter-spacing: var(--ds-tracking-wide);
+  text-transform: uppercase;
+  transition: background var(--ds-duration-fast, 0.2s) ease, gap var(--ds-duration-fast, 0.2s) ease;
+}
+
+.venture-card__case-study:hover {
+  background: var(--ds-gold-bright);
+  gap: 0.75rem;
+}
+
+/* ─── Progress rail ─── */
+
+.venture-showcase__progress {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.25rem, 3vh, 2rem);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-wide);
+  color: var(--ds-text-muted);
+  z-index: 4;
+}
+
+.venture-showcase__progress-track {
+  position: relative;
+  width: 160px;
+  height: 2px;
+  background: var(--ds-border-subtle);
+  border-radius: var(--ds-radius-full);
+  overflow: hidden;
+}
+
+.venture-showcase__progress-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ds-gold);
+  border-radius: inherit;
+}
+
+.venture-card--skeleton {
+  background: var(--ds-glass-fill-faint);
+  border-radius: var(--ds-radius-xl, 24px);
+  animation: ventureSkeletonPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes ventureSkeletonPulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.9; }
+}
+
+.venture-showcase__empty {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--ds-text-muted);
+}
+
+/* ─── Mobile: scroll-snap rail, no pin ─── */
+
+@media (max-width: 1023px) {
+  .venture-showcase {
+    height: auto;
+    padding: clamp(4rem, 10vh, 6rem) 0;
+  }
+
+  .venture-showcase__track {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .venture-showcase__track::-webkit-scrollbar { display: none; }
+
+  .venture-showcase__panel {
+    scroll-snap-align: start;
+    /* Reset the desktop rhythm/shift — a scroll-snap rail wants uniform
+       card widths and no vertical offset, unlike the pinned desktop track. */
+    width: min(85vw, 420px) !important;
+    transform: none !important;
+  }
+
+  .venture-showcase__panel--intro {
+    width: min(85vw, 420px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .venture-card--skeleton { animation: none; }
+}

@@ -1,0 +1,277 @@
+/* ============================================================
+   SIGNAL CHAIN — CH:01 · SYSTEM PROFILE
+   A pinned/scrubbed schematic: SENSE → CONDITION → INFER → DEPLOY →
+   IMPACT. Narrative cross-fades in a constrained column (col 2/6) while
+   an SVG diagram bleeds off the right edge (col 6/13) and line-draws in
+   sync. Below 1024px / reduced-motion: no pin, a static stacked list with
+   one fully-drawn diagram — same content, zero motion JS.
+   ============================================================ */
+
+.signal-chain {
+  position: relative;
+  background: var(--ds-abyss);
+  min-height: 100svh;
+  padding: clamp(3rem, 8vh, 5rem) 0 clamp(4rem, 10vh, 7rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.signal-chain__grid {
+  width: 100%;
+  align-items: center;
+}
+
+/* ─── Stage index rail ─── */
+
+.signal-chain__index {
+  grid-column: 1 / 2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.signal-chain__index-tick {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  color: var(--ds-text-muted);
+  letter-spacing: var(--ds-tracking-wide);
+  transition: color var(--ds-duration-base) ease;
+}
+
+.signal-chain__index-tick.is-passed {
+  color: var(--ds-text-secondary);
+}
+
+.signal-chain__index-tick.is-active {
+  color: var(--ds-gold-bright);
+  text-shadow: 0 0 12px var(--ds-gold-glow);
+}
+
+/* ─── Narrative ─── */
+
+.signal-chain__narrative {
+  grid-column: 2 / 6;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-5, 24px);
+}
+
+.signal-chain__intro-heading {
+  margin: 0;
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-3xl);
+  font-weight: 700;
+  line-height: var(--ds-leading-tight);
+  color: var(--ds-text-primary);
+}
+
+.signal-chain__intro-heading em {
+  font-style: normal;
+  color: var(--ds-gold-bright);
+}
+
+.signal-chain__stage-viewport {
+  position: relative;
+  min-height: 220px;
+}
+
+.signal-chain__stage-viewport .signal-chain__stage-block {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.signal-chain__stage-viewport .signal-chain__stage-block.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.signal-chain__stack {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 6vh, 4rem);
+}
+
+.signal-chain__stage-block h3 {
+  margin: 0.5rem 0;
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-2xl);
+  font-weight: 700;
+  color: var(--ds-text-primary);
+}
+
+.signal-chain__stage-block p {
+  margin: 0;
+  color: var(--ds-text-secondary);
+  line-height: var(--ds-leading-relaxed);
+  max-width: 42ch;
+}
+
+/* ─── Impact stage payload — numbers, no cards ─── */
+
+.signal-chain__impact {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 2rem;
+  margin-top: 1.5rem;
+}
+
+.signal-chain__impact-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--ds-border-subtle);
+}
+
+.signal-chain__impact-value {
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-4xl);
+  font-weight: 800;
+  color: var(--ds-gold-bright);
+  line-height: 1;
+}
+
+.signal-chain__impact-label {
+  font-size: var(--ds-text-sm);
+  font-weight: 600;
+  color: var(--ds-text-primary);
+}
+
+.signal-chain__impact-source {
+  font-family: var(--ds-font-mono);
+  font-size: 0.65rem;
+  letter-spacing: var(--ds-tracking-wide);
+  color: var(--ds-text-muted);
+}
+
+/* ─── Diagram ─── */
+
+.signal-chain__diagram-wrap {
+  grid-column: 6 / 13;
+  position: relative;
+}
+
+.signal-chain-diagram {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.signal-chain-diagram__edge {
+  fill: none;
+  stroke: var(--ds-gold);
+  stroke-width: 1.5;
+  opacity: 0.75;
+}
+
+.signal-chain-diagram__node circle:first-of-type {
+  fill: var(--ds-surface-raised);
+  stroke: var(--ds-border);
+  stroke-width: 1.5;
+  transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+.signal-chain-diagram__node-glow {
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.signal-chain-diagram__node text {
+  font-family: var(--ds-font-mono);
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  fill: var(--ds-text-muted);
+  transition: fill 0.3s ease;
+}
+
+.signal-chain-diagram__node.is-passed circle:first-of-type {
+  fill: var(--ds-surface-active);
+  stroke: var(--ds-border-hover);
+}
+
+.signal-chain-diagram__node.is-passed text {
+  fill: var(--ds-text-secondary);
+}
+
+.signal-chain-diagram__node.is-active circle:first-of-type {
+  fill: var(--ds-gold);
+  stroke: var(--ds-gold-bright);
+}
+
+.signal-chain-diagram__node.is-active .signal-chain-diagram__node-glow {
+  opacity: 0.55;
+  fill: var(--ds-gold-glow);
+  filter: url(#signal-chain-node-glow);
+}
+
+.signal-chain-diagram__node.is-active text {
+  fill: var(--ds-gold-bright);
+}
+
+/* ─── Credentials ticker ─── */
+
+.signal-chain__creds {
+  margin-top: clamp(3rem, 8vh, 5rem);
+  padding: 0 var(--home-grid-pad, clamp(16px, 4vw, 72px));
+}
+
+.signal-chain__creds-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ds-space-3, 12px);
+}
+
+.signal-chain__creds-meta {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  color: var(--ds-text-muted);
+}
+
+.ticker__item strong {
+  color: var(--ds-text-primary);
+  font-weight: 600;
+}
+
+/* ─── Responsive ─── */
+
+@media (max-width: 1023px) {
+  .signal-chain {
+    min-height: auto;
+  }
+
+  .signal-chain__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .signal-chain__index {
+    display: none;
+  }
+
+  .signal-chain__narrative,
+  .signal-chain__diagram-wrap {
+    grid-column: 1 / -1;
+  }
+
+  .signal-chain__diagram-wrap {
+    order: -1;
+    margin-bottom: 2rem;
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 640px) {
+  .signal-chain__intro-heading {
+    font-size: var(--ds-text-2xl);
+  }
+
+  .signal-chain__impact {
+    grid-template-columns: 1fr;
+  }
+}
