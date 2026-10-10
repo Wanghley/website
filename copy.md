@@ -44,18 +44,20 @@ innovative, "where X meets Y", synergy.
 
 ## About story + signal chain (`src/data/signalChain.js`, `STORY` and `STAGES`)
 
-Kicker: About me · Heading: **Why I put the computing inside the sensor.**
+Kicker: About me · Heading: **What I care about, and how I work.**
 
-> I'm Wanghley, a Brazilian engineer from Brasília. I'm a PhD student at Rice, in Dr. Juliane Sempionatto's lab, building wearable and point-of-care biosensors. Before that I studied ECE and CS at Duke as a Karsh International Scholar.
+> I'm Wanghley, from Brasília. I'm an engineer, a builder and an organizer, and I like being all three at once.
 >
-> Most wearables send raw data to the cloud and wait for an answer. That spends battery and adds delay. I do the opposite: I classify the signal right at the sensor, in microwatts, before anything crosses the bus.
->
-> My method is gambiarra, the Brazilian art of solving it with what you have on the bench. It was the subject of my TEDxDuke talk.
+> **Resourcefulness.** Gambiarra: solve it with what is on the bench. Constraints make the work better, and I gave a TEDxDuke talk on it.
+> **Community.** Mentoring, judging and organizing, across Brazil and the US, is part of the work, not a side project.
+> **Honesty.** I would rather show the number than the adjective, and say plainly when something is still a sketch.
 
 Links: **More about me →** (/about) · Watch the TEDxDuke talk ↗ (youtube.com/watch?v=tceoUHQ9rPQ)
-Figure kicker: The idea, in one signal · Closing: That is the whole idea. The projects below are the same chain, built.
+Figure kicker: One example of how I work · Closing: That is one example. The projects below show the rest.
 
-`[[PLACEHOLDER: confirm the "spends battery and adds delay" line; swap in a number if you have one]]`
+By request this block does not state the research focus or name collaborators. (The figure below it still demonstrates one project; say if you want it cut or moved.)
+
+`[[PLACEHOLDER: the three values are my draft from your brief (gambiarra, mentoring/judging/organizing, numbers over adjectives). Rewrite them in your own words.]]`
 
 Interaction: no pinning or scroll-scrubbing. The figure is sticky; the step in the middle of the screen takes focus and the waveform morphs once over 900ms.
 One numbering system only: 01-05. Tag on the figure: ILLUSTRATIVE · SIMULATED TRACE.

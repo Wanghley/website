@@ -4,7 +4,7 @@ import ChainFigure from './chain/ChainFigure';
 import { useScrollToSection } from '../../lib/LenisRoot';
 import './css/SignalChain.css';
 
-// Who I am, why it matters, and the idea in one signal.
+// Who I am (values, not résumé), then one example of how I work.
 //
 // No pinning and no scroll-scrubbing: the page scrolls at its normal pace.
 // On desktop the figure stays in view (position: sticky) while the steps
@@ -75,8 +75,15 @@ export default function SignalChain() {
             <h2 id="chain-heading" className="chain__title">{STORY.heading}</h2>
           </div>
           <div className="chain__story">
-            {STORY.who.map((t) => <p key={t} className="chain__lede">{t}</p>)}
-            {STORY.why.map((t) => <p key={t}>{t}</p>)}
+            <p className="chain__lede">{STORY.lede}</p>
+            <ul className="chain__values">
+              {STORY.values.map((v) => (
+                <li key={v.name}>
+                  <strong>{v.name}</strong>
+                  <span>{v.text}</span>
+                </li>
+              ))}
+            </ul>
             <p className="chain__links">
               {STORY.links.map((l) => (
                 <a
