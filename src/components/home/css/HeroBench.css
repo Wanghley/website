@@ -1,0 +1,77 @@
+/* The bench box. Live: fills its slot, canvas inside. Still / video:
+   sized by the pre-rendered asset's aspect ratio so the label's
+   fractional position matches the picture. Edges are feathered so
+   there is never a visible box. */
+
+.hero-bench {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--nav-height, 100px) + 8px);
+  bottom: -4vh;
+  right: -9vw;
+  width: clamp(520px, 64vw, 1040px);
+  opacity: 0;
+  transition: opacity var(--dur-reveal) var(--ease-out);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 12%);
+  mask-image: linear-gradient(to right, transparent 0, #000 12%);
+}
+
+.hero-bench.is-ready { opacity: 1; }
+
+.hero-bench--still,
+.hero-bench--video {
+  top: auto;
+  bottom: 0;
+  right: -10vw;
+  width: clamp(620px, 76vw, 1180px);
+  height: auto;
+  aspect-ratio: var(--bench-aspect, 1.444);
+}
+
+.hero-bench__canvas,
+.hero-bench__still {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hero-bench__label {
+  position: absolute;
+  z-index: 4;
+  margin: 0;
+  padding: 3px 8px;
+  transform: translate(-42%, 150%);
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: var(--font-mono-bench);
+  font-size: var(--step--2);
+  letter-spacing: 0.03em;
+  color: var(--copper-lit);
+  background: rgba(18, 19, 20, 0.82);
+  border: 1px solid var(--copper-dim);
+  border-radius: 2px;
+  opacity: 0;
+}
+
+@media (max-width: 1023px) {
+  .hero-bench,
+  .hero-bench--still,
+  .hero-bench--video {
+    position: relative;
+    aspect-ratio: var(--bench-aspect, 1.444);
+    height: auto;
+    top: auto;
+    bottom: auto;
+    right: auto;
+    width: 100%;
+    margin: 0 0 8px;
+    -webkit-mask-image: radial-gradient(ellipse 85% 82% at 50% 50%, #000 58%, transparent 100%);
+    mask-image: radial-gradient(ellipse 85% 82% at 50% 50%, #000 58%, transparent 100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bench { transition: none; }
+}

@@ -27,6 +27,7 @@ const ContactPage  = lazy(() => import('./pages/contact'));
 const Privacy      = lazy(() => import('./pages/privacy'));
 const DataPolicy   = lazy(() => import('./pages/data-policy'));
 const Styleguide   = lazy(() => import('./pages/styleguide'));
+const BenchCapture = lazy(() => import('./pages/benchcapture'));
 
 // Minimal full-screen fallback while a lazy chunk loads
 const PageLoader = () => (
@@ -81,6 +82,7 @@ function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/data-policy" element={<DataPolicy />} />
             <Route path="/styleguide" element={<Styleguide />} />
+            <Route path="/__capture" element={<BenchCapture />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

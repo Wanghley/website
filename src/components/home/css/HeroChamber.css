@@ -1,712 +1,149 @@
 /* ============================================================
-   HERO CHAMBER — CH:00 · ORIGIN
-   Terminal/HUD identity: oversized display type, a status rail, and a
-   circuit board (see HeroCircuitBoard.js) with a hologram head projected
-   above its sensor pad, standing in for a single portrait. The photo
-   archive (HeroPhotoArchive.js) that used to sit in a bottom filmstrip
-   here has been removed — its future home is a dedicated archive/collage
-   section below the hero, not this file.
+   HERO: "This board is sensing you."
+   Text column on the left (shares the nav's --edge), bench scene
+   bleeding off the right. No section background of its own: the
+   page's graphite + grain carries through, so there is no band.
    ============================================================ */
 
-.hero-chamber {
-  --navbar-height: var(--nav-height, 100px);
-  --proximity: 0; /* written by HeroChamber.js's pointermove handler; inherits
-                      down to CircuitBoardScene and .hero-chamber__cta--sensor */
+.hero {
   position: relative;
   min-height: 100svh;
-  overflow: hidden;
-  background: transparent;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* Static CSS gradient — replaces a previous always-on WebGL/three.js
-   shader here. That canvas cost a persistent GPU context + ~600KB of JS
-   for an effect most visitors caught only peripherally; a couple of soft
-   radial glows read almost identically and cost nothing at runtime. */
-.hero-chamber__backdrop {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  /* One soft copper lamp falloff behind the board. No drift, no tile
-     edges, no coloured washes. */
-  background: radial-gradient(60% 55% at 70% 55%, rgba(217, 133, 59, 0.07) 0%, transparent 70%);
-  background-repeat: no-repeat;
-}
-
-/* Gradient scrim only — no fill, no backdrop-filter, no border, no radius.
-   Legibility for the text stage without hiding the glow everywhere else. */
-.hero-chamber__scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background:
-    radial-gradient(110% 90% at 18% 58%,
-      rgba(18, 19, 20, .70) 0%, rgba(18, 19, 20, .30) 45%, transparent 72%);
-}
-
-.hero-chamber .light-leak {
-  z-index: 2;
-}
-
-/* Custom probe cursor — "you are the object being sensed." Only applied
-   under no-preference so reduced-motion visitors keep a real cursor;
-   HeroChamber.js also skips rendering/positioning the element itself in
-   that case, this is the belt-and-suspenders CSS half of that gate. */
-@media (prefers-reduced-motion: no-preference) {
-  .hero-chamber {
-    cursor: none;
-  }
-
-  .hero-chamber a,
-  .hero-chamber button {
-    cursor: pointer;
-  }
-}
-
-.hero-chamber__cursor {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 22px;
-  height: 22px;
-  border: 1.5px solid var(--color-primary);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 10;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-  will-change: transform;
-}
-
-.hero-chamber__cursor::before,
-.hero-chamber__cursor::after {
-  content: '';
-  position: absolute;
-  background: var(--color-primary);
-}
-
-.hero-chamber__cursor::before {
-  left: 50%;
-  top: -5px;
-  width: 1px;
-  height: 4px;
-  transform: translateX(-50%);
-}
-
-.hero-chamber__cursor::after {
-  left: 50%;
-  bottom: -5px;
-  width: 1px;
-  height: 4px;
-  transform: translateX(-50%);
-}
-
-/* ─── Circuit board slot — the actual geometry/materials live in
-   CircuitBoardScene.css; this is just the positioning box: right ~60% of
-   the hero, bled slightly past the right/bottom edges so it feels larger
-   than the viewport rather than sitting in a tidy contained frame. ─── */
-
-.hero-chamber__collage {
-  position: absolute;
-  z-index: 2;
-  /* top respects the nav's real clearance (was a flat `2vh`, which at a
-     short viewport like 1500x773 left the head clipped behind/under the
-     nav — see ResponsiveOrthoCamera in circuit3d/CircuitBoardR3F.js for
-     the matching height-aware zoom cap that makes this actually fit
-     rather than just relocating the clip). bottom keeps the same
-     intentional bleed past the section's own edge as before. */
-  top: calc(var(--navbar-height) + 40px);
-  bottom: -6vh;
-  right: -5vw;
-  width: clamp(500px, 68vw, 1050px);
-  will-change: transform;
-  /* Feather the box edges so the WebGL layer blends into the page. */
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0, #000 14%),
-    linear-gradient(to bottom, transparent 0, #000 10%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent 0, #000 14%),
-    linear-gradient(to bottom, transparent 0, #000 10%);
-  mask-composite: intersect;
-}
-
-/* ─── HUD — visible at all widths, not just desktop ─── */
-
-.hero-chamber__hud {
-  /* Vertical-rhythm ladder: HUD -> 24px -> eyebrow -> ... (see the "cut the
-     hero text" pass) — a fixed value, not a clamp, so the gap never grows
-     past its spec regardless of viewport. */
-  margin-bottom: 24px;
-}
-
-.hero-chamber__hud-inner {
-  display: flex;
-  /* Collapsed to one line per the "cut the hero text" pass — was `wrap`,
-     letting the HUD spill to a second row (STATUS/SubjectLock's removal
-     freed enough width that a single row now fits down to ~1024px; below
-     that the oscilloscope segment itself is hidden, see the mobile block). */
-  flex-wrap: nowrap;
-  overflow: hidden;
-  gap: 1.5rem 2.5rem;
   align-items: center;
+  overflow: clip;
+  padding-block: calc(var(--nav-height, 100px) + 24px) 96px;
 }
 
-.hero-chamber__hud-seg {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--ds-font-mono);
-  font-size: var(--ds-text-xs);
-  letter-spacing: var(--ds-tracking-widest);
-  text-transform: uppercase;
-  color: var(--ds-text-secondary);
-}
-
-.hero-chamber__hud-id {
-  color: var(--ds-gold);
-  font-weight: 700;
-}
-
-.hero-chamber__hud-dash {
-  width: 14px;
-  height: 1px;
-  background: var(--ds-gold);
-  opacity: 0.7;
-}
-
-.hero-chamber__hud-live {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--ds-success);
-}
-
-/* Boot sequence's transient "BOOTING" state — an open, amber-ish dim dot
-   (not yet the settled green NOMINAL dot) that pulses faster than the
-   normal telemetry pulse to read as "still starting up." */
-.telemetry__dot.is-booting {
-  background: var(--color-orange);
-  animation-duration: 0.7s;
-}
-
-/* Oscilloscope readout — the hero's "live reading." Value in the same
-   telemetry mono/blue as everything else in the HUD; the waveform is a
-   plain SVG polyline redrawn imperatively (see bits/OscilloscopeReadout.js)
-   reading lib/proximitySignal.js, which HeroChamber's pointermove handler
-   writes on every move — no relationship to React state. */
-.hero-chamber__hud-osc {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-family: var(--ds-font-mono);
-  font-size: var(--ds-text-xs);
-  letter-spacing: var(--ds-tracking-wide);
-  color: var(--ds-gold-bright);
-}
-
-.hero-chamber__hud-osc-value {
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-/* Tenth pass: the figure's "fully materialized" HUD state — toggled
-   imperatively by bits/OscilloscopeReadout.js's own rAF loop, same
-   direct-DOM-write convention as everything else in that file. */
-.hero-chamber__hud-osc-value--live {
-  color: var(--ds-success);
-}
-
-.hero-chamber__hud-osc-wave {
-  width: 70px;
-  height: 14px;
-  overflow: visible;
-}
-
-.hero-chamber__hud-osc-wave path {
-  fill: none;
-  stroke: var(--color-primary);
-  stroke-width: 1.4;
-  filter: drop-shadow(0 0 3px rgba(58, 175, 241, 0.6));
-}
-
-@media (max-width: 640px) {
-  .hero-chamber__hud-osc-wave { display: none; }
-}
-
-/* The lat/long readout — the one HUD element that drops on small screens,
-   everything else in the top rail stays visible (see bug fix #4 in the plan). */
-.hero-chamber__meta {
-  position: absolute;
-  right: var(--edge);
-  bottom: 2rem; /* was calc(2rem + 160px) to clear the hero filmstrip, since removed */
-  z-index: 4;
-  font-family: var(--ds-font-mono);
-  font-size: var(--ds-text-xs);
-  letter-spacing: var(--ds-tracking-widest);
-  text-transform: uppercase;
-  color: var(--ds-text-muted);
-}
-
-/* ─── Stage — type drives layout, not a card ─── */
-
-.hero-chamber__stage {
+.hero__content {
   position: relative;
   z-index: 3;
-  min-width: 0;
-  padding-top: calc(var(--navbar-height) + 5rem);
+  max-width: calc(560px + var(--edge) * 2);
 }
 
-.hero-chamber__content {
-  padding-inline: var(--edge);
-  max-width: min(calc(64vw + var(--edge)), calc(900px + var(--edge)));
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+.hero__eyebrow {
+  font-family: var(--font-mono-bench);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--copper);
+  margin-bottom: 20px;
 }
 
-.hero-chamber__eyebrow {
-  margin-bottom: 12px; /* vertical-rhythm ladder: eyebrow -> 12px -> name */
-}
-
-.hero-chamber__name-text {
+.hero__title {
   display: block;
-  margin: 0 0 16px 0; /* vertical-rhythm ladder: name -> 16px -> tagline */
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin: 0 0 24px;
+}
+
+.hero__name {
+  display: block;
   font-family: var(--font-wordmark);
-  font-weight: 900;
-  font-size: clamp(2.75rem, 7vw, 6.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  color: var(--ds-text-primary);
-  white-space: nowrap;
-  /* As a flex item of .hero-chamber__content, this nowrap headline's
-     automatic min-width otherwise equals its own min-content size —
-     forcing .hero-chamber__content and .hero-chamber__stage wider than
-     the viewport up the whole chain, the same flexbox-track bug class as
-     pass 1's grid-track overflow. min-width:0 lets the container respect
-     max-width:100% properly. At this restrained size the headline fits
-     comfortably inside .hero-chamber__content on real viewports instead
-     of relying on edge-bleed to "work". */
-  min-width: 0;
-  will-change: transform, opacity, letter-spacing;
+  font-size: var(--step-4);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--paper);
+  margin-bottom: 20px;
 }
 
-.hero-chamber__cycler {
+.hero__headline {
+  display: block;
+  position: relative;
+  font-family: var(--font-text);
+  font-size: var(--step-3);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--paper);
+  max-width: 14ch;
+  padding-bottom: 18px;
+}
+
+/* a copper rule draws under the headline once the figure has landed */
+.hero__headline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 72px;
+  height: 2px;
+  background: var(--copper);
+  transform-origin: left;
+  animation: hero-rule var(--dur-reveal) var(--ease-out) 1.15s both;
+}
+
+.hero__support {
+  font-size: var(--step-1);
+  line-height: 1.45;
+  color: var(--paper-dim);
+  max-width: 34ch;
+  margin-bottom: 32px;
+}
+
+.hero__ctas {
   display: flex;
-  align-items: baseline;
   flex-wrap: wrap;
-  gap: 0.6rem;
-  font-family: var(--ds-font-ui);
-  font-size: clamp(var(--ds-text-xl), 3vw, var(--ds-text-3xl));
-  color: var(--ds-text-secondary);
-  margin-bottom: 32px; /* vertical-rhythm ladder: tagline -> 32px -> role */
-  /* Was 1.6em — the new research-specific phrases run longer than the old
-     buzzwords ("the interface between hardware and health" vs "Neural
-     Nets on MCUs") and can wrap to a second line on narrower viewports.
-     Reserving 2-line worst-case height up front means the row holds
-     steady instead of growing/shrinking as the cycler advances through
-     the list, which would otherwise nudge the stats/CTAs below on every
-     word change. */
-  min-height: 2.8em;
+  gap: 14px;
+  margin-bottom: 28px;
+  animation: hero-rise var(--dur-reveal) var(--ease-out) 1.2s both;
 }
 
-.hero-chamber__cycler-lead {
-  flex-shrink: 0;
-}
-
-.hero-chamber__cycler-box {
-  position: relative;
-  display: inline-block;
-}
-
-/* Contrast fix: the previous crossfade+blur transition meant a genuine
-   stretch of every rotation rendered at partial opacity against the void
-   background — that read as "nearly invisible." TypeCycle (see
-   bits/TypeCycle.js) never renders a partially-transparent character, so
-   the only remaining job here is guaranteeing the color itself holds up:
-   a solid dark backing shadow under the glow so the bright word stays
-   legible even where it crosses a lighter patch of the animated backdrop
-   or the photo archive on the right. */
-.hero-chamber__cycler-word {
-  display: inline-block;
-  font-weight: 700;
-  color: var(--ds-gold-bright);
-  text-shadow:
-    0 0 24px var(--ds-gold-glow),
-    0 2px 10px rgba(0, 0, 0, 0.7);
-}
-
-.phrase-cycle {
-  position: relative;
-  display: inline-block;
-}
-
-/* The complete phrase is on screen at all times — a single reused node
-   crossfades between two transform states: leaving swaps text at rest (0)
-   -> +8px/fade out, then entering reuses that same +8px/faded start point
-   and animates back to rest, which reads as the new phrase rising up from
-   below as it fades in. No per-character reveal, ever — replaces a
-   typewriter effect that otherwise left a truncated phrase on screen most
-   of the time. */
-.phrase-cycle__word {
-  transition-property: opacity, transform;
-  transition-timing-function: ease;
-}
-
-.phrase-cycle__word.is-entering {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.phrase-cycle__word.is-leaving {
-  opacity: 0;
-  transform: translateY(8px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .phrase-cycle__word {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.hero-chamber__cycler-cursor {
-  display: inline-block;
-  width: 2px;
-  height: 0.85em;
-  margin-left: 2px;
-  background: var(--ds-gold-bright);
-  vertical-align: -0.1em;
-  animation: heroCursorBlink 1s step-end infinite;
-}
-
-@keyframes heroCursorBlink {
-  0%, 49%  { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-chamber__cycler-cursor { animation: none; }
-}
-
-/* .telemetry (instrumentation.css) sets --ds-text-muted by default, which
-   fails WCAG AA at this ~10px mono size (see the stats-label note below for
-   the same measurement) — override to --ds-text-secondary here too. Two
-   classes on the element already ties this rule's specificity above the
-   single-class .telemetry rule regardless of stylesheet load order. */
-/* Identity, not a metric — brand blue at reduced opacity distinguishes it
-   from the stats line below (orange numbers, grey labels) even though
-   both share the mono telemetry treatment. No leading dash: that's the
-   stats line's visual signature now, not this one's. */
-.hero-chamber__context.telemetry {
-  margin: 0 0 8px; /* vertical-rhythm ladder: role -> 8px -> stats */
-  color: rgba(58, 175, 241, 0.7);
-  /* Dropped to 60% opacity so it sits below the tagline in hierarchy, per
-     the "cut the hero text" pass — the color above still identifies it. */
-  opacity: 0.6;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.hero-chamber__context.telemetry::before {
-  display: none;
-}
-
-/* One of these two is always display:none — see the ≤768px override below
-   — so a screen reader only ever announces the visible one; not a11y
-   duplication since display:none content is removed from the tree. */
-.hero-chamber__role-text--short {
-  display: none;
-}
-
-/* ─── Bio — one sentence, fills the stats block's old slot. Placeholder
-   copy (see HeroChamber.js) pending the site owner's final wording. ─── */
-.hero-chamber__bio {
-  margin: 0 0 40px; /* vertical-rhythm ladder: bio -> 40px -> CTAs */
-  max-width: 42ch; /* keeps it well under ~90 characters of actual width */
-  font-size: 0.9375rem;
+.hero__note {
+  font-size: var(--step--1);
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
+  max-width: 40ch;
+  padding-left: 14px;
+  border-left: 2px solid var(--copper-dim);
 }
 
-.hero-chamber__ctas {
+.hero__instrument {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  right: 0;
+  bottom: 28px;
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 48px; /* vertical-rhythm ladder: CTAs -> 48px -> scroll cue */
+  gap: 8px 28px;
+  font-family: var(--font-mono-bench);
+  font-size: var(--step--2);
+  letter-spacing: 0.08em;
+  color: var(--muted);
 }
 
-/* Primary CTA: brand blue fill, dark navy text — reverting the previous
-   pass's red (that was a different brief's brand-guide reading; this one
-   explicitly reserves blue for the CTA and moves red out of the hero
-   entirely). #14242C on #3AAFF1 measures ~6.5:1, comfortably past AA.
-   The glow strengthens with --proximity, same signal the board reads —
-   the button participates in the "live sensor" system too. */
-.hero-chamber__cta.btn--primary {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: var(--logo-gradient-1);
-  font-weight: 800;
-  padding-inline: var(--ds-btn-pad-x-lg, 48px);
-  box-shadow: none; /* no glow on CTAs */
-  transition: background var(--dur-ui) var(--ease-out), transform var(--dur-micro) var(--ease-out);
-}
-
-.hero-chamber__cta.btn--primary:hover {
-  filter: none;
-  background: var(--ds-gold-bright);
-  border-color: var(--ds-gold-bright);
-  transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-chamber__cta.btn--primary { transition: none; }
-}
-
-.hero-chamber__cta-arrow {
+.hero__pf {
   display: inline-block;
-  margin-left: 0.5em;
-  transition: transform var(--ds-duration-fast) ease;
+  min-width: 3.2ch;
+  font-variant-numeric: tabular-nums;
+  color: var(--paper);
 }
 
-.hero-chamber__cta:hover .hero-chamber__cta-arrow {
-  transform: translateX(4px);
+@keyframes hero-rule {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
-/* ─── Scroll hint ─── */
-
-.hero-chamber__hint {
-  display: inline-flex;
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: var(--ds-text-xl);
-  color: var(--ds-text-muted);
-  /* Icon-only now — the "Scroll to explore" label moved to aria-label
-     (see HeroChamber.js) — at 40% opacity per the "cut the hero text" pass. */
-  opacity: 0.4;
-  transition: opacity var(--ds-duration-fast) ease, color var(--ds-duration-fast) ease;
+@keyframes hero-rise {
+  from { transform: translateY(8px); opacity: 0.35; }
+  to   { transform: none; opacity: 1; }
 }
 
-.hero-chamber__hint:hover {
-  opacity: 0.7;
-  color: var(--ds-gold-bright);
-}
-
-.hero-chamber__hint-arrow {
-  animation: heroChamberHintBounce 1.8s ease-in-out infinite;
-}
-
-@keyframes heroChamberHintBounce {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(4px); }
+/* Mobile: the bench sits above the text as a full-bleed banner. */
+@media (max-width: 1023px) {
+  .hero {
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: calc(var(--nav-height, 56px) + 4px);
+    padding-bottom: 72px;
+  }
+  .hero__content { max-width: none; }
+  .hero__instrument { position: static; margin-top: 40px; }
+  .hero__headline { max-width: 16ch; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-chamber__hint-arrow { animation: none; }
-  .hero-chamber__name-text { will-change: auto; }
-  .hero-chamber__backdrop { animation: none; }
-}
-
-/* ─── Responsive ─── */
-
-@media (max-width: 1200px) {
-  .hero-chamber__content {
-    max-width: min(78vw, 700px);
-  }
-
-  .hero-chamber__collage {
-    width: clamp(280px, 40vw, 460px);
-  }
-}
-
-@media (max-width: 1024px) {
-  .hero-chamber__meta {
-    display: none;
-  }
-}
-
-/* ─── Tablet (769–1023px) — same desktop layout, board scaled to fit
-   (CircuitBoardR3F.js's ResponsiveOrthoCamera tracks canvas width AND
-   height so the composition doesn't shrink twice, nor clip vertically)
-   with bloom/shadows dropped (HeroCircuitBoard.js's isTablet prop). The
-   1200px query above already shrinks .hero-chamber__collage/__content for
-   this range; nothing further is needed here. ─── */
-
-/* ─── Mobile (≤768px) — a dedicated layout, not the desktop one squeezed:
-   no live 3D (HeroCircuitBoard.js swaps in a static composite image, see
-   scripts/build-hero-composite.js), no stats/bio-only in its place, no
-   scroll cue, no LOC. Everything above the CTAs fits within the first
-   100svh at 390x844. ─── */
-@media (max-width: 768px) {
-  .hero-chamber {
-    justify-content: flex-start;
-  }
-
-  .hero-chamber__stage {
-    /* The composite banner (below) provides the visual separation from the
-       header that this padding used to reserve — collapsing it is what
-       lets the rest of the column fit inside the first 100svh. */
-    padding-top: 0;
-  }
-
-  /* 1. Header — --nav-height itself drops to 56px site-wide below 768px,
-     see components/css/Navbar.css. */
-
-  /* 2. Composite banner — full-bleed, 16:10, object-fit: cover, with a
-     bottom gradient fade so it doesn't end in a hard line. Replaces the
-     old "shrunk desktop board" treatment entirely; HeroCircuitBoard.js
-     renders a plain <img> + fade div here, not the R3F canvas or the SVG
-     scene (see hooks/useCanRender3D.js's narrowDisqualifies + Part 3). */
-  .hero-chamber__composite-wrap {
-    position: relative;
-    order: -1;
-    inset-block: auto;
-    right: auto;
-    width: 100%;
-    max-width: none;
-    aspect-ratio: 16 / 10;
-    height: auto;
-    margin: 0 0 16px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    /* Feather all four edges: the composite is a baked raster, so without
-       this its rectangle reads as a band against the page. (Replaced by a
-       re-lit render in the hero phase.) */
-    -webkit-mask-image: radial-gradient(ellipse 80% 78% at 50% 48%, #000 55%, transparent 100%);
-    mask-image: radial-gradient(ellipse 80% 78% at 50% 48%, #000 55%, transparent 100%);
-  }
-
-  .hero-chamber__composite-wrap.is-ready {
-    opacity: 1;
-  }
-
-  .hero-chamber__composite {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .hero-chamber__composite-fade {
-    position: absolute;
-    inset: auto 0 0 0;
-    height: 35%;
-    background: linear-gradient(to bottom, transparent, var(--ink));
-    pointer-events: none;
-  }
-
-  .hero-chamber__content {
-    max-width: 100%;
-    padding-inline: var(--edge);
-  }
-
-  /* 3. HUD — one truncated line, no sensor readout (no cursor to drive
-     it on mobile). Gaps pinned to the spec's 16px floor (not the 20-24px
-     desktop values) — see the tagline block below for why every px here
-     is accounted for at the narrowest tested viewport (360x740). */
-  .hero-chamber__hud {
-    margin-bottom: 16px;
-  }
-
-  .hero-chamber__hud-osc {
-    display: none;
-  }
-
-  /* 4. Eyebrow — already one line at this width; no override needed. */
-  .hero-chamber__eyebrow {
-    margin-bottom: 16px;
-  }
-
-  /* 5. Name — must never clip or wrap. The old clamp(3rem, 21vw, 6.5rem)
-     is exactly what overflowed: 21vw at 390px is ~82px against ~350px of
-     usable width for an 8-glyph word. */
-  .hero-chamber__name-text {
-    font-size: clamp(2.6rem, 14vw, 5rem);
-    letter-spacing: -0.02em;
-    overflow-wrap: normal;
-    margin-bottom: 16px;
-  }
-
-  /* 6. Tagline — "I build" on its own line, phrase below it. The phrase +
-     cursor switch from inline-block to inline so a long phrase wraps
-     word-by-word within the available width instead of overflowing as one
-     unbreakable box — the cursor, already the phrase's next DOM sibling
-     (bits/PhraseCycle.js), then simply sits after the last word on
-     whichever line that lands on, never on a line of its own. */
-  .hero-chamber__cycler {
-    display: block;
-    font-size: clamp(1.25rem, 6vw, 1.75rem);
-    /* Reserves the WORST-CASE height across all four WORDS entries
-       (measured: 110px for the three longer phrases at 360px width vs.
-       73px for the shortest, "non-contact biosensing") — PhraseCycle
-       rotates through them automatically, and without this the column's
-       height (and therefore whether the CTAs fit inside 100svh) depended
-       on which phrase happened to be showing at any given moment. */
-    min-height: 112px;
-    margin-bottom: 16px;
-  }
-
-  .hero-chamber__cycler-lead {
-    display: block;
-  }
-
-  .hero-chamber__cycler-box,
-  .phrase-cycle,
-  .phrase-cycle__word {
-    display: inline;
-  }
-
-  /* 7. Role line — shortened text, single line. */
-  .hero-chamber__context.telemetry {
-    margin-bottom: 16px;
-    flex-wrap: nowrap;
-  }
-
-  .hero-chamber__role-text {
-    font-size: 11px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    min-width: 0;
-  }
-
-  .hero-chamber__role-text--full {
-    display: none;
-  }
-
-  .hero-chamber__role-text--short {
-    display: inline;
-  }
-
-  /* 8. Bio — fills the old stats slot. */
-  .hero-chamber__bio {
-    margin-bottom: 16px;
-    max-width: none;
-  }
-
-  /* 9. CTAs — stacked, full width, 52px tall, 12px gap. */
-  .hero-chamber__ctas {
-    flex-direction: column;
-    flex-wrap: nowrap;
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-
-  .hero-chamber__ctas .btn {
-    width: 100%;
-    min-height: 52px;
-  }
-
-  /* No scroll cue, no LOC (already display:none <=1024px above). */
-  .hero-chamber__hint {
-    display: none;
-  }
+  .hero__headline::after,
+  .hero__ctas { animation: none; }
 }

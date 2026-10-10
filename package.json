@@ -55,7 +55,7 @@
     "generate-sitemap": "node src/sitemap.js",
     "build-archive": "node scripts/build-photo-archive.js",
     "build-head-precompute": "node scripts/build-head-precompute.js",
-    "build-hero-composite": "node scripts/build-hero-composite.js"
+    "build-hero-assets": "node scripts/render-hero-assets.js"
   },
   "eslintConfig": {
     "extends": [

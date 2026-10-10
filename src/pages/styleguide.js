@@ -65,7 +65,7 @@ export default function Styleguide() {
         <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,600&display=swap" rel="stylesheet" />
       </Helmet>
 
-      <header className="sg__head container">
+      <header className="sg__head bench-col">
         <p className="sg__label">STYLE TILE · PHASE 1</p>
         <h1 className="sg__title">The Bench</h1>
         <p className="sg__lede">
@@ -73,7 +73,7 @@ export default function Styleguide() {
         </p>
       </header>
 
-      <section className="sg__section container" aria-labelledby="sg-color">
+      <section className="sg__section bench-col" aria-labelledby="sg-color">
         <h2 id="sg-color" className="sg__h2">1. Colour</h2>
         <ul className="sg__swatches">
           {COLORS.map((c) => (
@@ -98,7 +98,7 @@ export default function Styleguide() {
         </p>
       </section>
 
-      <section className="sg__section container" aria-labelledby="sg-type">
+      <section className="sg__section bench-col" aria-labelledby="sg-type">
         <h2 id="sg-type" className="sg__h2">2. Type: Bricolage Grotesque chosen</h2>
         <div className="sg__options">
           {OPTIONS.map((o) => (
@@ -143,7 +143,7 @@ export default function Styleguide() {
         </ul>
       </section>
 
-      <section className="sg__section container" aria-labelledby="sg-ui">
+      <section className="sg__section bench-col" aria-labelledby="sg-ui">
         <h2 id="sg-ui" className="sg__h2">3. Buttons, cards, focus</h2>
         <div className="sg__row">
           <a className="btn btn--primary" href="#sg-ui">See my work</a>
@@ -176,7 +176,7 @@ export default function Styleguide() {
         </div>
       </section>
 
-      <section className="sg__section container" aria-labelledby="sg-motion">
+      <section className="sg__section bench-col" aria-labelledby="sg-motion">
         <h2 id="sg-motion" className="sg__h2">4. Motion tokens</h2>
         <ul className="sg__tokens sg__mono">
           <li>--dur-micro 120ms · --dur-ui 240ms · --dur-reveal 480ms · --dur-set 900ms</li>

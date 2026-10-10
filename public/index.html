@@ -15,15 +15,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <meta name="google-site-verification" content="g8x_87Cb0hLbe6qgpFdV-I3oNhXfUE2GvCePdBxjeqU" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!-- Hero hologram head model — meshopt-compressed to ~350KB (see
-         scripts/build-head-precompute.js). Preloaded as `fetch` (not
-         a font/image `as`) since it's consumed by useGLTF/GLTFLoader via
-         XHR/fetch, not the browser's native resource decoders; only fires
-         for visitors who clear useCanRender3D()'s gate in practice, since
-         the SVG-fallback path never imports the component that requests
-         it, but a same-origin preload the fallback path ignores is
-         harmless. -->
-    <link rel="preload" as="fetch" crossorigin href="%PUBLIC_URL%/models/wsm-figure.glb" />
+    <!-- Mobile hero poster: it is the LCP element and only discoverable after
+         JS runs, so hint it here (phones only; desktop's LCP is text). -->
+    <link rel="preload" as="image" href="%PUBLIC_URL%/hero/bench.webp" type="image/webp" fetchpriority="high" media="(max-width: 767px)" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/

@@ -14,7 +14,7 @@ import './css/home.css';
 
 const Home = () => {
     return (
-        <div className="home-page home-page-instrumented">
+        <main id="main" className="home-page home-page-instrumented">
             <Helmet>
                 <title>Wanghley Martins | Biosensing & Edge AI · Rice University</title>
                 <meta name="description" content="Wanghley Martins is a PhD researcher in Electrical & Computer Engineering at Rice University, building non-contact capacitive biosensors and edge AI systems that run on microcontrollers." />
@@ -65,7 +65,7 @@ const Home = () => {
             <SkillField />
             <LatestNews />
             <ClosingTransmit />
-        </div>
+        </main>
     );
 };
 
