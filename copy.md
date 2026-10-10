@@ -39,3 +39,27 @@ innovative, "where X meets Y", synergy.
 
 - `[[PLACEHOLDER: classify label numbers]]`
 - `[[PLACEHOLDER: real capacitive-sensor capture to replace the simulated trace]]`
+
+---
+
+## Signal chain (`src/data/signalChain.js`)
+
+Section heading: **How a hand becomes a decision.** (kicker: From the electrode to the answer)
+One numbering system only: 01-05. Tag on the figure: ILLUSTRATIVE · SIMULATED TRACE.
+
+| # | Stage | Heading | Sentence | Link |
+|---|---|---|---|---|
+| 01 | Sense | The electrode feels a hand. | My electrode reads a hand without touching it: the field moves from 0.18 to 2.14 pF, buried in noise. | Non-contact capacitive sensing |
+| 02 | Condition | The front-end cleans it up. | Analog filtering strips the hum and the drift, so the signal is clean before it goes anywhere. | Mixed-signal front-ends |
+| 03 | Infer | Features, not raw data. | I pull out the three numbers that matter (onset, peak, dwell) right next to the sensor, not in the cloud. | TinyML on embedded hardware |
+| 04 | Deploy | The model lives on the chip. | The classifier runs on a microcontroller in 0.4 ms at 38 µW*, which is small enough to wear. | Near-sensor accelerators |
+| 05 | Impact | A human-sized answer. | Out comes a hand, recognised, before any raw data leaves the sensor. | AI-driven Parkinson's diagnostic (ISEF) |
+
+\* Illustrative until measured on the wrist sensor.
+
+Open placeholders for this section:
+
+- `[[PLACEHOLDER: real capacitive-sensor capture (time, pF CSV)]]` replaces the simulated trace in `src/lib/sensorTrace.js`.
+- `[[PLACEHOLDER: real latency and power]]` for 0.4 ms and 38 µW.
+- `[[PLACEHOLDER: project slug for each stage's link]]` (all five point at /projects today).
+- "Condition" and "Deploy" sentences describe the work in general terms; confirm they match the projects you want to link.

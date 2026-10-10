@@ -1,280 +1,190 @@
 /* ============================================================
-   SIGNAL CHAIN — CH:01 · SYSTEM PROFILE
-   A pinned/scrubbed schematic: SENSE → CONDITION → INFER → DEPLOY →
-   IMPACT. Narrative cross-fades in a constrained column (col 2/6) while
-   an SVG diagram bleeds off the right edge (col 6/13) and line-draws in
-   sync. Below 1024px / reduced-motion: no pin, a static stacked list with
-   one fully-drawn diagram — same content, zero motion JS.
+   SIGNAL CHAIN: one waveform, five stages.
+   Pinned on desktop; stacked stills otherwise. One numbering
+   system only: 01-05.
    ============================================================ */
 
-.signal-chain {
+.chain {
   position: relative;
-  background: var(--ds-abyss);
-  min-height: 100svh;
-  padding: clamp(3rem, 8vh, 5rem) 0 clamp(4rem, 10vh, 7rem);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  overflow: hidden;
+  padding-block: 96px;
 }
 
-.signal-chain__grid {
-  width: 100%;
+.chain--pinned {
+  min-height: 100vh;
+  padding-block: calc(var(--nav-height-scrolled, 64px) + 24px) 32px;
+  display: flex;
   align-items: center;
 }
 
-/* ─── Stage index rail ─── */
+.chain__inner { width: 100%; }
 
-.signal-chain__index {
-  grid-column: 1 / 2;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+.chain__kicker {
+  font-family: var(--font-mono-bench);
+  font-size: var(--step--1);
+  letter-spacing: 0.04em;
+  color: var(--signal);
+  margin-bottom: 12px;
 }
 
-.signal-chain__index-tick {
-  font-family: var(--ds-font-mono);
-  font-size: var(--ds-text-xs);
-  color: var(--ds-text-muted);
-  letter-spacing: var(--ds-tracking-wide);
-  transition: color var(--ds-duration-base) ease;
-}
-
-.signal-chain__index-tick.is-passed {
-  color: var(--ds-text-secondary);
-}
-
-.signal-chain__index-tick.is-active {
-  color: var(--ds-gold-bright);
-  text-shadow: 0 0 12px var(--ds-gold-glow);
-}
-
-/* ─── Narrative ─── */
-
-.signal-chain__narrative {
-  grid-column: 2 / 6;
-  display: flex;
-  flex-direction: column;
-  gap: var(--ds-space-5, 24px);
-}
-
-.signal-chain__intro-heading {
-  margin: 0;
-  font-family: var(--ds-font-display);
-  font-size: var(--ds-text-3xl);
-  font-weight: 700;
-  line-height: var(--ds-leading-tight);
-  color: var(--ds-text-primary);
-}
-
-.signal-chain__intro-heading em {
-  font-style: normal;
-  color: var(--ds-gold-bright);
-}
-
-.signal-chain__stage-viewport {
-  position: relative;
-  min-height: 220px;
-}
-
-.signal-chain__stage-viewport .signal-chain__stage-block {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
-}
-
-.signal-chain__stage-viewport .signal-chain__stage-block.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.signal-chain__stack {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(2.5rem, 6vh, 4rem);
-}
-
-.signal-chain__stage-block h3 {
-  margin: 0.5rem 0;
-  font-family: var(--ds-font-display);
-  font-size: var(--ds-text-2xl);
-  font-weight: 700;
-  color: var(--ds-text-primary);
-}
-
-.signal-chain__stage-block p {
-  margin: 0;
-  color: var(--ds-text-secondary);
-  line-height: var(--ds-leading-relaxed);
-  max-width: 42ch;
-}
-
-/* ─── Impact stage payload — numbers, no cards ─── */
-
-.signal-chain__impact {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem 2rem;
-  margin-top: 1.5rem;
-}
-
-.signal-chain__impact-stat {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--ds-border-subtle);
-}
-
-.signal-chain__impact-value {
-  font-family: var(--ds-font-display);
-  font-size: var(--ds-text-4xl);
-  font-weight: 800;
-  color: var(--ds-gold-bright);
+.chain__title {
+  font-size: var(--step-4);
+  font-weight: 600;
+  letter-spacing: -0.03em;
   line-height: 1;
+  max-width: 14ch;
+  color: var(--paper);
+  margin-bottom: 40px;
 }
 
-.signal-chain__impact-label {
-  font-size: var(--ds-text-sm);
-  font-weight: 600;
-  color: var(--ds-text-primary);
-}
+.chain--pinned .chain__title { font-size: var(--step-3); margin-bottom: 24px; max-width: none; }
 
-.signal-chain__impact-source {
-  font-family: var(--ds-font-mono);
-  font-size: 0.65rem;
-  letter-spacing: var(--ds-tracking-wide);
-  color: var(--ds-text-muted);
-}
-
-/* ─── Diagram ─── */
-
-.signal-chain__diagram-wrap {
-  grid-column: 6 / 13;
-  position: relative;
-}
-
-.signal-chain-diagram {
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.signal-chain-diagram__edge {
-  fill: none;
-  stroke: var(--ds-gold);
-  stroke-width: 1.5;
-  opacity: 0.75;
-}
-
-.signal-chain-diagram__node circle:first-of-type {
-  fill: var(--ds-surface-raised);
-  stroke: var(--ds-border);
-  stroke-width: 1.5;
-  transition: fill 0.3s ease, stroke 0.3s ease;
-}
-
-.signal-chain-diagram__node-glow {
-  fill: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.signal-chain-diagram__node text {
-  font-family: var(--ds-font-mono);
-  font-size: 15px;
-  letter-spacing: 0.12em;
-  fill: var(--ds-text-muted);
-  transition: fill 0.3s ease;
-}
-
-.signal-chain-diagram__node.is-passed circle:first-of-type {
-  fill: var(--ds-surface-active);
-  stroke: var(--ds-border-hover);
-}
-
-.signal-chain-diagram__node.is-passed text {
-  fill: var(--ds-text-secondary);
-}
-
-.signal-chain-diagram__node.is-active circle:first-of-type {
-  fill: var(--ds-gold);
-  stroke: var(--ds-gold-bright);
-}
-
-.signal-chain-diagram__node.is-active .signal-chain-diagram__node-glow {
-  opacity: 0.55;
-  fill: var(--ds-gold-glow);
-  filter: url(#signal-chain-node-glow);
-}
-
-.signal-chain-diagram__node.is-active text {
-  fill: var(--ds-gold-bright);
-}
-
-/* ─── Credentials ticker ─── */
-
-.signal-chain__creds {
-  margin-top: clamp(3rem, 8vh, 5rem);
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: clamp(2rem, 5vh, 3rem) var(--home-grid-pad, clamp(16px, 4vw, 72px));
-  background: var(--color-paper);
-}
-
-.signal-chain__creds-head {
-  display: flex;
+/* --- pinned layout --- */
+.chain__stage {
+  display: grid;
+  grid-template-columns: minmax(280px, 400px) 1fr;
+  gap: clamp(32px, 5vw, 80px);
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--ds-space-3, 12px);
 }
 
-.signal-chain__creds-meta {
-  font-family: var(--ds-font-mono);
-  font-size: var(--ds-text-xs);
-  color: rgba(14, 15, 16, 0.45);
+.chain__text {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 20px;
+  align-items: start;
 }
 
-.signal-chain__creds .ticker__item strong {
-  color: var(--color-paper-ink);
+.chain__rail {
+  display: grid;
+  gap: 14px;
+  font-family: var(--font-mono-bench);
+  font-size: var(--step--2);
+  color: var(--muted);
+  padding-top: 4px;
+}
+.chain__rail li { position: relative; padding-left: 0; transition: color var(--dur-ui) var(--ease-out); }
+.chain__rail li.is-passed { color: var(--paper-dim); }
+.chain__rail li.is-active { color: var(--signal); }
+.chain__rail li.is-active::after {
+  content: '';
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  width: 14px;
+  height: 1px;
+  background: var(--signal);
+}
+
+.chain__blocks { position: relative; min-height: 270px; }
+.chain__block {
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition:
+    opacity var(--dur-reveal) var(--ease-out),
+    transform var(--dur-reveal) var(--ease-out),
+    visibility 0s linear var(--dur-reveal);
+}
+.chain__block.is-active {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.chain__figure { min-width: 0; }
+
+/* --- text atoms --- */
+.chain__stage-num {
+  font-family: var(--font-mono-bench);
+  font-size: var(--step--2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.chain__stage-heading {
+  font-size: var(--step-2);
   font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  margin-bottom: 14px;
+  color: var(--paper);
+}
+.chain__stage-body {
+  font-size: var(--step-0);
+  line-height: 1.5;
+  color: var(--paper-dim);
+  max-width: 36ch;
+  margin-bottom: 18px;
+}
+.chain__link {
+  display: inline-block;
+  font-size: var(--step--1);
+  color: var(--signal);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+.chain__link:hover { color: var(--copper); }
+.chain__note {
+  margin-top: 14px;
+  font-family: var(--font-mono-bench);
+  font-size: var(--step--2);
+  color: var(--muted);
 }
 
-/* ─── Responsive ─── */
-
-@media (max-width: 1023px) {
-  .signal-chain {
-    min-height: auto;
-  }
-
-  .signal-chain__grid {
-    grid-template-columns: 1fr;
-  }
-
-  .signal-chain__index {
-    display: none;
-  }
-
-  .signal-chain__narrative,
-  .signal-chain__diagram-wrap {
-    grid-column: 1 / -1;
-  }
-
-  .signal-chain__diagram-wrap {
-    order: -1;
-    margin-bottom: 2rem;
-    opacity: 0.7;
-  }
+/* --- the figure --- */
+.chain-figure { width: 100%; height: auto; max-height: 64vh; overflow: visible; }
+.chain-figure__path {
+  fill: none;
+  stroke: var(--signal);
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
 }
-
-@media (max-width: 640px) {
-  .signal-chain__intro-heading {
-    font-size: var(--ds-text-2xl);
-  }
-
-  .signal-chain__impact {
-    grid-template-columns: 1fr;
-  }
+.chain-figure__axis { stroke: var(--line-strong); stroke-width: 1; }
+.chain-figure__grid { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 6; }
+.chain-figure__tick,
+.chain-figure__tag,
+.chain-figure__mark,
+.chain-figure__chip-label {
+  font-family: var(--font-mono-bench);
+  font-size: 17px;
+  fill: var(--muted);
 }
+.chain-figure__tag { letter-spacing: 0.08em; font-size: 13px; }
+.chain-figure__mark { fill: var(--copper-lit); }
+.chain-figure__guide { stroke: var(--copper-dim); stroke-width: 1; stroke-dasharray: 3 5; }
+.chain-figure__bracket { stroke: var(--copper); stroke-width: 1.5; }
+.chain-figure__dot { fill: var(--ink); stroke: var(--copper); stroke-width: 2; }
+.chain-figure__chip { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+.chain-figure__pin line { stroke: var(--copper-dim); stroke-width: 2; }
+.chain-figure__chip-main { font-family: var(--font-text); font-size: 32px; font-weight: 600; fill: var(--paper); }
+.chain-figure__chip-sub { font-family: var(--font-mono-bench); font-size: 19px; fill: var(--signal); }
+.chain-figure__outcome { font-family: var(--font-text); font-size: 28px; font-weight: 600; fill: var(--paper); }
+
+/* --- stacked stills (phones, tablets, reduced motion) --- */
+.chain__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+  gap: 28px;
+  counter-reset: none;
+}
+.chain__card {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.chain__card .chain-figure { max-height: none; }
+.chain__card .chain-figure__tick,
+.chain__card .chain-figure__tag,
+.chain__card .chain-figure__mark,
+.chain__card .chain-figure__chip-label { font-size: 24px; }
+.chain__card .chain-figure__outcome { font-size: 34px; }
