@@ -1,14 +1,29 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { gsap, ScrollTrigger } from '../../lib/gsap';
-import { STAGES } from '../../data/signalChain';
+import { STORY, STAGES } from '../../data/signalChain';
 import ChainFigure from './chain/ChainFigure';
+import { useScrollToSection } from '../../lib/LenisRoot';
 import './css/SignalChain.css';
 
-// One signal, one story: a single waveform travels down the page and is
-// transformed at each stage, the way my systems transform data near the
-// sensor. Pinned scroll on desktop; a designed still per stage on phones and
-// for reduced motion.
-const STAGE_COUNT = STAGES.length;
+// Who I am, why it matters, and the idea in one signal.
+//
+// No pinning and no scroll-scrubbing: the page scrolls at its normal pace.
+// On desktop the figure stays in view (position: sticky) while the steps
+// scroll past it; when a step takes focus the waveform morphs once, over
+// 900ms, whatever the scroll speed. Phones and tablets get a still per step.
+
+function useMedia(query) {
+  const [match, setMatch] = useState(
+    typeof window !== 'undefined' ? window.matchMedia(query).matches : false
+  );
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const on = (e) => setMatch(e.matches);
+    mq.addEventListener('change', on);
+    setMatch(mq.matches);
+    return () => mq.removeEventListener('change', on);
+  }, [query]);
+  return match;
+}
 
 function StageText({ stage, number }) {
   return (
@@ -25,68 +40,75 @@ function StageText({ stage, number }) {
 }
 
 export default function SignalChain() {
-  const sectionRef = useRef(null);
   const figureRef = useRef(null);
-  const [idx, setIdx] = useState(0);
-  const [pinned, setPinned] = useState(false);
+  const stepRefs = useRef([]);
+  const [active, setActive] = useState(0);
+  const wide = useMedia('(min-width: 1024px)');
+  const reduced = useMedia('(prefers-reduced-motion: reduce)');
+  const scrollToSection = useScrollToSection();
+
+  // The step crossing the middle of the viewport owns the figure.
+  useEffect(() => {
+    if (!wide) return undefined;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActive(Number(e.target.dataset.index));
+        });
+      },
+      { rootMargin: '-42% 0px -42% 0px', threshold: 0 }
+    );
+    stepRefs.current.forEach((el) => el && io.observe(el));
+    return () => io.disconnect();
+  }, [wide]);
 
   useEffect(() => {
-    const mm = gsap.matchMedia();
-    mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
-      setPinned(true);
-      let trigger;
-      // wait a frame so the pinned layout exists before ScrollTrigger measures
-      const raf = requestAnimationFrame(() => {
-        if (!sectionRef.current) return;
-        trigger = ScrollTrigger.create({
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: `+=${STAGE_COUNT * 75}%`,
-          pin: true,
-          scrub: 0.5,
-          onUpdate(self) {
-            figureRef.current?.setProgress(self.progress);
-            setIdx(Math.min(STAGE_COUNT - 1, Math.floor(self.progress * STAGE_COUNT)));
-          },
-        });
-        figureRef.current?.setProgress(0);
-      });
-      return () => {
-        cancelAnimationFrame(raf);
-        trigger?.kill();
-        setPinned(false);
-        setIdx(0);
-      };
-    });
-    return () => mm.revert();
-  }, []);
+    figureRef.current?.goTo(active, reduced ? 0 : undefined);
+  }, [active, reduced]);
 
   return (
-    <section ref={sectionRef} id="identity" className={`chain${pinned ? ' chain--pinned' : ''}`} aria-labelledby="chain-heading">
+    <section id="identity" className="chain" aria-labelledby="chain-heading">
       <div className="chain__inner bench-col">
-        <header className="chain__head">
-          <p className="chain__kicker">From the electrode to the answer</p>
-          <h2 id="chain-heading" className="chain__title">How a hand becomes a decision.</h2>
-        </header>
+        <div className="chain__lead">
+          <div>
+            <p className="chain__kicker">{STORY.kicker}</p>
+            <h2 id="chain-heading" className="chain__title">{STORY.heading}</h2>
+          </div>
+          <div className="chain__story">
+            {STORY.who.map((t) => <p key={t} className="chain__lede">{t}</p>)}
+            {STORY.why.map((t) => <p key={t}>{t}</p>)}
+            <p className="chain__links">
+              {STORY.links.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className={l.primary ? 'btn btn--primary' : 'chain__link'}
+                  {...(l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                >
+                  {l.text}{' '}
+                  <span aria-hidden="true">{l.external ? '↗' : '→'}</span>
+                </a>
+              ))}
+            </p>
+          </div>
+        </div>
 
-        {pinned ? (
-          <div className="chain__stage">
-            <div className="chain__text">
-              <ol className="chain__rail" aria-hidden="true">
-                {STAGES.map((s, i) => (
-                  <li key={s.id} className={i === idx ? 'is-active' : i < idx ? 'is-passed' : ''}>
-                    {String(i + 1).padStart(2, '0')}
-                  </li>
-                ))}
-              </ol>
-              <div className="chain__blocks">
-                {STAGES.map((s, i) => (
-                  <article key={s.id} className={`chain__block${i === idx ? ' is-active' : ''}`} aria-hidden={i !== idx}>
-                    <StageText stage={s} number={i + 1} />
-                  </article>
-                ))}
-              </div>
-            </div>
+        <p className="chain__figure-kicker">{STORY.figureKicker}</p>
+
+        {wide ? (
+          <div className="chain__scroll">
+            <ol className="chain__steps">
+              {STAGES.map((s, i) => (
+                <li
+                  key={s.id}
+                  ref={(el) => { stepRefs.current[i] = el; }}
+                  data-index={i}
+                  className={`chain__step${i === active ? ' is-active' : ''}`}
+                >
+                  <StageText stage={s} number={i + 1} />
+                </li>
+              ))}
+            </ol>
             <div className="chain__figure">
               <ChainFigure ref={figureRef} />
             </div>
@@ -103,6 +125,13 @@ export default function SignalChain() {
             ))}
           </ol>
         )}
+
+        <div className="chain__closing">
+          <p>{STORY.closing}</p>
+          <button type="button" className="btn btn--ghost" onClick={() => scrollToSection('#ventures')}>
+            See the projects <span aria-hidden="true">↓</span>
+          </button>
+        </div>
       </div>
     </section>
   );

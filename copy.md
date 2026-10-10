@@ -42,9 +42,22 @@ innovative, "where X meets Y", synergy.
 
 ---
 
-## Signal chain (`src/data/signalChain.js`)
+## About story + signal chain (`src/data/signalChain.js`, `STORY` and `STAGES`)
 
-Section heading: **How a hand becomes a decision.** (kicker: From the electrode to the answer)
+Kicker: About me · Heading: **Why I put the computing inside the sensor.**
+
+> I'm Wanghley, a Brazilian engineer from Brasília. I'm a PhD student at Rice, in Dr. Juliane Sempionatto's lab, building wearable and point-of-care biosensors. Before that I studied ECE and CS at Duke as a Karsh International Scholar.
+>
+> Most wearables send raw data to the cloud and wait for an answer. That spends battery and adds delay. I do the opposite: I classify the signal right at the sensor, in microwatts, before anything crosses the bus.
+>
+> My method is gambiarra, the Brazilian art of solving it with what you have on the bench. It was the subject of my TEDxDuke talk.
+
+Links: **More about me →** (/about) · Watch the TEDxDuke talk ↗ (youtube.com/watch?v=tceoUHQ9rPQ)
+Figure kicker: The idea, in one signal · Closing: That is the whole idea. The projects below are the same chain, built.
+
+`[[PLACEHOLDER: confirm the "spends battery and adds delay" line; swap in a number if you have one]]`
+
+Interaction: no pinning or scroll-scrubbing. The figure is sticky; the step in the middle of the screen takes focus and the waveform morphs once over 900ms.
 One numbering system only: 01-05. Tag on the figure: ILLUSTRATIVE · SIMULATED TRACE.
 
 | # | Stage | Heading | Sentence | Link |

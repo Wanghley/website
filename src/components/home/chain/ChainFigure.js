@@ -1,38 +1,35 @@
-import React, { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import {
   CHIP,
   VIEW,
   PLOT,
   getShapes,
-  layerOpacity,
   lerpShape,
   toPathD,
   xOfTime,
   yOfPf,
 } from './shapes';
 
-const STAGES = 5;
-const ENTER = 0.4; // fraction of each stage's scroll spent morphing in
+const DURATION = 900; // ms for one stage-to-stage morph
 
 const ease = (x) => {
   const t = Math.min(1, Math.max(0, x));
   return t * t * (3 - 2 * t);
 };
 
-// Opacities for every overlay layer at stage `idx`, entry progress `m`.
-function layersAt(idx, m) {
+// Overlay opacity per layer for a settled stage.
+function layersAt(idx) {
   return {
-    axes: idx <= 2 ? 1 : idx === 3 ? 1 - m : 0,
-    features: layerOpacity(2, idx, m),
-    chip: layerOpacity(3, idx, m),
-    outcome: layerOpacity(4, idx, m),
+    axes: idx <= 2 ? 1 : 0,
+    features: idx === 2 ? 1 : 0,
+    chip: idx === 3 ? 1 : 0,
+    outcome: idx === 4 ? 1 : 0,
   };
 }
 
 /**
- * The one waveform. `ref.setProgress(0..1)` is called from the pinned
- * ScrollTrigger and writes straight to the DOM (no React re-render per
- * frame). With `stage` set it renders that stage as a still, which is the
+ * The one waveform. `ref.goTo(stage)` plays the morph to a stage and writes
+ * straight to the DOM (no React re-render per frame). With `stage` set it renders that stage as a still, which is the
  * designed end-state for reduced motion and small screens.
  */
 const ChainFigure = forwardRef(function ChainFigure({ stage = null, title }, ref) {
@@ -40,25 +37,52 @@ const ChainFigure = forwardRef(function ChainFigure({ stage = null, title }, ref
   const pathRef = useRef(null);
   const layerRefs = useRef({});
 
-  const initial = stage == null ? layersAt(0, 1) : layersAt(stage, 1);
+  const initial = stage == null ? layersAt(0) : layersAt(stage);
   const d0 = toPathD(shapes[stage == null ? 0 : stage]);
 
+  // Current drawn state, so an interrupted transition retargets from where
+  // it actually is instead of snapping.
+  const current = useRef({ pts: shapes[stage == null ? 0 : stage], layers: initial });
+  const raf = useRef(0);
+
+  const draw = (pts, layers) => {
+    current.current = { pts, layers };
+    if (pathRef.current) pathRef.current.setAttribute('d', toPathD(pts));
+    Object.keys(layers).forEach((k) => {
+      const el = layerRefs.current[k];
+      if (el) el.style.opacity = layers[k].toFixed(3);
+    });
+  };
+
+  useEffect(() => () => cancelAnimationFrame(raf.current), []);
+
   useImperativeHandle(ref, () => ({
-    setProgress(progress) {
-      const s = Math.min(STAGES - 1e-6, Math.max(0, progress * STAGES));
-      const idx = Math.floor(s);
-      const local = s - idx;
-      const m = idx === 0 ? 1 : ease(local / ENTER);
-      const from = shapes[Math.max(0, idx - 1)];
-      const to = shapes[idx];
-      if (pathRef.current) {
-        pathRef.current.setAttribute('d', toPathD(idx === 0 ? to : lerpShape(from, to, m)));
+    // Time-based, not scroll-scrubbed: the morph plays once when a step
+    // takes focus, at its own pace, whatever the scroll speed.
+    goTo(target, duration = DURATION) {
+      cancelAnimationFrame(raf.current);
+      const fromPts = current.current.pts;
+      const fromL = current.current.layers;
+      const toPts = shapes[target];
+      const toL = layersAt(target);
+      if (!duration) {
+        draw(toPts, toL);
+        return;
       }
-      const l = layersAt(idx, m);
-      Object.keys(l).forEach((k) => {
-        const el = layerRefs.current[k];
-        if (el) el.style.opacity = l[k].toFixed(3);
-      });
+      const t0 = performance.now();
+      const tick = (now) => {
+        const k = Math.min(1, (now - t0) / duration);
+        const layers = {};
+        Object.keys(toL).forEach((name) => {
+          const delta = toL[name] - fromL[name];
+          // outgoing layers leave early, incoming layers arrive late
+          const e = delta >= 0 ? ease((k - 0.4) / 0.6) : ease(k / 0.6);
+          layers[name] = fromL[name] + delta * e;
+        });
+        draw(lerpShape(fromPts, toPts, ease(k)), layers);
+        if (k < 1) raf.current = requestAnimationFrame(tick);
+      };
+      raf.current = requestAnimationFrame(tick);
     },
   }));
 

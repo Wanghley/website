@@ -62,7 +62,7 @@ body {
   line-height:      var(--ds-leading-normal);
   color:            var(--ds-text-primary);
   background-color: var(--ds-abyss);
-  overflow-x: hidden;
+  overflow-x: clip;
   padding: 0 0 20px;
   /* Remove 300ms tap delay; prevent accidental double-tap zoom on iOS */
   touch-action: manipulation;
@@ -704,7 +704,7 @@ hr {
    ============================================================ */
 
 .home-page {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 .home-section {
