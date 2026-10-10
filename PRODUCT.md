@@ -32,7 +32,10 @@ Live capacitive-sensing demo: SENSE readout of about 0.18 pF to 2.14 pF as a han
 - Budgets: LCP < 2.5s on 4G mid-range phone, CLS < 0.05, INP < 200ms, initial JS < 200 KB gzipped (3D chunk lazy and excluded).
 - Open to: industry internships and roles, research collaboration, speaking and mentoring.
 - Ventures: none named publicly for now. Omit the section until the user decides.
-- Undecided: hometown for the Brazil-to-US route, real classification numbers (latency and power), TEDxDuke talk link, Google Scholar and lab links to be verified.
+- Brazil-to-US route: Brasília (hometown, capital of Brazil) → Durham → Houston.
+- TEDxDuke talk: https://www.youtube.com/watch?v=tceoUHQ9rPQ
+- Sensor data for the signal chain is simulated (no real recording exists yet). It must be labelled as illustrative wherever shown and swapped for a real capture when available.
+- Undecided: real classification numbers (latency and power), Google Scholar and lab links to be verified.
 
 ## Brand Commitments
 - Wordmark face: the current wide geometric face (Lost In Space), for the name and logo only.
@@ -46,7 +49,9 @@ Proof points: ICYS Belgrade 2023 gold, FEBRACE 2021 gold, BRICS Young Inventor 2
 
 Assets in the repo: 57 personal photos (src/assets/wanghley/archive), off-duty photos, an optimized rigged Funko GLB (public/models/wsm-figure.glb), projects/blog/skills in the CMS, news in src/data/news.js.
 
-Absent, must not be fabricated: capacitive sensor CSV, handwriting scan, KiCad or scope captures, prototype photos, brand guide file, TEDx link, hometown.
+Handwriting: `Signatures/` (gitignored) holds signature.svg (a vectorized signature, potrace) and Rubrica.png (a flourish mark). It also holds a bank PDF that must never be opened or published.
+
+Absent, must not be fabricated: real capacitive sensor recording (a simulated one is allowed if labelled), handwritten notes, KiCad or scope captures, prototype photos, brand guide file.
 
 ## Product Principles
 1. Real beats rendered: every section carries an artifact only the user could have produced.

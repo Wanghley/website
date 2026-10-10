@@ -66,13 +66,14 @@ Dead code: `home/IdentityFocus`, `home/TechMatrix`, `home/HeroPhotoArchive`, `th
 
 | Needed | Used in | Status |
 |---|---|---|
-| Capacitive sensor data CSV (time, pF) | Phase 3 signal chain | missing, `/brief-assets/` doesn't exist |
+| Capacitive sensor data (time, pF) | Phase 3 signal chain | **I'll generate a simulated trace**, labelled as illustrative; swap for a real capture later |
 | Handwriting scan (notes, signature) → SVG | margin annotations, notebook cards | missing |
 | Prototype photos (early scrappy builds) | gambiarra section, work cards | missing, the 57 `wsm-*.webp` are portraits/life photos |
 | KiCad / schematic screenshots, scope captures | work cards, signal chain | missing |
 | Real classification numbers (latency, µW) | hero label | `[[PLACEHOLDER]]` |
-| Hometown in Brazil | Brazil↔US route | `[[PLACEHOLDER]]` |
-| TEDxDuke talk URL | gambiarra section | `[[PLACEHOLDER]]` |
+| Hometown | Brazil↔US route | **Provided: Brasília** |
+| TEDxDuke talk URL | gambiarra section | **Provided:** youtube.com/watch?v=tceoUHQ9rPQ |
+| Signatures | handwriting layer | **Provided** in `Signatures/` (gitignored). Signature SVG is usable; contains a bank PDF that I did not open |
 | Brand-guide file (only the token values in your brief are available) | tokens | partial |
 | Screenshots you referenced (2, 3) | audit | not in repo, I made my own |
 

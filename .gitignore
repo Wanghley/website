@@ -43,3 +43,7 @@ yarn-error.log*
 /src/assets/3d_model/*.fbx
 /src/assets/3d_model/*.obj
 /src/assets/3d_model/*.glb
+
+# personal source files (signatures + a bank PDF). Only vetted, optimized
+# derivatives may be copied into src/ or public/.
+/Signatures/
