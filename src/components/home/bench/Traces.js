@@ -106,6 +106,7 @@ const fragmentShader = /* glsl */ `
   uniform float uFade;
   uniform vec3 uDim;
   uniform vec3 uLit;
+  uniform vec3 uWarm;
   uniform vec3 uHot;
   varying float vDist;
   varying float vS;
@@ -118,7 +119,7 @@ const fragmentShader = /* glsl */ `
     float onPath = step(0.0, vS);
     float lit = onPath * (1.0 - smoothstep(uProg - 0.05, uProg, vS));
     // whole-board warm-up (other traces glow faintly as the pad is approached)
-    col = mix(col, uLit, (1.0 - onPath) * uGlobal * 0.22);
+    col = mix(col, uWarm, (1.0 - onPath) * uGlobal * 0.3);
     col = mix(col, uLit, lit);
     float pulse = onPath * exp(-pow((vS - uPulse) * 11.0, 2.0)) * step(vS, uProg + 0.02);
     col += uHot * pulse * 0.9;
@@ -146,8 +147,9 @@ export default function Traces({ layout }) {
           uGlobal: { value: 0 },
           uFade: { value: 1 },
           uDim: { value: new THREE.Color('#A8642A') },
-          uLit: { value: new THREE.Color('#F0A460') },
-          uHot: { value: new THREE.Color('#FFE2B8') },
+          uLit: { value: new THREE.Color('#3AAFF1') },
+          uWarm: { value: new THREE.Color('#E0934A') },
+          uHot: { value: new THREE.Color('#D4EEFD') },
         },
       }),
     [maxDist]

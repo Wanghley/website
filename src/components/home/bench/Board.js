@@ -19,10 +19,10 @@ function useMaskTexture(components) {
     c.width = TEX;
     c.height = TEX;
     const ctx = c.getContext('2d');
-    ctx.fillStyle = '#26272A';
+    ctx.fillStyle = '#1B2B34';
     ctx.fillRect(0, 0, TEX, TEX);
     // ground-pour hatch, very low contrast copper
-    ctx.strokeStyle = 'rgba(217, 133, 59, 0.07)';
+    ctx.strokeStyle = 'rgba(58, 175, 241, 0.09)';
     ctx.lineWidth = 1;
     for (let i = -TEX; i < TEX * 2; i += 16) {
       ctx.beginPath();
@@ -67,12 +67,12 @@ function Substrate({ components }) {
       </mesh>
       <mesh castShadow receiveShadow>
         <boxGeometry args={[w, th, d]} />
-        <meshStandardMaterial color="#2B2C2E" roughness={0.7} metalness={0.1} />
+        <meshStandardMaterial color="#14242C" roughness={0.7} metalness={0.1} />
       </mesh>
       {/* copper edge plating */}
       <mesh position={[0, th * 0.12, 0]}>
         <boxGeometry args={[w + 0.02, th * 0.14, d + 0.02]} />
-        <meshStandardMaterial color={COPPER} roughness={0.35} metalness={0.9} />
+        <meshStandardMaterial color="#2770B5" roughness={0.35} metalness={0.9} />
       </mesh>
     </group>
   );

@@ -24,7 +24,7 @@
   font-family: var(--font-mono-bench);
   font-size: var(--step--1);
   letter-spacing: 0.04em;
-  color: var(--copper);
+  color: var(--signal);
   margin-bottom: 20px;
 }
 
@@ -68,7 +68,7 @@
   bottom: 0;
   width: 72px;
   height: 2px;
-  background: var(--copper);
+  background: var(--signal);
   transform-origin: left;
   animation: hero-rule var(--dur-reveal) var(--ease-out) 1.15s both;
 }
@@ -95,7 +95,7 @@
   color: var(--muted);
   max-width: 40ch;
   padding-left: 14px;
-  border-left: 2px solid var(--copper-dim);
+  border-left: 2px solid var(--signal-press);
 }
 
 .hero__instrument {
