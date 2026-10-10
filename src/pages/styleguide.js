@@ -21,14 +21,14 @@ const OPTIONS = [
   {
     id: 'A',
     name: 'General Sans',
-    source: 'Fontshare, free for commercial use. Already loaded as the provisional face.',
+    source: 'Fontshare, free for commercial use. Not chosen.',
     family: "'General Sans', 'Helvetica Neue', sans-serif",
     note: 'Geometric with slightly squared curves. Calm and technical; the safest fit for engineering copy.',
   },
   {
     id: 'B',
     name: 'Bricolage Grotesque',
-    source: 'Google Fonts, OFL. Variable, with an optical-size axis.',
+    source: 'CHOSEN. Google Fonts, OFL. Variable, with an optical-size axis.',
     family: "'Bricolage Grotesque', 'Helvetica Neue', sans-serif",
     note: 'The most characterful: ink-trap quirks at display size, plain at text size. Fits "gambiarra" best.',
   },
@@ -59,16 +59,17 @@ export default function Styleguide() {
         <title>Style tile | Wanghley</title>
         <meta name="robots" content="noindex" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,600&display=swap" rel="stylesheet" />
       </Helmet>
 
       <header className="sg__head container">
         <p className="sg__label">STYLE TILE · PHASE 1</p>
         <h1 className="sg__title">The Bench</h1>
         <p className="sg__lede">
-          Graphite surfaces, copper traces, signal-blue for what is alive. Pick a text face in section 2.
+          Graphite surfaces, copper traces, signal-blue for what is alive. Text face chosen: Bricolage Grotesque (B).
         </p>
       </header>
 
@@ -98,7 +99,7 @@ export default function Styleguide() {
       </section>
 
       <section className="sg__section container" aria-labelledby="sg-type">
-        <h2 id="sg-type" className="sg__h2">2. Type: choose the text face</h2>
+        <h2 id="sg-type" className="sg__h2">2. Type: Bricolage Grotesque chosen</h2>
         <div className="sg__options">
           {OPTIONS.map((o) => (
             <article key={o.id} className="sg__option" style={{ '--sample': o.family }}>

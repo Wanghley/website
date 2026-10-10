@@ -50,9 +50,9 @@
   --focus-ring: 0 0 0 2px var(--ink), 0 0 0 4px var(--focus);
 
   /* — Fonts (max 3 families + wordmark) —
-     --font-text is provisional until the /styleguide type choice. */
+     --font-text: Bricolage Grotesque (chosen). */
   --font-wordmark: 'LostinSpace', 'Orbitron', sans-serif;
-  --font-text:     'General Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-text:     'Bricolage Grotesque', 'Helvetica Neue', Arial, sans-serif;
   --font-mono-bench: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* — Fluid type scale (headline measure <= 14 words) — */
@@ -172,6 +172,7 @@
    nav and is non-interactive.
    ============================================================ */
 html { background-color: var(--ink); }
+body { font-optical-sizing: auto; }
 
 body {
   background-color: var(--ink);
