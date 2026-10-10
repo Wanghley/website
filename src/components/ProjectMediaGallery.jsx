@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import "./css/ProjectMediaGallery.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft, faChevronRight, faTimes, faExpand, faCompress } from '@fortawesome/free-solid-svg-icons';
+import { FaChevronLeft, FaChevronRight, FaTimes, FaExpand, FaCompress } from 'react-icons/fa';
 
 function MediaGallery({ media }) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -102,7 +101,7 @@ function MediaGallery({ media }) {
                     loading="lazy"
                   />
                   <div className="project-page__media-overlay">
-                    <FontAwesomeIcon icon={faExpand} className="project-page__media-icon" />
+                    <FaExpand className="project-page__media-icon" />
                   </div>
                 </div>
               </div>
@@ -118,7 +117,7 @@ function MediaGallery({ media }) {
       ) : (
         <div className="project-page__carousel-wrapper">
           <button className="carousel-nav carousel-nav--prev" onClick={() => navigateImage('prev')}>
-            <FontAwesomeIcon icon={faChevronLeft} />
+            <FaChevronLeft />
           </button>
           
           <div className="project-page__media-carousel">
@@ -139,7 +138,7 @@ function MediaGallery({ media }) {
           </div>
           
           <button className="carousel-nav carousel-nav--next" onClick={() => navigateImage('next')}>
-            <FontAwesomeIcon icon={faChevronRight} />
+            <FaChevronRight />
           </button>
           
           <div className="carousel-indicators">
@@ -161,10 +160,10 @@ function MediaGallery({ media }) {
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-controls">
               <button className="modal-control modal-fullscreen" onClick={toggleFullscreen}>
-                <FontAwesomeIcon icon={isFullscreen ? faCompress : faExpand} />
+                {isFullscreen ? <FaCompress /> : <FaExpand />}
               </button>
               <button className="modal-control modal-close" onClick={closeModal}>
-                <FontAwesomeIcon icon={faTimes} />
+                <FaTimes />
               </button>
             </div>
             
@@ -182,13 +181,13 @@ function MediaGallery({ media }) {
                   e.stopPropagation();
                   navigateImage('prev');
                 }}>
-                  <FontAwesomeIcon icon={faChevronLeft} />
+                  <FaChevronLeft />
                 </button>
                 <button className="modal-nav modal-nav--right" onClick={(e) => {
                   e.stopPropagation();
                   navigateImage('next');
                 }}>
-                  <FontAwesomeIcon icon={faChevronRight} />
+                  <FaChevronRight />
                 </button>
                 <div className="modal-counter">
                   {activeImageIndex + 1} / {media.length}

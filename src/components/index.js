@@ -3,10 +3,7 @@ import Contact from "./Contact";
 import Footer from "./Footer";
 import AboutText from "./About-text";
 import NotFound from "./NotFound";
-import ProjectCard from "./ProjectCard";
-import ProjectCardGrid from "./ProjectCardGrid";
 import Card from "./Card";
-import CardGrid from "./CardGrid";
 import ProjectPost from "./ProjectPost";
 import TechArchitecture from "./TechArchitecture";
 import SignatureProject from "./SignatureProject";
@@ -17,7 +14,10 @@ import Timeline from "./Timeline";
 import HeroChamber from "./home/HeroChamber";
 import SignalChain from "./home/SignalChain";
 import VentureShowcase from "./home/VentureShowcase";
+import LatestWriting from "./home/LatestWriting";
+import OffDutyStrip from "./home/OffDutyStrip";
 import SkillField from "./home/SkillField";
+import LatestNews from "./home/LatestNews";
 import ClosingTransmit from "./home/ClosingTransmit";
 
 // Hero, About, Skills, GridFeatured, GridFeaturedBlog, GambiarraImpact,
@@ -36,10 +36,7 @@ export {
     Footer,
     AboutText,
     NotFound,
-    ProjectCard,
-    ProjectCardGrid,
     Card,
-    CardGrid,
     ProjectPost,
     TechArchitecture,
     SignatureProject,
@@ -50,6 +47,9 @@ export {
     HeroChamber,
     SignalChain,
     VentureShowcase,
+    LatestWriting,
+    OffDutyStrip,
     SkillField,
+    LatestNews,
     ClosingTransmit,
 }

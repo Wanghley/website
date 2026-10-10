@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo-colorful.png';
-import { FaLinkedinIn, FaInstagram, FaGithub, FaGraduationCap } from 'react-icons/fa6';
+import logo from '../assets/logo-colorful.webp';
+import { FaLinkedinIn, FaInstagram, FaGithub, FaAddressCard } from 'react-icons/fa6';
 import { SiGooglescholar } from 'react-icons/si';
 import './css/Footer.css';
 
@@ -9,8 +9,8 @@ const SOCIAL_LINKS = [
   { Icon: FaLinkedinIn,    href: 'https://linkedin.com/in/wanghley',                        label: 'LinkedIn' },
   { Icon: FaGithub,        href: 'https://github.com/wanghley',                             label: 'GitHub' },
   { Icon: FaInstagram,     href: 'https://instagram.com/wanghley',                          label: 'Instagram' },
-  { Icon: SiGooglescholar, href: 'https://scholar.google.com/citations?user=bMgQgr8AAAAJ', label: 'Google Scholar' },
-  { Icon: FaGraduationCap, href: 'http://lattes.cnpq.br/2402272123510102',                  label: 'Lattes CV' },
+  { Icon: SiGooglescholar, href: 'https://scholar.google.com/citations?user=sN2iKrkAAAAJ', label: 'Google Scholar' },
+  { Icon: FaAddressCard, href: 'http://lattes.cnpq.br/2402272123510102',                  label: 'Lattes CV' },
 ];
 
 const Footer = () => {
@@ -86,7 +86,7 @@ const Footer = () => {
             <div className="footer__col">
               <span className="footer__col-label">Research</span>
               <ul className="footer__link-list">
-                <li><a href="https://scholar.google.com/citations?user=bMgQgr8AAAAJ" target="_blank" rel="noopener noreferrer" className="footer__link">Google Scholar</a></li>
+                <li><a href="https://scholar.google.com/citations?user=sN2iKrkAAAAJ" target="_blank" rel="noopener noreferrer" className="footer__link">Google Scholar</a></li>
                 <li><a href="http://lattes.cnpq.br/2402272123510102" target="_blank" rel="noopener noreferrer" className="footer__link">Lattes CV</a></li>
               </ul>
             </div>

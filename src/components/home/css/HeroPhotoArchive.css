@@ -1,0 +1,161 @@
+/* ============================================================
+   HERO PHOTO ARCHIVE — every photo, tagged like lab specimens.
+   Two counter-scrolling rows, speed reactive to scroll velocity via
+   gsap.ticker + lib/scrollSignal (see HeroPhotoArchive.js). Falls back to
+   a single static, swipeable row on narrow viewports and
+   prefers-reduced-motion — never a slowed-down marquee, an actually still
+   one.
+   ============================================================ */
+
+.hero-archive {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.4vw, 16px);
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+}
+
+.hero-archive__row {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+}
+
+.hero-archive__track {
+  display: flex;
+  gap: clamp(12px, 1.4vw, 18px);
+  width: max-content;
+  will-change: transform;
+}
+
+.hero-archive__card {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(130px, 12vw, 200px);
+  aspect-ratio: 3 / 4;
+  border-radius: var(--ds-radius-sm, 8px);
+  overflow: hidden;
+  background: var(--ds-photo-surface);
+  border: 1px solid var(--ds-photo-border);
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.hero-archive__card:hover,
+.hero-archive__card:focus-within {
+  border-color: var(--ds-photo-border-hover);
+  transform: translateY(-3px);
+  z-index: 2;
+}
+
+.hero-archive__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(1.02) contrast(1.02);
+}
+
+/* Tag stays hidden until the specimen is actually hovered/focused — an
+   always-on label on 50+ small thumbnails is just visual noise. */
+.hero-archive__meta {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 0.3rem 0.4rem;
+  background: var(--ds-photo-overlay-card);
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.hero-archive__card:hover .hero-archive__meta,
+.hero-archive__card:focus-within .hero-archive__meta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.hero-archive__tag {
+  font-family: var(--ds-font-mono);
+  font-size: 0.58rem;
+  letter-spacing: var(--ds-tracking-wide);
+  color: var(--ds-gold-bright);
+}
+
+/* ─── Static fallback (compact viewports + prefers-reduced-motion) ─── */
+
+.hero-archive--static {
+  justify-content: flex-start;
+}
+
+.hero-archive__static-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+
+.hero-archive__static-row::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-archive__card--static {
+  scroll-snap-align: start;
+  width: clamp(96px, 26vw, 140px);
+  aspect-ratio: auto;
+  overflow: visible;
+  border: none;
+  background: none;
+}
+
+.hero-archive__card--static .hero-archive__img {
+  aspect-ratio: 3 / 4;
+  height: auto;
+  border-radius: var(--ds-radius-sm, 8px);
+  border: 1px solid var(--ds-photo-border);
+}
+
+.hero-archive__card--static .hero-archive__meta {
+  opacity: 1;
+  transform: none;
+  position: static;
+  background: none;
+  padding: 0.3rem 0 0;
+  text-align: center;
+}
+
+/* ─── Filmstrip (the hero's bottom band, once the circuit board took the
+   space the two-row marquee used to occupy) — one low-profile row.
+   Cards lift slightly with --proximity, the same value the board's own
+   glow/traces read (inherited from .hero-chamber, see HeroChamber.js) —
+   a cheap, shared approximation rather than per-card distance tracking. ─── */
+
+.hero-archive--filmstrip {
+  height: auto;
+}
+
+.hero-archive--filmstrip .hero-archive__card {
+  width: clamp(64px, 6vw, 92px);
+  transform: translateY(calc(var(--proximity, 0) * -6px));
+  transition: transform 0.25s ease, border-color 0.3s ease;
+}
+
+/* At filmstrip scale a dead-center crop reads as a forehead-down face
+   crop on several frames — bias the visible window up slightly toward
+   where faces actually sit. */
+.hero-archive--filmstrip .hero-archive__img {
+  object-position: 50% 22%;
+}
+
+.hero-archive--filmstrip .hero-archive__card:hover,
+.hero-archive--filmstrip .hero-archive__card:focus-within {
+  transform: translateY(calc(var(--proximity, 0) * -6px - 3px));
+}
+
+.hero-archive--filmstrip.hero-archive--static .hero-archive__card--static {
+  width: clamp(56px, 16vw, 76px);
+}

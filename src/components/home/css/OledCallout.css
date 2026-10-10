@@ -1,0 +1,44 @@
+/* ============================================================
+   OLED CALLOUT — the display component's hover callout (see
+   circuit3d/OledDisplay.js). Adapted from CircuitBoardScene.css's
+   .circuit-callout (the SVG board's own callout, which has no R3F
+   equivalent to reuse directly) — same visual language. Rendered via
+   drei's <Html>, anchored to the display's own 3D position (drei projects
+   it to screen space every frame and positions its own wrapper div
+   accordingly) — NOT `position: fixed` with manually-tracked cursor
+   coordinates, since this sits inside <Html>'s own positioned wrapper.
+   ============================================================ */
+
+.oled-callout {
+  transform: translate(12px, -50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--ds-font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--ds-text-primary);
+  background: rgba(10, 11, 20, 0.7);
+  backdrop-filter: blur(6px);
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--ds-glass-rim);
+  border-radius: var(--ds-radius-sm, 8px);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: oledCalloutIn 0.2s ease;
+}
+
+.oled-callout__leader {
+  width: 10px;
+  height: 1px;
+  background: var(--color-primary);
+}
+
+@keyframes oledCalloutIn {
+  from { opacity: 0; transform: translate(6px, -50%); }
+  to   { opacity: 1; transform: translate(12px, -50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oled-callout { animation: none; }
+}

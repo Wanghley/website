@@ -1,5 +1,4 @@
 @import url('./global.css');
-@import "rsuite/dist/rsuite.css";
 
 .Timeline {
     display: flex;

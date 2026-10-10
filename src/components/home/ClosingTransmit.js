@@ -35,7 +35,7 @@ export default function ClosingTransmit() {
     <section
       ref={sectionRef}
       id="transmit"
-      className="closing-transmit"
+      className="closing-transmit section-blend-from-dark"
       aria-labelledby="transmit-heading"
     >
       <div className="closing-transmit__grid">
@@ -73,6 +73,9 @@ export default function ClosingTransmit() {
             <span className="telemetry telemetry--dark">
               <DecryptedText text="LATENCY < 24h" trigger={entered} speed={26} />
             </span>
+            <span className="telemetry telemetry--dark">
+              <DecryptedText text="HOUSTON, TX · CST" trigger={entered} speed={22} />
+            </span>
           </div>
         </div>
 
@@ -97,6 +100,15 @@ export default function ClosingTransmit() {
             <FaCalendarAlt aria-hidden="true" className="closing-transmit__cta-icon" />
             Schedule a Call
           </Magnet>
+
+          <p className="closing-transmit__quiet-channels">
+            or reach me directly —{' '}
+            <a href="mailto:me@wanghley.com">me@wanghley.com</a>
+            {' · '}
+            <a href="https://linkedin.com/in/wanghley" target="_blank" rel="noopener noreferrer">
+              LinkedIn
+            </a>
+          </p>
         </div>
       </div>
     </section>

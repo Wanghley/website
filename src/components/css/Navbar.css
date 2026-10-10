@@ -660,12 +660,20 @@
   }
 }
 
-@media (max-width: 480px) {
+/* 56px header on every phone/small-tablet width — the hero's mobile layout
+   (HeroChamber.css) budgets the first 100svh against exactly this value,
+   so it's set once here rather than per-page. Was 100px down to 481px and
+   72px below that; a single 56px value site-wide below 768px reads as
+   "the mobile header," not two different heights depending on how narrow
+   the phone is. */
+@media (max-width: 768px) {
   :root {
-    --nav-height: 72px;
-    --nav-height-scrolled: 60px;
+    --nav-height: 56px;
+    --nav-height-scrolled: 56px;
   }
+}
 
+@media (max-width: 480px) {
   /* Bottom-sheet: tighter horizontal padding on small phones */
   .mobile-menu__content {
     padding: 20px 20px calc(32px + env(safe-area-inset-bottom, 0px));

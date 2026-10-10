@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import logoWhite from '../assets/logo-white.svg';
-import logoColor from '../assets/logo-colorful.png';
-import { FaLinkedinIn, FaInstagram, FaGithub, FaGraduationCap } from 'react-icons/fa6';
+import logoColor from '../assets/logo-colorful.webp';
+import { FaLinkedinIn, FaInstagram, FaGithub, FaAddressCard } from 'react-icons/fa6';
 import { SiGooglescholar } from 'react-icons/si';
 import { useLenis } from '../lib/LenisRoot';
 import './css/Navbar.css';
@@ -66,8 +66,8 @@ const Navbar = () => {
     { icon: FaLinkedinIn, url: 'https://linkedin.com/in/wanghley', label: 'LinkedIn' },
     { icon: FaInstagram, url: 'https://instagram.com/wanghley', label: 'Instagram' },
     { icon: FaGithub, url: 'https://github.com/Wanghley', label: 'GitHub' },
-    { icon: FaGraduationCap, url: 'http://lattes.cnpq.br/2402272123510102', label: 'Lattes' },
-    { icon: SiGooglescholar, url: 'https://scholar.google.com/citations?user=bMgQgr8AAAAJ', label: 'Google Scholar' },
+    { icon: FaAddressCard, url: 'http://lattes.cnpq.br/2402272123510102', label: 'Lattes' },
+    { icon: SiGooglescholar, url: 'https://scholar.google.com/citations?user=sN2iKrkAAAAJ', label: 'Google Scholar' },
   ];
 
   useEffect(() => {

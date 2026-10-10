@@ -7,7 +7,7 @@ import {
   FaCalendarAlt,
   FaLinkedin,
   FaGithub,
-  FaGraduationCap,
+  FaAddressCard,
   FaCheckCircle,
   FaArrowRight,
   FaLightbulb,
@@ -213,7 +213,7 @@ const Contact = () => {
   const socials = [
     { icon: <FaLinkedin />, href: "https://linkedin.com/in/wanghley", label: "LinkedIn" },
     { icon: <FaGithub />, href: "https://github.com/wanghley", label: "GitHub" },
-    { icon: <FaGraduationCap />, href: "http://lattes.cnpq.br/2402272123510102", label: "Lattes" }
+    { icon: <FaAddressCard />, href: "http://lattes.cnpq.br/2402272123510102", label: "Lattes" }
   ];
 
   return (

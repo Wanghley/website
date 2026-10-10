@@ -2,21 +2,19 @@
   "name": "wanghley.com",
   "version": "0.1.0",
   "private": true,
+  "resolutions": {
+    "postprocessing": "6.34.3"
+  },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@fortawesome/fontawesome-svg-core": "^6.4.2",
-    "@fortawesome/free-brands-svg-icons": "^6.4.2",
-    "@fortawesome/free-solid-svg-icons": "^6.5.2",
-    "@fortawesome/react-fontawesome": "^3.1.1",
-    "@mui/material": "^7.3.2",
     "@posthog/react": "^1.9.1",
     "@react-three/drei": "9.89.2",
     "@react-three/fiber": "8.15.12",
+    "@react-three/postprocessing": "^2.16.3",
+    "postprocessing": "6.34.3",
+    "three": "0.158.0",
     "axios": "^1.6.7",
     "chart.js": "^4.4.0",
-    "font-awesome": "^4.7.0",
     "framer-motion": "^12.40.0",
     "gsap": "^3.15.0",
     "katex": "^0.16.21",
@@ -25,7 +23,6 @@
     "posthog-js": "^1.376.5",
     "prop-types": "^15.8.1",
     "react": "18.2.0",
-    "react-bootstrap": "^2.10.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "18.2.0",
     "react-helmet-async": "^2.0.5",
@@ -38,13 +35,12 @@
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
-    "rsuite": "^5.74.2",
-    "sitemap": "^8.0.0",
-    "styled-components": "^6.1.6",
-    "three": "0.158.0"
+    "sitemap": "^8.0.0"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.0",
+    "@gltf-transform/core": "^4.3.1",
+    "@gltf-transform/functions": "^4.3.1",
+    "meshoptimizer": "^0.22.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -55,7 +51,6 @@
     "eslint-config-react-app": "^7.0.1",
     "playwright": "^1.60.0",
     "postcss": "^8.5.15",
-    "tailwindcss": "^4.3.0",
     "typescript": "^5.6.2",
     "web-vitals": "^2.1.4"
   },
@@ -64,7 +59,10 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate-sitemap": "node src/sitemap.js"
+    "generate-sitemap": "node src/sitemap.js",
+    "build-archive": "node scripts/build-photo-archive.js",
+    "build-head-precompute": "node scripts/build-head-precompute.js",
+    "build-hero-composite": "node scripts/build-hero-composite.js"
   },
   "eslintConfig": {
     "extends": [

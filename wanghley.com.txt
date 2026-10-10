@@ -1,0 +1,87 @@
+;;
+;; Domain:     wanghley.com.
+;; Exported:   2026-08-04 19:34:52
+;;
+;; This file is intended for use for informational and archival
+;; purposes ONLY and MUST be edited before use on a production
+;; DNS server.  In particular, you must:
+;;   -- update the SOA record with the correct authoritative name server
+;;   -- update the SOA record with the contact e-mail address information
+;;   -- update the NS record(s) with the authoritative name servers for this domain.
+;;
+;; For further information, please consult the BIND documentation
+;; located on the following website:
+;;
+;; http://www.isc.org/
+;;
+;; And RFC 1035:
+;;
+;; http://www.ietf.org/rfc/rfc1035.txt
+;;
+;; Please note that we do NOT offer technical support for any use
+;; of this zone data, the BIND name server, or any other third-party
+;; DNS software.
+;;
+;; Use at your own risk.
+;; SOA Record
+wanghley.com	3600	IN	SOA	jacqueline.ns.cloudflare.com. dns.cloudflare.com. 2053753869 10000 2400 604800 3600
+
+;; NS Records
+wanghley.com.	86400	IN	NS	jacqueline.ns.cloudflare.com.
+wanghley.com.	86400	IN	NS	nolan.ns.cloudflare.com.
+
+;; A Records
+ipv4.wanghley.com.	1	IN	A	65.19.154.94 ; Exposes raw server IP directly cf_tags=cf-proxied:false
+mail.wanghley.com.	1	IN	A	65.19.154.94 ; Mail server address for IMAP/POP3/SMTP cf_tags=cf-proxied:false
+wanghley.com.	1	IN	A	199.36.158.100 ; Main website, hosted on Firebase cf_tags=cf-proxied:false
+webmail.wanghley.com.	1	IN	A	65.19.154.94 ; Webmail login (Plesk/Roundcube) address cf_tags=cf-proxied:false
+
+;; AAAA Records
+mail.wanghley.com.	1	IN	AAAA	2001:470:1:1ee::2002 ; Mail server address for IMAP/POP3/SMTP cf_tags=cf-proxied:false
+webmail.wanghley.com.	1	IN	AAAA	2001:470:1:1ee::2002 ; Webmail login (Plesk/Roundcube) address cf_tags=cf-proxied:false
+
+;; CNAME Records
+bc.wanghley.com.	1	IN	CNAME	e6f5863ac01c5788.vercel-dns-017.com. ; BC2027 demo Site hosted on Vercel cf_tags=cf-proxied:true
+book.wanghley.com.	1	IN	CNAME	2a1de0aa10037192.vercel-dns-017.com. ; cal.diy hosted on Vercel cf_tags=cf-proxied:true
+cms.wanghley.com.	1	IN	CNAME	cms-wanghley-com.onrender.com. ; CMS backend, hosted on Render cf_tags=cf-proxied:true
+cosmos.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; Homelab service via Cloudflare Tunnel cf_tags=cf-proxied:true
+couchdb.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; CouchDB database Obsidian cf_tags=cf-proxied:true
+_domainconnect.wanghley.com.	1	IN	CNAME	connect.domains.google.com. ; Google's automated DNS provisioning discovery record cf_tags=cf-proxied:false
+grafana.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+homarr.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+homeassistant.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+homepage.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+links.wanghley.com.	1	IN	CNAME	glowing-peony-85c9cb.netlify.app. ; Link-in-bio page, hosted on Netlify cf_tags=cf-proxied:true
+minio-console.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+minio.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+n8n.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+ntfy.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+portainer.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+prm.wanghley.com.	1	IN	CNAME	d411762a-8895-4070-8ef9-a8b8e2a2a1ab.cfargotunnel.com. ; cf_tags=cf-proxied:true
+p.wanghley.com.	1	IN	CNAME	1e75d283dd969d14eb78.cf-prod-us-proxy.proxyhog.com. ; Posthog analytics cf_tags=cf-proxied:true
+share.wanghley.com.	1	IN	CNAME	d411762a-8895-4070-8ef9-a8b8e2a2a1ab.cfargotunnel.com. ; cf_tags=cf-proxied:true
+status.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+tools.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+twenty.wanghley.com.	1	IN	CNAME	363ee1eb-71c5-4105-b292-f918b4844628.cfargotunnel.com. ; cf_tags=cf-proxied:true
+uptime.wanghley.com.	1	IN	CNAME	d411762a-8895-4070-8ef9-a8b8e2a2a1ab.cfargotunnel.com. ; cf_tags=cf-proxied:true
+usyy6xqo4fjf.wanghley.com.	1	IN	CNAME	gv-ddiedyhkcdk5as.dv.googlehosted.com. ; Google Workspace Validation cf_tags=cf-proxied:false
+
+;; MX Records
+send.tx.wanghley.com.	3600	IN	MX	10 feedback-smtp.us-east-1.amazonses.com. ; Resend bounce/feedback handling for transactional mail
+wanghley.com.	1	IN	MX	0 mail.wanghley.com. ; Routes incoming mail to your HelioHost mail server
+
+;; SRV Records
+_imaps._tcp.wanghley.com.	1	IN	SRV	0 0 993 mail.wanghley.com. ; IMAP-over-SSL client autoconfig (port 993)
+_pop3s._tcp.wanghley.com.	1	IN	SRV	0 0 995 mail.wanghley.com. ; POP3-over-SSL client autoconfig (port 995)
+_smtps._tcp.wanghley.com.	1	IN	SRV	0 0 465 mail.wanghley.com. ; Implicit-TLS SMTP autoconfig (port 465)
+_submission._tcp.wanghley.com.	1	IN	SRV	0 0 587 mail.wanghley.com. ; STARTTLS SMTP submission autoconfig (port 587)
+
+;; TXT Records
+_dmarc.wanghley.com.	1	IN	TXT	"v=DMARC1; p=quarantine; pct=100; adkim=s; aspf=s; rua=mailto:me@wanghley.com; ruf=mailto:me@wanghley.com; fo=1" ; Email authentication + reporting policy
+_domainkey.wanghley.com.	1	IN	TXT	"o=-" ; Plesk's legacy domain-wide signing declaration
+mail._domainkey.wanghley.com.	1	IN	TXT	"v=DKIM1; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA2SKWDQo4Qik8NCix67WurLJoxn39TLrVHpk9rYRp7MpVvKeaY5tG/SnYl5K0sVnAaw8nwGLuYBjw3hw1I4RZfXBEB9wJ4/OhY7pjbeciqs4ZKBFj62glbkZYfgGg/bnZJvryBvNeuIg0y3bjPETLcZI5EjBY6a/O2dCuivbbE7tw5Uid2MOxzuTxHMRY9s8ymzJk28Zn" "I3apjEmsp3+EKwM/RefZCtmp2g7p6E9fNEtywxkjaust4LUyEVCyAy9kxm97QMSTSDbC/AKQluX/krGXaJZbj0jeCVhUUktNId8lgiZwW8Cs6X+qH0WKwMvhKDxGU987HT+YRrmTjWnlkQIDAQAB;" ; Active DKIM public key
+resend._domainkey.tx.wanghley.com.	3600	IN	TXT	"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDJ8bYlyBsUSGX3grKJprKKMHE18uowfZEff1DHUuZuL2b3nRNxv3Z8S0Bgy6afkwBSKXbwpzEduaz5vdLD6iSFrcVnE/ZFOhMQe8KJzwrez3ibQCG2ZgH1HXNTsGzYaOFhAPjHiT32EXuDf/utl9imvALwzaCKL3xCX3PlyXHk1wIDAQAB" ; DKIM key for Resend/SES transactional mail
+send.tx.wanghley.com.	3600	IN	TXT	"v=spf1 include:amazonses.com ~all" ; SPF for the transactional mail subdomain
+wanghley.com.	1	IN	TXT	"google-site-verification=g8x_87Cb0hLbe6qgpFdV-I3oNhXfUE2GvCePdBxjeqU" ; Google Search Console ownership proof
+wanghley.com.	1	IN	TXT	"v=spf1 a mx ip4:65.19.154.94 ip6:2001:470:1:1ee::2002 ~all" ; Authorizes which servers can send mail as you
+wanghley.com.	1	IN	TXT	"hosting-site=website-wanghley" ; Firebase website hosting

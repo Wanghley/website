@@ -9,7 +9,9 @@ import { useEffect, useState } from 'react';
  *  - the user has requested reduced motion
  *  - the device reports < 4GB RAM (navigator.deviceMemory)
  *  - the device reports < 4 logical cores (navigator.hardwareConcurrency)
- *  - it's a small-viewport touch device (coarse pointer + width < 768px)
+ *  - it's a small-viewport touch device (coarse pointer + width < 768px) —
+ *    or, for useCanRender3D() specifically, ANY viewport under 768px
+ *    regardless of pointer type (see `narrowDisqualifies` below)
  *  - a WebGL context can't actually be created
  *
  * Any signal not exposed by the browser is treated as "unknown" and does
@@ -28,7 +30,7 @@ function detectWebGL() {
   }
 }
 
-function evaluate({ requireWebGL = true } = {}) {
+function evaluate({ requireWebGL = true, narrowDisqualifies = false } = {}) {
   if (typeof window === 'undefined') return false;
 
   const reducedMotion = window.matchMedia?.(
@@ -47,7 +49,15 @@ function evaluate({ requireWebGL = true } = {}) {
 
   const isCoarsePointer = window.matchMedia?.('(pointer: coarse)').matches;
   const isSmallViewport = window.innerWidth < 768;
-  if (isCoarsePointer && isSmallViewport) return false;
+  // `narrowDisqualifies` (only useCanRender3D() sets it) drops the R3F hero
+  // scene below 768px regardless of pointer type: a desktop browser
+  // narrowed to phone width, or a touch emulator without `hasTouch`, still
+  // reports `pointer: fine` and previously slipped through the
+  // coarse-pointer-only check below, mounting the full R3F canvas at a
+  // width the fixed-zoom orthographic camera's composition wasn't designed
+  // for (visibly cropped). useCanAnimateCanvas()'s Canvas2D consumers don't
+  // have that cropping problem and keep the original, narrower rule.
+  if (isSmallViewport && (narrowDisqualifies || isCoarsePointer)) return false;
 
   if (requireWebGL && !detectWebGL()) return false;
 
@@ -74,7 +84,7 @@ function useGate(options) {
 }
 
 export default function useCanRender3D() {
-  return useGate({ requireWebGL: true });
+  return useGate({ requireWebGL: true, narrowDisqualifies: true });
 }
 
 /**

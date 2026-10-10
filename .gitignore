@@ -29,6 +29,17 @@ PORTFOLIO_FIXES.md
 posthog-setup-report.md
 docs/design/
 
+# raw camera-roll photo dumps — curated/optimized copies live in
+# src/assets/**/, never the untouched full-size originals (500MB+,
+# and inside src/ they bloat CRA's dev-server file watcher)
+/photo-originals/
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# raw 3D sculpt sources (500MB+); the optimized runtime GLB lives in
+# public/models/. precomputed/ stays tracked (imported by CircuitBoardScene).
+/src/assets/3d_model/*.fbx
+/src/assets/3d_model/*.obj
+/src/assets/3d_model/*.glb

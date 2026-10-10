@@ -1,0 +1,117 @@
+/* ============================================================
+   LATEST NEWS — CH:06 · TRANSMISSIONS
+   Dark section between the Capability Matrix and Contact. Compact
+   vertical list, distinct from the Credentials ticker (dated recent
+   activity, not evergreen achievements).
+   ============================================================ */
+
+.latest-news {
+  position: relative;
+  background: var(--ds-abyss);
+  padding: clamp(3.5rem, 9vh, 6rem) 0;
+}
+
+.latest-news__head {
+  margin-bottom: clamp(2rem, 5vh, 3rem);
+}
+
+.latest-news__head > * {
+  grid-column: 2 / 9;
+}
+
+.latest-news__heading {
+  margin: 0.5rem 0 0.75rem;
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-text-3xl);
+  font-weight: 700;
+  line-height: var(--ds-leading-tight);
+  color: var(--ds-text-primary);
+}
+
+.latest-news__subtitle {
+  margin: 0;
+  color: var(--ds-text-secondary);
+  line-height: var(--ds-leading-relaxed);
+  max-width: 52ch;
+}
+
+.latest-news__list-wrap > * {
+  grid-column: 2 / 12;
+}
+
+.latest-news__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.latest-news__item {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--ds-border-subtle);
+}
+
+.latest-news__item:last-child {
+  border-bottom: 1px solid var(--ds-border-subtle);
+}
+
+.latest-news__dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ds-text-muted);
+  transform: translateY(-1px);
+}
+
+.latest-news__dot--talk        { background: var(--color-orange, #F5A623); }
+.latest-news__dot--publication { background: var(--color-green, #6FCF97); }
+.latest-news__dot--press       { background: var(--color-purple, #9B59B6); }
+.latest-news__dot--milestone   { background: var(--color-primary, #3AAFF1); }
+.latest-news__dot--award       { background: var(--color-yellow, #F7DC6F); }
+
+.latest-news__date {
+  flex-shrink: 0;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  letter-spacing: var(--ds-tracking-wide);
+  color: var(--ds-text-muted);
+  white-space: nowrap;
+  min-width: 9rem;
+}
+
+.latest-news__title {
+  color: var(--ds-text-primary);
+  font-size: var(--ds-text-sm);
+  line-height: var(--ds-leading-normal);
+}
+
+.latest-news__title--link {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--ds-border);
+  transition: color var(--ds-duration-fast, 0.2s) ease;
+}
+
+.latest-news__title--link:hover {
+  color: var(--ds-gold-bright);
+}
+
+@media (max-width: 640px) {
+  .latest-news__head > *,
+  .latest-news__list-wrap > * {
+    grid-column: 1 / -1;
+  }
+
+  .latest-news__item {
+    flex-wrap: wrap;
+  }
+
+  .latest-news__date {
+    width: auto;
+  }
+}

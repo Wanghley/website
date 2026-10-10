@@ -218,7 +218,10 @@
 
 .signal-chain__creds {
   margin-top: clamp(3rem, 8vh, 5rem);
-  padding: 0 var(--home-grid-pad, clamp(16px, 4vw, 72px));
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding: clamp(2rem, 5vh, 3rem) var(--home-grid-pad, clamp(16px, 4vw, 72px));
+  background: var(--color-paper);
 }
 
 .signal-chain__creds-head {
@@ -231,11 +234,11 @@
 .signal-chain__creds-meta {
   font-family: var(--ds-font-mono);
   font-size: var(--ds-text-xs);
-  color: var(--ds-text-muted);
+  color: rgba(6, 7, 14, 0.45);
 }
 
-.ticker__item strong {
-  color: var(--ds-text-primary);
+.signal-chain__creds .ticker__item strong {
+  color: var(--color-paper-ink);
   font-weight: 600;
 }
 

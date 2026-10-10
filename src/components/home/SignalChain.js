@@ -10,9 +10,33 @@ const formatStat = (val, stat) => `${stat.prefix}${Math.round(val).toLocaleStrin
 export default function SignalChain() {
   const sectionRef = useRef(null);
   const diagramRef = useRef(null);
+  const tickerTrackRef = useRef(null);
+  const tickerGroupRef = useRef(null);
   const [stageIndex, setStageIndex] = useState(0);
   const [reduced, setReduced] = useState(false);
   const [pinned, setPinned] = useState(true);
+
+  // The track's real loop point is one copy's width plus the gap that
+  // follows it, not a flat 50% — 50% only matches when every item happens
+  // to be the same width, which credential names/subs never are. Measured
+  // directly (and re-measured on resize) instead of hardcoded so the fix
+  // holds regardless of how many CREDENTIALS entries exist.
+  useEffect(() => {
+    const track = tickerTrackRef.current;
+    const group = tickerGroupRef.current;
+    if (!track || !group) return undefined;
+
+    const measure = () => {
+      const groupWidth = group.getBoundingClientRect().width;
+      const gapPx = parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap || '0');
+      track.style.setProperty('--group-shift', `${groupWidth + gapPx}px`);
+    };
+
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(group);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -86,7 +110,7 @@ export default function SignalChain() {
             <span className="channel-mark__title">SYSTEM PROFILE</span>
           </span>
           <h2 className="signal-chain__intro-heading" id="signal-chain-heading">
-            Bridging physical constraints with <em>digital intelligence.</em>
+            Where physical limits meet <em>digital intelligence.</em>
           </h2>
 
           {showAll ? (
@@ -129,19 +153,29 @@ export default function SignalChain() {
         </div>
       </div>
 
-      <div className="signal-chain__creds">
+      <div className="signal-chain__creds section-blend-from-dark">
         <div className="signal-chain__creds-head">
-          <span className="telemetry">CREDENTIALS · LIVE FEED</span>
+          <span className="telemetry telemetry--dark">CREDENTIALS · LIVE FEED</span>
           <span className="signal-chain__creds-meta">{CREDENTIALS.length} ENTRIES</span>
         </div>
-        <div className="ticker">
-          <div className="ticker__track">
-            {[...CREDENTIALS, ...CREDENTIALS].map((c, idx) => (
-              <span className="ticker__item" key={`${c.name}-${idx}`}>
-                <strong>{c.name}</strong>&nbsp;/&nbsp;{c.sub}
-                <span className="ticker__sep">·</span>
-              </span>
-            ))}
+        <div className="ticker ticker--light">
+          <div className="ticker__track" ref={tickerTrackRef}>
+            <div className="ticker__group" ref={tickerGroupRef}>
+              {CREDENTIALS.map((c) => (
+                <span className="ticker__item" key={c.name}>
+                  <strong>{c.name}</strong>&nbsp;/&nbsp;{c.sub}
+                  <span className="ticker__sep">·</span>
+                </span>
+              ))}
+            </div>
+            <div className="ticker__group" aria-hidden="true">
+              {CREDENTIALS.map((c) => (
+                <span className="ticker__item" key={`${c.name}-dup`}>
+                  <strong>{c.name}</strong>&nbsp;/&nbsp;{c.sub}
+                  <span className="ticker__sep">·</span>
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>

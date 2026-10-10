@@ -1,0 +1,36 @@
+.hero-circuit-r3f {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  cursor: none;
+}
+
+/* Was gated on the hero's unrelated boot-telemetry timer (`.is-booted`,
+   ~900ms) — this subtree fades in on its OWN readiness instead (see
+   HeroCircuitBoard.js), since the R3F chunk/Canvas can resolve well before
+   or after that arbitrary mark. Renamed to `.is-ready` to match. */
+.hero-circuit-r3f.is-ready {
+  opacity: 1;
+}
+
+/* Empirically positioned to match the sensor pad's on-screen location for
+   the fixed isometric camera framing in CircuitBoardR3F.js — adjust here
+   (not in the camera/layout math) if the composition changes; this is a
+   proximity-target anchor only, never rendered. */
+.hero-circuit-r3f__sensor-anchor {
+  position: absolute;
+  left: 30%;
+  top: 56%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-circuit-r3f {
+    opacity: 1;
+    transition: none;
+  }
+}

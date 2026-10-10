@@ -88,7 +88,7 @@ export default function SkillField() {
   const showCanvas = canAnimateCanvas && inView && !loading && skills.length > 0;
 
   return (
-    <section id="matrix" className="skill-field" aria-labelledby="skill-field-heading">
+    <section id="matrix" className="skill-field section-blend-from-paper" aria-labelledby="skill-field-heading">
       <span className="skill-field__title" aria-hidden="true">
         CAPABILITY&nbsp;MATRIX
       </span>
@@ -96,7 +96,7 @@ export default function SkillField() {
       <div className="home-grid skill-field__grid">
         <div className="skill-field__index">
           <span className="channel-mark">
-            <span className="channel-mark__id">CH:03</span>
+            <span className="channel-mark__id">CH:05</span>
             <span className="channel-mark__sep" />
             <span className="channel-mark__title">CAPABILITY MATRIX</span>
           </span>

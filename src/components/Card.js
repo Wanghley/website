@@ -1,9 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'; // Import PropTypes for validation
 import './css/Card.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLinkAlt, faBook } from '@fortawesome/free-solid-svg-icons'; // Import necessary icons from Font Awesome
-import { faGithub } from '@fortawesome/free-brands-svg-icons'; // Import necessary icons from Font Awesome
+import { FaExternalLinkAlt, FaBook, FaGithub } from 'react-icons/fa';
 import { Link } from 'react-router-dom'; // Import Link from react-router-dom
 
 const Card = ({ imageUrl, title, date, teaser, category, slug, sourceURL = "#", demoURL = "#", isBlogPost = false }) => {
@@ -25,15 +23,15 @@ const Card = ({ imageUrl, title, date, teaser, category, slug, sourceURL = "#", 
                 <p className="card__teaser">{truncatedTeaser}</p>
                 <div className="card__icons">
                     <Link to={projectLink} className="card__icon" title={isBlogPost ? "Read Full Post" : "Read More"}>
-                        <FontAwesomeIcon icon={faBook} />
+                        <FaBook />
                     </Link>
                     {!isBlogPost && (
                         <>
                             <a href={sourceURL} className="card__icon" title="Source" target="_blank" rel="noreferrer">
-                                <FontAwesomeIcon icon={faGithub} />
+                                <FaGithub />
                             </a>
                             <a href={demoURL} className="card__icon" title="Demo" target="_blank" rel="noreferrer">
-                                <FontAwesomeIcon icon={faExternalLinkAlt} />
+                                <FaExternalLinkAlt />
                             </a>
                         </>
                     )}

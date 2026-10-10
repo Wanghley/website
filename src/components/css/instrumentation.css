@@ -217,8 +217,8 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
-          mask-image: linear-gradient(90deg, transparent 0%, #000 6%, #000 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 3%, #000 97%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, #000 3%, #000 97%, transparent 100%);
 }
 
 .ticker__track {
@@ -226,6 +226,12 @@
   gap: 2.5rem;
   width: max-content;
   animation: tickerScroll 40s linear infinite;
+}
+
+.ticker__group {
+  display: flex;
+  gap: inherit;
+  flex-shrink: 0;
 }
 
 .ticker:hover .ticker__track {
@@ -255,7 +261,7 @@
 
 @keyframes tickerScroll {
   0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  100% { transform: translateX(calc(-1 * var(--group-shift, 50%))); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -299,6 +305,36 @@
   background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.35) 100%);
   pointer-events: none;
   z-index: 2;
+}
+
+/* ============================================================
+   SECTION TONE BLEND — 120px fade at a dark/paper seam, scaled
+   down from HeroChamber's own composite-fade technique. Put on
+   the section (or band) that follows a tone change so the fade
+   reads as "this section arriving."
+   ============================================================ */
+
+.section-blend-from-dark,
+.section-blend-from-paper {
+  position: relative;
+}
+
+.section-blend-from-dark::before,
+.section-blend-from-paper::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 120px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.section-blend-from-dark::before {
+  background: linear-gradient(to bottom, var(--ds-abyss) 0%, transparent 100%);
+}
+
+.section-blend-from-paper::before {
+  background: linear-gradient(to bottom, var(--color-paper) 0%, transparent 100%);
 }
 
 .crt-display > * {

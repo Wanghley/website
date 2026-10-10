@@ -58,6 +58,10 @@
   --ds-text-link:         var(--ds-gold);           /* → #3AAFF1 */
   --ds-text-link-hover:   var(--ds-gold-bright);    /* → #68C8F7 */
 
+  /* — Paper (tonal-rhythm alias) — */
+  --color-paper:          var(--ds-text-primary);   /* #f5f0e8 — sampled from Contact, not a new color */
+  --color-paper-ink:      var(--ds-text-inverse);   /* #06070e — Contact's own ink color */
+
   /* — Semantic States — */
   --ds-success:           #22c55e;
   --ds-success-dim:       rgba(34, 197, 94, 0.12);
@@ -563,6 +567,45 @@
   --text-4xl:     var(--ds-text-4xl);
   --text-5xl:     var(--ds-text-5xl);
   --text-display: var(--ds-text-display);
+}
+
+/* ============================================================
+   BRAND GUIDE TOKENS
+   Canonical references for the official brand palette. Most of these
+   already existed under different (legacy) names elsewhere in this file
+   before this block was added — aliased here rather than duplicated as a
+   flat hex, so there's exactly one source of truth per color. Only
+   colors with no prior token anywhere get a fresh hex value.
+
+   --color-primary is deliberately NOT redefined here — it already exists
+   in global.css's legacy-compat block (`--color-primary: var(--ds-gold)`)
+   and design-system.css's @import in global.css hoists ahead of that
+   declaration, so a second `--color-primary` here would just be shadowed
+   silently. Leave the single existing definition alone.
+   ============================================================ */
+:root {
+  /* Was referenced by markdown-styles.module.css but never defined
+     anywhere in the codebase — closing that gap here since we're in the
+     --color-* namespace already. */
+  --color-primary-dark: var(--ds-gold-subtle);  /* #2280B8 */
+
+  --color-dark:    var(--charcoal);    /* #313131 — brand mid-gray (pills/glass tint), NOT the page background; that's --ds-void (#06070e) */
+  --color-orange:  var(--ds-warning);  /* #F5A623 */
+  --color-red:     var(--red-pvc);     /* #E84A5F */
+  --color-green:   var(--green);       /* #6FCF97 */
+  --color-purple:  var(--purple);      /* #9B59B6 */
+
+  --color-white:   #FFFFFF;  /* logo/brand-mark use only — body text uses --ds-text-primary (warm parchment), not pure white */
+  --color-yellow:  #F7DC6F;
+  --color-deep-red: #C0392B;
+
+  /* Logo gradient family — the mark's own gradient stops, available for
+     subtle background washes that tie a page back to the logo itself. */
+  --logo-gradient-1: #14242C;
+  --logo-gradient-2: #2770B5;
+  --logo-gradient-3: #46AAE0;
+  --logo-gradient-4: #243A7A;
+  --logo-gradient-5: #23448C;
 }
 
 /* ============================================================
