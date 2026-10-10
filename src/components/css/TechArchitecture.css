@@ -213,7 +213,7 @@
     font-family: var(--font-mono, 'JetBrains Mono', monospace);
     font-size: 0.6rem;
     font-weight: 900;
-    color: var(--text-inverse, #06070e);
+    color: var(--text-inverse, #0E0F10);
     background: var(--blue, #3AAFF1);
     padding: 0.3rem 0.65rem;
     border-radius: 2px;
@@ -388,7 +388,7 @@
 }
 
 .ta__accordion-item {
-    background: linear-gradient(180deg, rgba(35, 35, 50, 0.85) 0%, rgba(20, 22, 40, 0.85) 100%);
+    background: linear-gradient(180deg, rgba(35, 35, 50, 0.85) 0%, rgba(36, 37, 39, 0.85) 100%);
     border: 1px solid rgba(58, 175, 241, 0.25);
     border-radius: 3px;
     overflow: hidden;

@@ -319,7 +319,7 @@
   padding: 0.6rem 1.1rem;
   border-radius: var(--ds-radius-full);
   background: var(--ds-gold);
-  color: var(--ds-text-inverse, #06070e);
+  color: var(--ds-text-inverse, #0E0F10);
   font-family: var(--ds-font-mono);
   font-size: var(--ds-text-xs);
   font-weight: 700;

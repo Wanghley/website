@@ -234,7 +234,7 @@
 .signal-chain__creds-meta {
   font-family: var(--ds-font-mono);
   font-size: var(--ds-text-xs);
-  color: rgba(6, 7, 14, 0.45);
+  color: rgba(14, 15, 16, 0.45);
 }
 
 .signal-chain__creds .ticker__item strong {

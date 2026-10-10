@@ -7,7 +7,7 @@ import { scrollSignal } from '../../lib/scrollSignal';
 
 const COLOR_A = new THREE.Color('#3AAFF1');
 const COLOR_B = new THREE.Color('#313131');
-const COLOR_VOID = new THREE.Color('#06070e');
+const COLOR_VOID = new THREE.Color('#0E0F10');
 
 // drei's shaderMaterial() builds a THREE.ShaderMaterial subclass and
 // registers it as a fiber intrinsic — `extend()` below is what makes
@@ -111,7 +111,7 @@ export default function AmbientShader({ intensity = 1 }) {
         dpr={[1, 1.75]}
         gl={{ antialias: false, powerPreference: 'high-performance', alpha: false }}
         frameloop={visible ? 'always' : 'never'}
-        onCreated={({ gl }) => gl.setClearColor('#06070e', 1)}
+        onCreated={({ gl }) => gl.setClearColor('#0E0F10', 1)}
       >
         <Plane intensity={intensity} />
       </Canvas>

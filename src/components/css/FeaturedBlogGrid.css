@@ -227,7 +227,7 @@
   position: relative;
   width: 100%;
   padding: clamp(4rem, 6vw, 6rem) 5%;
-  background: linear-gradient(180deg, var(--abyss, #0a0b14) 0%, var(--void, #06070e) 100%);
+  background: linear-gradient(180deg, var(--abyss, #121314) 0%, var(--void, #0E0F10) 100%);
   font-family: var(--font-main, "Montserrat", "Inter", sans-serif);
 }
 
@@ -383,7 +383,7 @@
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  background: rgba(15, 17, 32, 0.6);
+  background: rgba(28, 29, 31, 0.6);
   border-left: 3px solid var(--blue, #3AAFF1);
   border-right: 1px solid rgba(58, 175, 241, 0.10);
   border-top: 1px solid rgba(58, 175, 241, 0.10);
@@ -421,7 +421,7 @@
   border-left-width: 4px;
   background: linear-gradient(135deg,
     rgba(245, 166, 35, 0.07) 0%,
-    rgba(15, 17, 32, 0.75) 50%,
+    rgba(28, 29, 31, 0.75) 50%,
     rgba(10, 12, 22, 0.85) 100%);
   box-shadow: inset 0 0 40px rgba(245, 166, 35, 0.04);
 }
@@ -457,7 +457,7 @@
 .editorial__card--hero .editorial__card-head {
   position: absolute;
   top: 0; left: 0; right: 0;
-  background: rgba(6, 7, 14, 0.65);
+  background: rgba(14, 15, 16, 0.65);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
@@ -503,12 +503,12 @@
 .editorial__card-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 40%, rgba(6, 7, 14, 0.5) 100%);
+  background: linear-gradient(180deg, transparent 40%, rgba(14, 15, 16, 0.5) 100%);
   pointer-events: none;
 }
 
 .editorial__card--hero .editorial__card-overlay {
-  background: linear-gradient(90deg, transparent 30%, rgba(6, 7, 14, 0.4) 100%);
+  background: linear-gradient(90deg, transparent 30%, rgba(14, 15, 16, 0.4) 100%);
 }
 
 .editorial__card-readtime {
@@ -588,7 +588,7 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   background: var(--charcoal, #313131);
-  border: 1px solid var(--surface-hover, #1a1d32);
+  border: 1px solid var(--surface-hover, #2B2C2F);
   color: var(--text-muted, #5A6575);
 }
 
@@ -615,7 +615,7 @@
 .editorial__tag--default {
   background: var(--charcoal, #313131);
   color: var(--text-muted, #5A6575);
-  border-color: var(--surface-hover, #1a1d32);
+  border-color: var(--surface-hover, #2B2C2F);
 }
 
 /* Card Title */
@@ -684,9 +684,9 @@
   background-size: 200% 100%;
   animation: editorial-shimmer 1.5s ease-in-out infinite;
   border-left: 4px solid rgba(58, 175, 241, 0.2);
-  border-right: 1px solid var(--surface-hover, #1a1d32);
-  border-top: 1px solid var(--surface-hover, #1a1d32);
-  border-bottom: 1px solid var(--surface-hover, #1a1d32);
+  border-right: 1px solid var(--surface-hover, #2B2C2F);
+  border-top: 1px solid var(--surface-hover, #2B2C2F);
+  border-bottom: 1px solid var(--surface-hover, #2B2C2F);
   min-height: 120px;
 }
 
@@ -709,8 +709,8 @@
   grid-column: span 2;
   padding: 60px 40px;
   text-align: center;
-  background: var(--surface, #0f1120);
-  border: 1px solid var(--surface-hover, #1a1d32);
+  background: var(--surface, #1C1D1F);
+  border: 1px solid var(--surface-hover, #2B2C2F);
   border-radius: 8px;
   box-shadow: none;
 }
@@ -810,7 +810,7 @@
     right: 0;
     bottom: 0;
     width: 52px;
-    background: linear-gradient(to left, #06070e 0%, transparent 100%);
+    background: linear-gradient(to left, #0E0F10 0%, transparent 100%);
     pointer-events: none;
     z-index: 2;
   }

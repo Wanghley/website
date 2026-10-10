@@ -4,7 +4,6 @@ import Footer from "./Footer";
 import AboutText from "./About-text";
 import NotFound from "./NotFound";
 import Card from "./Card";
-import ProjectPost from "./ProjectPost";
 import TechArchitecture from "./TechArchitecture";
 import SignatureProject from "./SignatureProject";
 import ChannelRail from "./ChannelRail";
@@ -37,7 +36,6 @@ export {
     AboutText,
     NotFound,
     Card,
-    ProjectPost,
     TechArchitecture,
     SignatureProject,
     ChannelRail,

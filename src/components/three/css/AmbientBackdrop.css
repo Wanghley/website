@@ -7,7 +7,7 @@
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  background: var(--ds-void, #06070e);
+  background: var(--ds-void, #0E0F10);
 }
 
 /* CSS gradient shown immediately on mount, and left in place as the

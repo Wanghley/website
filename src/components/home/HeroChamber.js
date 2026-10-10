@@ -316,7 +316,7 @@ export default function HeroChamber() {
       />
 
       <aside className="hero-chamber__meta" aria-hidden="true">
-        LOC&nbsp;36.0°N&nbsp;·&nbsp;78.9°W
+        HOUSTON&nbsp;29.72°N&nbsp;·&nbsp;95.40°W
       </aside>
 
       <div className="hero-chamber__stage">

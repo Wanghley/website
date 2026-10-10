@@ -109,7 +109,7 @@
   font-weight: 500;
 }
 
-.channel-mark--dark .channel-mark__title { color: rgba(13, 14, 26, 0.7); }
+.channel-mark--dark .channel-mark__title { color: rgba(23, 24, 25, 0.7); }
 .channel-mark--green { color: var(--green, #6FCF97); }
 .channel-mark--green .channel-mark__id { color: var(--green, #6FCF97); }
 
@@ -256,7 +256,7 @@
   opacity: 0.6;
 }
 
-.ticker--light .ticker__item { color: rgba(13, 14, 26, 0.6); }
+.ticker--light .ticker__item { color: rgba(23, 24, 25, 0.6); }
 .ticker--light .ticker__sep  { color: var(--blue, #3AAFF1); }
 
 @keyframes tickerScroll {

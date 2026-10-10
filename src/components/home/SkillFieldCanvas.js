@@ -52,7 +52,7 @@ function buildGraph(skills) {
 /** Manual char-by-char draw with a fixed advance — avoids ctx.letterSpacing
  * (Chrome 99+/Safari 17+ only) to get the wide-tracked telemetry look. */
 function drawTrackedText(ctx, text, x, y, { size = 10, tracking = 1.6, color = COLOR_TEXT, align = 'left' } = {}) {
-  ctx.font = `600 ${size}px ${'"JetBrains Mono", monospace'}`;
+  ctx.font = `600 ${size}px ${'"IBM Plex Mono", monospace'}`;
   ctx.fillStyle = color;
   ctx.textBaseline = 'middle';
 

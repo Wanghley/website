@@ -1,0 +1,222 @@
+/* ============================================================
+   THE BENCH — brand tokens (graphite / copper / signal-blue)
+   Imported last from global.css, so it is the single place that
+   defines the palette. Legacy --ds-* names are re-pointed at these
+   values so every existing component picks up the new palette
+   without a per-file rewrite; retire the legacy names as sections
+   are rebuilt.
+
+   Contrast (measured, WCAG 2.2):
+     paper   #F2EFE9 on ink #121314  16.7:1
+     signal  #3AAFF1 on ink #121314   7.5:1   (7.8:1 on #0E0F10)
+     copper  #D9853B on ink #121314   6.5:1   (5.9:1 on surface)
+     muted   #9A978F on ink #121314   6.4:1   (5.8:1 on surface)
+     ok      #6FCF97 on ink #121314   9.8:1
+     alert   #E84A5F on ink #121314   4.9:1   (4.5:1 on surface — status only,
+                                               never body text, never a CTA)
+   ============================================================ */
+
+:root {
+  /* — Surfaces: warm graphite, never flat black — */
+  --ink-deep:   #0E0F10;
+  --ink:        #121314;   /* page background */
+  --surface:    #1C1D1F;   /* cards, board, panels */
+  --surface-2:  #242527;   /* raised */
+  --graphite:   #313131;   /* brand dark */
+  --line:       rgba(242, 239, 233, 0.10);
+  --line-strong: rgba(242, 239, 233, 0.22);
+
+  /* — Text — */
+  --paper:      #F2EFE9;   /* primary text, warm off-white */
+  --paper-dim:  #B9B5AC;   /* secondary text */
+  --muted:      #9A978F;   /* tertiary, mono labels */
+
+  /* — Brand — */
+  --signal:     #3AAFF1;   /* primary: links, active, primary CTA */
+  --signal-press: #2770B5;
+  --copper:     #D9853B;   /* PCB copper, hover, the warm half */
+  --copper-dim: #8F5A2B;   /* de-energised traces */
+  --copper-lit: #F0A460;   /* energised traces */
+
+  /* — Status only — */
+  --ok:         #6FCF97;
+  --alert:      #E84A5F;
+
+  /* — Logo gradient: logo + rare hero accents only — */
+  --logo-grad:  linear-gradient(135deg, #14242C 0%, #2770B5 55%, #46AAE0 100%);
+
+  /* — Focus: copper, always visible — */
+  --focus:      var(--copper);
+  --focus-ring: 0 0 0 2px var(--ink), 0 0 0 4px var(--focus);
+
+  /* — Fonts (max 3 families + wordmark) —
+     --font-text is provisional until the /styleguide type choice. */
+  --font-wordmark: 'LostinSpace', 'Orbitron', sans-serif;
+  --font-text:     'General Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono-bench: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* — Fluid type scale (headline measure <= 14 words) — */
+  --step--2: clamp(0.72rem, 0.70rem + 0.10vw, 0.78rem);
+  --step--1: clamp(0.82rem, 0.80rem + 0.12vw, 0.90rem);
+  --step-0:  clamp(1.00rem, 0.96rem + 0.20vw, 1.12rem);
+  --step-1:  clamp(1.20rem, 1.10rem + 0.50vw, 1.45rem);
+  --step-2:  clamp(1.45rem, 1.25rem + 1.00vw, 2.00rem);
+  --step-3:  clamp(1.85rem, 1.45rem + 2.00vw, 3.00rem);
+  --step-4:  clamp(2.40rem, 1.70rem + 3.50vw, 4.75rem);
+  --step-5:  clamp(3.00rem, 1.80rem + 6.00vw, 7.00rem);
+
+  /* — Motion: 4 durations, 1 out-curve, 1 in-out — */
+  --dur-micro:  120ms;
+  --dur-ui:     240ms;
+  --dur-reveal: 480ms;
+  --dur-set:    900ms;
+  --ease-out:    cubic-bezier(0.2, 0.7, 0.1, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --stagger:    48ms;
+
+  /* — One container for nav AND body. --edge is the left/right inset
+       to the content column, so logo, hero text and sections all share
+       one left edge at every width. — */
+  --container-max: 1280px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --edge: max(var(--gutter), calc((100% - var(--container-max)) / 2));
+}
+
+/* ============================================================
+   Legacy token re-map (--ds-*) → Bench palette
+   ============================================================ */
+:root {
+  --ds-void:            var(--ink-deep);
+  --ds-abyss:           var(--ink);
+  --ds-surface-0:       #171819;
+  --ds-surface:         var(--surface);
+  --ds-surface-raised:  var(--surface-2);
+  --ds-surface-hover:   #2B2C2F;
+  --ds-surface-active:  #323336;
+  --ds-surface-overlay: rgba(18, 19, 20, 0.88);
+
+  --ds-gold-dim:        var(--signal-press);
+  --ds-gold-subtle:     #2E8FC9;
+  --ds-gold:            var(--signal);
+  --ds-gold-bright:     #6CC4F5;
+  --ds-gold-intense:    #A5DBF9;
+  /* Glow is reserved for energised traces. These stay defined for
+     legacy callers but are much quieter. */
+  --ds-gold-glow:        rgba(58, 175, 241, 0.10);
+  --ds-gold-glow-soft:   rgba(58, 175, 241, 0.05);
+  --ds-gold-glow-strong: rgba(58, 175, 241, 0.18);
+
+  --ds-amber:           var(--copper);
+  --ds-amber-bright:    var(--copper-lit);
+  --ds-amber-dim:       var(--copper-dim);
+  --ds-amber-glow:      rgba(217, 133, 59, 0.14);
+  --ds-teal:            var(--ok);
+  --ds-teal-bright:     #8FDDAE;
+  --ds-teal-dim:        #4FAE79;
+  --ds-teal-glow:       rgba(111, 207, 151, 0.14);
+
+  --ds-text-primary:    var(--paper);
+  --ds-text-secondary:  var(--paper-dim);
+  --ds-text-muted:      var(--muted);
+  --ds-text-disabled:   #5E5C57;
+  --ds-text-inverse:    var(--ink-deep);
+  --ds-text-on-surface: var(--paper-dim);
+
+  --ds-success:         var(--ok);
+  --ds-success-dim:     rgba(111, 207, 151, 0.12);
+  --ds-warning:         var(--copper);
+  --ds-warning-dim:     rgba(217, 133, 59, 0.12);
+  --ds-error:           var(--alert);
+  --ds-error-dim:       rgba(232, 74, 95, 0.12);
+
+  --ds-border:          var(--line);
+  --ds-border-hover:    var(--line-strong);
+  --ds-border-strong:   rgba(242, 239, 233, 0.36);
+  --ds-border-subtle:   rgba(242, 239, 233, 0.06);
+  --ds-border-separator: rgba(242, 239, 233, 0.08);
+
+  --ds-gradient-gold:          linear-gradient(135deg, var(--signal), var(--signal));
+  --ds-gradient-gold-vertical: linear-gradient(180deg, var(--signal), var(--signal));
+  --ds-gradient-gold-radial:   none;
+
+  --ds-focus-ring:       var(--focus-ring);
+  --ds-focus-ring-tight: var(--focus-ring);
+
+  --ds-elevation-gold-1: 0 4px 16px rgba(0,0,0,0.35);
+  --ds-elevation-gold-2: 0 8px 30px rgba(0,0,0,0.40);
+  --ds-elevation-gold-3: 0 16px 48px rgba(0,0,0,0.45);
+
+  /* Fonts: every legacy family var resolves to the 3-family system. */
+  --ds-font-display: var(--font-text);
+  --ds-font-ui:      var(--font-text);
+  --ds-font-body:    var(--font-text);
+  --ds-font-mono:    var(--font-mono-bench);
+  --font-display:    var(--font-text);
+  --font-main:       var(--font-text);
+  --font-mono:       var(--font-mono-bench);
+
+  /* Motion: legacy names → the Bench curve. */
+  --ds-ease-default: var(--ease-out);
+  --ds-ease-out:     var(--ease-out);
+  --ds-ease-smooth:  var(--ease-out);
+  --ds-ease-spring:  var(--ease-out);   /* nothing bounces except the Funko */
+  --ds-ease-bounce:  var(--ease-out);
+
+  --ds-navbar-height: 72px;
+}
+
+/* ============================================================
+   Page surface: soft lighting falloff + fine grain.
+   Applied once, to the page, so no section needs its own
+   background band. The grain sits above content but below the
+   nav and is non-interactive.
+   ============================================================ */
+html { background-color: var(--ink); }
+
+body {
+  background-color: var(--ink);
+  background-image:
+    radial-gradient(90% 60% at 50% -10%, rgba(217, 133, 59, 0.06) 0%, transparent 60%),
+    radial-gradient(70% 50% at 100% 0%, rgba(58, 175, 241, 0.05) 0%, transparent 60%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: var(--paper);
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 90;               /* above content, below nav (1000) and modals */
+  pointer-events: none;
+  opacity: 0.045;            /* no blend mode: keeps the WebGL layer off the slow path */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  background-size: 160px 160px;
+}
+
+/* Visible copper focus everywhere */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Shared content column: nav, hero and sections align to --edge */
+.container {
+  width: 100%;
+  padding-inline: var(--edge);
+}
+
+/* Wordmark face: name/logo only */
+.wordmark { font-family: var(--font-wordmark); }
+
+/* Reduced motion: no animation anywhere by default; set pieces provide
+   their own designed end-state. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

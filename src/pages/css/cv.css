@@ -39,7 +39,7 @@
 }
 
 .cv-nav__label {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.58rem;
   font-weight: 700;
   letter-spacing: 0.24em;
@@ -65,7 +65,7 @@
   align-items: center;
   gap: 8px;
   padding: 8px 10px 8px 16px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.06em;
@@ -158,10 +158,10 @@
   width: 100%;
   padding: 10px 14px;
   background: #3AAFF1;
-  color: #06070e;
+  color: #0E0F10;
   border: none;
   border-radius: 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.68rem;
   font-weight: 800;
   letter-spacing: 0.10em;
@@ -190,7 +190,7 @@
 }
 
 .cv-print-hint {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.58rem;
   color: #9ca3af;
   text-align: center;
@@ -246,7 +246,7 @@
 }
 
 .cv-section__title {
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--font-mono-bench) !important;
   font-size: 0.72rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.22em !important;
@@ -366,7 +366,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.72rem;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -396,7 +396,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--font-mono-bench) !important;
   font-size: 0.72rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.22em !important;
@@ -478,7 +478,7 @@
 }
 
 .cv-card .dates {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.68rem;
   color: #9ca3af;
   white-space: nowrap;
@@ -517,7 +517,7 @@
 }
 
 .cv-card .education .location {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.68rem;
   color: #9ca3af;
   text-align: right;
@@ -553,7 +553,7 @@
 }
 
 .cv-card .experience-category > h3 {
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--font-mono-bench) !important;
   font-size: 0.62rem !important;
   font-weight: 700 !important;
   letter-spacing: 0.20em !important;
@@ -627,7 +627,7 @@
 }
 
 .cv-card .experience .location {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.68rem;
   color: #9ca3af;
   text-align: right;
@@ -667,7 +667,7 @@
 .cv-card .skills-list__category:last-child { margin-bottom: 0; }
 
 .cv-card .skills-list__category h3 {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -746,7 +746,7 @@
   background: rgba(58, 175, 241, 0.08);
   border: 1px solid rgba(58, 175, 241, 0.25);
   border-radius: 6px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.65rem;
   font-weight: 700;
   color: #3AAFF1;
@@ -774,7 +774,7 @@
 }
 
 .cv-card .publication-date {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.68rem;
   color: #9ca3af;
   letter-spacing: 0.04em;
@@ -813,7 +813,7 @@
 .cv-card .peer-badge {
   display: inline-flex;
   align-items: center;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -834,7 +834,7 @@
 .cv-card .doi-link {
   display: inline-block;
   margin-top: 8px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.65rem;
   color: #3AAFF1;
   text-decoration: none;
@@ -899,7 +899,7 @@
 }
 
 .cv-certifications-grid .certification-info span {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.65rem;
   color: #6b7280;
   letter-spacing: 0.04em;
@@ -918,7 +918,7 @@
 
 .cv-certifications-grid .certification-details span,
 .cv-certifications-grid .certification-date {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.62rem;
   color: #9ca3af;
 }
@@ -933,7 +933,7 @@
   border: 1px solid #3AAFF1;
   border-radius: 6px;
   color: #3AAFF1;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.08em;

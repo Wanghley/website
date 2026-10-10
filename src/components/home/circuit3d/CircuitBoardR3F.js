@@ -1,7 +1,6 @@
 import React, { Suspense, useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrthographicCamera, Environment, ContactShadows } from '@react-three/drei';
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing';
 import { generatePcbLayout, GRID } from '../../../lib/pcbLayout';
 import BoardMesh from './BoardMesh';
 import Traces from './Traces';
@@ -219,12 +218,6 @@ export default function CircuitBoardR3F({ reducedMotion, isTablet = false }) {
     >
       <ResponsiveOrthoCamera />
       <Scene reducedMotion={reducedMotion} isTablet={isTablet} />
-      {!reducedMotion && !isTablet && (
-        <EffectComposer multisampling={0}>
-          <Bloom luminanceThreshold={0.75} luminanceSmoothing={0.25} intensity={1.1} mipmapBlur />
-          <Vignette eskil={false} offset={0.25} darkness={0.55} />
-        </EffectComposer>
-      )}
     </Canvas>
   );
 }

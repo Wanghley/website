@@ -15,7 +15,7 @@ import Home from './pages/index';
 import { Navbar, Footer, NotFound } from './components';
 
 // Route-level code splitting — heavy deps (mermaid, katex, syntax-highlighter,
-// chart.js, vidstack, etc.) are isolated to their routes and never downloaded
+// vidstack, etc.) are isolated to their routes and never downloaded
 // unless the user navigates there.
 const AboutPage    = lazy(() => import('./pages/about'));
 const Projects     = lazy(() => import('./pages/projects'));
@@ -26,11 +26,12 @@ const CVPage       = lazy(() => import('./pages/cv'));
 const ContactPage  = lazy(() => import('./pages/contact'));
 const Privacy      = lazy(() => import('./pages/privacy'));
 const DataPolicy   = lazy(() => import('./pages/data-policy'));
+const Styleguide   = lazy(() => import('./pages/styleguide'));
 
 // Minimal full-screen fallback while a lazy chunk loads
 const PageLoader = () => (
   <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '0.72rem', letterSpacing: '0.18em', color: '#3AAFF1', textTransform: 'uppercase' }}>
+    <span style={{ fontFamily: 'var(--font-mono-bench)', fontSize: '0.72rem', letterSpacing: '0.18em', color: 'var(--signal)', textTransform: 'uppercase' }}>
       LOADING...
     </span>
   </div>
@@ -79,6 +80,7 @@ function App() {
             <Route path="/curriculum-vitae" element={<CVPage />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/data-policy" element={<DataPolicy />} />
+            <Route path="/styleguide" element={<Styleguide />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

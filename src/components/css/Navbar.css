@@ -8,7 +8,7 @@
   --nav-height: 100px;
   --nav-height-scrolled: 64px;
   --nav-bg: transparent;
-  --nav-bg-scrolled: rgba(6, 7, 14, 0.88);
+  --nav-bg-scrolled: rgba(14, 15, 16, 0.88);
   --nav-blur: 24px;
   --nav-text: #ffffff;
   --nav-text-muted: #8fa0b4;
@@ -65,7 +65,7 @@
 
 /* Scrolled: dark glass with subtle cyan accent line */
 .nav--theme-transparent.nav--scrolled {
-  background:         rgba(6, 7, 14, 0.88);
+  background:         rgba(14, 15, 16, 0.88);
   backdrop-filter:    blur(28px) saturate(1.6);
   -webkit-backdrop-filter: blur(28px) saturate(1.6);
   border-bottom:      1px solid rgba(58, 175, 241, 0.12);
@@ -125,7 +125,7 @@
   --nav-text-muted:  #8fa0b4;
   --nav-accent:      #3AAFF1;
   --nav-accent-glow: rgba(58, 175, 241, 0.28);
-  background:         rgba(6, 7, 14, 0.92);
+  background:         rgba(14, 15, 16, 0.92);
   backdrop-filter:    blur(24px) saturate(1.5);
   -webkit-backdrop-filter: blur(24px) saturate(1.5);
   border-bottom:      1px solid rgba(255, 255, 255, 0.06);
@@ -133,7 +133,7 @@
 }
 
 .nav--theme-dark.nav--scrolled {
-  background:    rgba(6, 7, 14, 0.95);
+  background:    rgba(14, 15, 16, 0.95);
   border-bottom: 1px solid rgba(58, 175, 241, 0.10);
   box-shadow:    0 4px 28px rgba(0, 0, 0, 0.45), 0 1px 0 rgba(58, 175, 241, 0.08);
 }
@@ -150,9 +150,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 clamp(1rem, 5vw, 3rem);
+  max-width: none;
+  margin: 0;
+  padding: 0 var(--edge);
   height: var(--nav-height);
   transition: height var(--nav-transition);
 }
@@ -192,7 +192,7 @@
 }
 
 .nav__logo-text {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -234,7 +234,7 @@
   align-items: center;
   padding: 8px 14px;
   color: var(--nav-text-muted);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -489,7 +489,7 @@
 }
 
 .mobile-menu__number {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.72rem;
   font-weight: 600;
   color: #3AAFF1;
@@ -703,7 +703,7 @@
    Channel indicator (homepage scroll progress)
    ======================================== */
 .nav__channel {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: var(--font-mono-bench);
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.18em;

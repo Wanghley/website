@@ -4,7 +4,7 @@
   position: relative;
   width: 100%;
   background: #F7F8FA;
-  color: #0d0e1a;
+  color: #171819;
   font-family: var(--font-main, 'Montserrat', sans-serif);
   overflow: hidden;
   padding: clamp(5rem, 7vw, 8rem) 0;
@@ -76,7 +76,7 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(13, 14, 26, 0.55);
+  color: rgba(23, 24, 25, 0.55);
   margin-bottom: 1.25rem;
 }
 
@@ -98,7 +98,7 @@
   font-size: clamp(2.25rem, 1.75rem + 2vw, 3.25rem);
   font-weight: 800;
   letter-spacing: -0.01em;
-  color: #0d0e1a;
+  color: #171819;
   line-height: 1.05;
   margin: 0 0 1rem 0;
 }
@@ -126,7 +126,7 @@
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(13, 14, 26, 0.45);
+  color: rgba(23, 24, 25, 0.45);
 }
 
 .skills__filters .filter-tab,
@@ -137,9 +137,9 @@
   letter-spacing: 0.14em;
   text-transform: uppercase;
   padding: 0.4rem 0.85rem;
-  border: 1px solid rgba(13, 14, 26, 0.18);
+  border: 1px solid rgba(23, 24, 25, 0.18);
   border-radius: 2px;
-  color: rgba(13, 14, 26, 0.55);
+  color: rgba(23, 24, 25, 0.55);
   transition: all 0.2s;
   background: transparent;
   cursor: pointer;
@@ -147,7 +147,7 @@
 
 .skills__filters .filter-tab:hover,
 .skills__filters button:hover {
-  color: #0d0e1a;
+  color: #171819;
   border-color: var(--blue, #3AAFF1);
 }
 
@@ -163,12 +163,12 @@
 /* ===== Panel ===== */
 .skills__panel {
   background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(13, 14, 26, 0.12);
+  border: 1px solid rgba(23, 24, 25, 0.12);
   border-top: 2px solid var(--blue, #3AAFF1);
   border-radius: 3px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  box-shadow: 0 4px 24px rgba(13,14,26,0.06), 0 0 0 1px rgba(58,175,241,0.04);
+  box-shadow: 0 4px 24px rgba(23, 24, 25,0.06), 0 0 0 1px rgba(58,175,241,0.04);
   overflow: hidden;
   opacity: 0;
   transform: translateY(14px);
@@ -201,7 +201,7 @@
   gap: 0.45rem;
   padding: 0.4rem 0.75rem 0.4rem 0.55rem;
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(13, 14, 26, 0.11);
+  border: 1px solid rgba(23, 24, 25, 0.11);
   border-radius: 3px;
   cursor: default;
   opacity: 0;
@@ -259,7 +259,7 @@
   display: flex;
   justify-content: center;
   padding: 0.6rem 1.5rem 1.1rem;
-  border-top: 1px solid rgba(13, 14, 26, 0.07);
+  border-top: 1px solid rgba(23, 24, 25, 0.07);
 }
 
 .skills__expand {
@@ -272,9 +272,9 @@
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: rgba(13, 14, 26, 0.5);
+  color: rgba(23, 24, 25, 0.5);
   background: transparent;
-  border: 1px solid rgba(13, 14, 26, 0.14);
+  border: 1px solid rgba(23, 24, 25, 0.14);
   border-radius: 2px;
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s, background 0.2s;

@@ -19,6 +19,7 @@ const NAVBAR_THEMES = {
   '/projects':          'dark',
   '/blog':              'dark',
   '/contact':           'dark',
+  '/styleguide':        'dark',
   '/privacy':           'light',
   '/data-policy':       'light',
 };

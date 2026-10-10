@@ -33,7 +33,7 @@
 
 .off-duty__subtitle {
   margin: 0;
-  color: rgba(6, 7, 14, 0.62);
+  color: rgba(14, 15, 16, 0.62);
   line-height: var(--ds-leading-relaxed);
   max-width: 52ch;
 }
@@ -145,7 +145,7 @@
   font-size: var(--ds-text-xs);
   letter-spacing: var(--ds-tracking-wide);
   text-transform: uppercase;
-  color: rgba(6, 7, 14, 0.4);
+  color: rgba(14, 15, 16, 0.4);
 }
 
 @media (min-width: 900px) {

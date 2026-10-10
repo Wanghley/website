@@ -16,14 +16,14 @@
 :root {
 
   /* — Backgrounds — */
-  --ds-void:              #06070e;   /* absolute black — hero BGs, overlays */
-  --ds-abyss:             #0a0b14;   /* main page background */
-  --ds-surface-0:         #0d0e1a;   /* slightly above abyss */
-  --ds-surface:           #0f1120;   /* card / panel */
-  --ds-surface-raised:    #141628;   /* elevated card */
-  --ds-surface-hover:     #1a1d32;   /* interactive hover */
-  --ds-surface-active:    #1f2239;   /* pressed / active */
-  --ds-surface-overlay:   rgba(10, 11, 20, 0.85); /* modal backdrops */
+  --ds-void:              #0E0F10;   /* absolute black — hero BGs, overlays */
+  --ds-abyss:             #121314;   /* main page background */
+  --ds-surface-0:         #171819;   /* slightly above abyss */
+  --ds-surface:           #1C1D1F;   /* card / panel */
+  --ds-surface-raised:    #242527;   /* elevated card */
+  --ds-surface-hover:     #2B2C2F;   /* interactive hover */
+  --ds-surface-active:    #323336;   /* pressed / active */
+  --ds-surface-overlay:   rgba(18, 19, 20, 0.85); /* modal backdrops */
 
   /* — Blue Accent — primary engineering brand color */
   --ds-gold-dim:          #1a6a9a;   /* deep blue — disabled/muted states */
@@ -52,7 +52,7 @@
   --ds-text-secondary:    #b8b0a0;
   --ds-text-muted:        #6b6358;
   --ds-text-disabled:     #3d3830;
-  --ds-text-inverse:      #06070e;   /* on highlighted backgrounds */
+  --ds-text-inverse:      #0E0F10;   /* on highlighted backgrounds */
   --ds-text-on-surface:   #c8dbe8;   /* on surface cards */
   --ds-text-gold:         var(--ds-gold-bright);   /* alias → blue-bright */
   --ds-text-link:         var(--ds-gold);           /* → #3AAFF1 */
@@ -60,7 +60,7 @@
 
   /* — Paper (tonal-rhythm alias) — */
   --color-paper:          var(--ds-text-primary);   /* #f5f0e8 — sampled from Contact, not a new color */
-  --color-paper-ink:      var(--ds-text-inverse);   /* #06070e — Contact's own ink color */
+  --color-paper-ink:      var(--ds-text-inverse);   /* #0E0F10 — Contact's own ink color */
 
   /* — Semantic States — */
   --ds-success:           #22c55e;
@@ -271,7 +271,7 @@
   --ds-blur-xl:  blur(48px);
 
   /* — Glass surfaces — */
-  --ds-glass-bg:      rgba(15, 17, 32, 0.70);
+  --ds-glass-bg:      rgba(28, 29, 31, 0.70);
   --ds-glass-bg-warm: rgba(20, 16, 12, 0.72);
   --ds-glass-border:  rgba(245, 240, 232, 0.08);
 
@@ -365,10 +365,10 @@
   --ds-grain-opacity: 0.035;
 
   /* — Image overlays — */
-  --ds-overlay-dark:     rgba(6, 7, 14, 0.65);
-  --ds-overlay-darker:   rgba(6, 7, 14, 0.80);
-  --ds-overlay-card:     linear-gradient(180deg, transparent 40%, rgba(6,7,14,0.90) 100%);
-  --ds-overlay-card-top: linear-gradient(0deg, transparent 40%, rgba(6,7,14,0.85) 100%);
+  --ds-overlay-dark:     rgba(14, 15, 16, 0.65);
+  --ds-overlay-darker:   rgba(14, 15, 16, 0.80);
+  --ds-overlay-card:     linear-gradient(180deg, transparent 40%, rgba(14, 15, 16,0.90) 100%);
+  --ds-overlay-card-top: linear-gradient(0deg, transparent 40%, rgba(14, 15, 16,0.85) 100%);
 }
 
 /* ============================================================
@@ -471,8 +471,8 @@
   --ds-photo-overlay-top:    linear-gradient(0deg, transparent 40%, rgba(9,8,14,0.80) 100%);
 
   /* — Lightbox — */
-  --ds-lightbox-bg:          rgba(6, 7, 14, 0.97);
-  --ds-lightbox-control-bg:  rgba(15, 17, 32, 0.75);
+  --ds-lightbox-bg:          rgba(14, 15, 16, 0.97);
+  --ds-lightbox-control-bg:  rgba(28, 29, 31, 0.75);
   --ds-lightbox-control-border: rgba(245, 240, 232, 0.12);
   --ds-lightbox-caption-color: var(--ds-text-secondary);
   --ds-lightbox-blur:        var(--ds-blur-lg);
@@ -589,7 +589,7 @@
      --color-* namespace already. */
   --color-primary-dark: var(--ds-gold-subtle);  /* #2280B8 */
 
-  --color-dark:    var(--charcoal);    /* #313131 — brand mid-gray (pills/glass tint), NOT the page background; that's --ds-void (#06070e) */
+  --color-dark:    var(--charcoal);    /* #313131 — brand mid-gray (pills/glass tint), NOT the page background; that's --ds-void (#0E0F10) */
   --color-orange:  var(--ds-warning);  /* #F5A623 */
   --color-red:     var(--red-pvc);     /* #E84A5F */
   --color-green:   var(--green);       /* #6FCF97 */

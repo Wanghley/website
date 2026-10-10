@@ -11,7 +11,7 @@
   padding: 0.4rem 1rem;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 999px;
-  color: rgba(13, 14, 26, 0.5);
+  color: rgba(23, 24, 25, 0.5);
   transition: all 0.2s;
   background: transparent;
   cursor: pointer;
@@ -19,7 +19,7 @@
 }
 
 .chip:hover {
-  color: #0d0e1a;
+  color: #171819;
   border-color: rgba(0, 0, 0, 0.25);
 }
 

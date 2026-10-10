@@ -32,7 +32,7 @@
 
 .latest-writing__subtitle {
   margin: 0;
-  color: rgba(6, 7, 14, 0.62);
+  color: rgba(14, 15, 16, 0.62);
   line-height: var(--ds-leading-relaxed);
   max-width: 52ch;
 }
@@ -77,14 +77,14 @@
 .latest-writing__card:hover,
 .latest-writing__card:focus-visible {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px -12px rgba(6, 7, 14, 0.18);
+  box-shadow: 0 12px 32px -12px rgba(14, 15, 16, 0.18);
 }
 
 .latest-writing__card--skeleton {
   border-radius: var(--ds-radius-xl, 24px);
   padding: 1rem;
   min-height: 320px;
-  background: rgba(6, 7, 14, 0.04);
+  background: rgba(14, 15, 16, 0.04);
   animation: latestWritingPulse 1.6s ease-in-out infinite;
 }
 
@@ -99,7 +99,7 @@
   border-radius: var(--ds-radius-md);
   overflow: hidden;
   margin-bottom: 1rem;
-  background: rgba(6, 7, 14, 0.06);
+  background: rgba(14, 15, 16, 0.06);
 }
 
 .latest-writing__card-image-el {
@@ -146,19 +146,19 @@
   text-transform: uppercase;
   padding: 0.2rem 0.6rem;
   border-radius: var(--ds-radius-full);
-  border: 1px solid rgba(6, 7, 14, 0.15);
+  border: 1px solid rgba(14, 15, 16, 0.15);
 }
 
 .latest-writing__tag--tutorial { color: #3d8a5f; border-color: rgba(111, 207, 151, 0.4); background: rgba(111, 207, 151, 0.12); }
 .latest-writing__tag--system   { color: #1f79b5; border-color: rgba(58, 175, 241, 0.4); background: rgba(58, 175, 241, 0.12); }
 .latest-writing__tag--opinion  { color: #a06a13; border-color: rgba(245, 166, 35, 0.4); background: rgba(245, 166, 35, 0.12); }
 .latest-writing__tag--research { color: #6c3d8a; border-color: rgba(155, 89, 182, 0.4); background: rgba(155, 89, 182, 0.12); }
-.latest-writing__tag--default  { color: rgba(6, 7, 14, 0.55); border-color: rgba(6, 7, 14, 0.15); background: rgba(6, 7, 14, 0.04); }
+.latest-writing__tag--default  { color: rgba(14, 15, 16, 0.55); border-color: rgba(14, 15, 16, 0.15); background: rgba(14, 15, 16, 0.04); }
 
 .latest-writing__date {
   font-family: var(--ds-font-mono);
   font-size: var(--ds-text-xs);
-  color: rgba(6, 7, 14, 0.4);
+  color: rgba(14, 15, 16, 0.4);
 }
 
 .latest-writing__card-title {
@@ -174,7 +174,7 @@
 
 .latest-writing__card-teaser {
   margin: 0;
-  color: rgba(6, 7, 14, 0.62);
+  color: rgba(14, 15, 16, 0.62);
   font-size: var(--ds-text-sm);
   line-height: var(--ds-leading-normal);
   display: -webkit-box;

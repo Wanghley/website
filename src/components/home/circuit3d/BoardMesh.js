@@ -35,7 +35,7 @@ function useSilkscreenTexture(components) {
     });
 
     ctx.fillStyle = 'rgba(232, 228, 218, 0.55)';
-    ctx.font = '16px "JetBrains Mono", monospace';
+    ctx.font = '16px "IBM Plex Mono", monospace';
     ctx.textAlign = 'center';
     components.forEach((c) => {
       if (!c.designator || c.kind === 'mount') return;
@@ -44,7 +44,7 @@ function useSilkscreenTexture(components) {
     });
 
     ctx.textAlign = 'left';
-    ctx.font = '20px "JetBrains Mono", monospace';
+    ctx.font = '20px "IBM Plex Mono", monospace';
     ctx.fillStyle = 'rgba(232, 228, 218, 0.3)';
     ctx.fillText(BOARD_LABEL, TEX_SIZE * 0.03, TEX_SIZE * 0.97);
 

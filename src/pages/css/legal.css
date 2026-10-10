@@ -29,7 +29,7 @@
   font-family: var(--font-display, 'Orbitron', monospace);
   font-size: clamp(1.75rem, 4vw, 2.5rem);
   font-weight: 800;
-  color: #0d0e1a;
+  color: #171819;
   letter-spacing: -0.01em;
   line-height: 1.1;
   margin: 0 0 0.75rem;

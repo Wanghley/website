@@ -1,13 +1,13 @@
 /* ===== BlogCard — Prototype Design (Dark / Left-border / Blue accent) ===== */
 
 .cardblog {
-  background: var(--surface, #0f1120);
+  background: var(--surface, #1C1D1F);
   border-radius: 6px;
   padding: 1.5rem 1.5rem 1.5rem 1.75rem;
   border-left: 4px solid var(--blue, #3AAFF1);
-  border-right: 1px solid var(--surface-hover, #1a1d32);
-  border-top: 1px solid var(--surface-hover, #1a1d32);
-  border-bottom: 1px solid var(--surface-hover, #1a1d32);
+  border-right: 1px solid var(--surface-hover, #2B2C2F);
+  border-top: 1px solid var(--surface-hover, #2B2C2F);
+  border-bottom: 1px solid var(--surface-hover, #2B2C2F);
   transition: border-left-color 0.2s, transform 0.3s;
   cursor: pointer;
   position: relative;
@@ -42,7 +42,7 @@
   letter-spacing: 0.06em;
   padding: 0.2rem 0.6rem;
   background: var(--charcoal, #313131);
-  border: 1px solid var(--surface-hover, #1a1d32);
+  border: 1px solid var(--surface-hover, #2B2C2F);
   border-radius: 3px;
   color: var(--text-muted, #5A6575);
   margin-bottom: 0.625rem;

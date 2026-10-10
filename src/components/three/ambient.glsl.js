@@ -26,7 +26,7 @@ export const fragmentShader = /* glsl */ `
   uniform vec2  uResolution;
   uniform vec3  uColorA;     // #3AAFF1 — accent blue
   uniform vec3  uColorB;     // #313131 — brand glass tint
-  uniform vec3  uColorVoid;  // #06070e — absolute dark
+  uniform vec3  uColorVoid;  // #0E0F10 — absolute dark
   uniform float uIntensity;
   uniform float uVelocity;   // 0..1, current scroll speed (see lib/scrollSignal.js)
   uniform float uScroll;     // 0..1, page scroll progress

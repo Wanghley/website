@@ -69,7 +69,7 @@ html {
     min-height: 100vh;
     background: var(--blog-bg-alt);
     color: var(--blog-text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-text);
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

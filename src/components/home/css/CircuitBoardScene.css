@@ -168,7 +168,7 @@
   font-size: 0.68rem;
   letter-spacing: 0.02em;
   color: var(--ds-text-primary);
-  background: rgba(10, 11, 20, 0.7);
+  background: rgba(18, 19, 20, 0.7);
   backdrop-filter: blur(6px);
   padding: 0.3rem 0.6rem;
   border: 1px solid var(--ds-glass-rim);

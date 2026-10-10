@@ -215,7 +215,7 @@
   position: relative;
   width: 100%;
   padding: clamp(4rem, 6vw, 6rem) 5%;
-  background: linear-gradient(180deg, #06070e 0%, #0a0f1a 50%, #06070e 100%);
+  background: linear-gradient(180deg, #0E0F10 0%, #0a0f1a 50%, #0E0F10 100%);
   overflow: hidden;
   font-family: var(--font-main, 'Montserrat', sans-serif);
 }
@@ -381,7 +381,7 @@
   background: var(--blue, #3AAFF1);
   border: 1px solid var(--blue, #3AAFF1);
   border-radius: 2px;
-  color: var(--text-inverse, #06070e);
+  color: var(--text-inverse, #0E0F10);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.7rem;
   font-weight: 800;
@@ -394,7 +394,7 @@
 .eng-showroom__cta:hover {
   background: var(--blue-bright, #68C8F7);
   border-color: var(--blue-bright, #68C8F7);
-  color: var(--text-inverse, #06070e);
+  color: var(--text-inverse, #0E0F10);
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(58, 175, 241, 0.25);
 }
@@ -474,7 +474,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.55rem 0.85rem;
-  background: rgba(6, 7, 14, 0.5);
+  background: rgba(14, 15, 16, 0.5);
   border-bottom: 1px solid rgba(58, 175, 241, 0.18);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.55rem;
@@ -830,7 +830,7 @@
     right: 0;
     bottom: 0;
     width: 52px;
-    background: linear-gradient(to left, #06070e 0%, transparent 100%);
+    background: linear-gradient(to left, #0E0F10 0%, transparent 100%);
     pointer-events: none;
     z-index: 2;
   }

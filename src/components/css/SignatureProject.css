@@ -2,7 +2,7 @@
 .sp {
   position: relative;
   padding: clamp(4rem, 6vw, 6rem) 0 0;
-  background: var(--void, #06070e);
+  background: var(--void, #0E0F10);
   overflow: hidden;
   font-family: var(--font-main, 'Montserrat', sans-serif);
 }
@@ -219,7 +219,7 @@
   gap: 0.5rem;
   padding: 0.85rem 1.5rem;
   background: var(--green, #6FCF97);
-  color: var(--void, #06070e);
+  color: var(--void, #0E0F10);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 0.7rem;
   font-weight: 800;
@@ -235,7 +235,7 @@
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(111, 207, 151, 0.25);
   gap: 0.75rem;
-  color: var(--void, #06070e);
+  color: var(--void, #0E0F10);
 }
 
 /* ===== Stats (CRT cards) ===== */

@@ -54,7 +54,7 @@ html {
     min-height: 100vh;
     background: var(--proj-bg-alt);
     color: var(--proj-text);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-text);
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
 }
@@ -1357,7 +1357,7 @@ html {
 }
 
 .proj-mermaid .label {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-family: var(--font-text);
     font-size: 14px;
 }
 

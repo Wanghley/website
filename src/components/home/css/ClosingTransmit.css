@@ -60,7 +60,7 @@
 }
 
 .closing-transmit__meta .telemetry--dark {
-  color: rgba(6, 7, 14, 0.6);
+  color: rgba(14, 15, 16, 0.6);
 }
 
 .closing-transmit__meta .telemetry__dot {
@@ -80,13 +80,13 @@
 }
 
 .closing-transmit__cta--ghost {
-  border-color: rgba(6, 7, 14, 0.25);
+  border-color: rgba(14, 15, 16, 0.25);
   color: var(--color-paper-ink);
 }
 
 .closing-transmit__cta--ghost:hover {
-  border-color: rgba(6, 7, 14, 0.5);
-  background: rgba(6, 7, 14, 0.05);
+  border-color: rgba(14, 15, 16, 0.5);
+  background: rgba(14, 15, 16, 0.05);
 }
 
 .closing-transmit__cta-icon {
@@ -102,14 +102,14 @@
   flex-basis: 100%;
   margin: 0.75rem 0 0;
   font-size: var(--ds-text-sm);
-  color: rgba(6, 7, 14, 0.5);
+  color: rgba(14, 15, 16, 0.5);
 }
 
 .closing-transmit__quiet-channels a {
   color: inherit;
   text-decoration: underline;
   text-underline-offset: 2px;
-  text-decoration-color: rgba(6, 7, 14, 0.3);
+  text-decoration-color: rgba(14, 15, 16, 0.3);
   transition: color var(--ds-duration-fast, 0.15s) ease;
 }
 

@@ -15,7 +15,7 @@
   position: relative;
   min-height: 100svh;
   overflow: hidden;
-  background: var(--ds-void);
+  background: transparent;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -29,32 +29,11 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background:
-    radial-gradient(55% 50% at 18% 12%, rgba(58, 175, 241, 0.16) 0%, transparent 62%),
-    radial-gradient(48% 42% at 88% 78%, rgba(111, 207, 151, 0.10) 0%, transparent 65%),
-    /* Logo gradient wash (--logo-gradient-5 #23448C → --logo-gradient-4
-       #243A7A, written as rgba for the alpha blend — see design-system.css
-       for the opaque token definitions). Focal point sits in the right
-       half, near the photo archive, since that's where .hero-chamber__scrim
-       (centered at 22% 62%) leaves the backdrop least darkened — the only
-       place a subtle wash would actually be visible. Base void color below
-       is untouched. */
-    radial-gradient(70% 65% at 84% 58%, rgba(35, 68, 140, 0.14) 0%, rgba(36, 58, 122, 0.09) 45%, transparent 78%),
-    var(--ds-void);
-  /* Without this, the default `repeat` tiles each radial-gradient layer at
-     the box's own size — invisible at background-position 0 0 (one tile
-     exactly fills the box), but heroBackdropDrift below animates that
-     position by a couple percent, which exposes the adjacent repeated
-     tile's edge as a hard rectangular seam (worst in whichever corner sits
-     farthest from all three gradients' centers, since that's where the
-     tile boundary reads most differently from its neighbor). */
+  pointer-events: none;
+  /* One soft copper lamp falloff behind the board. No drift, no tile
+     edges, no coloured washes. */
+  background: radial-gradient(60% 55% at 70% 55%, rgba(217, 133, 59, 0.07) 0%, transparent 70%);
   background-repeat: no-repeat;
-  animation: heroBackdropDrift 22s ease-in-out infinite;
-}
-
-@keyframes heroBackdropDrift {
-  0%, 100% { background-position: 0 0, 0 0, 0 0; }
-  50%      { background-position: 2% 1%, -2% -1%, -1% 1%; }
 }
 
 /* Gradient scrim only — no fill, no backdrop-filter, no border, no radius.
@@ -65,10 +44,8 @@
   z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(120% 90% at 22% 62%,
-      rgba(6, 7, 14, .86) 0%, rgba(6, 7, 14, .45) 45%, transparent 72%),
-    linear-gradient(180deg,
-      rgba(6, 7, 14, .7) 0%, transparent 28%, transparent 62%, rgba(6, 7, 14, .9) 100%);
+    radial-gradient(110% 90% at 18% 58%,
+      rgba(18, 19, 20, .70) 0%, rgba(18, 19, 20, .30) 45%, transparent 72%);
 }
 
 .hero-chamber .light-leak {
@@ -147,6 +124,15 @@
   right: -5vw;
   width: clamp(500px, 68vw, 1050px);
   will-change: transform;
+  /* Feather the box edges so the WebGL layer blends into the page. */
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0, #000 14%),
+    linear-gradient(to bottom, transparent 0, #000 10%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0, #000 14%),
+    linear-gradient(to bottom, transparent 0, #000 10%);
+  mask-composite: intersect;
 }
 
 /* ─── HUD — visible at all widths, not just desktop ─── */
@@ -256,7 +242,7 @@
    everything else in the top rail stays visible (see bug fix #4 in the plan). */
 .hero-chamber__meta {
   position: absolute;
-  right: clamp(16px, 4vw, 72px);
+  right: var(--edge);
   bottom: 2rem; /* was calc(2rem + 160px) to clear the hero filmstrip, since removed */
   z-index: 4;
   font-family: var(--ds-font-mono);
@@ -276,8 +262,8 @@
 }
 
 .hero-chamber__content {
-  padding-inline: clamp(16px, 4vw, 72px);
-  max-width: min(64vw, 900px);
+  padding-inline: var(--edge);
+  max-width: min(calc(64vw + var(--edge)), calc(900px + var(--edge)));
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -289,8 +275,8 @@
 
 .hero-chamber__name-text {
   display: block;
-  margin: 0 0 16px calc(-0.03em); /* vertical-rhythm ladder: name -> 16px -> tagline */
-  font-family: var(--ds-font-display);
+  margin: 0 0 16px 0; /* vertical-rhythm ladder: name -> 16px -> tagline */
+  font-family: var(--font-wordmark);
   font-weight: 900;
   font-size: clamp(2.75rem, 7vw, 6.5rem);
   line-height: 0.95;
@@ -468,16 +454,15 @@
   color: var(--logo-gradient-1);
   font-weight: 800;
   padding-inline: var(--ds-btn-pad-x-lg, 48px);
-  box-shadow:
-    0 10px 28px -8px var(--ds-gold-glow),
-    0 0 calc(var(--proximity, 0) * 32px) rgba(58, 175, 241, calc(var(--proximity, 0) * 0.7)),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  transition: box-shadow 0.25s ease, transform var(--ds-duration-fast) ease;
+  box-shadow: none; /* no glow on CTAs */
+  transition: background var(--dur-ui) var(--ease-out), transform var(--dur-micro) var(--ease-out);
 }
 
 .hero-chamber__cta.btn--primary:hover {
-  filter: brightness(1.08);
-  transform: translateY(-2px);
+  filter: none;
+  background: var(--ds-gold-bright);
+  border-color: var(--ds-gold-bright);
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -592,6 +577,11 @@
     margin: 0 0 16px;
     opacity: 0;
     transition: opacity 0.5s ease;
+    /* Feather all four edges: the composite is a baked raster, so without
+       this its rectangle reads as a band against the page. (Replaced by a
+       re-lit render in the hero phase.) */
+    -webkit-mask-image: radial-gradient(ellipse 80% 78% at 50% 48%, #000 55%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 78% at 50% 48%, #000 55%, transparent 100%);
   }
 
   .hero-chamber__composite-wrap.is-ready {
@@ -609,13 +599,13 @@
     position: absolute;
     inset: auto 0 0 0;
     height: 35%;
-    background: linear-gradient(to bottom, transparent, var(--ds-void));
+    background: linear-gradient(to bottom, transparent, var(--ink));
     pointer-events: none;
   }
 
   .hero-chamber__content {
     max-width: 100%;
-    padding-inline: 20px;
+    padding-inline: var(--edge);
   }
 
   /* 3. HUD — one truncated line, no sensor readout (no cursor to drive

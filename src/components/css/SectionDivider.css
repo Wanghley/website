@@ -62,8 +62,8 @@
 .sec-divider--dark { background: transparent; }
 
 .sec-divider--light .sec-divider__rule { background: var(--hairline-light, rgba(0, 0, 0, 0.08)); }
-.sec-divider--light .sec-divider__mark { color: rgba(13, 14, 26, 0.5); }
-.sec-divider--light .sec-divider__title { color: rgba(13, 14, 26, 0.65); }
+.sec-divider--light .sec-divider__mark { color: rgba(23, 24, 25, 0.5); }
+.sec-divider--light .sec-divider__title { color: rgba(23, 24, 25, 0.65); }
 .sec-divider--light .sec-divider__sep { background: rgba(0, 0, 0, 0.15); }
 
 /* — Accent variants — */
