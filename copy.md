@@ -78,3 +78,30 @@ Open placeholders for this section:
 - `[[PLACEHOLDER: real latency and power]]` for 0.4 ms and 38 µW.
 - `[[PLACEHOLDER: project slug for each stage's link]]` (all five point at /projects today).
 - "Condition" and "Deploy" sentences describe the work in general terms; confirm they match the projects you want to link.
+
+---
+
+## Phase 4 sections (`src/data/home.js`)
+
+Order: Hero, About + one example, Selected work, Gambiarra, Research, Community + Recognition, Contact, Footer. Ventures omitted by request. Removed from the home page: dispatches/blog strip, off-duty photos, capability graph, news, old closing band (the blog and CV pages are untouched).
+
+**Selected work.** Heading: Things I built, with their numbers. Cards pull title, one-line teaser and photo from your CMS (first four projects by start date). Each shows Constraint / Result / My role.
+`[[PLACEHOLDER: constraint (µW / ms / $ BOM), result as one number, and role for each card]]`. Add them per project in `WORK` or as CMS fields.
+
+**Gambiarra.** Heading: When the part is not in the drawer, I make it work. (about 85 words)
+> Gambiarra is the Brazilian art of fixing it with what you have. You do not wait for the right part. You look at the bench, you improvise, and a lot of the time it works better than the plan.
+> I took that habit into engineering. Microwatts, milliseconds and a bill of materials are my constraints, and constraints are where the good ideas show up. A tidy lab never taught me that.
+> I gave a talk about it at TEDxDuke in 2023.
+
+Button: Watch the TEDxDuke talk (youtube.com/watch?v=tceoUHQ9rPQ). Figure: pre-rendered thumbs-up (`/hero/figure-thumbs.webp`).
+`[[PLACEHOLDER: photo of an early, scrappy prototype]]`. Confirm the "improvise ... works better than the plan" line is true to you.
+
+**Research.** Heading: Papers and posters. List comes from the CMS publications; link: All of it on Google Scholar. No lab link and no research-interests blurb, by request.
+
+**Community.** Heading: I build the rooms, too. HackBrazil (Vice President, 2026); Brasil Conference (President of Communication and People & Management); TEDxDuke (Speaker, 2023); Mentoring and judging (student competitions in Brazil and the US). A thin copper line draws once: Brasília, Durham, Houston.
+**Recognition.** ICYS Belgrade (2023, gold medal) · FEBRACE (2021, gold medal) · BRICS Young Inventor (2021) · Regeneron ISEF (finalist) · One Young World (2023, summit representative).
+`[[PLACEHOLDER: ISEF year; what BRICS Young Inventor was awarded]]`
+
+**Contact.** Heading: Say hello. Open to industry roles, research collaboration, and speaking and mentoring. Email me@wanghley.com + LinkedIn, GitHub, Book a call. The figure waves (pre-rendered loop).
+
+**Header:** two icons (LinkedIn, GitHub). **Footer:** graphite, all five socials.

@@ -1,14 +1,11 @@
 import React from "react";
-import {
-  HeroChamber,
-  SignalChain,
-  VentureShowcase,
-  LatestWriting,
-  OffDutyStrip,
-  SkillField,
-  LatestNews,
-  ClosingTransmit,
-} from '../components';
+import { HeroChamber, SignalChain } from '../components';
+import SelectedWork from '../components/home/sections/SelectedWork';
+import Gambiarra from '../components/home/sections/Gambiarra';
+import Research from '../components/home/sections/Research';
+import Ecosystem from '../components/home/sections/Ecosystem';
+import ClosingContact from '../components/home/sections/ClosingContact';
+import '../components/home/css/Sections.css';
 import { Helmet } from "react-helmet-async";
 import './css/home.css';
 
@@ -59,12 +56,11 @@ const Home = () => {
             </Helmet>
             <HeroChamber />
             <SignalChain />
-            <VentureShowcase />
-            <LatestWriting />
-            <OffDutyStrip />
-            <SkillField />
-            <LatestNews />
-            <ClosingTransmit />
+            <SelectedWork />
+            <Gambiarra />
+            <Research />
+            <Ecosystem />
+            <ClosingContact />
         </main>
     );
 };

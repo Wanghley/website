@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/logo-colorful.webp';
+import logo from '../assets/logo-white.svg';
 import { FaLinkedinIn, FaInstagram, FaGithub, FaAddressCard } from 'react-icons/fa6';
 import { SiGooglescholar } from 'react-icons/si';
 import './css/Footer.css';
@@ -30,13 +30,11 @@ const Footer = () => {
             <img src={logo} alt="Wanghley Martins" className="footer__logo" />
 
             <p className="footer__roles">
-              Electrical &amp; Computer Engineer
+              Engineer
               <span className="footer__roles-dot" aria-hidden="true" />
-              Maker
+              Builder
               <span className="footer__roles-dot" aria-hidden="true" />
-              Researcher
-              <span className="footer__roles-dot" aria-hidden="true" />
-              Entrepreneur
+              Organizer
             </p>
 
             <nav className="footer__socials" aria-label="Social profiles">
@@ -67,7 +65,7 @@ const Footer = () => {
                   { to: '/curriculum-vitae', label: 'Curriculum Vitae' },
                   { to: '/projects',         label: 'Projects' },
                   { to: '/blog',             label: 'Blog' },
-                  { to: '/#contact',           label: 'Contact' },
+                  { to: '/contact',            label: 'Contact' },
                 ].map(({ to, label }) => (
                   <li key={to}><Link to={to} className="footer__link">{label}</Link></li>
                 ))}

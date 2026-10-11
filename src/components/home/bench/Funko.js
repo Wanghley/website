@@ -73,6 +73,7 @@ export default function Funko({ position, height = 6, gesture = null }) {
         const action = mixer.clipAction(clip);
         action.play();
         action.setEffectiveWeight(name === 'Idle' ? 1 : 0);
+        action.setLoop(THREE.LoopRepeat, Infinity);
         actionsRef.current[name] = action;
       }
     });
@@ -93,7 +94,12 @@ export default function Funko({ position, height = 6, gesture = null }) {
     const d = benchState.drop;
 
     // Pose first (deterministic in time), then the additive head turn.
-    if (mixerRef.current) mixerRef.current.setTime(t);
+    if (mixerRef.current) {
+      const g = gesture ? benchState.gesture : 0;
+      if (actionsRef.current.Idle) actionsRef.current.Idle.setEffectiveWeight(1 - g);
+      if (gesture && actionsRef.current[gesture]) actionsRef.current[gesture].setEffectiveWeight(g);
+      mixerRef.current.setTime(t);
+    }
     if (headRef.current) {
       const ty = THREE.MathUtils.clamp(benchState.lookX * YAW_LIMIT, -YAW_LIMIT, YAW_LIMIT);
       const tp = THREE.MathUtils.clamp(-benchState.lookY * PITCH_LIMIT, -PITCH_LIMIT, PITCH_LIMIT);

@@ -34,9 +34,9 @@ const proximityAtLoop = (sec) => {
   return 0;
 };
 
-async function open(browser, w, h, transparent) {
+async function open(browser, w, h, transparent, query = '') {
   const page = await browser.newPage({ viewport: { width: w, height: h } });
-  await page.goto(`${BASE}/__capture`, { waitUntil: 'load' });
+  await page.goto(`${BASE}/__capture${query}`, { waitUntil: 'load' });
   await page.addStyleTag({
     content: `.nav,nav,footer,body::after{display:none!important} html,body{background:${transparent ? 'transparent' : INK}!important} #bench-capture{background:${transparent ? 'transparent' : INK}!important}`,
   });
@@ -76,7 +76,32 @@ async function open(browser, w, h, transparent) {
     await vPage.screenshot({ path: path.join(tmp, `f${String(i).padStart(3, '0')}.png`) });
   }
   await vPage.close();
+  // --- the figure on its own: gambiarra still (thumbs-up) + contact wave loop ---
+  const gPage = await open(browser, 800, 800, true, '?scene=funko&gesture=ThumbsUp');
+  const gs = { p: 0, t: 1.1, draw: 1, drop: 1, fade: 1, lookX: 0, lookY: 0, gesture: 1 };
+  await gPage.evaluate((x) => window.__bench.set(x), gs);
+  await gPage.evaluate((x) => window.__bench.set(x), gs);
+  const gpng = path.join(tmp, 'figure-thumbs.png');
+  await gPage.screenshot({ path: gpng, omitBackground: true });
+  execFileSync('cwebp', ['-q', '88', '-alpha_q', '92', gpng, '-o', path.join(OUT, 'figure-thumbs.webp')], { stdio: 'ignore' });
+  await gPage.close();
+
+  const WAVE = { w: 640, h: 640, fps: 15, seconds: 2.4 };
+  const wPage = await open(browser, WAVE.w, WAVE.h, false, '?scene=funko&gesture=Wave');
+  const wFrames = Math.round(WAVE.fps * WAVE.seconds);
+  fs.mkdirSync(path.join(tmp, 'wave'));
+  for (let i = 0; i < wFrames; i += 1) {
+    const s2 = { p: 0, t: i / WAVE.fps, draw: 1, drop: 1, fade: 1, lookX: 0, lookY: 0, gesture: 1 };
+    await wPage.evaluate((x) => window.__bench.set(x), s2);
+    await wPage.evaluate((x) => window.__bench.set(x), s2);
+    await wPage.screenshot({ path: path.join(tmp, 'wave', `w${String(i).padStart(3, '0')}.png`) });
+  }
+  await wPage.close();
   await browser.close();
+  execFileSync('cwebp', ['-q', '86', path.join(tmp, 'wave', 'w000.png'), '-o', path.join(OUT, 'figure-wave.webp')], { stdio: 'ignore' });
+  const wIn = ['-y', '-framerate', String(WAVE.fps), '-i', path.join(tmp, 'wave', 'w%03d.png')];
+  execFileSync('ffmpeg', [...wIn, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', path.join(OUT, 'figure-wave.mp4')], { stdio: 'ignore' });
+  execFileSync('ffmpeg', [...wIn, '-c:v', 'libvpx-vp9', '-crf', '38', '-b:v', '0', '-pix_fmt', 'yuv420p', '-an', path.join(OUT, 'figure-wave.webm')], { stdio: 'ignore' });
 
   const input = ['-y', '-framerate', String(LOOP.fps), '-i', path.join(tmp, 'f%03d.png')];
   execFileSync('ffmpeg', [...input, '-c:v', 'libx264', '-crf', '30', '-preset', 'slow', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', path.join(OUT, 'bench-loop.mp4')], { stdio: 'ignore' });
@@ -92,7 +117,7 @@ export default BENCH_ASSET;
 `;
   fs.writeFileSync(path.join(ROOT, 'src/data/benchAsset.js'), asset);
   fs.rmSync(tmp, { recursive: true, force: true });
-  for (const f of ['bench.avif', 'bench.webp', 'bench-loop.mp4', 'bench-loop.webm']) {
+  for (const f of ['bench.avif', 'bench.webp', 'bench-loop.mp4', 'bench-loop.webm', 'figure-thumbs.webp', 'figure-wave.mp4', 'figure-wave.webm', 'figure-wave.webp']) {
     console.log(f, (fs.statSync(path.join(OUT, f)).size / 1024).toFixed(0), 'KB');
   }
 })();

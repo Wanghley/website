@@ -143,6 +143,33 @@ function Studio({ shadows }) {
   );
 }
 
+// A bare graphite slab with the figure on it: used for the gambiarra still
+// and the contact wave (the second and third appearances, pre-rendered).
+function FunkoShot({ gesture, capture }) {
+  return (
+    <>
+      <Studio shadows />
+      <OrthographicCamera makeDefault position={[11, 9, 11]} zoom={92} near={0.1} far={100} onUpdate={(c) => c.lookAt(0, 2.5, 0)} />
+      <Driver capture={capture} autoLoop={false} />
+      <group>
+        <mesh position={[0, -0.25, 0]} receiveShadow castShadow>
+          <cylinderGeometry args={[2.6, 2.6, 0.5, 64]} />
+          <meshStandardMaterial color="#14242C" roughness={0.6} metalness={0.15} />
+        </mesh>
+        <mesh position={[0, 0.012, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[2.4, 2.55, 64]} />
+          <meshStandardMaterial color="#D9853B" metalness={0.95} roughness={0.3} />
+        </mesh>
+        <FootShadow position={[0, 0.02, 0]} />
+        <Suspense fallback={null}>
+          <Funko position={[0, 0.02, 0]} height={FIGURE_HEIGHT * 0.78} gesture={gesture} />
+        </Suspense>
+      </group>
+      {capture && <CaptureAPI />}
+    </>
+  );
+}
+
 function CaptureAPI() {
   const advance = useThree((s) => s.advance);
   const gl = useThree((s) => s.gl);
@@ -185,7 +212,7 @@ function Scene({ capture, autoLoop, shadows }) {
   );
 }
 
-export default function BenchScene({ active = true, capture = false, autoLoop = false, shadows = true, onReady }) {
+export default function BenchScene({ active = true, capture = false, autoLoop = false, shadows = true, scene = 'board', gesture = null, onReady }) {
   return (
     <Canvas
       shadows={shadows}
@@ -195,7 +222,11 @@ export default function BenchScene({ active = true, capture = false, autoLoop = 
       style={{ width: '100%', height: '100%', background: 'transparent' }}
       onCreated={() => onReady && onReady()}
     >
-      <Scene capture={capture} autoLoop={autoLoop} shadows={shadows} />
+      {scene === 'funko' ? (
+        <FunkoShot gesture={gesture} capture={capture} />
+      ) : (
+        <Scene capture={capture} autoLoop={autoLoop} shadows={shadows} />
+      )}
     </Canvas>
   );
 }

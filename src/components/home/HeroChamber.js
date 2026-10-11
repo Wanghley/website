@@ -54,8 +54,8 @@ export default function HeroChamber() {
             type="button"
             className="btn btn--primary"
             onClick={() => {
-              posthog?.capture('home_hero_cta_clicked', { target: 'ventures' });
-              scrollToSection('#ventures');
+              posthog?.capture('home_hero_cta_clicked', { target: 'work' });
+              scrollToSection('#work');
             }}
           >
             See my work

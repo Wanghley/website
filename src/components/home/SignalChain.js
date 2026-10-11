@@ -135,7 +135,7 @@ export default function SignalChain() {
 
         <div className="chain__closing">
           <p>{STORY.closing}</p>
-          <button type="button" className="btn btn--ghost" onClick={() => scrollToSection('#ventures')}>
+          <button type="button" className="btn btn--ghost" onClick={() => scrollToSection('#work')}>
             See the projects <span aria-hidden="true">↓</span>
           </button>
         </div>

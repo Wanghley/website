@@ -27,6 +27,7 @@ export const benchState = {
   pTarget: 0,
   lookTargetX: 0,
   lookTargetY: 0,
+  gesture: 0,  // 0..1 blend from idle to the gesture clip (contact wave, thumbs-up still)
   // Projected screen positions as fractions of the canvas (0..1)
   pad: { x: 0.3, y: 0.6, ready: false },
   mcu: { x: 0.6, y: 0.5, ready: false },

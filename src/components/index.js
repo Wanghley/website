@@ -12,12 +12,6 @@ import EcgRibbon from "./EcgRibbon";
 import Timeline from "./Timeline";
 import HeroChamber from "./home/HeroChamber";
 import SignalChain from "./home/SignalChain";
-import VentureShowcase from "./home/VentureShowcase";
-import LatestWriting from "./home/LatestWriting";
-import OffDutyStrip from "./home/OffDutyStrip";
-import SkillField from "./home/SkillField";
-import LatestNews from "./home/LatestNews";
-import ClosingTransmit from "./home/ClosingTransmit";
 
 // Hero, About, Skills, GridFeatured, GridFeaturedBlog, GambiarraImpact,
 // IdentityFocus, and TechMatrix (pass-1/pass-2 homepage sections superseded
@@ -44,10 +38,4 @@ export {
     Timeline,
     HeroChamber,
     SignalChain,
-    VentureShowcase,
-    LatestWriting,
-    OffDutyStrip,
-    SkillField,
-    LatestNews,
-    ClosingTransmit,
 }
