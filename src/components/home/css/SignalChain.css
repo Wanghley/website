@@ -20,8 +20,12 @@
   margin-bottom: clamp(64px, 12vh, 120px);
 }
 
-.chain__kicker,
-.chain__figure-kicker {
+.chain__figure-lead {
+  font-size: var(--step-0);
+  color: var(--paper-dim);
+  margin-bottom: 8px;
+}
+.chain__kicker-unused {
   font-family: var(--font-mono-bench);
   font-size: var(--step--1);
   letter-spacing: 0.04em;
@@ -64,7 +68,7 @@
 .chain__links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 6px; }
 
 /* --- the idea in one signal: figure stays, steps scroll --- */
-.chain__figure-kicker { margin-bottom: 8px; }
+
 
 .chain__scroll {
   display: grid;
@@ -80,13 +84,16 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  opacity: 0.3;
   transform: translateY(6px);
-  transition:
-    opacity var(--dur-reveal) var(--ease-out),
-    transform var(--dur-reveal) var(--ease-out);
+  transition: transform var(--dur-reveal) var(--ease-out);
 }
-.chain__step.is-active { opacity: 1; transform: none; }
+/* inactive steps recede by colour, never below 6:1 (no opacity dimming) */
+.chain__step:not(.is-active) .chain__stage-heading,
+.chain__step:not(.is-active) .chain__stage-body,
+.chain__step:not(.is-active) .chain__link { color: var(--muted); }
+.chain__step .chain__stage-heading,
+.chain__step .chain__stage-body { transition: color var(--dur-reveal) var(--ease-out); }
+.chain__step.is-active { transform: none; }
 .chain__step:first-child { min-height: 56vh; }
 
 .chain__figure {
@@ -212,4 +219,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .chain__step { transition: none; }
+}
+
+@media (pointer: coarse) {
+  .chain__link,
+  .footer__link,
+  .footer__legal-link { display: inline-flex; align-items: center; min-height: 44px; }
 }

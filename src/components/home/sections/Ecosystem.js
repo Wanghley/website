@@ -40,7 +40,6 @@ export default function Ecosystem() {
     <section id="community" className="sec" aria-labelledby="community-heading">
       <div className="bench-col community">
         <div>
-          <p className="sec__kicker">{ECOSYSTEM.kicker}</p>
           <h2 id="community-heading" className="sec__title">{ECOSYSTEM.heading}</h2>
           <p className="sec__lede">{ECOSYSTEM.lede}</p>
           <ul className="roles">
@@ -57,7 +56,7 @@ export default function Ecosystem() {
       </div>
 
       <div className="bench-col">
-        <h3 className="sec__kicker recog__title">Recognition</h3>
+        <h3 className="recog__title">Recognition</h3>
         <ul className="recog">
           {RECOGNITION.map((r) => (
             <li key={r.name}>

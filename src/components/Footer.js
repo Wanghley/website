@@ -81,14 +81,6 @@ const Footer = () => {
               </ul>
             </div>
 
-            <div className="footer__col">
-              <span className="footer__col-label">Research</span>
-              <ul className="footer__link-list">
-                <li><a href="https://scholar.google.com/citations?user=sN2iKrkAAAAJ" target="_blank" rel="noopener noreferrer" className="footer__link">Google Scholar</a></li>
-                <li><a href="http://lattes.cnpq.br/2402272123510102" target="_blank" rel="noopener noreferrer" className="footer__link">Lattes CV</a></li>
-              </ul>
-            </div>
-
           </div>
         </div>
       </div>

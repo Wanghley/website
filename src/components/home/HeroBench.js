@@ -150,8 +150,7 @@ export default function HeroBench({ className = '', reducedMotion }) {
       ref={boxRef}
       className={`hero-bench hero-bench--${mode}${ready ? ' is-ready' : ''} ${className}`}
       style={{ '--bench-aspect': BENCH_ASSET.width / BENCH_ASSET.height }}
-      role="img"
-      aria-label="A circuit board with a capacitive sensing pad and a figure of Wanghley standing on it. As the cursor nears the copper pad, the board's capacitance reading rises and the signal is classified as a hand."
+      aria-hidden="true"
     >
       {mode === 'still' && (
         <picture>

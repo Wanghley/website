@@ -71,7 +71,6 @@ export default function SignalChain() {
       <div className="chain__inner bench-col">
         <div className="chain__lead">
           <div>
-            <p className="chain__kicker">{STORY.kicker}</p>
             <h2 id="chain-heading" className="chain__title">{STORY.heading}</h2>
           </div>
           <div className="chain__story">
@@ -100,7 +99,7 @@ export default function SignalChain() {
           </div>
         </div>
 
-        <p className="chain__figure-kicker">{STORY.figureKicker}</p>
+        <p className="chain__figure-lead">{STORY.figureKicker}</p>
 
         {wide ? (
           <div className="chain__scroll">

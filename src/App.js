@@ -70,7 +70,9 @@ function App() {
       <LenisRoot>
         <ScrollToTop />
         <PostHogPageView />
+        <a className="skip-link" href="#main-content">Skip to content</a>
         <Navbar />
+        <div id="main-content" tabIndex={-1} style={{ outline: 'none' }}>
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -88,6 +90,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        </div>
         <Footer />
       </LenisRoot>
     </Router>

@@ -1,8 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CONTACT } from '../../../data/home';
+import useInView from '../../../hooks/useInView';
+import rubrica from '../../../assets/handwriting/rubrica.png';
 
 export default function ClosingContact() {
   const videoRef = useRef(null);
+  const [signRef, signed] = useInView();
   const [reduced, setReduced] = useState(
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   );
@@ -38,6 +41,7 @@ export default function ClosingContact() {
               </li>
             ))}
           </ul>
+          <img ref={signRef} className={`contact__sign${signed ? ' is-in' : ''}`} src={rubrica} alt="" width="120" height="61" loading="lazy" />
         </div>
         <div className="contact__figure">
           {reduced ? (

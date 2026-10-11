@@ -56,7 +56,7 @@
   --font-mono-bench: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   /* — Fluid type scale (headline measure <= 14 words) — */
-  --step--2: clamp(0.72rem, 0.70rem + 0.10vw, 0.78rem);
+  --step--2: clamp(0.78rem, 0.76rem + 0.08vw, 0.82rem);
   --step--1: clamp(0.82rem, 0.80rem + 0.12vw, 0.90rem);
   --step-0:  clamp(1.00rem, 0.96rem + 0.20vw, 1.12rem);
   --step-1:  clamp(1.20rem, 1.10rem + 0.50vw, 1.45rem);
@@ -236,3 +236,17 @@ body::after {
     scroll-behavior: auto !important;
   }
 }
+
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 2000;
+  padding: 10px 16px;
+  background: var(--paper);
+  color: var(--ink);
+  border-radius: 4px;
+  transform: translateY(-200%);
+  transition: transform var(--dur-ui) var(--ease-out);
+}
+.skip-link:focus { transform: none; color: var(--ink); }
