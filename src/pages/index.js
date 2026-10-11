@@ -25,7 +25,11 @@ const Home = () => {
                 <meta property="og:description" content="Wanghley Martins is a PhD researcher in Electrical & Computer Engineering at Rice University, building non-contact capacitive biosensors and edge AI systems that run on microcontrollers." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://wanghley.com/" />
-                <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1746648815/branding/logo_applied_sq.png" />
+                <meta property="og:image" content="https://wanghley.com/og-image.png" />
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
+                <meta property="og:image:alt" content="A figure of Wanghley standing on a circuit board with a copper capacitive sensing pad" />
+                <meta name="twitter:card" content="summary_large_image" />
                 <meta property="og:site_name" content="Wanghley Martins – Biosensing & Edge AI" />
                 <meta property="og:locale" content="en_US" />
 

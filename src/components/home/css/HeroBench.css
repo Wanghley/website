@@ -17,6 +17,9 @@
 }
 
 .hero-bench.is-ready { opacity: 1; }
+/* the poster is the LCP element: never gate it behind a fade */
+.hero-bench--still,
+.hero-bench--video { opacity: 1; transition: none; }
 
 .hero-bench--still,
 .hero-bench--video {

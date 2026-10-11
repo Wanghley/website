@@ -12,7 +12,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- Type system: wordmark face (local) + Bricolage Grotesque (text) + IBM Plex Mono. -->
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <!-- non-blocking: swap in when loaded (display=swap keeps text visible) -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" /></noscript>
     <meta name="google-site-verification" content="g8x_87Cb0hLbe6qgpFdV-I3oNhXfUE2GvCePdBxjeqU" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!-- Mobile hero poster: it is the LCP element and only discoverable after
