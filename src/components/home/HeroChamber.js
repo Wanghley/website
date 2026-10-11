@@ -76,7 +76,6 @@ export default function HeroChamber() {
   const posthog = usePostHog();
   const scrollToSection = useScrollToSection();
   const reduced = useReducedMotion();
-  const coarse = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
   return (
     <section id="home" className="hero" aria-labelledby="hero-title">

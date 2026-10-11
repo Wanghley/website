@@ -17,8 +17,6 @@ innovative, "where X meets Y", synergy.
 | Headline (rotates every 3.6 s; reduced motion shows all five as a list) | Compute at the sensor boundary. · ECE PhD student at Rice. · Engineering powered by *gambiarra*. (gambiarra in copper italic) · Mobilizing ecosystems across the Americas. · Deep tech for human impact. |
 | Primary CTA | See my work |
 | Ghost CTA | Get in touch |
-| Microcopy (mouse) | Move closer. This board is reading you, the way my wrist sensor reads a hand without touching it. |
-| Microcopy (touch) | Watch the board read a hand without touching it, the way my wrist sensor does. |
 | Instrument line | PHD STUDENT · RICE ECE · HOUSTON 29.72°N 95.40°W · SENSE x.xx pF |
 | Classify label | classified: hand · 0.4 ms · 38 µW |
 
@@ -34,8 +32,6 @@ The supporting sentence ("PhD at Rice building wearable biosensors…") was remo
 | Supporting line | PhD at Rice building wearable biosensors and the microwatt AI that runs on them. |
 | Primary CTA | See my work |
 | Ghost CTA | Get in touch |
-| Microcopy (mouse) | Move closer. This board is reading you, the way my wrist sensor reads a hand without touching it. |
-| Microcopy (touch) | Watch the board read a hand without touching it, the way my wrist sensor does. |
 | Instrument line | RICE ECE · HOUSTON 29.72°N 95.40°W · SENSE x.xx pF |
 | Classify label | classified: hand · 0.4 ms · 38 µW |
 

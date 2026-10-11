@@ -96,13 +96,6 @@
   animation: hero-rise var(--dur-reveal) var(--ease-out) 1.2s both;
 }
 
-.hero__note {
-  font-size: var(--step--1);
-  line-height: 1.5;
-  color: var(--muted);
-  max-width: 40ch;
-}
-
 .hero__instrument {
   position: absolute;
   z-index: 3;
