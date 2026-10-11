@@ -12,6 +12,21 @@ innovative, "where X meets Y", synergy.
 
 | Slot | Copy |
 |---|---|
+| Eyebrow | ENGINEER · RESEARCHER · MAKER · INVENTOR · CURIOUS |
+| Name (wordmark face) | Wanghley *(read aloud as "Wanghley Soares Martins")* |
+| Headline (rotates every 3.6 s; reduced motion shows the first four as a list) | I put the intelligence inside the sensor. · I'm a PhD student at Rice. · I lead teams and communities. · I care about social impact. · I mentor and judge student engineers. · I believe in gambiarra: solving it with what you have. · I organize events across Brazil and the US. |
+| Primary CTA | See my work |
+| Ghost CTA | Get in touch |
+| Microcopy (mouse) | Move closer. This board is reading you, the way my wrist sensor reads a hand without touching it. |
+| Microcopy (touch) | Watch the board read a hand without touching it, the way my wrist sensor does. |
+| Instrument line | PHD STUDENT · RICE ECE · HOUSTON 29.72°N 95.40°W · SENSE x.xx pF |
+| Classify label | classified: hand · 0.4 ms · 38 µW |
+
+The supporting sentence ("PhD at Rice building wearable biosensors…") was removed by request. Always say "PhD student", never "PhD" alone.
+
+`[[PLACEHOLDER: real latency and power for the classify label (0.4 ms and 38 µW)]]`
+
+---|---|
 | Eyebrow | Brazilian engineer · PhD, Rice ECE |
 | Name (wordmark face) | Wanghley *(read aloud as "Wanghley Soares Martins")* |
 | Headline (words rise in on load) | I put the intelligence inside the sensor. |

@@ -107,7 +107,7 @@ export default function Styleguide() {
               <h3 className="sg__option-name">{o.name}</h3>
               <p className="sg__sample-h">I put the intelligence inside the sensor.</p>
               <p className="sg__sample-p">
-                PhD at Rice building wearable biosensors and the microwatt AI that runs on them. I treat 38 µW and 0.4
+                Engineer, researcher, maker, inventor, curious. I treat 38 µW and 0.4
                 ms as product constraints, not paper metrics.
               </p>
               <p className="sg__sample-p sg__sample-p--small">Gambiarra: fixing it with what is on the bench. 0123456789</p>

@@ -16,14 +16,14 @@ const Home = () => {
         <main id="main" className="home-page home-page-instrumented">
             <Helmet>
                 <title>Wanghley Martins | Biosensing & Edge AI · Rice University</title>
-                <meta name="description" content="Wanghley Martins is a PhD researcher in Electrical & Computer Engineering at Rice University, building non-contact capacitive biosensors and edge AI systems that run on microcontrollers." />
+                <meta name="description" content="Wanghley Martins is a PhD student in Electrical & Computer Engineering at Rice University, building non-contact capacitive biosensors and edge AI systems that run on microcontrollers." />
                 <meta name="keywords" content="Wanghley Martins, Non-Contact Biosensing, Capacitive Sensing, Edge AI, TinyML, Biomedical AI, Embedded ML, STM32, Health Tech, Rice University, Duke University, Karsh Scholar, Silicon to Cloud, FPGA, ARM Cortex, RTOS, ONNX" />
                 <link rel="canonical" href="https://wanghley.com/" />
                 <meta name="author" content="Wanghley Martins" />
                 <meta name="robots" content="index, follow" />
 
                 <meta property="og:title" content="Wanghley Martins | Biosensing & Edge AI · Rice University" />
-                <meta property="og:description" content="Wanghley Martins is a PhD researcher in Electrical & Computer Engineering at Rice University, building non-contact capacitive biosensors and edge AI systems that run on microcontrollers." />
+                <meta property="og:description" content="Wanghley Martins is a PhD student in Electrical & Computer Engineering at Rice University, building non-contact capacitive biosensors and edge AI systems that run on microcontrollers." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://wanghley.com/" />
                 <meta property="og:image" content="https://wanghley.com/og-image.png" />
@@ -40,8 +40,8 @@ const Home = () => {
                         "@type": "Person",
                         "name": "Wanghley Martins",
                         "url": "https://wanghley.com",
-                        "jobTitle": "PhD Researcher, Electrical & Computer Engineering",
-                        "description": "PhD researcher in Electrical & Computer Engineering at Rice University, building non-contact capacitive biosensors and edge AI systems that run on microcontrollers.",
+                        "jobTitle": "PhD Student, Electrical & Computer Engineering",
+                        "description": "PhD student in Electrical & Computer Engineering at Rice University, building non-contact capacitive biosensors and edge AI systems that run on microcontrollers.",
                         "affiliation": {
                             "@type": "EducationalOrganization",
                             "name": "Rice University",
