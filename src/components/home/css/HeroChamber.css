@@ -60,6 +60,41 @@
   padding-bottom: 18px;
 }
 
+/* words rise in one by one; the text is in the DOM from the first frame */
+.hero__word {
+  display: inline-block;
+  animation: hero-word 560ms var(--ease-out) both;
+  animation-delay: calc(120ms + var(--i) * 70ms);
+}
+@keyframes hero-word {
+  from { opacity: 0; transform: translateY(0.45em); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* "I also ..." rotating line */
+.hero__also {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.4em;
+  margin: -8px 0 24px;
+  font-size: var(--step-1);
+  line-height: 1.35;
+  color: var(--paper-dim);
+  animation: hero-rise var(--dur-reveal) var(--ease-out) 0.7s both;
+}
+.hero__also-lead { color: var(--paper-dim); }
+.hero__rotator { display: inline-grid; color: var(--signal); font-weight: 500; min-width: 0; }
+.hero__rotator-item {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(0.5em);
+  transition: opacity 520ms var(--ease-out), transform 520ms var(--ease-out);
+  pointer-events: none;
+}
+.hero__rotator-item.is-on { opacity: 1; transform: none; }
+.hero__also--static { display: block; color: var(--paper-dim); max-width: 38ch; animation: none; }
+
 /* a copper rule draws under the headline once the figure has landed */
 .hero__headline::after {
   content: '';
@@ -157,5 +192,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .hero__headline::after,
-  .hero__ctas { animation: none; }
+  .hero__ctas,
+  .hero__word,
+  .hero__also { animation: none; }
+  .hero__rotator-item { transition: none; }
 }

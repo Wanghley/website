@@ -3,7 +3,7 @@ import { ABOUT } from '../../../data/home';
 
 export default function AboutMe() {
   return (
-    <section id="about" className="hm-sec" aria-labelledby="about-heading">
+    <section id="about" className="hm-sec hm-sec--light" aria-labelledby="about-heading">
       <div className="bench-col hm-about">
         <h2 id="about-heading" className="hm-sec__title">{ABOUT.heading}</h2>
         <div className="hm-about__body">

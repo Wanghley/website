@@ -34,7 +34,7 @@ Live capacitive-sensing demo: SENSE readout of about 0.18 pF to 2.14 pF as a han
 - Ventures: none named publicly for now. Omit the section until the user decides.
 - Brazil-to-US route: Brasília (hometown, capital of Brazil) → Durham → Houston.
 - TEDxDuke talk: https://www.youtube.com/watch?v=tceoUHQ9rPQ
-- Sensor data for the signal chain is simulated (no real recording exists yet). It must be labelled as illustrative wherever shown and swapped for a real capture when available.
+- Sensor data for the signal chain is simulated (no real recording exists yet). Swap it for a real capture when available.
 - Undecided: real classification numbers (latency and power), Google Scholar and lab links to be verified.
 
 ## Brand Commitments

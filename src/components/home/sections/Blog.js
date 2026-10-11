@@ -24,7 +24,7 @@ export default function Blog() {
   }, []);
 
   return (
-    <section id="blog" className="hm-sec" aria-labelledby="blog-heading">
+    <section id="blog" className="hm-sec hm-sec--light" aria-labelledby="blog-heading">
       <div className="bench-col">
         <h2 id="blog-heading" className="hm-sec__title">{BLOG.heading}</h2>
         {posts.length > 0 && (

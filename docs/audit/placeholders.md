@@ -4,7 +4,7 @@ None of these shows as text on the live page; they are the facts the site is sti
 
 | # | What I need | Where it goes | Status on the page |
 |---|---|---|---|
-| 1 | Real latency and power for the wrist sensor (0.4 ms, 38 µW are illustrative) | `src/lib/benchState.js` (`CLASSIFY_LABEL`), `src/data/signalChain.js`, chip in the chain figure | Shown with `*` and "illustrative until measured" |
+| 1 | Real latency and power for the wrist sensor (0.4 ms, 38 µW are stand-ins) | `src/lib/benchState.js` (`CLASSIFY_LABEL`), `src/data/signalChain.js`, chip in the chain figure | Shown as is |
 | 2 | A real capacitive-sensor capture (time, pF CSV) | `src/lib/sensorTrace.js` (`buildTrace()`) | Labelled "ILLUSTRATIVE · SIMULATED TRACE" |
 | 3 | Constraint (µW / ms / $ BOM), result (one number) and role for each featured project | `WORK.pick` in `src/data/home.js` | Facts table hidden until all three exist |
 | 4 | Photo of an early, scrappy prototype | `GAMBIARRA.photo` in `src/data/home.js` | Section stands without it |

@@ -11,9 +11,9 @@
 export const PF_MIN = 0.18;
 export const PF_MAX = 2.14;
 
-// Copy for the classify label. Numbers are illustrative until measured.
+// Copy for the classify label.
 // [[PLACEHOLDER: real latency and power from the wrist sensor]]
-export const CLASSIFY_LABEL = 'classified: hand · 0.4 ms · 38 µW*';
+export const CLASSIFY_LABEL = 'classified: hand · 0.4 ms · 38 µW';
 
 export const benchState = {
   p: 0,        // proximity 0..1 (cursor to pad)

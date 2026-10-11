@@ -2,10 +2,10 @@
    effects. Bench tokens only. */
 
 .hm-sec { position: relative; padding-block: clamp(64px, 11vh, 120px); }
-.hm-sec + .hm-sec::before, .hm-trust + .hm-sec::before {
+.hm-sec:not(.hm-sec--light) + .hm-sec:not(.hm-sec--light)::before {
   content: '';
   position: absolute; top: 0; left: var(--edge); right: var(--edge);
-  height: 1px; background: var(--line);
+  height: 1px; background: var(--t-line);
 }
 .hm-sec__title {
   font-size: var(--step-3);
@@ -13,18 +13,47 @@
   letter-spacing: -0.025em;
   line-height: 1.05;
   max-width: 20ch;
-  color: var(--paper);
+  color: var(--t-fg);
   margin-bottom: clamp(28px, 5vh, 48px);
 }
 .hm-sec__more { margin-top: 32px; }
 .hm-link {
-  color: var(--signal);
+  color: var(--t-link);
   text-decoration: underline;
   text-underline-offset: 4px;
   text-decoration-thickness: 1px;
   font-size: var(--step-0);
 }
-.hm-link:hover { color: var(--copper); }
+.hm-link:hover { color: var(--t-hover); }
+
+/* --- themes: dark (default) and light bands alternate down the page --- */
+.hm-sec, .hm-trust, .hm-strip {
+  --t-bg: transparent;
+  --t-fg: var(--paper);
+  --t-dim: var(--paper-dim);
+  --t-muted: var(--muted);
+  --t-line: rgba(242, 239, 233, 0.10);
+  --t-line-strong: rgba(242, 239, 233, 0.22);
+  --t-surface: var(--surface);
+  --t-link: var(--signal);
+  --t-hover: var(--copper);
+}
+.hm-sec--light, .hm-trust--light {
+  --t-bg: var(--paper);
+  --t-fg: #121314;
+  --t-dim: #44423D;
+  --t-muted: #625F59;
+  --t-line: rgba(18, 19, 20, 0.14);
+  --t-line-strong: rgba(18, 19, 20, 0.28);
+  --t-surface: #E7E3DB;
+  --t-link: #1A66A0;
+  --t-hover: #8F4F1C;
+  background: var(--t-bg);
+  color: var(--t-fg);
+}
+/* the section rules use each band's own background, so seams are the band edges */
+.hm-sec--light::before, .hm-trust--light::before { display: none; }
+.hm-sec--light + .hm-sec::before { display: none; }
 
 /* --- photo strip, right under the hero --- */
 .hm-strip { padding-block: 0 clamp(48px, 8vh, 88px); }
@@ -33,14 +62,14 @@
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: clamp(8px, 1.2vw, 16px);
 }
-.hm-strip__row li { overflow: hidden; border-radius: 4px; border: 1px solid var(--line); background: var(--surface); }
+.hm-strip__row li { overflow: hidden; border-radius: 4px; border: 1px solid var(--t-line); background: var(--t-surface); }
 .hm-strip__row img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
 .hm-strip__caption {
   margin-top: 14px;
   font-family: var(--font-mono-bench);
   font-size: var(--step--1);
   letter-spacing: 0.04em;
-  color: var(--muted);
+  color: var(--t-muted);
 }
 @media (max-width: 899px) {
   .hm-strip__row {
@@ -59,54 +88,49 @@
 .hm-about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
 .hm-about .hm-sec__title { margin-bottom: 0; }
 .hm-about__body { display: grid; gap: 24px; max-width: 56ch; }
-.hm-about__lede { font-size: var(--step-1); line-height: 1.45; color: var(--paper); }
-.hm-about__values { border-top: 1px solid var(--line); }
+.hm-about__lede { font-size: var(--step-1); line-height: 1.45; color: var(--t-fg); }
+.hm-about__values { border-top: 1px solid var(--t-line); }
 .hm-about__values li {
   display: grid; grid-template-columns: 9.5rem 1fr; gap: 8px 20px;
-  padding: 16px 0; border-bottom: 1px solid var(--line);
-  font-size: var(--step-0); line-height: 1.55; color: var(--paper-dim);
+  padding: 16px 0; border-bottom: 1px solid var(--t-line);
+  font-size: var(--step-0); line-height: 1.55; color: var(--t-dim);
 }
-.hm-about__values strong { font-weight: 600; color: var(--paper); }
+.hm-about__values strong { font-weight: 600; color: var(--t-fg); }
 .hm-about__links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; }
 
 /* --- where I have been --- */
-.hm-trust { padding-block: clamp(40px, 7vh, 72px); position: relative; }
-.hm-trust::before, .hm-trust::after {
-  content: ''; position: absolute; left: var(--edge); right: var(--edge); height: 1px; background: var(--line);
-}
-.hm-trust::before { top: 0; }
-.hm-trust::after { bottom: 0; }
+.hm-trust { padding-block: clamp(48px, 8vh, 80px); position: relative; }
 .hm-trust__title {
   font-family: var(--font-mono-bench); font-size: var(--step--1); font-weight: 400;
-  letter-spacing: 0.04em; color: var(--muted); margin-bottom: 24px;
+  letter-spacing: 0.04em; color: var(--t-muted); margin-bottom: 24px;
 }
 .hm-trust__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px 40px; }
-.hm-trust__group dt { font-size: var(--step--1); color: var(--muted); margin-bottom: 10px; }
+.hm-trust__group dt { font-size: var(--step--1); color: var(--t-muted); margin-bottom: 10px; }
 .hm-trust__group ul { display: grid; gap: 6px; }
-.hm-trust__group li { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.01em; color: var(--paper); line-height: 1.25; }
+.hm-trust__group li { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.01em; color: var(--t-fg); line-height: 1.25; }
 
 /* --- skills --- */
-.hm-skills { display: grid; border-top: 1px solid var(--line); }
-.hm-skills__group { display: grid; grid-template-columns: 9.5rem 1fr; gap: 12px 20px; padding: 18px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
-.hm-skills__group dt { font-weight: 600; color: var(--paper); }
+.hm-skills { display: grid; border-top: 1px solid var(--t-line); }
+.hm-skills__group { display: grid; grid-template-columns: 9.5rem 1fr; gap: 12px 20px; padding: 18px 0; border-bottom: 1px solid var(--t-line); align-items: baseline; }
+.hm-skills__group dt { font-weight: 600; color: var(--t-fg); }
 .hm-skills__group ul { display: flex; flex-wrap: wrap; gap: 8px; }
 .hm-skills__group li {
-  font-size: var(--step--1); color: var(--paper-dim);
-  padding: 6px 12px; border: 1px solid var(--line-strong); border-radius: 999px;
+  font-size: var(--step--1); color: var(--t-dim);
+  padding: 6px 12px; border: 1px solid var(--t-line-strong); border-radius: 999px;
 }
 
 /* --- cards (projects, blog) --- */
 .hm-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: clamp(24px, 3vw, 36px); }
 .hm-card { display: grid; gap: 12px; align-content: start; }
-.hm-card__media { display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; border: 1px solid var(--line); background: var(--surface); }
+.hm-card__media { display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; border: 1px solid var(--t-line); background: var(--t-surface); }
 .hm-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hm-card__blank { display: block; width: 100%; height: 100%; background: var(--surface); }
-.hm-card__meta { font-family: var(--font-mono-bench); font-size: var(--step--2); color: var(--muted); letter-spacing: 0.04em; }
+.hm-card__blank { display: block; width: 100%; height: 100%; background: var(--t-surface); }
+.hm-card__meta { font-family: var(--font-mono-bench); font-size: var(--step--2); color: var(--t-muted); letter-spacing: 0.04em; }
 .hm-card__title { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; }
-.hm-card__title a { color: var(--paper); }
-.hm-card__title a:hover { color: var(--copper); }
+.hm-card__title a { color: var(--t-fg); }
+.hm-card__title a:hover { color: var(--t-hover); }
 .hm-card__text {
-  color: var(--paper-dim); font-size: var(--step--1); line-height: 1.55;
+  color: var(--t-dim); font-size: var(--step--1); line-height: 1.55;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
 
@@ -118,11 +142,11 @@
 .hm-contact__figure { width: min(220px, 50%); height: auto; margin-top: 12px; }
 .hm-form { display: grid; gap: 18px; }
 .hm-form__field { display: grid; gap: 8px; }
-.hm-form__field span { font-size: var(--step--1); color: var(--paper-dim); }
+.hm-form__field span { font-size: var(--step--1); color: var(--t-dim); }
 .hm-form__field input, .hm-form__field textarea {
   width: 100%;
-  font: inherit; font-size: var(--step-0); color: var(--paper);
-  background: var(--surface); border: 1px solid var(--line-strong); border-radius: 4px;
+  font: inherit; font-size: var(--step-0); color: var(--t-fg);
+  background: var(--t-surface); border: 1px solid var(--t-line-strong); border-radius: 4px;
   padding: 12px 14px;
 }
 .hm-form__field textarea { resize: vertical; min-height: 140px; }

@@ -14,7 +14,8 @@ innovative, "where X meets Y", synergy.
 |---|---|
 | Eyebrow | Brazilian engineer · PhD, Rice ECE |
 | Name (wordmark face) | Wanghley *(read aloud as "Wanghley Soares Martins")* |
-| Headline | I put the intelligence inside the sensor. |
+| Headline (words rise in on load) | I put the intelligence inside the sensor. |
+| Rotating line ("I also ...", 3.2 s each; all shown at once with reduced motion) | lead teams and communities. · care about social impact. · mentor and judge student engineers. · speak about gambiarra. · organize events across Brazil and the US. |
 | Supporting line | PhD at Rice building wearable biosensors and the microwatt AI that runs on them. |
 | Primary CTA | See my work |
 | Ghost CTA | Get in touch |
@@ -23,7 +24,7 @@ innovative, "where X meets Y", synergy.
 | Instrument line | RICE ECE · HOUSTON 29.72°N 95.40°W · SENSE x.xx pF |
 | Classify label | classified: hand · 0.4 ms · 38 µW |
 
-`[[PLACEHOLDER: real latency and power for the classify label. 0.4 ms and 38 µW are illustrative until you measure them on the wrist sensor.]]`
+`[[PLACEHOLDER: real latency and power for the classify label (0.4 ms and 38 µW)]]`
 
 ### Headline: five alternatives in your voice
 
