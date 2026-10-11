@@ -17,10 +17,6 @@ const COPY = {
     'Deep tech for human impact.',
   ],
 
-  noteFine:
-    'Move closer. This board is reading you, the way my wrist sensor reads a hand without touching it.',
-  noteTouch:
-    'Watch the board read a hand without touching it, the way my wrist sensor does.',
 };
 
 function useReducedMotion() {
@@ -118,7 +114,6 @@ export default function HeroChamber() {
           </a>
         </div>
 
-        <p className="hero__note">{coarse ? COPY.noteTouch : COPY.noteFine}</p>
       </div>
 
       <p className="sr-only">
