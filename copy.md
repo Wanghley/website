@@ -42,66 +42,27 @@ innovative, "where X meets Y", synergy.
 
 ---
 
-## About story + signal chain (`src/data/signalChain.js`, `STORY` and `STAGES`)
+## Home page, in order (`src/data/home.js`)
 
-Kicker: About me · Heading: **What I care about, and how I work.**
+Structure by request: Hero, photos, About, Where I have been, Skills, Projects, Blog, Contact form, Footer. No entrance animations or scroll effects below the hero; native scrolling.
 
-> I'm Wanghley, from Brasília. I'm an engineer, a builder and an organizer, and I like being all three at once.
->
-> **Resourcefulness.** Gambiarra: solve it with what is on the bench. Constraints make the work better, and I gave a TEDxDuke talk on it.
+**Photo strip** (six photos from `src/assets/wanghley/strip/`, alt text written by me from what is in each picture, please review) · caption: Brasília → Durham → Houston
+
+**About.** Heading: Part engineer, part builder, part organizer.
+> I'm Wanghley, from Brasília. I design hardware, write the software that runs on it, and organize the people and events around it. I like the places where those three overlap.
+> **Resourcefulness.** Gambiarra: the Brazilian art of solving it with what is on the bench. It is the subject of my TEDxDuke talk.
 > **Community.** Mentoring, judging and organizing, across Brazil and the US, is part of the work, not a side project.
 > **Honesty.** I would rather show the number than the adjective, and say plainly when something is still a sketch.
 
-Links: **More about me →** (/about) · Watch the TEDxDuke talk ↗ (youtube.com/watch?v=tceoUHQ9rPQ)
-Figure kicker: One example of how I work · Closing: That is one example. The projects below show the rest.
+Buttons: More about me (/about) · Watch the TEDxDuke talk (youtube.com/watch?v=tceoUHQ9rPQ).
+`[[PLACEHOLDER: the three values are my draft from your brief; rewrite them in your own words]]`
 
-By request this block does not state the research focus or name collaborators. (The figure below it still demonstrates one project; say if you want it cut or moved.)
+**Where I have been** (names only, no logos): Studied and researched at Rice University, Duke University · Worked at NetApp, 3D Systems, Nomad · Spoken at and recognized by TEDxDuke, One Young World, Regeneron ISEF, ICYS Belgrade, FEBRACE, BRICS Young Inventor · Led HackBrazil, Brasil Conference.
+`[[PLACEHOLDER: add roles and years if you want them shown, e.g. NetApp 2024]]`
 
-`[[PLACEHOLDER: the three values are my draft from your brief (gambiarra, mentoring/judging/organizing, numbers over adjectives). Rewrite them in your own words.]]`
+**Skills** (from your CMS, grouped by type: Engineering, Software, Data, DevOps, Other).
+**Projects** (CMS: capacitive, biosensor and Parkinson's projects first, then the rest; six shown) · link: All projects.
+**Blog** (three latest from the CMS) · link: All posts.
+**Contact.** Heading: Say hello. Open to industry roles, research collaboration, and speaking and mentoring. Form (name, email, message) sends through Web3Forms; email + LinkedIn, GitHub, Book a call.
 
-Interaction: no pinning or scroll-scrubbing. The figure is sticky; the step in the middle of the screen takes focus and the waveform morphs once over 900ms.
-One numbering system only: 01-05. Tag on the figure: ILLUSTRATIVE · SIMULATED TRACE.
-
-| # | Stage | Heading | Sentence | Link |
-|---|---|---|---|---|
-| 01 | Sense | The electrode feels a hand. | My electrode reads a hand without touching it: the field moves from 0.18 to 2.14 pF, buried in noise. | Non-contact capacitive sensing |
-| 02 | Condition | The front-end cleans it up. | Analog filtering strips the hum and the drift, so the signal is clean before it goes anywhere. | Mixed-signal front-ends |
-| 03 | Infer | Features, not raw data. | I pull out the three numbers that matter (onset, peak, dwell) right next to the sensor, not in the cloud. | TinyML on embedded hardware |
-| 04 | Deploy | The model lives on the chip. | The classifier runs on a microcontroller in 0.4 ms at 38 µW*, which is small enough to wear. | Near-sensor accelerators |
-| 05 | Impact | A human-sized answer. | Out comes a hand, recognised, before any raw data leaves the sensor. | AI-driven Parkinson's diagnostic (ISEF) |
-
-\* Illustrative until measured on the wrist sensor.
-
-Open placeholders for this section:
-
-- `[[PLACEHOLDER: real capacitive-sensor capture (time, pF CSV)]]` replaces the simulated trace in `src/lib/sensorTrace.js`.
-- `[[PLACEHOLDER: real latency and power]]` for 0.4 ms and 38 µW.
-- `[[PLACEHOLDER: project slug for each stage's link]]` (all five point at /projects today).
-- "Condition" and "Deploy" sentences describe the work in general terms; confirm they match the projects you want to link.
-
----
-
-## Phase 4 sections (`src/data/home.js`)
-
-Order: Hero, About + one example, Selected work, Gambiarra, Research, Community + Recognition, Contact, Footer. Ventures omitted by request. Removed from the home page: dispatches/blog strip, off-duty photos, capability graph, news, old closing band (the blog and CV pages are untouched).
-
-**Selected work.** Heading: Things I built, with their numbers. Cards pull title, one-line teaser and photo from your CMS (first four projects by start date). Each shows Constraint / Result / My role.
-`[[PLACEHOLDER: constraint (µW / ms / $ BOM), result as one number, and role for each card]]`. Add them per project in `WORK` or as CMS fields.
-
-**Gambiarra.** Heading: When the part is not in the drawer, I make it work. (about 85 words)
-> Gambiarra is the Brazilian art of fixing it with what you have. You do not wait for the right part. You look at the bench, you improvise, and a lot of the time it works better than the plan.
-> I took that habit into engineering. Microwatts, milliseconds and a bill of materials are my constraints, and constraints are where the good ideas show up. A tidy lab never taught me that.
-> I gave a talk about it at TEDxDuke in 2023.
-
-Button: Watch the TEDxDuke talk (youtube.com/watch?v=tceoUHQ9rPQ). Figure: pre-rendered thumbs-up (`/hero/figure-thumbs.webp`).
-`[[PLACEHOLDER: photo of an early, scrappy prototype]]`. Confirm the "improvise ... works better than the plan" line is true to you.
-
-**Research.** Heading: Papers and posters. List comes from the CMS publications; link: All of it on Google Scholar. No lab link and no research-interests blurb, by request.
-
-**Community.** Heading: I build the rooms, too. HackBrazil (Vice President, 2026); Brasil Conference (President of Communication and People & Management); TEDxDuke (Speaker, 2023); Mentoring and judging (student competitions in Brazil and the US). A thin copper line draws once: Brasília, Durham, Houston.
-**Recognition.** ICYS Belgrade (2023, gold medal) · FEBRACE (2021, gold medal) · BRICS Young Inventor (2021) · Regeneron ISEF (finalist) · One Young World (2023, summit representative).
-`[[PLACEHOLDER: ISEF year; what BRICS Young Inventor was awarded]]`
-
-**Contact.** Heading: Say hello. Open to industry roles, research collaboration, and speaking and mentoring. Email me@wanghley.com + LinkedIn, GitHub, Book a call. The figure waves (pre-rendered loop).
-
-**Header:** two icons (LinkedIn, GitHub). **Footer:** graphite, all five socials.
+**Hero** copy is unchanged (see the first section). Removed from the home page: the signal-chain story, gambiarra section, research list, community map and recognition strip. The gambiarra idea now lives in the About values; the awards are in "Where I have been".

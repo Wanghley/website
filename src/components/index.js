@@ -10,8 +10,6 @@ import ChannelRail from "./ChannelRail";
 import SectionDivider from "./SectionDivider";
 import EcgRibbon from "./EcgRibbon";
 import Timeline from "./Timeline";
-import HeroChamber from "./home/HeroChamber";
-import SignalChain from "./home/SignalChain";
 
 // Hero, About, Skills, GridFeatured, GridFeaturedBlog, GambiarraImpact,
 // IdentityFocus, and TechMatrix (pass-1/pass-2 homepage sections superseded
@@ -36,6 +34,4 @@ export {
     SectionDivider,
     EcgRibbon,
     Timeline,
-    HeroChamber,
-    SignalChain,
 }

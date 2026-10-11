@@ -92,6 +92,27 @@ const GL = ['--use-gl=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu
     await page.waitForURL('**/contact', { timeout: 8000 }).catch(() => {});
     check('"Get in touch" opens /contact', page.url().endsWith('/contact'));
 
+    // the contact form on the home page, form service mocked
+    {
+      const home = await ctx.newPage();
+      let sentHome = null;
+      await home.route('https://api.web3forms.com/submit', async (route) => {
+        sentHome = route.request().postData() || '';
+        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ success: true }) });
+      });
+      await home.goto(BASE + '/#contact', { waitUntil: 'load' });
+      await home.waitForTimeout(2500);
+      await home.fill('#contact input[name="name"]', 'Home Tester');
+      await home.fill('#contact input[name="email"]', 'home@example.com');
+      await home.fill('#contact textarea[name="message"]', 'A test message from the home page form.');
+      await home.waitForTimeout(2000);
+      await home.click('#contact button[type="submit"]');
+      await home.waitForTimeout(1200);
+      const msg = await home.textContent('#contact [role="status"]');
+      check('home contact form submits (mocked service)', !!sentHome && /Home Tester/.test(sentHome) && /Thanks/.test(msg || ''), (msg || '').trim());
+      await home.close();
+    }
+
     // contact form with the form service mocked
     let sent = null;
     await page.route('https://api.web3forms.com/submit', async (route) => {

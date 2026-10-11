@@ -45,7 +45,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -742,4 +741,8 @@ hr {
   --color-primary-hover:   var(--ds-gold-bright);
   --color-secondary:       var(--ds-surface-raised);
   --color-secondary-hover: var(--ds-surface-hover);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
 }

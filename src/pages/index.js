@@ -1,11 +1,12 @@
 import React from "react";
 import HeroChamber from '../components/home/HeroChamber';
-import SignalChain from '../components/home/SignalChain';
-import SelectedWork from '../components/home/sections/SelectedWork';
-import Gambiarra from '../components/home/sections/Gambiarra';
-import Research from '../components/home/sections/Research';
-import Ecosystem from '../components/home/sections/Ecosystem';
-import ClosingContact from '../components/home/sections/ClosingContact';
+import PhotoStrip from '../components/home/sections/PhotoStrip';
+import AboutMe from '../components/home/sections/AboutMe';
+import TrustStrip from '../components/home/sections/TrustStrip';
+import Skills from '../components/home/sections/Skills';
+import Projects from '../components/home/sections/Projects';
+import Blog from '../components/home/sections/Blog';
+import ContactForm from '../components/home/sections/ContactForm';
 import '../components/home/css/Sections.css';
 import { Helmet } from "react-helmet-async";
 import './css/home.css';
@@ -60,12 +61,13 @@ const Home = () => {
                 `}</script>
             </Helmet>
             <HeroChamber />
-            <SignalChain />
-            <SelectedWork />
-            <Gambiarra />
-            <Research />
-            <Ecosystem />
-            <ClosingContact />
+            <PhotoStrip />
+            <AboutMe />
+            <TrustStrip />
+            <Skills />
+            <Projects />
+            <Blog />
+            <ContactForm />
         </main>
     );
 };
