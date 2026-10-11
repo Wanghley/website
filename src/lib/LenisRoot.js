@@ -1,41 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ReactLenis, useLenis } from 'lenis/react';
-import { gsap, ScrollTrigger } from './gsap';
-import { writeScrollSignal, startScrollSignalFallback, stopScrollSignalFallback } from './scrollSignal';
-
-// ─── Lenis ↔ ScrollTrigger bridge ──────────────────────────────────────────
-// Lenis owns the scroll loop (autoRaf: false below); gsap.ticker drives it so
-// GSAP animations and Lenis's smoothing stay on the exact same frame clock.
-// Without `lenis.on('scroll', ScrollTrigger.update)`, pinned/scrubbed
-// ScrollTriggers silently drift out of sync with the smoothed scroll position.
-function LenisScrollTriggerBridge() {
-  const lenis = useLenis((instance) => {
-    ScrollTrigger.update();
-    // The shader (AmbientShader's useFrame) and the skill-field canvas tick
-    // both live outside this React tree (a separate R3F reconciler, and a
-    // plain gsap.ticker callback respectively) — scrollSignal is how they
-    // read live scroll velocity without a context bridge. See lib/scrollSignal.js.
-    writeScrollSignal(instance);
-  });
-
-  useEffect(() => {
-    if (!lenis) return undefined;
-    const update = (time) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(update);
-    return () => gsap.ticker.remove(update);
-  }, [lenis]);
-
-  return null;
-}
 
 /**
- * Mounts a global Lenis instance for the whole app (root: true → no wrapper
- * DOM, just intercepts window scroll). Skipped entirely under
- * prefers-reduced-motion — the design system already zeroes all motion
- * tokens under that query, and native scroll + ScrollTrigger's built-in
- * scroll-event fallback keep everything else working unsmoothed.
+ * Mounts a global Lenis instance for the whole app (root: true, so no wrapper
+ * DOM, it just intercepts window scroll). Gentle smoothing (lerp 0.1), driven
+ * by Lenis's own rAF. Skipped entirely under prefers-reduced-motion: native
+ * scroll is used instead.
  */
 export default function LenisRoot({ children }) {
   const [enabled, setEnabled] = useState(() => {
@@ -50,26 +20,10 @@ export default function LenisRoot({ children }) {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  // When Lenis isn't mounted, scrollSignal still needs a live writer — a
-  // native-scroll fallback — so reactive consumers read honest (settling
-  // to 0) values instead of a stale velocity from before reduced-motion
-  // was toggled on.
-  useEffect(() => {
-    if (enabled) {
-      stopScrollSignalFallback();
-      return undefined;
-    }
-    startScrollSignalFallback();
-    return () => stopScrollSignalFallback();
-  }, [enabled]);
-
-  if (!enabled) {
-    return children;
-  }
+  if (!enabled) return children;
 
   return (
-    <ReactLenis root options={{ lerp: 0.1, smoothWheel: true, autoRaf: false }}>
-      <LenisScrollTriggerBridge />
+    <ReactLenis root options={{ lerp: 0.1, smoothWheel: true }}>
       {children}
     </ReactLenis>
   );

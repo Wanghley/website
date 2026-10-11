@@ -7,12 +7,14 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import { usePostHog } from '@posthog/react';
+import { usePostHog } from './lib/analytics';
 import LenisRoot, { useLenis } from './lib/LenisRoot';
 
 // Eagerly import the shell — Navbar/Footer/Home must be fast on first paint
 import Home from './pages/index';
-import { Navbar, Footer, NotFound } from './components';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import NotFound from './components/NotFound';
 
 // Route-level code splitting — heavy deps (mermaid, katex, syntax-highlighter,
 // vidstack, etc.) are isolated to their routes and never downloaded

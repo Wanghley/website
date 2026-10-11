@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from '../lib/analytics';
 import { fetchBlogs } from "../api/blog";
 import { cloudinarySrc, cloudinarySrcSet, CARD_SIZES } from "../utils/cloudinaryImage";
 import "./css/FeaturedBlogGrid.css";

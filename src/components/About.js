@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './css/About.css'
 import { FaPlay, FaTimes } from 'react-icons/fa'
-import { usePostHog } from '@posthog/react'
+import { usePostHog } from '../lib/analytics'
 
 const CREDENTIALS = [
   { name: 'Karsh Scholar',     sub: 'Duke · Full Merit' },

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { usePostHog } from '@posthog/react';
+import { usePostHog } from '../lib/analytics';
 import { fetchBlogs } from '../api/blog';
 import './css/blog.css';
 import { Helmet } from "react-helmet-async";

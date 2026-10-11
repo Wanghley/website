@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { LazyMotion, m, useReducedMotion } from 'framer-motion';
+
 import './css/notFound.css';
+
+// motion features load after first paint (see lib/motionFeatures.js)
+const loadMotionFeatures = () => import('../lib/motionFeatures').then((mod) => mod.default);
 
 /* ── Sparse EEG: 3 calm channels ─────────────────────────────────── */
 const BG_CHANNELS = [
@@ -124,56 +128,57 @@ const NotFound = () => {
   const initial = prefersReduced ? 'show' : 'hidden';
 
   return (
+    <LazyMotion features={loadMotionFeatures}>
     <div className="nf">
       <canvas ref={canvasRef} className="nf__canvas" aria-hidden="true" />
 
       <div className="nf__content">
 
         {/* Card entrance */}
-        <motion.div
+        <m.div
           className="nf__card"
           variants={cardVariants}
           initial={initial}
           animate="show"
         >
           {/* Staggered children */}
-          <motion.div
+          <m.div
             variants={containerVariants}
             initial={initial}
             animate="show"
             className="nf__card-inner"
           >
 
-            <motion.div className="nf__eyebrow" variants={itemVariants}>
+            <m.div className="nf__eyebrow" variants={itemVariants}>
               <span className="nf__eye-dot" />
               <span>HTTP · STATUS 404</span>
               <span className="nf__sep">·</span>
               <span>ENDPOINT NULL</span>
-            </motion.div>
+            </m.div>
 
             {/* 404 — the "0" floats continuously */}
-            <motion.div className="nf__code" aria-label="404" variants={itemVariants}>
+            <m.div className="nf__code" aria-label="404" variants={itemVariants}>
               <span>4</span>
-              <motion.span
+              <m.span
                 className="nf__zero"
                 animate={prefersReduced ? {} : { y: [0, -5, 0] }}
                 transition={{ duration: 4, ease: 'easeInOut', repeat: Infinity }}
               >
                 0
-              </motion.span>
+              </m.span>
               <span>4</span>
-            </motion.div>
+            </m.div>
 
-            <motion.h1 className="nf__heading" variants={itemVariants}>
+            <m.h1 className="nf__heading" variants={itemVariants}>
               SIGNAL NOT FOUND
-            </motion.h1>
+            </m.h1>
 
-            <motion.p className="nf__body" variants={itemVariants}>
+            <m.p className="nf__body" variants={itemVariants}>
               The route you requested returned no signal. The endpoint may have
               been removed, renamed, or never existed in this domain.
-            </motion.p>
+            </m.p>
 
-            <motion.div className="nf__chips" variants={itemVariants}>
+            <m.div className="nf__chips" variants={itemVariants}>
               <div className="nf__chip">
                 <span className="nf__chip-key">LAST_ROUTE</span>
                 <span className="nf__chip-val">UNKNOWN</span>
@@ -186,20 +191,21 @@ const NotFound = () => {
                 <span className="nf__chip-key">RETURN_CODE</span>
                 <span className="nf__chip-val">E_NOTFOUND</span>
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div variants={itemVariants}>
+            <m.div variants={itemVariants}>
               <Link to="/" className="nf__cta">
                 <span className="nf__cta-arrow">←</span>
                 Return to base
               </Link>
-            </motion.div>
+            </m.div>
 
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
 
       </div>
     </div>
+    </LazyMotion>
   );
 };
 

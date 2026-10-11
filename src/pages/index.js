@@ -1,5 +1,6 @@
 import React from "react";
-import { HeroChamber, SignalChain } from '../components';
+import HeroChamber from '../components/home/HeroChamber';
+import SignalChain from '../components/home/SignalChain';
 import SelectedWork from '../components/home/sections/SelectedWork';
 import Gambiarra from '../components/home/sections/Gambiarra';
 import Research from '../components/home/sections/Research';

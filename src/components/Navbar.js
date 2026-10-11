@@ -1,11 +1,15 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { LazyMotion, m, AnimatePresence } from 'framer-motion';
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import logoWhite from '../assets/logo-white.svg';
 import logoColor from '../assets/logo-colorful.webp';
 import { FaLinkedinIn, FaGithub } from 'react-icons/fa6';
 import { useLenis } from '../lib/LenisRoot';
 import './css/Navbar.css';
+
+// motion features load after first paint (see lib/motionFeatures.js)
+const loadMotionFeatures = () => import('../lib/motionFeatures').then((mod) => mod.default);
 
 // ─── Navbar theme per route ───────────────────────────────────────────────────
 // 'transparent' → invisible at top of page, dark glass when scrolled  (dark hero pages)
@@ -218,8 +222,8 @@ const Navbar = () => {
   };
 
   return (
-    <>
-      <motion.nav
+    <LazyMotion features={loadMotionFeatures}>
+      <m.nav
         ref={navRef}
         initial={prefersReducedMotion ? false : { y: -24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -288,12 +292,12 @@ const Navbar = () => {
             <span className="nav__toggle-bar" aria-hidden="true" />
           </button>
         </div>
-      </motion.nav>
+      </m.nav>
 
       {/* Mobile Menu — AnimatePresence handles mount/unmount */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
+          <m.div
             id="mobile-menu"
             className="mobile-menu mobile-menu--open"
             variants={mobileMenuVariants}
@@ -358,14 +362,14 @@ const Navbar = () => {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
 
       {/* Backdrop — AnimatePresence handles fade in/out */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
+          <m.div
             className="nav-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -376,7 +380,7 @@ const Navbar = () => {
           />
         )}
       </AnimatePresence>
-    </>
+    </LazyMotion>
   );
 };
 

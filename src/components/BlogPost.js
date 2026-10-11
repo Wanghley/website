@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { usePostHog } from '@posthog/react';
+import { usePostHog } from '../lib/analytics';
 import axios from 'axios';
 import ReactMarkdown from 'react-markdown';
 import './css/BlogPost.css';

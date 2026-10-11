@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { usePostHog } from '@posthog/react';
+import { usePostHog } from '../../lib/analytics';
 import { useScrollToSection } from '../../lib/LenisRoot';
 import HeroBench, { SenseValue } from './HeroBench';
 import './css/HeroChamber.css';

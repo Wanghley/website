@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from '../lib/analytics';
 import { fetchProjects } from "../api/projects";
 import { cloudinarySrc, cloudinarySrcSet, CARD_SIZES } from "../utils/cloudinaryImage";
 import "./css/GridFeaturedProjects.css";

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { usePostHog } from '@posthog/react';
+import { usePostHog } from '../lib/analytics';
 import './css/Contact.css';
 import {
   FaEnvelope,

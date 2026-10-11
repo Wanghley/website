@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from '../lib/analytics';
 import SkillFilterChips from "./SkillFilterChips";
 import { fetchFeaturedSkills } from "../api/skills";
 import "./css/Skills.css";

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { usePostHog } from '@posthog/react';
+import { usePostHog } from '../lib/analytics';
 import { fetchPersonalInfo } from '../api/personal-info';
 import { fetchAllEducations } from '../api/education';
 import { fetchAllExperiences } from '../api/experience';
