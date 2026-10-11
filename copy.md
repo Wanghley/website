@@ -14,7 +14,7 @@ innovative, "where X meets Y", synergy.
 |---|---|
 | Eyebrow | ENGINEER · RESEARCHER · MAKER · INVENTOR · CURIOUS |
 | Name (wordmark face) | Wanghley *(read aloud as "Wanghley Soares Martins")* |
-| Headline (rotates every 3.6 s; reduced motion shows the first four as a list) | I put the intelligence inside the sensor. · I'm a PhD student at Rice. · I lead teams and communities. · I care about social impact. · I mentor and judge student engineers. · I believe in gambiarra: solving it with what you have. · I organize events across Brazil and the US. |
+| Headline (rotates every 3.6 s; reduced motion shows all five as a list) | Compute at the sensor boundary. · ECE PhD student at Rice. · Engineering powered by *gambiarra*. (gambiarra in copper italic) · Mobilizing ecosystems across the Americas. · Deep tech for human impact. |
 | Primary CTA | See my work |
 | Ghost CTA | Get in touch |
 | Microcopy (mouse) | Move closer. This board is reading you, the way my wrist sensor reads a hand without touching it. |
@@ -62,7 +62,7 @@ The supporting sentence ("PhD at Rice building wearable biosensors…") was remo
 
 Structure by request: Hero, photos, About, Where I have been, Skills, Projects, Blog, Contact form, Footer. No entrance animations or scroll effects below the hero; native scrolling.
 
-**Photo strip** (six photos from `src/assets/wanghley/strip/`, alt text written by me from what is in each picture, please review) · caption: Brasília → Durham → Houston
+**Photo strip** (six photos from `src/assets/wanghley/strip/`, alt text written by me from what is in each picture, please review) · caption: flag + city + country: Brasília, Brazil → Durham, USA → Houston, USA (drawn SVG flags)
 
 **About.** Heading: Part engineer, part builder, part organizer.
 > I'm Wanghley, from Brasília. I design hardware, write the software that runs on it, and organize the people and events around it. I like the places where those three overlap.

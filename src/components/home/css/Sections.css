@@ -64,13 +64,20 @@
 }
 .hm-strip__row li { overflow: hidden; border-radius: 4px; border: 1px solid var(--t-line); background: var(--t-surface); }
 .hm-strip__row img { display: block; width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
-.hm-strip__caption {
-  margin-top: 14px;
+.hm-strip__places {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 6px;
+  margin-top: 16px;
   font-family: var(--font-mono-bench);
   font-size: var(--step--1);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   color: var(--t-muted);
 }
+.hm-strip__places li { display: inline-flex; align-items: center; gap: 8px; }
+.hm-strip__places li + li::before { content: '→'; margin-right: 6px; color: var(--t-line-strong); }
+.hm-flag { width: 20px; height: 14px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(242, 239, 233, 0.25); flex: none; }
 @media (max-width: 899px) {
   .hm-strip__row {
     grid-template-columns: none;

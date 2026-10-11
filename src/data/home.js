@@ -16,7 +16,11 @@ export const PHOTOS = [
   { src: p016, alt: 'Wanghley in a blue graduation gown with arms crossed, in front of a garden gazebo' },
   { src: p033, alt: 'Wanghley in a light blue suit lying back on a bench that reads Great Ideas Bench' },
 ];
-export const PHOTO_CAPTION = 'Brasília → Durham → Houston';
+export const PLACES = [
+  { city: 'Brasília', country: 'Brazil', flag: 'br' },
+  { city: 'Durham', country: 'USA', flag: 'us' },
+  { city: 'Houston', country: 'USA', flag: 'us' },
+];
 
 export const ABOUT = {
   heading: 'Part engineer, part builder, part organizer.',

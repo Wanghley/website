@@ -8,15 +8,15 @@ import './css/HeroChamber.css';
 const COPY = {
   eyebrow: 'ENGINEER · RESEARCHER · MAKER · INVENTOR · CURIOUS',
   // The headline rotates (reduced motion shows them all as a short list).
+  // *word* marks an accent word (copper)
   lines: [
-    'I put the intelligence inside the sensor.',
-    "I'm a PhD student at Rice.",
-    'I lead teams and communities.',
-    'I care about social impact.',
-    'I mentor and judge student engineers.',
-    'I believe in gambiarra: solving it with what you have.',
-    'I organize events across Brazil and the US.',
+    'Compute at the sensor boundary.',
+    'ECE PhD student at Rice.',
+    'Engineering powered by *gambiarra*.',
+    'Mobilizing ecosystems across the Americas.',
+    'Deep tech for human impact.',
   ],
+
   noteFine:
     'Move closer. This board is reading you, the way my wrist sensor reads a hand without touching it.',
   noteTouch:
@@ -37,6 +37,10 @@ function useReducedMotion() {
 }
 
 const ROTATE_MS = 3600;
+const plain = (t) => t.replace(/\*/g, '');
+const accent = (t) => t.split(/(\*[^*]+\*)/).map((part, n) => (
+  part.startsWith('*') ? <em key={n} className="hero__accent">{part.slice(1, -1)}</em> : part
+));
 
 // The headline: one sentence at a time, stacked in the same grid cell so the
 // box is as tall as the longest sentence (no layout shift). The whole list is
@@ -57,7 +61,7 @@ function Headline({ reduced }) {
   if (reduced) {
     return (
       <ul className="hero__headline hero__headline--static">
-        {COPY.lines.slice(0, 4).map((t) => <li key={t}>{t}</li>)}
+        {COPY.lines.map((t) => <li key={t}>{accent(t)}</li>)}
       </ul>
     );
   }
@@ -65,7 +69,7 @@ function Headline({ reduced }) {
     <div className="hero__headline">
       <span className="hero__rotator" aria-hidden="true">
         {COPY.lines.map((t, n) => (
-          <span key={t} className={`hero__rotator-item${n === i ? ' is-on' : ''}`}>{t}</span>
+          <span key={t} className={`hero__rotator-item${n === i ? ' is-on' : ''}`}>{accent(t)}</span>
         ))}
       </span>
     </div>
@@ -87,7 +91,7 @@ export default function HeroChamber() {
 
         <h1 id="hero-title" className="hero__title">
           <span className="hero__name">Wanghley</span>
-          <span className="sr-only"> Soares Martins. {COPY.lines.join(' ')}</span>
+          <span className="sr-only"> Soares Martins. {COPY.lines.map(plain).join(' ')}</span>
         </h1>
 
         <Headline reduced={reduced} />
