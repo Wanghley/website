@@ -22,9 +22,9 @@ export default function Skills() {
   }, [skills]);
 
   return (
-    <section id="skills" className="hm-sec hm-sec--light" aria-labelledby="skills-heading">
+    <section id="skills" className="bp-sec bp-sec--light" aria-labelledby="skills-heading">
       <div className="bench-col">
-        <h2 id="skills-heading" className="hm-sec__title">{SKILLS.heading}</h2>
+        <h2 id="skills-heading" className="bp-sec__title">{SKILLS.heading}</h2>
         <dl className="hm-skills">
           {groups.map((g) => (
             <div key={g.type} className="hm-skills__group">

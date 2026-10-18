@@ -26,7 +26,7 @@ function Flag({ code }) {
 
 export default function PhotoStrip() {
   return (
-    <section className="hm-strip bench-col" aria-label="Photos of Wanghley">
+    <section className="hm-strip bp-theme bench-col" aria-label="Photos of Wanghley">
       <ul className="hm-strip__row">
         {PHOTOS.map((p) => (
           <li key={p.src}>

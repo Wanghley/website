@@ -1,59 +1,7 @@
-/* Home sections after the hero. Static: no entrance animations, no scroll
-   effects. Bench tokens only. */
-
-.hm-sec { position: relative; padding-block: clamp(64px, 11vh, 120px); }
-.hm-sec:not(.hm-sec--light) + .hm-sec:not(.hm-sec--light)::before {
-  content: '';
-  position: absolute; top: 0; left: var(--edge); right: var(--edge);
-  height: 1px; background: var(--t-line);
-}
-.hm-sec__title {
-  font-size: var(--step-3);
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.05;
-  max-width: 20ch;
-  color: var(--t-fg);
-  margin-bottom: clamp(28px, 5vh, 48px);
-}
-.hm-sec__more { margin-top: 32px; }
-.hm-link {
-  color: var(--t-link);
-  text-decoration: underline;
-  text-underline-offset: 4px;
-  text-decoration-thickness: 1px;
-  font-size: var(--step-0);
-}
-.hm-link:hover { color: var(--t-hover); }
-
-/* --- themes: dark (default) and light bands alternate down the page --- */
-.hm-sec, .hm-trust, .hm-strip {
-  --t-bg: transparent;
-  --t-fg: var(--paper);
-  --t-dim: var(--paper-dim);
-  --t-muted: var(--muted);
-  --t-line: rgba(242, 239, 233, 0.10);
-  --t-line-strong: rgba(242, 239, 233, 0.22);
-  --t-surface: var(--surface);
-  --t-link: var(--signal);
-  --t-hover: var(--copper);
-}
-.hm-sec--light, .hm-trust--light {
-  --t-bg: var(--paper);
-  --t-fg: #121314;
-  --t-dim: #44423D;
-  --t-muted: #625F59;
-  --t-line: rgba(18, 19, 20, 0.14);
-  --t-line-strong: rgba(18, 19, 20, 0.28);
-  --t-surface: #E7E3DB;
-  --t-link: #1A66A0;
-  --t-hover: #8F4F1C;
-  background: var(--t-bg);
-  color: var(--t-fg);
-}
-/* the section rules use each band's own background, so seams are the band edges */
-.hm-sec--light::before, .hm-trust--light::before { display: none; }
-.hm-sec--light + .hm-sec::before { display: none; }
+/* Home sections after the hero: only what is specific to the home page.
+   Bands, section titles, links, cards and spec rows are the shared page kit
+   in components/css/bench-page.css. Static: no entrance animations, no
+   scroll effects. Bench tokens only. */
 
 /* --- photo strip, right under the hero --- */
 .hm-strip { padding-block: 0 clamp(48px, 8vh, 88px); }
@@ -93,16 +41,9 @@
 
 /* --- about --- */
 .hm-about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-.hm-about .hm-sec__title { margin-bottom: 0; }
+.hm-about .bp-sec__title { margin-bottom: 0; }
 .hm-about__body { display: grid; gap: 24px; max-width: 56ch; }
 .hm-about__lede { font-size: var(--step-1); line-height: 1.45; color: var(--t-fg); }
-.hm-about__values { border-top: 1px solid var(--t-line); }
-.hm-about__values li {
-  display: grid; grid-template-columns: 9.5rem 1fr; gap: 8px 20px;
-  padding: 16px 0; border-bottom: 1px solid var(--t-line);
-  font-size: var(--step-0); line-height: 1.55; color: var(--t-dim);
-}
-.hm-about__values strong { font-weight: 600; color: var(--t-fg); }
 .hm-about__links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; }
 
 /* --- where I have been --- */
@@ -126,24 +67,9 @@
   padding: 6px 12px; border: 1px solid var(--t-line-strong); border-radius: 999px;
 }
 
-/* --- cards (projects, blog) --- */
-.hm-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: clamp(24px, 3vw, 36px); }
-.hm-card { display: grid; gap: 12px; align-content: start; }
-.hm-card__media { display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; border: 1px solid var(--t-line); background: var(--t-surface); }
-.hm-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.hm-card__blank { display: block; width: 100%; height: 100%; background: var(--t-surface); }
-.hm-card__meta { font-family: var(--font-mono-bench); font-size: var(--step--2); color: var(--t-muted); letter-spacing: 0.04em; }
-.hm-card__title { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; }
-.hm-card__title a { color: var(--t-fg); }
-.hm-card__title a:hover { color: var(--t-hover); }
-.hm-card__text {
-  color: var(--t-dim); font-size: var(--step--1); line-height: 1.55;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-}
-
 /* --- contact --- */
 .hm-contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(32px, 6vw, 96px); align-items: start; }
-.hm-contact .hm-sec__title { margin-bottom: 20px; }
+.hm-contact .bp-sec__title { margin-bottom: 20px; }
 .hm-contact__text { display: grid; gap: 18px; align-content: start; }
 .hm-contact__links { display: flex; flex-wrap: wrap; gap: 8px 24px; }
 .hm-contact__figure { width: min(220px, 50%); height: auto; margin-top: 12px; }
@@ -165,8 +91,5 @@
 
 @media (max-width: 899px) {
   .hm-about, .hm-contact { grid-template-columns: 1fr; }
-  .hm-about__values li, .hm-skills__group { grid-template-columns: 1fr; gap: 4px; }
-}
-@media (pointer: coarse) {
-  .hm-link, .hm-card__title a { display: inline-flex; align-items: center; min-height: 44px; }
+  .hm-skills__group { grid-template-columns: 1fr; gap: 4px; }
 }

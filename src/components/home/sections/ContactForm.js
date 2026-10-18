@@ -51,15 +51,15 @@ export default function ContactForm() {
   };
 
   return (
-    <section id="contact" className="hm-sec" aria-labelledby="contact-heading">
+    <section id="contact" className="bp-sec" aria-labelledby="contact-heading">
       <div className="bench-col hm-contact">
         <div className="hm-contact__text">
-          <h2 id="contact-heading" className="hm-sec__title">{CONTACT.heading}</h2>
+          <h2 id="contact-heading" className="bp-sec__title">{CONTACT.heading}</h2>
           <p className="hm-about__lede">{CONTACT.open}</p>
-          <p><a className="hm-link" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></p>
+          <p><a className="bp-link" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></p>
           <ul className="hm-contact__links">
             {CONTACT.links.map((l) => (
-              <li key={l.href}><a className="hm-link" href={l.href} target="_blank" rel="noopener noreferrer">{l.text} <span aria-hidden="true">↗</span></a></li>
+              <li key={l.href}><a className="bp-link" href={l.href} target="_blank" rel="noopener noreferrer">{l.text} <span aria-hidden="true">↗</span></a></li>
             ))}
           </ul>
           <img className="hm-contact__figure" src="/hero/figure-wave.webp" width="640" height="640" alt="A figure of Wanghley waving" loading="lazy" decoding="async" />

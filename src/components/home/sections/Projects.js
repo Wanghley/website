@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchProjects } from '../../../api/projects';
-import { cloudinarySrc } from '../../../utils/cloudinaryImage';
 import { PROJECTS } from '../../../data/home';
+import { BenchCard, BenchCards } from '../../bench';
 
 const imageOf = (p) => {
   const f = p?.attributes?.Featured?.data?.attributes;
@@ -34,23 +34,15 @@ export default function Projects() {
   }, []);
 
   return (
-    <section id="work" tabIndex={-1} className="hm-sec" aria-labelledby="work-heading">
+    <section id="work" tabIndex={-1} className="bp-sec" aria-labelledby="work-heading">
       <div className="bench-col">
-        <h2 id="work-heading" className="hm-sec__title">{PROJECTS.heading}</h2>
-        <ul className="hm-cards">
+        <h2 id="work-heading" className="bp-sec__title">{PROJECTS.heading}</h2>
+        <BenchCards>
           {items.map((it) => (
-            <li key={it.href + it.title} className="hm-card">
-              <a className="hm-card__media" href={it.href} tabIndex={-1} aria-hidden="true">
-                {it.image ? (
-                  <img src={cloudinarySrc(it.image, { width: 640 })} alt="" width="640" height="480" loading="lazy" decoding="async" />
-                ) : <span className="hm-card__blank" />}
-              </a>
-              <h3 className="hm-card__title"><a href={it.href}>{it.title}</a></h3>
-              {it.teaser && <p className="hm-card__text">{it.teaser}</p>}
-            </li>
+            <BenchCard key={it.href + it.title} href={it.href} title={it.title} text={it.teaser} image={it.image} />
           ))}
-        </ul>
-        <p className="hm-sec__more"><a className="hm-link" href="/projects">All projects <span aria-hidden="true">→</span></a></p>
+        </BenchCards>
+        <p className="bp-sec__more"><a className="bp-link" href="/projects">All projects <span aria-hidden="true">→</span></a></p>
       </div>
     </section>
   );

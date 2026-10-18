@@ -1,0 +1,207 @@
+/* ============================================================
+   THE BENCH — page kit
+   Shared by the home sections and every inner page: themed bands
+   (dark / light), the section heading, text link, card, the
+   silkscreen marking, page header, spec table and long-form prose.
+   Colour comes from bench-tokens.css; nothing here defines a palette.
+   Static by design: no entrance animation, no scroll effects.
+   ============================================================ */
+
+/* Browser surfaces the page would otherwise leave to defaults */
+::selection { background: var(--copper); color: var(--ink-deep); }
+input, textarea, select { caret-color: var(--signal); accent-color: var(--signal); }
+
+/* --- themes: dark (default) and light bands alternate down the page.
+   Any element can opt in with .bp-theme; sections carry it already. --- */
+.bp-theme, .bp-sec {
+  --t-bg: transparent;
+  --t-fg: var(--paper);
+  --t-dim: var(--paper-dim);
+  --t-muted: var(--muted);
+  --t-line: rgba(242, 239, 233, 0.10);
+  --t-line-strong: rgba(242, 239, 233, 0.22);
+  --t-surface: var(--surface);
+  --t-link: var(--signal);
+  --t-hover: var(--copper);
+}
+.bp-theme--light, .bp-sec--light {
+  --t-bg: var(--paper);
+  --t-fg: #121314;
+  --t-dim: #44423D;
+  --t-muted: #625F59;
+  --t-line: rgba(18, 19, 20, 0.14);
+  --t-line-strong: rgba(18, 19, 20, 0.28);
+  --t-surface: #E7E3DB;
+  --t-link: #1A66A0;
+  --t-hover: #8F4F1C;
+  background: var(--t-bg);
+  color: var(--t-fg);
+}
+
+/* --- section band --- */
+.bp-sec { position: relative; padding-block: clamp(64px, 11vh, 120px); }
+.bp-sec:not(.bp-sec--light) + .bp-sec:not(.bp-sec--light)::before {
+  content: '';
+  position: absolute; top: 0; left: var(--edge); right: var(--edge);
+  height: 1px; background: var(--t-line);
+}
+/* the section rules use each band's own background, so seams are the band edges */
+.bp-sec--light::before { display: none; }
+.bp-sec--light + .bp-sec::before { display: none; }
+/* top band of an inner page: clears the fixed nav */
+.bp-sec--head {
+  padding-top: calc(var(--nav-height) + clamp(32px, 7vh, 80px));
+  padding-bottom: clamp(40px, 7vh, 72px);
+}
+
+.bp-sec__title {
+  font-size: var(--step-3);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  max-width: 20ch;
+  color: var(--t-fg);
+  margin-bottom: clamp(28px, 5vh, 48px);
+}
+.bp-sec__more { margin-top: 32px; }
+.bp-link {
+  color: var(--t-link);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+  font-size: var(--step-0);
+}
+.bp-link:hover { color: var(--t-hover); }
+
+/* --- silkscreen marking: a reference designator printed on the board at the
+   end of a hairline. Decoration only; it never repeats the heading. --- */
+.bp-rule { display: flex; align-items: center; gap: 14px; margin-bottom: clamp(20px, 4vh, 36px); }
+.bp-rule::before { content: ''; flex: 1; height: 1px; background: var(--t-line); }
+.bp-silk {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono-bench);
+  font-size: var(--step--2);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--t-muted);
+}
+.bp-silk::before { content: ''; width: 5px; height: 5px; background: var(--t-hover); flex: none; } /* the pad */
+
+/* --- page header --- */
+.bp-head__title {
+  font-size: var(--step-4);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
+  max-width: 18ch;
+  color: var(--t-fg);
+  text-wrap: balance;
+}
+.bp-head--md .bp-head__title { font-size: var(--step-3); max-width: 26ch; }
+.bp-head__lede {
+  margin-top: 18px;
+  font-size: var(--step-1); line-height: 1.45; color: var(--t-dim);
+  max-width: 52ch; text-wrap: pretty;
+}
+.bp-head__meta {
+  display: flex; flex-wrap: wrap; gap: 4px 0;
+  margin-top: 18px;
+  font-family: var(--font-mono-bench); font-size: var(--step--1);
+  font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
+  color: var(--t-muted);
+}
+.bp-head__meta li + li::before { content: '·'; margin-inline: 0.7em; color: var(--t-line-strong); }
+
+/* --- spec table: term and description rows (About values, CV, project facts) --- */
+.bp-spec { border-top: 1px solid var(--t-line); margin: 0; }
+.bp-spec__row {
+  display: grid; grid-template-columns: var(--spec-key, 9.5rem) minmax(0, 1fr); gap: 8px 20px;
+  padding: 16px 0; border-bottom: 1px solid var(--t-line);
+  font-size: var(--step-0); line-height: 1.55; color: var(--t-dim);
+}
+.bp-spec dt { font-weight: 600; color: var(--t-fg); }
+.bp-spec dd { margin: 0; min-width: 0; }
+/* values that are measurements, dates or part numbers */
+.bp-spec--data dd {
+  font-family: var(--font-mono-bench); font-size: var(--step--1);
+  font-variant-numeric: tabular-nums; letter-spacing: 0.01em; color: var(--t-fg);
+}
+@media (max-width: 899px) {
+  .bp-spec__row { grid-template-columns: 1fr; gap: 4px; }
+}
+
+/* --- cards (projects, blog) --- */
+.bp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: clamp(24px, 3vw, 36px); }
+.bp-card { display: grid; gap: 12px; align-content: start; }
+.bp-card__media { display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; border: 1px solid var(--t-line); background: var(--t-surface); }
+.bp-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.bp-card__blank { display: block; width: 100%; height: 100%; background: var(--t-surface); }
+.bp-card__meta { font-family: var(--font-mono-bench); font-size: var(--step--2); color: var(--t-muted); letter-spacing: 0.04em; }
+.bp-card__title { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.015em; line-height: 1.2; }
+.bp-card__title a { color: var(--t-fg); }
+.bp-card__title a:hover { color: var(--t-hover); }
+.bp-card__text {
+  color: var(--t-dim); font-size: var(--step--1); line-height: 1.55;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* --- prose: long-form reading (posts, project write-ups, about, legal).
+   Wrap rendered markdown in <Prose>. Follows the band's theme. --- */
+.bp-prose { max-width: 68ch; font-size: var(--step-0); line-height: 1.7; color: var(--t-dim); text-wrap: pretty; }
+.bp-prose > * + * { margin-top: 1.1em; }
+/* global.css sizes and colours bare <p> and headings; inside prose they take the column's type */
+.bp-prose p { font-size: inherit; line-height: inherit; color: inherit; }
+.bp-prose h1, .bp-prose h2, .bp-prose h3, .bp-prose h4, .bp-prose h5, .bp-prose h6 {
+  color: var(--t-fg); font-weight: 600; line-height: 1.15; letter-spacing: -0.02em;
+  text-wrap: balance;
+  scroll-margin-top: calc(var(--nav-height-scrolled) + 24px);
+}
+.bp-prose h1, .bp-prose h2 { font-size: var(--step-2); margin-top: 2.2em; }
+.bp-prose h3 { font-size: var(--step-1); margin-top: 1.8em; }
+.bp-prose h4, .bp-prose h5, .bp-prose h6 { font-size: var(--step-0); margin-top: 1.5em; }
+.bp-prose :is(h1, h2, h3, h4, h5, h6) + * { margin-top: 0.6em; }
+.bp-prose a { color: var(--t-link); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.bp-prose a:hover { color: var(--t-hover); }
+.bp-prose strong { color: var(--t-fg); font-weight: 600; }
+.bp-prose ul, .bp-prose ol { padding-left: 1.4em; }
+.bp-prose ul { list-style: disc; }
+.bp-prose ol { list-style: decimal; }
+.bp-prose li + li { margin-top: 0.4em; }
+.bp-prose li > ul, .bp-prose li > ol { margin-top: 0.4em; }
+.bp-prose li::marker { color: var(--t-muted); }
+.bp-prose blockquote {
+  padding-left: 1.1em; border-left: 1px solid var(--t-line-strong);
+  color: var(--t-fg); font-size: var(--step-1); line-height: 1.5;
+}
+.bp-prose blockquote p + p { margin-top: 0.6em; }
+.bp-prose code {
+  font-family: var(--font-mono-bench); font-size: 0.9em;
+  padding: 0.12em 0.4em; background: var(--t-surface); border: 0; border-radius: 3px; color: var(--t-fg);
+}
+.bp-prose pre {
+  overflow-x: auto; padding: 16px 18px;
+  background: var(--t-surface); border: 1px solid var(--t-line); border-radius: 4px;
+  font-size: var(--step--1); line-height: 1.6;
+}
+.bp-prose pre code { padding: 0; background: none; font-size: inherit; }
+.bp-prose table {
+  display: block; max-width: 100%; overflow-x: auto;
+  border-collapse: collapse; font-size: var(--step--1); font-variant-numeric: tabular-nums;
+}
+.bp-prose th, .bp-prose td { padding: 10px 14px; border-bottom: 1px solid var(--t-line); text-align: left; vertical-align: top; }
+.bp-prose th { color: var(--t-fg); font-weight: 600; border-bottom-color: var(--t-line-strong); white-space: nowrap; }
+.bp-prose img, .bp-prose video { max-width: 100%; height: auto; border-radius: 4px; border: 1px solid var(--t-line); }
+.bp-prose figure { margin-inline: 0; }
+.bp-prose figcaption { margin-top: 8px; font-family: var(--font-mono-bench); font-size: var(--step--2); color: var(--t-muted); }
+.bp-prose hr { height: 0; background: none; border: 0; border-top: 1px solid var(--t-line); margin-block: 2.5em; }
+/* footnote markers and what they jump to */
+.bp-prose sup { font-size: 0.72em; line-height: 0; }
+.bp-prose sup a { font-family: var(--font-mono-bench); color: var(--t-hover); text-decoration: none; padding-inline: 1px; }
+.bp-prose sup a:hover { text-decoration: underline; }
+.bp-prose :target { background: color-mix(in srgb, var(--t-hover) 16%, transparent); }
+
+@media (pointer: coarse) {
+  .bp-link, .bp-card__title a { display: inline-flex; align-items: center; min-height: 44px; }
+}

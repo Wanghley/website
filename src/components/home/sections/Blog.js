@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchBlogs } from '../../../api/blog';
-import { cloudinarySrc } from '../../../utils/cloudinaryImage';
 import { BLOG } from '../../../data/home';
+import { BenchCard, BenchCards } from '../../bench';
 
 const imageOf = (p) => {
   const f = p?.attributes?.Featured?.data?.attributes;
@@ -24,29 +24,27 @@ export default function Blog() {
   }, []);
 
   return (
-    <section id="blog" className="hm-sec hm-sec--light" aria-labelledby="blog-heading">
+    <section id="blog" className="bp-sec bp-sec--light" aria-labelledby="blog-heading">
       <div className="bench-col">
-        <h2 id="blog-heading" className="hm-sec__title">{BLOG.heading}</h2>
+        <h2 id="blog-heading" className="bp-sec__title">{BLOG.heading}</h2>
         {posts.length > 0 && (
-          <ul className="hm-cards hm-cards--three">
+          <BenchCards>
             {posts.map((p) => {
               const a = p.attributes;
-              const href = `/blog/${a.slug}`;
-              const img = imageOf(p);
               return (
-                <li key={p.id} className="hm-card">
-                  <a className="hm-card__media" href={href} tabIndex={-1} aria-hidden="true">
-                    {img ? <img src={cloudinarySrc(img, { width: 640 })} alt="" width="640" height="480" loading="lazy" decoding="async" /> : <span className="hm-card__blank" />}
-                  </a>
-                  <p className="hm-card__meta">{date(a.published || a.publishedAt)}</p>
-                  <h3 className="hm-card__title"><a href={href}>{a.Title}</a></h3>
-                  {a.Excerpt && <p className="hm-card__text">{a.Excerpt}</p>}
-                </li>
+                <BenchCard
+                  key={p.id}
+                  href={`/blog/${a.slug}`}
+                  title={a.Title}
+                  text={a.Excerpt}
+                  meta={date(a.published || a.publishedAt)}
+                  image={imageOf(p)}
+                />
               );
             })}
-          </ul>
+          </BenchCards>
         )}
-        <p className="hm-sec__more"><a className="hm-link" href="/blog">All posts <span aria-hidden="true">→</span></a></p>
+        <p className="bp-sec__more"><a className="bp-link" href="/blog">All posts <span aria-hidden="true">→</span></a></p>
       </div>
     </section>
   );
