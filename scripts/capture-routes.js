@@ -73,8 +73,15 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       for (let y = 0; y < H; y += Math.round(h * 0.6)) { await page.evaluate((v) => scrollTo(0, v), y); await page.waitForTimeout(300); }
       await page.evaluate((v) => scrollTo(0, v), H);
       await page.waitForTimeout(1000);
-      await page.evaluate(() => scrollTo(0, 0));
-      await page.waitForTimeout(1000);
+      // The site eases scrolling, so wait until the page has really landed at the
+      // top. A full-page shot taken at any other offset puts fixed elements (the
+      // navbar, the skip link) in the wrong place.
+      for (let i = 0; i < 20 && (await page.evaluate(() => scrollY)) !== 0; i++) {
+        await page.evaluate(() => scrollTo(0, 0));
+        await page.waitForTimeout(250);
+      }
+      await page.waitForTimeout(800);
+      if ((await page.evaluate(() => scrollY)) !== 0) console.log(`WARN ${name} ${w}px is not at the top; fixed elements will be misplaced`);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
       const pending = await page.evaluate(() =>
         [...document.querySelectorAll('body *')].some((el) => !el.children.length && /^loading[.…]*$/i.test(el.textContent.trim()))
