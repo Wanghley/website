@@ -3,35 +3,15 @@ import Contact from "./Contact";
 import Footer from "./Footer";
 import AboutText from "./About-text";
 import NotFound from "./NotFound";
-import Card from "./Card";
-import TechArchitecture from "./TechArchitecture";
-import SignatureProject from "./SignatureProject";
-import ChannelRail from "./ChannelRail";
-import SectionDivider from "./SectionDivider";
-import EcgRibbon from "./EcgRibbon";
-import Timeline from "./Timeline";
 
-// Hero, About, Skills, GridFeatured, GridFeaturedBlog, GambiarraImpact,
-// IdentityFocus, and TechMatrix (pass-1/pass-2 homepage sections superseded
-// by the home/* components below — IdentityFocus by SignalChain, TechMatrix
-// by SkillField) are deliberately NOT imported here. They're pure dead code
-// with zero remaining consumers anywhere in the app — but CSS has no module
-// scoping, so importing a component even unused is enough to pull its CSS
-// into the main bundle and collide with a same-id/same-class replacement
-// (e.g. Hero.css's `#home { align-items: center }` fought HeroChamber
-// purely because both sections share id="home"). Left as standalone files
-// (not deleted) in case their ported copy is needed again.
+// Only components that pages actually pull from this barrel live here.
+// Importing a component, even unused, pulls its CSS into the bundle, and CSS
+// has no module scoping, so a stale export can restyle an unrelated page.
+// Home sections live in components/home/* and are imported directly.
 export {
     Navbar,
     Contact,
     Footer,
     AboutText,
     NotFound,
-    Card,
-    TechArchitecture,
-    SignatureProject,
-    ChannelRail,
-    SectionDivider,
-    EcgRibbon,
-    Timeline,
 }
