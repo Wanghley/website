@@ -3,7 +3,6 @@ import { LazyMotion, m, AnimatePresence } from 'framer-motion';
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import logoWhite from '../assets/logo-white.svg';
-import logoColor from '../assets/logo-colorful.webp';
 import { FaLinkedinIn, FaGithub } from 'react-icons/fa6';
 import { useLenis } from '../lib/LenisRoot';
 import './css/Navbar.css';
@@ -12,26 +11,11 @@ import './css/Navbar.css';
 const loadMotionFeatures = () => import('../lib/motionFeatures').then((mod) => mod.default);
 
 // ─── Navbar theme per route ───────────────────────────────────────────────────
-// 'transparent' → invisible at top of page, dark glass when scrolled  (dark hero pages)
-// 'light'       → frosted white always, dark text                      (light-bg pages)
-// 'dark'        → dark solid always, white text                        (dark-bg pages)
-const NAVBAR_THEMES = {
-  '/':                  'transparent',
-  '/about':             'dark',
-  '/curriculum-vitae':  'light',
-  '/projects':          'dark',
-  '/blog':              'dark',
-  '/contact':           'dark',
-  '/styleguide':        'dark',
-  '/privacy':           'light',
-  '/data-policy':       'light',
-};
-
+// 'transparent' → invisible at top of page, dark glass when scrolled  (the home hero)
+// 'dark'        → dark solid always, white text                        (every other page)
+// Pages with a light band bring their own; the bar stays graphite.
 function getNavbarTheme(pathname) {
-  if (NAVBAR_THEMES[pathname]) return NAVBAR_THEMES[pathname];
-  if (pathname.startsWith('/projects/')) return 'dark';
-  if (pathname.startsWith('/blog/'))     return 'dark';
-  return 'light';
+  return pathname === '/' ? 'transparent' : 'dark';
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -241,7 +225,7 @@ const Navbar = () => {
             onClick={handleLogoClick}
             aria-label="Wanghley - Home"
           >
-            <img src={navTheme === 'light' ? logoColor : logoWhite} alt="" className="nav__logo-img" aria-hidden="true" />
+            <img src={logoWhite} alt="" className="nav__logo-img" aria-hidden="true" />
           </a>
 
           {/* Desktop Navigation */}

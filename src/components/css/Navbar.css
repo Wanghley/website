@@ -1,6 +1,6 @@
 /* ========================================
    Modern Navbar - 2026 Design System
-   Theme-Aware (Light/Dark)
+   Graphite bar: transparent on the home hero, solid elsewhere
    ======================================== */
 
 /* CSS Custom Properties - Dark Theme (default) */
@@ -40,10 +40,9 @@
 
 /* ========================================
    Theme Variations
-   Three themes are available — select per page via NAVBAR_THEMES in Navbar.js:
+   Two themes, chosen by route in getNavbarTheme (Navbar.js):
      'transparent' → clear at top of hero, dark glass on scroll
-     'light'       → frosted white always, dark text
-     'dark'        → dark solid always, white text
+     'dark'        → dark solid always, white text (every other page)
    ======================================== */
 
 /* ── TRANSPARENT theme (home page / hero pages) ── */
@@ -76,50 +75,7 @@
 
 .nav--theme-transparent .nav__toggle-bar { background: #ffffff; }
 
-/* ── LIGHT theme (about, cv, privacy, etc.) ── */
-.nav--theme-light {
-  --nav-text:        #1a1b2e;
-  --nav-text-muted:  #4B5563;
-  --nav-accent:      #3AAFF1;
-  --nav-accent-glow: rgba(58, 175, 241, 0.18);
-  background:         rgba(255, 255, 255, 0.94);
-  backdrop-filter:    blur(20px) saturate(1.8);
-  -webkit-backdrop-filter: blur(20px) saturate(1.8);
-  border-bottom:      1px solid rgba(0, 0, 0, 0.07);
-  box-shadow:         0 1px 16px rgba(0, 0, 0, 0.07);
-}
-
-.nav--theme-light.nav--scrolled {
-  background:         rgba(255, 255, 255, 0.97);
-  backdrop-filter:    blur(24px) saturate(2);
-  -webkit-backdrop-filter: blur(24px) saturate(2);
-  border-bottom:      1px solid rgba(0, 0, 0, 0.09);
-  box-shadow:         0 2px 20px rgba(0, 0, 0, 0.08);
-}
-
-.nav--theme-light .nav__link        { color: var(--nav-text-muted); }
-.nav--theme-light .nav__link:hover  { color: var(--nav-accent); background: rgba(58, 175, 241, 0.07); text-shadow: none; }
-.nav--theme-light .nav__link--active { color: var(--nav-accent); text-shadow: none; }
-
-.nav--theme-light .nav__social {
-  color: #4B5563;
-  background: rgba(0, 0, 0, 0.03);
-  border-color: rgba(0, 0, 0, 0.08);
-}
-.nav--theme-light .nav__social:hover {
-  color: var(--nav-accent);
-  background: rgba(58, 175, 241, 0.07);
-  border-color: rgba(58, 175, 241, 0.28);
-  box-shadow: 0 0 10px rgba(58, 175, 241, 0.14), 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.nav--theme-light .nav__toggle-bar               { background: #1a1b2e; }
-.nav--theme-light.nav--open .nav__toggle-bar,
-.nav--theme-light .nav__toggle--active .nav__toggle-bar { background: #1a1b2e !important; }
-
-.nav--theme-light .nav__logo-img { height: 36px; }
-
-/* ── DARK theme (projects, blog, contact, etc.) ── */
+/* ── DARK theme (every page except the home hero) ── */
 .nav--theme-dark {
   --nav-text:        #ffffff;
   --nav-text-muted:  #8fa0b4;
@@ -139,9 +95,6 @@
 }
 
 .nav--theme-dark .nav__toggle-bar { background: #ffffff; }
-
-/* Legacy aliases — kept for any older CSS references */
-.nav--on-light { /* maps to theme-light */ }
 
 /* ========================================
    Container
@@ -262,12 +215,6 @@
 .nav__link--active {
   color: var(--nav-accent);
   text-shadow: 0 0 10px rgba(58, 175, 241, 0.40);
-}
-
-/* Remove persistent glow on active links for light-theme nav */
-.nav--theme-light .nav__link--active,
-.nav--on-light .nav__link--active {
-  text-shadow: none;
 }
 
 .nav__link-indicator {
@@ -767,10 +714,6 @@
   .nav--theme-dark, .nav--theme-dark.nav--scrolled {
     background: rgba(0, 0, 0, 0.98);
     border-bottom: 2px solid #fff;
-  }
-  .nav--theme-light, .nav--theme-light.nav--scrolled {
-    background: #ffffff;
-    border-bottom: 2px solid #000;
   }
 
   .nav__link--active,
