@@ -1,215 +1,89 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import "./css/ProjectMediaGallery.css";
-import { FaChevronLeft, FaChevronRight, FaTimes, FaExpand, FaCompress } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaTimes } from 'react-icons/fa';
 
+// A grid of buttons, each opening a lightbox. The lightbox is a real dialog:
+// focus moves into it, Escape closes it, and focus goes back to the thumbnail
+// that opened it.
 function MediaGallery({ media }) {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  
-  // Maximum number of images to show in grid before using carousel
-  const MAX_GRID_IMAGES = 12;
-  
-  // Determine if we should use grid or carousel layout
-  const useGridLayout = media.length <= MAX_GRID_IMAGES;
-  
-  // Visible images in grid (show fewer initially on mobile)
-  const initialVisibleCount = window.innerWidth < 768 ? 6 : 8;
-  const [visibleCount, setVisibleCount] = useState(
-    Math.min(initialVisibleCount, media.length)
-  );
-  
-  const openModal = useCallback((index) => {
-    setActiveImageIndex(index);
-    setModalOpen(true);
+  const [active, setActive] = useState(null); // index of the open image, or null
+  const opener = useRef(null);
+  const closeRef = useRef(null);
+  const initial = typeof window !== 'undefined' && window.innerWidth < 768 ? 6 : 8;
+  const [visible, setVisible] = useState(Math.min(initial, media.length));
+
+  const close = useCallback(() => {
+    setActive(null);
+    opener.current?.focus();
+  }, []);
+  const step = useCallback((dir) => {
+    setActive((i) => (i + dir + media.length) % media.length);
+  }, [media.length]);
+
+  useEffect(() => {
+    if (active === null) return undefined;
+    closeRef.current?.focus();
+    const previous = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-  }, []);
-
-  const closeModal = useCallback(() => {
-    setModalOpen(false);
-    document.body.style.overflow = 'auto';
-  }, []);
-
-  const navigateImage = useCallback((direction) => {
-    if (direction === 'next') {
-      setActiveImageIndex((prev) => (prev + 1) % media.length);
-    } else {
-      setActiveImageIndex((prev) => (prev - 1 + media.length) % media.length);
-    }
-  }, [media.length]);
-  
-  const toggleFullscreen = useCallback(() => {
-    setIsFullscreen(prev => !prev);
-  }, []);
-
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!modalOpen) return;
-      
-      if (e.key === 'ArrowRight') {
-        navigateImage('next');
-      } else if (e.key === 'ArrowLeft') {
-        navigateImage('prev');
-      } else if (e.key === 'Escape') {
-        closeModal();
-      } else if (e.key === 'f') {
-        toggleFullscreen();
-      }
+    const onKey = (e) => {
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowRight') step(1);
+      else if (e.key === 'ArrowLeft') step(-1);
     };
-    
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [modalOpen, navigateImage, closeModal, toggleFullscreen]);
-
-  // Handle window resize
-  useEffect(() => {
-    const handleResize = () => {
-      const newInitialCount = window.innerWidth < 768 ? 6 : 8;
-      setVisibleCount(Math.min(newInitialCount, media.length));
+    window.addEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previous;
     };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [media.length]);
-
-  const showMoreImages = () => {
-    setVisibleCount(prev => Math.min(prev + 8, media.length));
-  };
+  }, [active, close, step]);
 
   if (!media || media.length === 0) return null;
 
   return (
-    <section className="project-page__media">
-      <h2 className="project-page__gallery-title">Project Gallery</h2>
-      
-      {useGridLayout ? (
-        <div className="project-page__gallery-wrapper">
-          <div className="project-page__media-grid">
-            {media.slice(0, visibleCount).map((url, index) => (
-              <div
-                key={index}
-                className="project-page__media-item"
-                onClick={() => openModal(index)}
-                data-index={`${index + 1}/${media.length}`}
-              >
-                <div className="project-page__media-inner">
-                  <img
-                    src={url}
-                    alt={`Project media ${index + 1}`}
-                    className="project-page__media-image"
-                    loading="lazy"
-                  />
-                  <div className="project-page__media-overlay">
-                    <FaExpand className="project-page__media-icon" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {visibleCount < media.length && (
-            <button className="project-page__load-more" onClick={showMoreImages}>
-              Show More Images ({media.length - visibleCount} remaining)
+    <div className="gallery">
+      <ul className="gallery__grid">
+        {media.slice(0, visible).map((url, index) => (
+          <li key={url + index}>
+            <button
+              type="button"
+              className="gallery__thumb"
+              aria-label={`Open image ${index + 1} of ${media.length}`}
+              onClick={(e) => { opener.current = e.currentTarget; setActive(index); }}
+            >
+              <img src={url} alt="" loading="lazy" />
             </button>
-          )}
-        </div>
-      ) : (
-        <div className="project-page__carousel-wrapper">
-          <button className="carousel-nav carousel-nav--prev" onClick={() => navigateImage('prev')}>
-            <FaChevronLeft />
-          </button>
-          
-          <div className="project-page__media-carousel">
-            {media.map((url, index) => (
-              <div
-                key={index}
-                className={`project-page__carousel-item ${index === activeImageIndex ? 'active' : ''}`}
-                onClick={() => openModal(index)}
-              >
-                <img
-                  src={url}
-                  alt={`Project media ${index + 1}`}
-                  className="project-page__carousel-image"
-                  loading="lazy"
-                />
-              </div>
-            ))}
-          </div>
-          
-          <button className="carousel-nav carousel-nav--next" onClick={() => navigateImage('next')}>
-            <FaChevronRight />
-          </button>
-          
-          <div className="carousel-indicators">
-            {media.map((_, index) => (
-              <button 
-                key={index} 
-                className={`carousel-indicator ${index === activeImageIndex ? 'active' : ''}`}
-                onClick={() => setActiveImageIndex(index)}
-                aria-label={`Go to image ${index + 1}`}
-              />
-            ))}
-          </div>
-        </div>
+          </li>
+        ))}
+      </ul>
+
+      {visible < media.length && (
+        <button type="button" className="btn btn--ghost gallery__more" onClick={() => setVisible((v) => Math.min(v + 8, media.length))}>
+          Show {Math.min(8, media.length - visible)} more of {media.length - visible} remaining
+        </button>
       )}
 
-      {/* Enhanced Modal with zoom controls */}
-      {modalOpen && (
-        <div className={`modal-overlay ${isFullscreen ? 'fullscreen' : ''}`} onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-controls">
-              <button className="modal-control modal-fullscreen" onClick={toggleFullscreen}>
-                {isFullscreen ? <FaCompress /> : <FaExpand />}
-              </button>
-              <button className="modal-control modal-close" onClick={closeModal}>
-                <FaTimes />
-              </button>
-            </div>
-            
-            <div className="modal-image-container">
-              <img 
-                src={media[activeImageIndex]} 
-                alt={`Enlarged view ${activeImageIndex + 1}`}
-                className={`modal-image ${isFullscreen ? 'fullscreen' : ''}`}
-              />
-            </div>
-
+      {active !== null && (
+        <div className="gallery__overlay" role="dialog" aria-modal="true" aria-label={`Image ${active + 1} of ${media.length}`} onClick={close}>
+          <div className="gallery__frame" onClick={(e) => e.stopPropagation()}>
+            <img src={media[active]} alt={`Project media ${active + 1} of ${media.length}`} />
+            <button type="button" ref={closeRef} className="gallery__btn gallery__btn--close" aria-label="Close" onClick={close}>
+              <FaTimes aria-hidden="true" />
+            </button>
             {media.length > 1 && (
               <>
-                <button className="modal-nav modal-nav--left" onClick={(e) => {
-                  e.stopPropagation();
-                  navigateImage('prev');
-                }}>
-                  <FaChevronLeft />
+                <button type="button" className="gallery__btn gallery__btn--prev" aria-label="Previous image" onClick={() => step(-1)}>
+                  <FaChevronLeft aria-hidden="true" />
                 </button>
-                <button className="modal-nav modal-nav--right" onClick={(e) => {
-                  e.stopPropagation();
-                  navigateImage('next');
-                }}>
-                  <FaChevronRight />
+                <button type="button" className="gallery__btn gallery__btn--next" aria-label="Next image" onClick={() => step(1)}>
+                  <FaChevronRight aria-hidden="true" />
                 </button>
-                <div className="modal-counter">
-                  {activeImageIndex + 1} / {media.length}
-                </div>
-                
-                <div className="modal-thumbnails">
-                  {media.map((url, index) => (
-                    <div 
-                      key={index}
-                      className={`modal-thumbnail ${index === activeImageIndex ? 'active' : ''}`}
-                      onClick={() => setActiveImageIndex(index)}
-                    >
-                      <img src={url} alt={`Thumbnail ${index + 1}`} />
-                    </div>
-                  ))}
-                </div>
+                <p className="gallery__count" aria-hidden="true">{active + 1} / {media.length}</p>
               </>
             )}
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 }
 
