@@ -98,3 +98,72 @@ cards are `BenchCard`s. `Sections.css` keeps only what is specific to the home p
 - The "empty tile" cards in the Phase 6 screenshots were lazy images that had not loaded yet, not
   a site bug.
 - Baselines for the pages rebuilt in Phases 2 and 3 are re-shot just before each is touched.
+
+## Critique fixes (2026-10-18, snapshot in `.impeccable/critique/`, 23/32)
+
+- The TEDx link on the About band went from 2.13:1 to 5.3:1 (`bp-link`). The `/contact` form
+  subtitle went from 1.00:1 at 9.9px to 6.4:1 at 12px.
+- The nav no longer glows on hover or on the active link, and its indicator and hamburger use the
+  Bench ease-out instead of overshooting curves (`--ease-spring` now maps to it too).
+- The home project cards lead with the FPGA ECG/EMG device, the Plessey EPIC sensor board,
+  ArgusView, Neuromappr, StepDrop and Swipe-o-matic. A card needs an image and a written teaser.
+  The old picks (capacitive, biosensor, parkinson) matched no title.
+- Left alone on purpose, by your call: the hero copy and rotation (so the headline still has no
+  pause control, a WCAG 2.2.2 gap) and the `0.4 ms · 38 µW` stand-ins.
+
+## Phase 2 result: CV, Projects, project pages
+
+**CV** (`/curriculum-vitae`) is a component datasheet: a dark title band with the name, a Rice
+affiliation line (the home page's own meta description), a mono keyword line, contact links, an
+"Open to" line and two actions; then a paper body with a sticky contents rail and dated entries.
+One entry pattern replaces four copies. It has an A4 print sheet (black on white, no page chrome).
+Loading and error states are designed, with a retry and an email fallback.
+
+**Projects** (`/projects`) lost the stat counters ("20+ Technologies" and "15+ Deployed" had no
+source), the "Latest project" block with its stock-photo fallback, the filter panel, the grid/list
+toggle, the sort menu and the floating back-to-top button. It keeps search (with the ⌘K shortcut
+and Escape to clear), category chips with counts, and the PostHog events. Everything loads in one
+request, so search and filters cover every project; before, they covered only the pages scrolled
+so far. A failed load and an empty result are now different states.
+
+**Project pages** (`/projects/:slug`): one `h1` (write-up headings shift down so the shallowest is
+an `h2`), a TOC rail (a `<details>` on narrow screens), the write-up in the kit's `Prose`, diagrams
+drawn in the Bench light palette, a shared Bench syntax theme (`src/lib/benchPrism.js`), and a
+gallery whose thumbnails are buttons and whose lightbox is a real dialog. Dropped: the reading-
+progress bar, the floating action bar that repeated the header links, the mobile TOC drawer, the
+quick-links block, the back-to-top button, and the gallery's carousel, fullscreen and thumbnail strip.
+
+**Bugs fixed on the way**
+
+- Date-only values shifted a day in US timezones: `new Date("2024-01-01")` rendered as December
+  2023 in Houston. `formatDate` now reads the parts, which fixes the CV, project pages and posts.
+- Every inline `code` span in a project write-up rendered as a block `<div>` inside its paragraph
+  (react-markdown 9 has no `inline` flag). That was the `validateDOMNesting` warning from the
+  baseline; the warning is gone.
+- `react-markdown` 9 ignores `className`, so the CV descriptions never got their styles.
+- The ghost button was white on a translucent white border, illegible on the paper band.
+- The CV's print header printed pale on white until the print theme reached each band's own vars.
+
+**Checks**
+
+- Production build: no warnings. `main.js` 117.92 kB (+0.31 kB), `main.css` 16.10 kB; all JS and
+  CSS 1841.0 to 1825.7 kB.
+- axe (WCAG 2.2 A and AA plus best practice) at 1440 and 375 on `/`, `/curriculum-vitae`,
+  `/projects`, `/projects/stepdrop`: 0 failing rules after fixing heading order, unlabelled task-list
+  checkboxes, a diagram SVG with no role, and scrolling code blocks and tables with no keyboard
+  access. The home photo strip had the same scroll problem and was fixed too.
+- The detector returns no findings on the rebuilt files. `scripts/e2e-home.js`: 48 of 48.
+- Keyboard walk: every stop on `/projects` and the CV shows a ring, in a sensible order.
+- CV print: A4, 7 pages, because the CMS entries are long.
+
+## Content to fix in the CMS (Strapi), which only you can do
+
+- **Education** has no Rice entry, and the CV text never mentions Rice (18,122 characters, 0 times).
+- **Address** says "Durham, NC, USA"; the rest of the site says Houston.
+- **Certifications:** one title is garbled ("…Thoughtful Online Search Thoughtful Online Search").
+- **Neurostimulator custom connector:** the description is "TO BE WRITTEN" and there is no teaser.
+- **Image Recovery with Regularized Regression:** its featured image is a Gandalf still.
+- **Systemic.bio** has no teaser.
+- Your Research entry at the Federal Institute of Brasília already describes "a novel non-contact
+  capacitive sensing platform utilizing Electric Potential Sensors". That is the work the hero is
+  about, in your own words, and it has no project page yet.
