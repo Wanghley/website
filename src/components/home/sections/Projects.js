@@ -16,7 +16,10 @@ export default function Projects() {
     (async () => {
       try {
         const res = await fetchProjects(1, 30);
-        const all = (Array.isArray(res.data) ? res.data : []).filter((p) => p?.attributes?.Title);
+        const all = (Array.isArray(res.data) ? res.data : []).filter((p) => {
+          const a = p?.attributes;
+          return a?.Title && a.Teaser && imageOf(p) && !PROJECTS.skip.some((re) => re.test(a.Title));
+        });
         const picked = PROJECTS.pick.map((re) => all.find((p) => re.test(p.attributes.Title))).filter(Boolean);
         const ordered = [...picked, ...all.filter((p) => !picked.includes(p))].slice(0, PROJECTS.count);
         const rows = ordered.map((p) => ({

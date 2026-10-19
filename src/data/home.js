@@ -63,8 +63,11 @@ export const SKILLS = {
 
 export const PROJECTS = {
   heading: 'Projects',
-  // Featured first, matched by title; the rest follow in CMS order.
-  pick: [/capacitive/i, /ink|biosensor/i, /parkinson/i],
+  // Featured first, matched by title: biosignal and sensor hardware, then sensing
+  // and edge ML, so the cards back up the hero. The rest follow in CMS order.
+  // A card needs an image and a written teaser; `skip` is never featured here.
+  pick: [/FPGA/i, /Plessey/i, /ArgusView/i, /Neuromappr/i, /StepDrop/i, /Swipe-o-matic/i],
+  skip: [/image recovery/i],
   count: 6,
   fallback: [
     { title: 'Non-contact capacitive sensor V3', teaser: 'Reading hand and wrist movement without touching the skin.', href: '/projects' },
