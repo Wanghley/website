@@ -986,11 +986,11 @@
 
 .contact-section__form-subtitle {
   font-family: var(--font-mono, 'JetBrains Mono', monospace) !important;
-  font-size: 0.62rem !important;
+  font-size: 0.75rem !important;
   font-weight: 600 !important;
   letter-spacing: 0.14em !important;
   text-transform: uppercase !important;
-  color: rgba(255, 255, 255, 0.45) !important;
+  color: #625F59 !important; /* the form card is white, so this reads 5.9:1 */
 }
 
 /* ----- Reduced motion ----- */

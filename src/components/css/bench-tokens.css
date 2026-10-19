@@ -161,6 +161,7 @@
   --ds-ease-smooth:  var(--ease-out);
   --ds-ease-spring:  var(--ease-out);   /* nothing bounces except the Funko */
   --ds-ease-bounce:  var(--ease-out);
+  --ease-spring:     var(--ease-out);   /* un-prefixed alias still read by About.css and Contact.css */
 
   --ds-navbar-height: 72px;
 }

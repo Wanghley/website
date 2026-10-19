@@ -15,7 +15,7 @@ export default function AboutMe() {
               <a
                 key={l.href}
                 href={l.href}
-                className={l.primary ? 'btn btn--primary' : 'link'}
+                className={l.primary ? 'btn btn--primary' : 'bp-link'}
                 {...(l.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
               >
                 {l.text} <span aria-hidden="true">{l.external ? '↗' : '→'}</span>
