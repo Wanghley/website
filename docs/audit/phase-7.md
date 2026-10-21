@@ -156,6 +156,64 @@ quick-links block, the back-to-top button, and the gallery's carousel, fullscree
 - Keyboard walk: every stop on `/projects` and the CV shows a ring, in a sensible order.
 - CV print: A4, 7 pages, because the CMS entries are long.
 
+## Phase 3 result: blog, About, Contact, 404, legal
+
+**Shared first.** The project page and the blog post were the same 400 lines twice, so what they
+share moved to `src/components/article/`: the helpers, Mermaid, the table of contents, share, the
+markdown renderer (`ArticleBody`) and two scroll hooks. The Projects and Blog lists share
+`components/css/list-page.css` (search, category chips, empty and loading states). One article
+stylesheet (`article.css`) replaced a 2,003-line project one and a 1,833-line blog one.
+
+- **Blog** (`/blog`, `/blog/:slug`): the same pattern as Projects (`U3`), with the 100-post load,
+  search with ⌘K, chips with counts, and related posts as cards. The old tagline leaned on "the
+  intersection of technology, health and social impact"; the lede is now plain.
+- **About** (`/about`): kept as the encyclopedia entry, as you chose. A title with its pronunciation,
+  the tagline "From the bench, the free encyclopedia", a contents rail numbered the way Wikipedia
+  numbers it (the list, not every heading), the hatnote, an infobox, and the article in `Prose`.
+  The CMS parsing for references and citations is unchanged. References are now escaped before
+  they are linked (the old code injected CMS text as raw HTML). The page title is now "About
+  Wanghley Martins | PhD student, Rice ECE".
+- **Contact** (`/contact`): the same form as the home page, opening the page. The legacy
+  `Contact.js`, its 1,004-line stylesheet and its newsletter form are gone. That form only opened
+  Substack in a new tab with the visitor's email in the URL; the footer still links to the
+  newsletter.
+- **404:** "Eita! Sem sinal.", a mono readout (`SENSE 0.00 pF · no signal`), the visitor's actual
+  path, and three exits. The EEG canvas and framer-motion are gone. The site is a single-page app
+  on Firebase hosting, so the HTTP status is still 200; the page carries `noindex` instead.
+- **Privacy and data policy:** your copy is unchanged byte for byte. The 55px overflow on
+  `/privacy` at 375px is fixed. The cookie table scrolls in a focusable frame.
+
+**Bugs fixed on the way**
+
+- A heading could skip a level (an `h3` straight after the `h1`). A heading now never sits more
+  than one level below the one before it, and the table of contents indents by that depth.
+- A `# comment` inside a fenced code block was read as a heading.
+- Table cells in a scrolling table no longer squeeze to slivers on a phone.
+
+**Checks**
+
+- Production build: no warnings. `main.js` 116.38 kB (down 1.54 kB), `main.css` 15.27 kB; all JS
+  and CSS 1825.7 to 1794.9 kB.
+- axe at 1440 and 375 on `/`, `/about`, `/blog`, a blog post, `/curriculum-vitae`, `/projects`,
+  a project page, `/contact`, `/privacy`, `/data-policy` and a 404: 0 failing rules in all 22 runs.
+- The detector reports no findings across the whole of `src/pages` and `src/components` (it
+  started this work at 32). The last six were dead gradient-text utilities and three bouncy easing
+  tokens, now removed.
+- `scripts/e2e-home.js`: 48 of 48. Keyboard walks on About, Contact and Blog: every stop shows a ring.
+- The capture script now waits for a loader to leave before it waits for the height to settle: a
+  skeleton has a steady height too.
+
+**For you to check**
+
+- The privacy policy says you are "based at Duke University, Durham, NC". It is your legal text, so
+  I left it; it is out of date next to the rest of the site.
+- The About infobox falls back to six rows I wrote from PRODUCT.md and your article (born in
+  Brasília, Brazilian, Duke and Rice, PhD student at Rice, known for gambiarra and the TEDxDuke
+  talk, wanghley.com). They are in `src/data/about.js`. Any row the CMS `personalInfo` sets
+  overrides mine.
+- The About lead sentence ("known for his work in…") and the hatnote joke are yours, moved to
+  `src/data/about.js` unchanged.
+
 ## Content to fix in the CMS (Strapi), which only you can do
 
 - **Education** has no Rice entry, and the CV text never mentions Rice (18,122 characters, 0 times).

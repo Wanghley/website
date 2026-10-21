@@ -20,3 +20,4 @@ Rows 2 to 9 describe home sections that were removed in the home restructure (`4
 | 11 | Role type, start window and work authorization, for an "Open to" table on the CV | `src/data/cv.js` | Not shown; the CV says only what PRODUCT.md says |
 | 12 | Three real numbers (µW, ms, $ BOM), each with its project, for a datasheet block on the CV | `src/data/cv.js` | Not shown |
 | 13 | For a capacitive-sensing case study: a real capture (time, pF CSV), a photo of the prototype, and lab approval to show it | a new project entry in the CMS, then `PROJECTS.pick` in `src/data/home.js` | No such project page yet |
+| 14 | Confirm the six About infobox rows I wrote from PRODUCT.md and your article | `src/data/about.js` (`ABOUT_PAGE.infobox`) | Shown; any CMS `personalInfo` field overrides a row |

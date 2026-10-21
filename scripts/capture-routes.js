@@ -57,8 +57,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       await page.goto(BASE + route, { waitUntil: 'load' });
       await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
       await page.waitForTimeout(name === 'home' ? 3500 : 1500);
-      // CMS content can arrive late (cold start). Wait until the page height
-      // holds still for 2 s, up to ~25 s, so a loader is never photographed.
+      // CMS content can arrive late (cold start). A skeleton has a steady height
+      // too, so first wait (up to ~30 s) for any loader to go, then wait until
+      // the page height holds still for 2 s, so a loader is never photographed.
+      const isPending = () => page.evaluate(() =>
+        [...document.querySelectorAll('body *')].some((el) => !el.children.length && /^loading[.…]*$/i.test(el.textContent.trim()))
+        || document.querySelectorAll('[class*="skeleton"]').length > 0);
+      for (let i = 0; i < 40 && (await isPending()); i++) await page.waitForTimeout(750);
       let last = -1, still = 0;
       for (let i = 0; i < 50 && still < 4; i++) {
         const hh = await page.evaluate(() => document.documentElement.scrollHeight);
@@ -83,10 +88,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
       await page.waitForTimeout(800);
       if ((await page.evaluate(() => scrollY)) !== 0) console.log(`WARN ${name} ${w}px is not at the top; fixed elements will be misplaced`);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
-      const pending = await page.evaluate(() =>
-        [...document.querySelectorAll('body *')].some((el) => !el.children.length && /^loading[.…]*$/i.test(el.textContent.trim()))
-        || document.querySelectorAll('[class*="skeleton"]').length > 0);
-      if (pending) console.log(`WARN ${name} ${w}px still shows a loader or skeleton; this capture is not a valid baseline`);
+      if (await isPending()) console.log(`WARN ${name} ${w}px still shows a loader or skeleton; this capture is not a valid baseline`);
       const file = `${label}-${name}-${w}.jpg`;
       await page.screenshot({ path: path.join(OUT, file), fullPage: true, type: 'jpeg', quality: 70 });
       console.log(`${name.padEnd(17)} ${String(w).padStart(4)}px  overflow=${overflow}  errors=${errors.length}${errors.length ? '  ' + errors[0] : ''}`);
