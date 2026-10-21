@@ -1,10 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import fetchAbout from '../api/about';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import './css/About.css';
-import './css/AboutText.css';
+import { PageHeader, Prose, SpecTable } from './bench';
+import { useActiveHeading } from './article/hooks';
+import { slugify, textOf } from './article/utils';
+import { ABOUT_PAGE } from '../data/about';
+import { CONTACT } from '../data/home';
+import './css/AboutArticle.css';
 
 const AboutText = () => {
     const [about, setAbout] = useState(null);
@@ -13,8 +18,6 @@ const AboutText = () => {
     const [error, setError] = useState(null);
     const [headings, setHeadings] = useState([]);
     const [references, setReferences] = useState([]);
-    const contentRef = useRef(null);
-    const [activeHeading, setActiveHeading] = useState(null);
 
     const getAbout = async () => {
         try {
@@ -96,7 +99,7 @@ const AboutText = () => {
                 if (match) {
                     const level = match[1].length;
                     const text = match[2];
-                    const id = text.toLowerCase().replace(/[^\w]+/g, '-');
+                    const id = slugify(text);
                     
                     if (level === 2) {
                         sectionCounter++;
@@ -126,334 +129,199 @@ const AboutText = () => {
         getAbout();
     }, []);
 
-    // Track active section for TOC highlighting
-    useEffect(() => {
-        if (!headings.length) return;
-        
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        setActiveHeading(entry.target.id);
-                    }
-                });
-            },
-            { rootMargin: "-100px 0px -80% 0px" }
-        );
-        
-        headings.forEach(heading => {
-            const element = document.getElementById(heading.id);
-            if (element) observer.observe(element);
-        });
-        
-        return () => {
-            headings.forEach(heading => {
-                const element = document.getElementById(heading.id);
-                if (element) observer.unobserve(element);
-            });
-        };
-    }, [headings, loading]);
-
-    // Scroll handling for the index
-    const scrollToSection = (id) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
+    const activeHeading = useActiveHeading(!loading && !error);
 
     const markdownComponents = {
-        h1: ({ children }) => (
-            <h1 className="about-page__main-title">{children}</h1>
-        ),
-        h2: ({ children }) => {
-            const id = children.toLowerCase().replace(/[^\w]+/g, '-');
-            const headingData = headings.find(h => h.id === id);
-            const number = headingData ? headingData.number : '';
-            
-            return (
-                <h2 id={id} className="about-page__markdown-header">
-                    <span className="about-page__section-number">{number}</span> {children}
-                </h2>
-            );
-        },
-        h3: ({ children }) => {
-            const id = children.toLowerCase().replace(/[^\w]+/g, '-');
-            const headingData = headings.find(h => h.id === id);
-            const number = headingData ? headingData.number : '';
-            
-            return (
-                <h3 id={id} className="about-page__markdown-header">
-                    <span className="about-page__section-number">{number}</span> {children}
-                </h3>
-            );
-        },
-        // Special component to handle footnote references
-        p: ({ children }) => {
-            // Check if it contains only our footnote pattern
-            if (React.Children.count(children) === 1 && 
-                typeof children === 'string' && 
+        // The page already has its h1 (the title), so a stray # in the article is an h2.
+        h1: ({ children }) => <h2 id={slugify(textOf(children))}>{children}</h2>,
+        h2: ({ children }) => <h2 id={slugify(textOf(children))}>{children}</h2>,
+        h3: ({ children }) => <h3 id={slugify(textOf(children))}>{children}</h3>,
+        p: ({ node, children }) => {
+            // footnote definitions are stripped above; a stray one renders nothing
+            if (React.Children.count(children) === 1 &&
+                typeof children === 'string' &&
                 children.match(/^\[\^\d+\]:/)) {
-                return null; // Don't render these
+                return null;
+            }
+            // an image on its own line becomes a figure, never a figure inside a <p>
+            if (node.children?.length === 1 && node.children[0].tagName === 'img') {
+                return <>{children}</>;
             }
             return <p>{children}</p>;
         },
-        // Handle links with special treatment for citations
         a: ({ href, children }) => {
-            // Check if this is a citation link (format: [1])
-            if (href && href.startsWith('#reference-') && 
-                String(children).match(/^\[\d+\]$/)) {
+            // citation links: [1] jumps to the reference list
+            if (href && href.startsWith('#reference-') && String(children).match(/^\[\d+\]$/)) {
                 const refId = String(children).match(/\d+/)[0];
-                return (
-                    <a 
-                        href={href}
-                        className="citation-link"
-                        title={`Jump to reference ${refId}`}
-                    >
-                        {children}
-                    </a>
-                );
+                return <a href={href} className="about-cite" title={`Jump to reference ${refId}`}>{children}</a>;
             }
-            
-            // Regular links
-            return (
-                <a href={href} className="about-page__wiki-link" target="_blank" rel="noopener noreferrer">
-                    {children}
-                </a>
-            );
+            return <a href={href} target="_blank" rel="noopener noreferrer">{children} <span aria-hidden="true">↗</span></a>;
         },
-        // Make images display like Wikipedia with captions
+        // images get captions, as in an encyclopedia
         img: ({ src, alt }) => (
-            <figure className="about-page__figure">
-                <img src={src} alt={alt} className="about-page__image" />
-                {alt && <figcaption className="about-page__figcaption">{alt}</figcaption>}
+            <figure className="about-figure">
+                <img src={src} alt={alt || ''} loading="lazy" />
+                {alt && <figcaption>{alt}</figcaption>}
             </figure>
         ),
-        // Wrap tables for horizontal scroll on narrow viewports
+        // a wide table scrolls inside a focusable wrapper
         table: ({ children }) => (
-            <div className="about-page__table-wrapper">
-                <table className="about-page__table">{children}</table>
+            <div className="bp-scroll" tabIndex={0} role="group" aria-label="Table">
+                <table>{children}</table>
             </div>
         ),
-        // Text handling can stay simple
-        text: ({ children }) => children
-    };
-
-    // Toggle mobile index visibility
-    const toggleMobileIndex = () => {
-        const mobileIndex = document.querySelector('.about-page__mobile-index-content');
-        if (mobileIndex) {
-            mobileIndex.classList.toggle('open');
-        }
     };
 
     if (loading) {
-        return <div className="about-page__loading">Loading...</div>;
+        return (
+            <>
+                <section className="bp-sec bp-sec--head" aria-busy="true">
+                    <div className="bench-col">
+                        <div className="bp-rule" aria-hidden="true" />
+                        <div className="about-skeleton about-skeleton--title" />
+                        <div className="about-skeleton about-skeleton--lede" />
+                    </div>
+                </section>
+                <section className="bp-sec bp-sec--light">
+                    <div className="bench-col">
+                        {[1, 2, 3].map((n) => <div key={n} className="about-skeleton about-skeleton--line" />)}
+                    </div>
+                </section>
+                <p className="sr-only" role="status">Loading the article.</p>
+            </>
+        );
     }
 
     if (error) {
-        return <p className="about-page__error">{error}</p>;
+        return (
+            <>
+                <section className="bp-sec bp-sec--head">
+                    <div className="bench-col">
+                        <PageHeader refdes="J1" title="Wanghley" lede={ABOUT_PAGE.tagline} />
+                    </div>
+                </section>
+                <section className="bp-sec bp-sec--light">
+                    <div className="bench-col about-error">
+                        <p>The article did not load. Check your connection and try again, or email <a className="bp-link" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.</p>
+                        <button type="button" className="btn btn--primary" onClick={() => window.location.reload()}>Try again</button>
+                    </div>
+                </section>
+            </>
+        );
     }
 
-    // Add a Wikipedia-style infobox
-    const renderInfobox = () => {
-        if (!personalInfo) return null;
-        
-        return (
-            <div className="infobox">
-                <div className="infobox-title">Wanghley</div>
-                {personalInfo.photo && (
-                    <figure className="infobox-figure">
-                        <img src={personalInfo.photo} alt="Wanghley" className="infobox-image" />
-                        <figcaption className="infobox-caption">Wanghley</figcaption>
-                    </figure>
-                )}
-                <table className="infobox-table">
-                    <tbody>
-                        {personalInfo.born && (
-                            <tr>
-                                <th>Born</th>
-                                <td>{personalInfo.born}</td>
-                            </tr>
-                        )}
-                        {personalInfo.nationality && (
-                            <tr>
-                                <th>Nationality</th>
-                                <td>{personalInfo.nationality}</td>
-                            </tr>
-                        )}
-                        {personalInfo.education && (
-                            <tr>
-                                <th>Education</th>
-                                <td>{personalInfo.education}</td>
-                            </tr>
-                        )}
-                        {personalInfo.occupation && (
-                            <tr>
-                                <th>Occupation</th>
-                                <td>{personalInfo.occupation}</td>
-                            </tr>
-                        )}
-                        {personalInfo.knownFor && (
-                            <tr>
-                                <th>Known for</th>
-                                <td>{personalInfo.knownFor}</td>
-                            </tr>
-                        )}
-                        {personalInfo.website && (
-                            <tr>
-                                <th>Website</th>
-                                <td>
-                                    <a href={personalInfo.website} target="_blank" rel="noopener noreferrer">
-                                        {personalInfo.website.replace(/^https?:\/\//, '')}
-                                    </a>
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        );
-    };
+    // Infobox rows: a field the CMS sets wins; the static facts fill the gaps.
+    const info = personalInfo || {};
+    const infoRows = ABOUT_PAGE.infobox
+        .map(({ label, key, value }) => {
+            const v = info[key] || value;
+            if (!v) return null;
+            return {
+                label,
+                value: key === 'website'
+                    ? <a href={v} target="_blank" rel="noopener noreferrer">{String(v).replace(/^https?:\/\//, '')}</a>
+                    : v,
+            };
+        })
+        .filter(Boolean);
+    const photo = info.photo ? { src: info.photo, alt: 'Wanghley' } : ABOUT_PAGE.photo;
 
-    // Generate Wikipedia-style hatnote
-    const renderHatnote = () => (
-        <div className="hatnote">
-            <span>
-                This article is about <strong>Wanghley</strong> the individual. For other uses, including quantumly entangled or alternate-universe Wanghleys, see <a href="/about">Wanghley (disambiguation)</a>.
-            </span>
-        </div>
+    // Wikipedia numbers its contents list, not the headings themselves.
+    const referencesNumber = headings.filter((h) => h.level === 2).length + 1;
+    const contents = (
+        <ol className="about-toc__list">
+            {headings.map((heading) => (
+                <li key={heading.id} className={`about-toc__item about-toc__item--${heading.level}`}>
+                    <a href={`#${heading.id}`} aria-current={activeHeading === heading.id ? 'true' : undefined}>
+                        <span className="about-toc__n">{heading.number}</span>{heading.text}
+                    </a>
+                </li>
+            ))}
+            {references.length > 0 && (
+                <li className="about-toc__item about-toc__item--2">
+                    <a href="#references" aria-current={activeHeading === 'references' ? 'true' : undefined}>
+                        <span className="about-toc__n">{referencesNumber}</span>References
+                    </a>
+                </li>
+            )}
+        </ol>
     );
 
-    // Render the references section
-    const renderReferences = () => {
-        if (references.length === 0) return null;
-        
-        return (
-            <div className="references-section">
-            <h2 id="references" className="about-page__markdown-header">
-                <span className="about-page__section-number">{headings.filter(h => h.level === 2).length + 1}</span> References
-            </h2>
-            <ol className="references-list">
-                {references.map(ref => (
-                <li key={ref.id} id={`reference-${ref.id}`} className="reference-item">
-                    <span className="reference-id">[{ref.id}]</span>
-                    <span className="reference-text" dangerouslySetInnerHTML={{ __html: formatReferenceText(ref.text.replace(/^.*?References\s*/is, '')) }}></span>
-                </li>
-                ))}
-            </ol>
-            </div>
-        );
-    };
-
-    // Format reference text to handle URLs and make them clickable
+    // Reference text comes from the CMS: escape it, then turn URLs and DOIs into links.
+    const escapeHtml = (text) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const formatReferenceText = (text) => {
-        // Convert URLs to clickable links
-        const withLinks = text.replace(
-            /(https?:\/\/[^\s]+)/g, 
-            '<a href="$1" target="_blank" rel="noopener noreferrer" class="reference-link">$1</a>'
+        const withLinks = escapeHtml(text).replace(
+            /(https?:\/\/[^\s]+)/g,
+            '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
         );
-        
-        // Make DOIs clickable
         return withLinks.replace(
-            /\bDOI:\s*([^\s]+)/gi,
-            'DOI: <a href="https://doi.org/$1" target="_blank" rel="noopener noreferrer" class="reference-link">$1</a>'
+            /\bDOI:\s*([^\s<]+)/gi,
+            'DOI: <a href="https://doi.org/$1" target="_blank" rel="noopener noreferrer">$1</a>'
         );
     };
 
     return (
-        <div className="about-page">
-            <div className="about-page__layout">
-                {/* Sidebar with index */}
-                <aside className="about-page__sidebar">
-                    <div className="about-page__toc-container">
-                        <div className="about-page__toc-header">Contents</div>
-                        <ol className="about-page__index-list">
-                            {headings.map((heading, index) => (
-                                <li 
-                                    key={index} 
-                                    className={`about-page__index-item level-${heading.level} ${activeHeading === heading.id ? 'active' : ''}`}
-                                    onClick={() => scrollToSection(heading.id)}
-                                >
-                                    <a href={`#${heading.id}`}>
-                                        <span className="about-page__toc-number">{heading.number}</span> {heading.text}
-                                    </a>
-                                </li>
-                            ))}
+        <>
+            <section className="bp-sec bp-sec--head">
+                <div className="bench-col">
+                    <PageHeader
+                        refdes="J1"
+                        title={<>Wanghley <span className="about-ipa">({ABOUT_PAGE.pronunciation})</span></>}
+                        lede={ABOUT_PAGE.tagline}
+                    />
+                </div>
+            </section>
+
+            <section className="bp-sec bp-sec--light about-body">
+                <div className="bench-col about-layout">
+                    <nav className="about-toc about-toc--rail" aria-label="Contents">
+                        <p className="about-toc__label">Contents</p>
+                        {contents}
+                    </nav>
+
+                    <article className="about-article">
+                        <details className="about-toc about-toc--inline">
+                            <summary>Contents</summary>
+                            {contents}
+                        </details>
+
+                        <p className="about-hatnote">
+                            {ABOUT_PAGE.hatnote} <Link to="/about">{ABOUT_PAGE.hatnoteLink}</Link>.
+                        </p>
+
+                        <aside className="about-infobox" aria-label="Wanghley at a glance">
+                            <p className="about-infobox__title">Wanghley</p>
+                            <figure>
+                                <img src={photo.src} alt={photo.alt} width="240" height="320" />
+                            </figure>
+                            <SpecTable rows={infoRows} />
+                        </aside>
+
+                        <Prose className="article-content about-content">
+                            <p className="about-lead"><strong>Wanghley</strong> {ABOUT_PAGE.lead}</p>
+
+                            <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                                {about}
+                            </ReactMarkdown>
+
                             {references.length > 0 && (
-                                <li 
-                                    className="about-page__index-item level-2"
-                                    onClick={() => scrollToSection('references')}
-                                >
-                                    <a href="#references">
-                                        <span className="about-page__toc-number">{headings.filter(h => h.level === 2).length + 1}</span> References
-                                    </a>
-                                </li>
+                                <>
+                                    <h2 id="references">References</h2>
+                                    <ol className="about-refs">
+                                        {references.map((ref) => (
+                                            <li key={ref.id} id={`reference-${ref.id}`}>
+                                                <span className="about-refs__id">[{ref.id}]</span>
+                                                <span dangerouslySetInnerHTML={{ __html: formatReferenceText(ref.text.replace(/^.*?References\s*/is, '')) }} />
+                                            </li>
+                                        ))}
+                                    </ol>
+                                </>
                             )}
-                        </ol>
-                    </div>
-                </aside>
-
-                {/* Mobile index dropdown */}
-                <div className="about-page__mobile-index">
-                    <button className="about-page__mobile-index-toggle" onClick={toggleMobileIndex}>
-                        Contents
-                    </button>
-                    <ol className="about-page__mobile-index-content">
-                        {headings.map((heading, index) => (
-                            <li 
-                                key={index} 
-                                className={`level-${heading.level}`}
-                                onClick={() => scrollToSection(heading.id)}
-                            >
-                                <a href={`#${heading.id}`}>
-                                    <span className="about-page__toc-number">{heading.number}</span> {heading.text}
-                                </a>
-                            </li>
-                        ))}
-                        {references.length > 0 && (
-                            <li 
-                                className="level-2"
-                                onClick={() => scrollToSection('references')}
-                            >
-                                <a href="#references">
-                                    <span className="about-page__toc-number">{headings.filter(h => h.level === 2).length + 1}</span> References
-                                </a>
-                            </li>
-                        )}
-                    </ol>
+                        </Prose>
+                    </article>
                 </div>
-
-                {/* Main content */}
-                <div className="about-page__content" ref={contentRef}>
-                    {/* Wikipedia style - title with pronunciation */}
-                    <h1 className="about-page__title">
-                        Wanghley
-                        <span className="about-page__pronunciation">(/ˈwɐ̃ŋɡlej/)</span>
-                    </h1>
-                    
-                    {/* Wikipedia-style hatnote */}
-                    {renderHatnote()}
-                    
-                    {renderInfobox()}
-                    
-                    <div className="about-page__lead-paragraph">
-                        <strong>Wanghley</strong> is a technologist, engineer, and innovator known for his work in artificial intelligence, computer science, and biomedical engineering.
-                    </div>
-                    
-                    <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        className="about-page__markdown"
-                        components={markdownComponents}
-                    >
-                        {about}
-                    </ReactMarkdown>
-                    
-                    {/* References section */}
-                    {renderReferences()}
-                </div>
-            </div>
-        </div>
+            </section>
+        </>
     );
 };
 
