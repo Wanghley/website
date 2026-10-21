@@ -4,7 +4,7 @@ import { usePostHog } from '../lib/analytics';
 import { fetchProjects } from '../api/projects';
 import { formatMonth } from '../utils/formatDate';
 import { PageHeader, BenchCard, BenchCards } from '../components/bench';
-import './css/projects.css';
+import '../components/css/list-page.css';
 
 // The whole list is a few dozen rows, so it loads in one go: search and the
 // category filter then cover every project, not just the pages scrolled so far.
@@ -107,8 +107,8 @@ const Projects = () => {
 
             <section className="bp-sec bp-sec--light projects-body" aria-label="Project list">
                 <div className="bench-col">
-                    <div className="projects-toolbar">
-                        <div className="projects-search">
+                    <div className="list-toolbar">
+                        <div className="list-search">
                             <label htmlFor="project-search" className="sr-only">Search projects</label>
                             <input
                                 id="project-search"
@@ -124,30 +124,30 @@ const Projects = () => {
                                 }}
                             />
                             {searchTerm ? (
-                                <button type="button" className="projects-search__clear" onClick={() => setSearchTerm('')}>Clear</button>
+                                <button type="button" className="list-search__clear" onClick={() => setSearchTerm('')}>Clear</button>
                             ) : (
                                 <kbd aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>
                             )}
                         </div>
 
                         {categories.length > 2 && (
-                            <div className="projects-filters" role="group" aria-label="Filter by category">
+                            <div className="list-filters" role="group" aria-label="Filter by category">
                                 {categories.map(({ name, count }) => (
                                     <button
                                         key={name}
                                         type="button"
-                                        className="projects-chip"
+                                        className="list-chip"
                                         aria-pressed={activeCategory === name}
                                         onClick={() => { setActiveCategory(name); posthog?.capture('project_filter_applied', { category: name }); }}
                                     >
-                                        {name}<span className="projects-chip__n">{count}</span>
+                                        {name}<span className="list-chip__n">{count}</span>
                                     </button>
                                 ))}
                             </div>
                         )}
                     </div>
 
-                    <p className="projects-results" role="status" aria-live="polite">
+                    <p className="list-results" role="status" aria-live="polite">
                         {status === 'loading' && 'Loading projects.'}
                         {status === 'ready' && (filtering
                             ? `${shown.length} of ${sorted.length} projects${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}${searchTerm.trim() ? ` matching "${searchTerm.trim()}"` : ''}`
@@ -159,17 +159,17 @@ const Projects = () => {
                             {Array.from({ length: 6 }).map((_, i) => (
                                 <li key={i} className="bp-card">
                                     <span className="bp-card__media"><span className="bp-card__blank" /></span>
-                                    <span className="projects-skeleton projects-skeleton--meta" />
-                                    <span className="projects-skeleton projects-skeleton--title" />
-                                    <span className="projects-skeleton projects-skeleton--text" />
+                                    <span className="list-skeleton list-skeleton--meta" />
+                                    <span className="list-skeleton list-skeleton--title" />
+                                    <span className="list-skeleton list-skeleton--text" />
                                 </li>
                             ))}
                         </ul>
                     )}
 
                     {status === 'error' && (
-                        <div className="projects-empty">
-                            <h2 className="projects-empty__title">The projects did not load</h2>
+                        <div className="list-empty">
+                            <h2 className="list-empty__title">The projects did not load</h2>
                             <p>The data service did not answer. Check your connection and try again.</p>
                             <button type="button" className="btn btn--primary" onClick={load}>Try again</button>
                         </div>
@@ -201,8 +201,8 @@ const Projects = () => {
                     )}
 
                     {status === 'ready' && shown.length === 0 && (
-                        <div className="projects-empty">
-                            <h2 className="projects-empty__title">No projects match</h2>
+                        <div className="list-empty">
+                            <h2 className="list-empty__title">No projects match</h2>
                             <p>Try a shorter search, or another category.</p>
                             {filtering && <button type="button" className="btn btn--primary" onClick={clearFilters}>Show all {sorted.length} projects</button>}
                         </div>
