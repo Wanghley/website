@@ -431,28 +431,6 @@ hr {
   margin-right: var(--ds-space-2);
 }
 
-/* — Gradient text — */
-.text-gradient {
-  background:         var(--ds-text-gradient-gold);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip:    text;
-}
-
-.text-gradient--warm {
-  background:         var(--ds-text-gradient-warm);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip:    text;
-}
-
-.text-gradient--teal {
-  background:         var(--ds-text-gradient-cool);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip:    text;
-}
-
 /* — Section heading block — */
 .section-heading {
   display:   flex;
