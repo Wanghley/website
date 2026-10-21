@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import NavbarSpacer from '../components/NavbarSpacer';
+import { PageHeader, Prose } from '../components/bench';
 import './css/legal.css';
 
 const DataPolicy = () => (
@@ -13,19 +13,17 @@ const DataPolicy = () => (
       <meta name="robots" content="noindex, follow" />
     </Helmet>
 
-    <NavbarSpacer />
+    <main id="main" className="legal-page">
+      <section className="bp-sec bp-sec--head">
+        <div className="bench-col">
+          <PageHeader size="md" title="Data & Cookie Policy" meta={['Last updated: June 1, 2025', 'Effective immediately']} />
+        </div>
+      </section>
 
-    <main className="legal-page">
-      <div className="legal-page__container">
-        <header className="legal-page__header">
-          <span className="legal-page__label">LEGAL</span>
-          <h1 className="legal-page__title">Data &amp; Cookie Policy</h1>
-          <p className="legal-page__meta">Last updated: June 1, 2025 · Effective immediately</p>
-        </header>
+      <section className="bp-sec bp-sec--light">
+        <div className="bench-col">
+          <Prose as="article">
 
-        <article className="legal-page__body">
-
-          <section>
             <h2>1. Overview</h2>
             <p>
               This policy explains what cookies and similar tracking technologies are used
@@ -33,20 +31,17 @@ const DataPolicy = () => (
               operated by Wanghley Soares Martins for personal and professional portfolio
               purposes.
             </p>
-          </section>
 
-          <section>
             <h2>2. What Are Cookies</h2>
             <p>
               Cookies are small text files stored in your browser when you visit a website.
               They help the site remember preferences and understand how visitors use it.
               This site uses a minimal set of cookies — only those essential for analytics.
             </p>
-          </section>
 
-          <section>
             <h2>3. Cookies and Tracking Technologies Used</h2>
-            <table className="legal-page__table">
+            <div className="bp-scroll" tabIndex={0} role="group" aria-label="Cookies and tracking technologies">
+            <table>
               <thead>
                 <tr>
                   <th>Name</th>
@@ -70,13 +65,12 @@ const DataPolicy = () => (
                 </tr>
               </tbody>
             </table>
+            </div>
             <p>
               This site does <strong>not</strong> use advertising cookies, tracking pixels,
               social media cookies, or any third-party remarketing technologies.
             </p>
-          </section>
 
-          <section>
             <h2>4. Analytics in Detail</h2>
             <p>
               Analytics are powered by <strong>PostHog</strong> (US Cloud). PostHog collects:
@@ -92,9 +86,7 @@ const DataPolicy = () => (
               All analytics data is aggregated. IP addresses are not stored after processing.
               No data is shared with advertising networks.
             </p>
-          </section>
 
-          <section>
             <h2>5. How to Control or Opt Out</h2>
             <p>You have several options to limit or disable tracking:</p>
             <ul>
@@ -119,18 +111,14 @@ const DataPolicy = () => (
               Disabling analytics cookies does not affect the functionality of this site in
               any way.
             </p>
-          </section>
 
-          <section>
             <h2>6. Data Transfers</h2>
             <p>
               PostHog processes analytics data on servers in the United States (US Cloud
               region). By using this site, you consent to this transfer. PostHog complies
               with GDPR Standard Contractual Clauses for EU/EEA visitors.
             </p>
-          </section>
 
-          <section>
             <h2>7. Your Rights</h2>
             <p>
               Under the GDPR, CCPA, and LGPD, you have the right to access, correct, delete,
@@ -138,32 +126,28 @@ const DataPolicy = () => (
               rights, email <a href="mailto:me@wanghley.com">me@wanghley.com</a>. Requests
               will be addressed within 30 days.
             </p>
-          </section>
 
-          <section>
             <h2>8. Changes to This Policy</h2>
             <p>
               This policy may be updated to reflect changes in technologies or legal
               requirements. The "Last updated" date at the top of the page will always
               reflect the most recent version.
             </p>
-          </section>
 
-          <section>
             <h2>9. Contact</h2>
             <p>
               Questions? Email <a href="mailto:me@wanghley.com">me@wanghley.com</a> or
               use the <Link to="/#contact">contact form</Link>.
             </p>
-          </section>
 
-        </article>
+          </Prose>
 
-        <div className="legal-page__footer">
-          <Link to="/privacy" className="legal-page__back">← Privacy Policy</Link>
-          <Link to="/" className="legal-page__sibling">Back to home →</Link>
+          <p className="legal-page__footer">
+            <Link to="/privacy" className="bp-link">← Privacy Policy</Link>
+            <Link to="/" className="bp-link">Back to home →</Link>
+          </p>
         </div>
-      </div>
+      </section>
     </main>
   </>
 );
