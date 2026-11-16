@@ -8,13 +8,12 @@
 // home sections that all read the same single type share one request.
 import axios from 'axios';
 
+// Reads are anonymous. Every endpoint the site uses is public in the CMS, and a
+// token sent with a request makes Strapi apply that token's permissions instead,
+// which returned 403 for the content types added in Strapi 5 and failed whole pages.
 const BASE = (process.env.REACT_APP_cms_base_url || '').replace(/\/$/, '');
-const TOKEN = process.env.REACT_APP_cms_api_token;
 
-const http = axios.create({
-  baseURL: BASE,
-  headers: TOKEN ? { Authorization: `Bearer ${TOKEN}` } : {},
-});
+const http = axios.create({ baseURL: BASE });
 
 const cache = new Map();
 
