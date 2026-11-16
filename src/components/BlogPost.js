@@ -73,7 +73,7 @@ const BlogPostPage = () => {
             } catch (err) {
                 console.error("Error fetching blog post:", err);
                 setError("The data service did not answer. Check your connection and try again.");
-                posthog?.captureException(err, { slug });
+                posthog?.captureException?.(err, { slug });
             } finally {
                 setLoading(false);
             }
