@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { usePostHog } from '../lib/analytics';
-import axios from 'axios';
 import './css/article.css';
 import { formatMonth } from '../utils/formatDate';
 import { FaGithub, FaPlay } from "react-icons/fa";
@@ -13,9 +12,7 @@ import TableOfContents from './article/TableOfContents';
 import ShareButton from './article/ShareButton';
 import { useActiveHeading, useReadCompletion } from './article/hooks';
 import { calculateReadingTime, extractHeadings, pickImage } from './article/utils';
-
-const baseURL = process.env.REACT_APP_cms_base_url;
-const apiKey = process.env.REACT_APP_cms_api_token;
+import { fetchPage, mediaUrl } from '../api/cms';
 
 const withProtocol = (url) => (url.includes('http') ? url : `https://${url}`);
 
@@ -55,21 +52,17 @@ const ProjectPage = () => {
             setError(null);
 
             try {
-                const response = await axios.get(
-                    `${baseURL}/api/slugify/slugs/project/${slug}?populate=*`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${apiKey}`,
-                        },
-                    }
-                );
-
-                const projectData = response.data.data;
+                const { data } = await fetchPage('projects', {
+                    'filters[slug][$eq]': slug,
+                    'pagination[pageSize]': 1,
+                    populate: '*',
+                });
+                const projectData = data[0] || null;
                 setProject(projectData);
                 posthog?.capture('project_viewed', {
                     slug,
-                    title: projectData?.attributes?.Title,
-                    category: projectData?.attributes?.Category,
+                    title: projectData?.title,
+                    category: projectData?.category,
                 });
             } catch (err) {
                 console.error("Error fetching project data:", err);
@@ -85,13 +78,13 @@ const ProjectPage = () => {
         }
     }, [slug, posthog]);
 
-    const headings = useMemo(() => extractHeadings(project?.attributes?.Description), [project]);
+    const headings = useMemo(() => extractHeadings(project?.body), [project]);
     const activeHeadingId = useActiveHeading(!loading && !!project);
     useReadCompletion(!!project, () => posthog?.capture('project_read_completed', {
         slug,
-        title: project?.attributes?.Title,
-        category: project?.attributes?.Category,
-        reading_time_min: calculateReadingTime(project?.attributes?.Description),
+        title: project?.title,
+        category: project?.category,
+        reading_time_min: calculateReadingTime(project?.body),
     }));
 
     if (loading) {
@@ -135,16 +128,16 @@ const ProjectPage = () => {
 
     // Extract project data
     const {
-        Title, Github, Description, Category, Demo,
-        End, Start, Teaser, video, Featured, Media
-    } = project.attributes;
+        title: Title, githubUrl: Github, body: Description, category: Category, demoUrl: Demo,
+        endDate: End, startDate: Start, summary: Teaser, videoUrl, cover: coverMedia, gallery,
+    } = project;
 
-    const cover = pickImage(Featured?.data?.attributes);
-    const media = Media?.data?.map((item) => pickImage(item.attributes)?.url).filter(Boolean) || [];
+    const cover = pickImage(coverMedia);
+    const media = (gallery || []).map((item) => mediaUrl(item)).filter(Boolean);
 
     const readingTime = calculateReadingTime(Description);
     const projectUrl = `https://wanghley.com/projects/${slug}`;
-    const hasVideo = !!video?.url;
+    const hasVideo = !!videoUrl;
     const hasGallery = media.length > 0;
     const dates = Start ? [formatMonth(Start), End ? formatMonth(End) : 'Present'].join(' – ') : null;
 
@@ -247,7 +240,7 @@ const ProjectPage = () => {
                                         poster={cover?.url}
                                         onPlay={() => posthog?.capture('project_video_played', { slug, title: Title })}
                                     >
-                                        <source src={video.url} type="video/mp4" />
+                                        <source src={videoUrl} type="video/mp4" />
                                         Your browser does not support the video tag.
                                     </video>
                                 </section>

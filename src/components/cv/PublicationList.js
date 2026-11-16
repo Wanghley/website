@@ -34,30 +34,31 @@ const PublicationList = ({ publications }) => {
       ) : (
         <ol className="cv-list cv-pubs">
           {publications.map((publication, index) => {
-            const { Title, Type, publication: pubDate, publisher, DOI, Authors = [], peerReviewed } = publication.attributes;
-            const meta = [publisher, Type, peerReviewed && 'Peer-reviewed'].filter(Boolean);
+            const { title, type, publishedDate, venue, doi, authors = [], peerReviewed } = publication;
+            const meta = [venue, type, peerReviewed && 'Peer-reviewed'].filter(Boolean);
+            const ordered = [...authors].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
             return (
-              <li key={publication.id ?? index} className="cv-pub">
+              <li key={publication.documentId ?? index} className="cv-pub">
                 <span className="cv-pub__n" aria-hidden="true">{index + 1}</span>
                 <div>
-                  <h3 className="cv-pub__title">{Title}</h3>
-                  {Authors.length > 0 && (
+                  <h3 className="cv-pub__title">{title}</h3>
+                  {ordered.length > 0 && (
                     <p className="cv-pub__authors">
-                      {Authors.map((author, idx) => (
+                      {ordered.map((author, idx) => (
                         <span key={author.id ?? idx} className={isCvOwner(author) ? 'cv-pub__me' : undefined}>
                           {author.lastName}, {formatInitials(author.firstName)}
-                          {idx < Authors.length - 1 ? '; ' : ''}
+                          {idx < ordered.length - 1 ? '; ' : ''}
                         </span>
                       ))}
                     </p>
                   )}
                   <p className="cv-pub__meta">
-                    {[pubDate && formatPublicationDate(pubDate), ...meta].filter(Boolean).join(' · ')}
+                    {[publishedDate && formatPublicationDate(publishedDate), ...meta].filter(Boolean).join(' · ')}
                   </p>
-                  {DOI && (
-                    <a className="bp-link cv-pub__doi" href={`https://doi.org/${DOI}`} target="_blank" rel="noopener noreferrer">
-                      doi.org/{DOI}
+                  {doi && (
+                    <a className="bp-link cv-pub__doi" href={`https://doi.org/${doi}`} target="_blank" rel="noopener noreferrer">
+                      doi.org/{doi}
                     </a>
                   )}
                 </div>

@@ -1,135 +1,127 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import fetchAbout from '../api/about';
-import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { PageHeader, Prose, SpecTable } from './bench';
 import { useActiveHeading } from './article/hooks';
 import { slugify, textOf } from './article/utils';
-import { ABOUT_PAGE } from '../data/about';
-import { CONTACT } from '../data/home';
+import { fetchAboutArticle, fetchPersonalInfo } from '../api/site';
+import useCmsData from '../hooks/useCmsData';
+import useContact from '../hooks/useContact';
+import { PHOTOS } from '../data/photos';
+import { mediaUrl } from '../api/cms';
 import './css/AboutArticle.css';
 
-const AboutText = () => {
-    const [about, setAbout] = useState(null);
-    const [personalInfo, setPersonalInfo] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [headings, setHeadings] = useState([]);
-    const [references, setReferences] = useState([]);
+// The infobox rows, in order. The CMS holds each value; the label is layout.
+const INFOBOX = [
+    { label: 'Born', key: 'birthplace' },
+    { label: 'Nationality', key: 'nationality' },
+    { label: 'Education', key: 'education' },
+    { label: 'Occupation', key: 'occupation' },
+    { label: 'Known for', key: 'knownFor' },
+    { label: 'Website', key: 'website' },
+];
 
-    const getAbout = async () => {
-        try {
-            const data = await fetchAbout();
-            const aboutContent = data.data.attributes.about;
-            
-            // Extract reference section first
-            const referencesSectionMatch = aboutContent.match(/## References\s+([\s\S]+)$/);
-            const referencesSection = referencesSectionMatch ? referencesSectionMatch[1] : '';
-            
-            // Extract references — handle both [N]: and [^N]: formats
-            const referenceRegex = /\[\^?(\d+)\](?::|-)?\s*(.*?)(?=\n\s*\[\^?\d+\](?::|-)|\n\s*$|$)/gs;
-            const refs = [];
-            let match;
+const loadAbout = () => Promise.all([fetchAboutArticle(), fetchPersonalInfo()]).then(([article, person]) => ({ article, person }));
 
-            while ((match = referenceRegex.exec(referencesSection)) !== null) {
-                refs.push({
-                    id: match[1],
-                    text: match[2].trim()
-                });
-            }
+// Splits the article into its body, its references and its contents list. The
+// body is Markdown from the CMS; citations [N] and [^N] become links to the list.
+const prepareArticle = (aboutContent = '') => {
+    // Extract reference section first
+    const referencesSectionMatch = aboutContent.match(/## References\s+([\s\S]+)$/);
+    const referencesSection = referencesSectionMatch ? referencesSectionMatch[1] : '';
 
-            // Remove the entire references section from content
-            let cleanedContent = aboutContent;
-            if (referencesSectionMatch) {
-                cleanedContent = aboutContent.replace(/## References[\s\S]+$/, '').trim();
-            }
+    // Extract references — handle both [N]: and [^N]: formats
+    const referenceRegex = /\[\^?(\d+)\](?::|-)?\s*(.*?)(?=\n\s*\[\^?\d+\](?::|-)|\n\s*$|$)/gs;
+    const refs = [];
+    let match;
 
-            // Also collect inline footnote definitions [^N]: text outside the references section
-            const inlineFootnoteRegex = /^\[\^(\d+)\]:\s*(.+)$/gm;
-            let fnMatch;
-            while ((fnMatch = inlineFootnoteRegex.exec(cleanedContent)) !== null) {
-                const matchId = fnMatch[1];
-                const matchText = fnMatch[2];
-                if (!refs.some(r => r.id === matchId)) {
-                    refs.push({ id: matchId, text: matchText.trim() });
-                }
-            }
-            // Remove inline footnote definition lines from content
-            cleanedContent = cleanedContent.replace(/^\[\^(\d+)\]:\s*.+$/gm, '').trim();
+    while ((match = referenceRegex.exec(referencesSection)) !== null) {
+        refs.push({
+            id: match[1],
+            text: match[2].trim()
+        });
+    }
 
-            // Clean up any HTML link remnants that might be at the end
-            cleanedContent = cleanedContent.replace(/\[\d+\]\([^)]+\)/g, '');
+    // Remove the entire references section from content
+    let cleanedContent = aboutContent;
+    if (referencesSectionMatch) {
+        cleanedContent = aboutContent.replace(/## References[\s\S]+$/, '').trim();
+    }
 
-            // Convert [N] numeric citations to links
-            cleanedContent = cleanedContent.replace(/\[(\d+)\](?:-|\s+)?/g, (match, refId) => {
-                if (refs.some(ref => ref.id === refId)) {
-                    return `[[${refId}]](#reference-${refId})`;
-                }
-                return match;
-            });
-
-            // Convert [^N] footnote references to citation links
-            cleanedContent = cleanedContent.replace(/\[\^(\d+)\]/g, (match, refId) => {
-                if (refs.some(ref => ref.id === refId)) {
-                    return `[[${refId}]](#reference-${refId})`;
-                }
-                return match;
-            });
-
-            // Sort refs numerically
-            refs.sort((a, b) => parseInt(a.id) - parseInt(b.id));
-            
-            setAbout(cleanedContent);
-            setReferences(refs);
-            
-            // Set personal info if available
-            if (data.data.attributes.personalInfo) {
-                setPersonalInfo(data.data.attributes.personalInfo);
-            }
-            
-            // Extract headings for the index (ignoring h1, only h2 and beyond)
-            const tempHeadings = [];
-            let sectionCounter = 0;
-            let subsectionCounter = 0;
-            
-            cleanedContent.split('\n').forEach(line => {
-                const match = line.match(/^(#{2,3})\s+(.*)/); // Only match ## and ###
-                if (match) {
-                    const level = match[1].length;
-                    const text = match[2];
-                    const id = slugify(text);
-                    
-                    if (level === 2) {
-                        sectionCounter++;
-                        subsectionCounter = 0;
-                    } else if (level === 3) {
-                        subsectionCounter++;
-                    }
-                    
-                    tempHeadings.push({ 
-                        level, 
-                        text,
-                        id,
-                        number: level === 2 ? sectionCounter : `${sectionCounter}.${subsectionCounter}`
-                    });
-                }
-            });
-            setHeadings(tempHeadings);
-            setLoading(false);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            setError('Failed to load content');
-            setLoading(false);
+    // Also collect inline footnote definitions [^N]: text outside the references section
+    const inlineFootnoteRegex = /^\[\^(\d+)\]:\s*(.+)$/gm;
+    let fnMatch;
+    while ((fnMatch = inlineFootnoteRegex.exec(cleanedContent)) !== null) {
+        const matchId = fnMatch[1];
+        const matchText = fnMatch[2];
+        if (!refs.some(r => r.id === matchId)) {
+            refs.push({ id: matchId, text: matchText.trim() });
         }
-    };
+    }
+    // Remove inline footnote definition lines from content
+    cleanedContent = cleanedContent.replace(/^\[\^(\d+)\]:\s*.+$/gm, '').trim();
 
-    useEffect(() => {
-        getAbout();
-    }, []);
+    // Clean up any HTML link remnants that might be at the end
+    cleanedContent = cleanedContent.replace(/\[\d+\]\([^)]+\)/g, '');
 
-    const activeHeading = useActiveHeading(!loading && !error);
+    // Convert [N] numeric citations to links
+    cleanedContent = cleanedContent.replace(/\[(\d+)\](?:-|\s+)?/g, (match, refId) => {
+        if (refs.some(ref => ref.id === refId)) {
+            return `[[${refId}]](#reference-${refId})`;
+        }
+        return match;
+    });
+
+    // Convert [^N] footnote references to citation links
+    cleanedContent = cleanedContent.replace(/\[\^(\d+)\]/g, (match, refId) => {
+        if (refs.some(ref => ref.id === refId)) {
+            return `[[${refId}]](#reference-${refId})`;
+        }
+        return match;
+    });
+
+    // Sort refs numerically
+    refs.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+    // Extract headings for the index (ignoring h1, only h2 and beyond)
+    const headings = [];
+    let sectionCounter = 0;
+    let subsectionCounter = 0;
+
+    cleanedContent.split('\n').forEach(line => {
+        const match = line.match(/^(#{2,3})\s+(.*)/); // Only match ## and ###
+        if (match) {
+            const level = match[1].length;
+            const text = match[2];
+            const id = slugify(text);
+
+            if (level === 2) {
+                sectionCounter++;
+                subsectionCounter = 0;
+            } else if (level === 3) {
+                subsectionCounter++;
+            }
+
+            headings.push({
+                level,
+                text,
+                id,
+                number: level === 2 ? sectionCounter : `${sectionCounter}.${subsectionCounter}`
+            });
+        }
+    });
+
+    return { content: cleanedContent, references: refs, headings };
+};
+
+const AboutText = () => {
+    const { status, data } = useCmsData(loadAbout);
+    const { data: contact } = useContact();
+    const activeHeading = useActiveHeading(status === 'ready');
+
+    const prepared = useMemo(() => prepareArticle(data?.article?.body || ''), [data]);
+    const { content: about, references, headings } = prepared;
 
     const markdownComponents = {
         // The page already has its h1 (the title), so a stray # in the article is an h2.
@@ -172,7 +164,7 @@ const AboutText = () => {
         ),
     };
 
-    if (loading) {
+    if (status === 'loading') {
         return (
             <>
                 <section className="bp-sec bp-sec--head" aria-busy="true">
@@ -192,17 +184,17 @@ const AboutText = () => {
         );
     }
 
-    if (error) {
+    if (status === 'error') {
         return (
             <>
                 <section className="bp-sec bp-sec--head">
                     <div className="bench-col">
-                        <PageHeader refdes="J1" title="Wanghley" lede={ABOUT_PAGE.tagline} />
+                        <PageHeader refdes="J1" title="Wanghley" />
                     </div>
                 </section>
                 <section className="bp-sec bp-sec--light">
                     <div className="bench-col about-error">
-                        <p>The article did not load. Check your connection and try again, or email <a className="bp-link" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.</p>
+                        <p>The article did not load. Check your connection and try again{contact?.email && <>, or email <a className="bp-link" href={`mailto:${contact.email}`}>{contact.email}</a></>}.</p>
                         <button type="button" className="btn btn--primary" onClick={() => window.location.reload()}>Try again</button>
                     </div>
                 </section>
@@ -210,11 +202,13 @@ const AboutText = () => {
         );
     }
 
-    // Infobox rows: a field the CMS sets wins; the static facts fill the gaps.
-    const info = personalInfo || {};
-    const infoRows = ABOUT_PAGE.infobox
-        .map(({ label, key, value }) => {
-            const v = info[key] || value;
+    const article = data.article || {};
+    const person = data.person || {};
+
+    // Infobox rows: a field the CMS leaves empty is not shown.
+    const infoRows = INFOBOX
+        .map(({ label, key }) => {
+            const v = person[key];
             if (!v) return null;
             return {
                 label,
@@ -224,7 +218,8 @@ const AboutText = () => {
             };
         })
         .filter(Boolean);
-    const photo = info.photo ? { src: info.photo, alt: 'Wanghley' } : ABOUT_PAGE.photo;
+    const pictureUrl = mediaUrl(person.picture, ['medium', 'large', 'small']);
+    const photo = pictureUrl ? { src: pictureUrl, alt: 'Wanghley' } : PHOTOS[0];
 
     // Wikipedia numbers its contents list, not the headings themselves.
     const referencesNumber = headings.filter((h) => h.level === 2).length + 1;
@@ -266,8 +261,8 @@ const AboutText = () => {
                 <div className="bench-col">
                     <PageHeader
                         refdes="J1"
-                        title={<>Wanghley <span className="about-ipa">({ABOUT_PAGE.pronunciation})</span></>}
-                        lede={ABOUT_PAGE.tagline}
+                        title={<>Wanghley {article.pronunciation && <span className="about-ipa">({article.pronunciation})</span>}</>}
+                        lede={article.tagline}
                     />
                 </div>
             </section>
@@ -285,9 +280,11 @@ const AboutText = () => {
                             {contents}
                         </details>
 
-                        <p className="about-hatnote">
-                            {ABOUT_PAGE.hatnote} <Link to="/about">{ABOUT_PAGE.hatnoteLink}</Link>.
-                        </p>
+                        {article.hatnote && (
+                            <p className="about-hatnote">
+                                {article.hatnote} {article.hatnoteLink && <Link to="/about">{article.hatnoteLink}</Link>}.
+                            </p>
+                        )}
 
                         <aside className="about-infobox" aria-label="Wanghley at a glance">
                             <p className="about-infobox__title">Wanghley</p>
@@ -298,7 +295,7 @@ const AboutText = () => {
                         </aside>
 
                         <Prose className="article-content about-content">
-                            <p className="about-lead"><strong>Wanghley</strong> {ABOUT_PAGE.lead}</p>
+                            {article.lead && <p className="about-lead"><strong>Wanghley</strong> {article.lead}</p>}
 
                             <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                                 {about}

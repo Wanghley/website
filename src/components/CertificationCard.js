@@ -11,12 +11,12 @@ const CertificationsList = ({ certifications = [] }) => (
       <p className="cv-empty">No certifications listed yet.</p>
     ) : (
       <ul className="cv-list">
-        {certifications.map(({ id, attributes: { name, organization, date, url, credID } }) => (
-          <CvEntry key={id} as="h3" when={date ? `Issued ${formatMonth(date)}` : undefined} org={name} role={organization}>
-            {credID && <p className="cv-entry__id">Credential ID {credID}</p>}
-            {url && url.trim() && (
+        {certifications.map((c) => (
+          <CvEntry key={c.documentId} as="h3" when={c.issuedDate ? `Issued ${formatMonth(c.issuedDate)}` : undefined} org={c.name} role={c.organization}>
+            {c.credentialId && <p className="cv-entry__id">Credential ID {c.credentialId}</p>}
+            {c.url && c.url.trim() && (
               <p className="cv-entry__link">
-                <a className="bp-link" href={url} target="_blank" rel="noopener noreferrer">Show credential <span aria-hidden="true">↗</span></a>
+                <a className="bp-link" href={c.url} target="_blank" rel="noopener noreferrer">Show credential <span aria-hidden="true">↗</span></a>
               </p>
             )}
           </CvEntry>

@@ -1,19 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { usePostHog } from '../lib/analytics';
-import { fetchProjects } from '../api/projects';
+import { fetchAllProjects } from '../api/site';
+import { mediaUrl } from '../api/cms';
 import { formatMonth } from '../utils/formatDate';
 import { PageHeader, BenchCard, BenchCards } from '../components/bench';
 import '../components/css/list-page.css';
 
 // The whole list is a few dozen rows, so it loads in one go: search and the
 // category filter then cover every project, not just the pages scrolled so far.
-const PAGE_SIZE = 100;
-
-const imageOf = (p) => {
-    const f = p?.attributes?.Featured?.data?.attributes;
-    return f?.formats?.medium?.url || f?.formats?.small?.url || f?.url || null;
-};
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
@@ -27,16 +22,13 @@ const Projects = () => {
 
     const load = useCallback(async () => {
         setStatus('loading');
-        const first = await fetchProjects(1, PAGE_SIZE);
-        if (!first.meta) { setStatus('error'); return; } // fetchProjects returns meta: null when the request failed
-        let rows = first.data || [];
-        const pages = first.meta.pagination?.pageCount || 1;
-        for (let p = 2; p <= pages; p++) {
-            const next = await fetchProjects(p, PAGE_SIZE);
-            rows = rows.concat(next.data || []);
+        try {
+            const rows = await fetchAllProjects();
+            setProjects(rows.filter((p) => p?.title));
+            setStatus('ready');
+        } catch {
+            setStatus('error');
         }
-        setProjects(rows.filter((p) => p?.attributes?.Title));
-        setStatus('ready');
     }, []);
 
     useEffect(() => { load(); }, [load]);
@@ -59,22 +51,22 @@ const Projects = () => {
 
     // newest first; date-only strings sort correctly as text
     const sorted = useMemo(
-        () => [...projects].sort((a, b) => String(b.attributes.Start || '').localeCompare(String(a.attributes.Start || ''))),
+        () => [...projects].sort((a, b) => String(b.startDate || '').localeCompare(String(a.startDate || ''))),
         [projects]
     );
 
     const categories = useMemo(() => {
         const counts = {};
-        sorted.forEach((p) => { if (p.attributes.Category) counts[p.attributes.Category] = (counts[p.attributes.Category] || 0) + 1; });
+        sorted.forEach((p) => { if (p.category) counts[p.category] = (counts[p.category] || 0) + 1; });
         const named = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).map((name) => ({ name, count: counts[name] }));
         return [{ name: 'All', count: sorted.length }, ...named];
     }, [sorted]);
 
     const shown = useMemo(() => {
         const q = searchTerm.trim().toLowerCase();
-        return sorted.filter(({ attributes: a }) => {
-            const matchesSearch = !q || a.Title.toLowerCase().includes(q) || (a.Teaser || '').toLowerCase().includes(q);
-            const matchesCategory = activeCategory === 'All' || a.Category === activeCategory;
+        return sorted.filter((a) => {
+            const matchesSearch = !q || a.title.toLowerCase().includes(q) || (a.summary || '').toLowerCase().includes(q);
+            const matchesCategory = activeCategory === 'All' || a.category === activeCategory;
             return matchesSearch && matchesCategory;
         });
     }, [sorted, searchTerm, activeCategory]);
@@ -180,15 +172,15 @@ const Projects = () => {
                     {status === 'ready' && shown.length > 0 && (
                         <BenchCards>
                             {shown.map((project, index) => {
-                                const { Title, Teaser, Category, Start, slug, Github, Demo } = project.attributes;
+                                const { title: Title, summary: Teaser, category: Category, startDate: Start, slug, githubUrl: Github, demoUrl: Demo } = project;
                                 return (
                                     <BenchCard
-                                        key={project.id ?? slug}
+                                        key={project.documentId ?? slug}
                                         href={`/projects/${slug}`}
                                         title={Title}
                                         text={Teaser}
                                         meta={[Start && formatMonth(Start), Category].filter(Boolean).join(' · ')}
-                                        image={imageOf(project)}
+                                        image={mediaUrl(project.cover)}
                                         onClick={() => posthog?.capture('project_card_clicked', { title: Title, slug, category: Category, index })}
                                         actions={[
                                             Github && { label: 'Source', href: Github, onClick: () => posthog?.capture('project_github_quick_clicked', { title: Title, slug }) },

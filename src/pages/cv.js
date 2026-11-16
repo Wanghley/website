@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import { Helmet } from "react-helmet-async";
 import { FaPrint } from "react-icons/fa";
 import { usePostHog } from '../lib/analytics';
-import { fetchPersonalInfo } from '../api/personal-info';
-import { fetchAllEducations } from '../api/education';
-import { fetchAllExperiences } from '../api/experience';
-import { fetchAllPublications } from '../api/publication';
-import { fetchAllCertifications } from '../api/certification';
-import { getSkillsgrouped } from "../api/skills";
+import {
+  fetchCvPage, fetchPersonalInfo, fetchEducations, fetchExperiences,
+  fetchPublications, fetchCertifications, fetchAllSkills,
+} from '../api/site';
+import useContact from '../hooks/useContact';
 import PersonalInfo from '../components/cv/PersonalInfo';
 import EducationList from '../components/cv/EducationList';
 import ExperienceList from '../components/cv/ExperienceList';
@@ -16,8 +15,7 @@ import PublicationList from '../components/cv/PublicationList';
 import CertificationsList from '../components/CertificationCard';
 import SkillsList from '../components/cv/SkillList';
 import { PageHeader } from '../components/bench';
-import { CV } from '../data/cv';
-import { CONTACT } from '../data/home';
+import { CV_SECTIONS } from '../data/layout';
 import './css/cv.css';
 
 const CVPage = () => {
@@ -30,7 +28,9 @@ const CVPage = () => {
   const [skills, setSkills]                 = useState([]);
   const [loading, setLoading]               = useState(true);
   const [error, setError]                   = useState(null);
-  const [activeSection, setActiveSection]   = useState(CV.sections[0].id);
+  const [activeSection, setActiveSection]   = useState(CV_SECTIONS[0].id);
+  const [cvPage, setCvPage]                 = useState(null);
+  const { data: contact } = useContact();
 
   // IntersectionObserver to track which section is in view
   const observerRef = useRef(null);
@@ -43,7 +43,7 @@ const CVPage = () => {
       },
       { rootMargin: '-20% 0px -65% 0px', threshold: 0 }
     );
-    CV.sections.forEach(({ id }) => {
+    CV_SECTIONS.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) observerRef.current.observe(el);
     });
@@ -54,17 +54,27 @@ const CVPage = () => {
     const fetchData = async () => {
       try {
         const [
-          personal, educationsData, experiencesData,
-          publicationsData, certificationsData, skillsData
+          page, personal, educationsData, experiencesData,
+          publicationsData, certificationsData, skillRows,
         ] = await Promise.all([
+          fetchCvPage(),
           fetchPersonalInfo(),
-          fetchAllEducations(),
-          fetchAllExperiences(),
-          fetchAllPublications(),
-          fetchAllCertifications(),
-          getSkillsgrouped(),
+          fetchEducations(),
+          fetchExperiences(),
+          fetchPublications(),
+          fetchCertifications(),
+          fetchAllSkills(),
         ]);
 
+        // The skills section groups the CMS rows by category.
+        const skillsData = skillRows.reduce((acc, s) => {
+          const category = s.category || 'Other';
+          if (!acc[category]) acc[category] = [];
+          acc[category].push({ name: s.name, expertise: s.level });
+          return acc;
+        }, {});
+
+        setCvPage(page);
         setPersonalInfo(personal);
         setEducations(educationsData);
         setExperiences(experiencesData);
@@ -133,7 +143,7 @@ const CVPage = () => {
         </section>
         <section className="bp-sec bp-sec--light">
           <div className="bench-col cv-error">
-            <p>The data service did not answer. Check your connection and try again, or email <a className="bp-link" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> and I will send it.</p>
+            <p>The data service did not answer. Check your connection and try again{contact?.email && <>, or email <a className="bp-link" href={`mailto:${contact.email}`}>{contact.email}</a> and I will send it</>}.</p>
             <button type="button" className="btn btn--primary" onClick={() => window.location.reload()}>Try again</button>
           </div>
         </section>
@@ -148,11 +158,11 @@ const CVPage = () => {
     <main id="main" className="cv-page">
       <Helmet>
         <title>Curriculum vitae | Wanghley Martins</title>
-        <meta name="description" content={`Curriculum vitae of Wanghley Martins. ${CV.lede}`} />
+        <meta name="description" content={`Curriculum vitae of Wanghley Martins. ${cvPage?.lede || ''}`} />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://wanghley.com/curriculum-vitae" />
         <meta property="og:title" content="Curriculum vitae | Wanghley Martins" />
-        <meta property="og:description" content={CV.lede} />
+        <meta property="og:description" content={cvPage?.lede || ''} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://wanghley.com/curriculum-vitae" />
         <meta property="og:image" content="https://wanghley.com/og-image.png" />
@@ -160,9 +170,9 @@ const CVPage = () => {
 
       <section className="bp-sec bp-sec--head cv-head">
         <div className="bench-col">
-          <PageHeader refdes="U1" title={personalInfo?.name || 'Curriculum vitae'} lede={CV.lede} meta={keywords}>
+          <PageHeader refdes="U1" title={personalInfo?.name || 'Curriculum vitae'} lede={cvPage?.lede} meta={keywords}>
             <PersonalInfo personalInfo={personalInfo} />
-            <p className="cv-open">{CV.open}</p>
+            {cvPage?.openTo && <p className="cv-open">{cvPage.openTo}</p>}
             <div className="cv-actions no-print">
               <Link className="btn btn--primary" to="/contact">Get in touch</Link>
               <button type="button" className="btn btn--ghost" onClick={handlePrint}>
@@ -178,7 +188,7 @@ const CVPage = () => {
           <nav className="cv-rail no-print" aria-label="CV sections">
             <p className="cv-rail__label">On this page</p>
             <ul>
-              {CV.sections.map(({ id, label }) => (
+              {CV_SECTIONS.map(({ id, label }) => (
                 <li key={id}>
                   <a href={`#${id}`} aria-current={activeSection === id ? 'true' : undefined} onClick={(e) => handleNavClick(e, id)}>
                     {label}

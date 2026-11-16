@@ -1,9 +1,9 @@
 import React from 'react';
 import { SpecTable } from '../bench';
-import { SKILLS } from '../../data/home';
+import { SKILL_ORDER } from '../../data/layout';
 
 const EXPERTISE = { Basic: 1, Intermediate: 2, Proficient: 3, Advanced: 4 };
-const rank = (category) => { const i = SKILLS.order.indexOf(category); return i < 0 ? SKILLS.order.length : i; };
+const rank = (category) => { const i = SKILL_ORDER.indexOf(category); return i < 0 ? SKILL_ORDER.length : i; };
 
 // The CMS groups skills by category, in no set order. Categories follow the
 // home page (Engineering first); within a group the strongest come first.

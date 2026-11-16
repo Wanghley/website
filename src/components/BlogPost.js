@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { usePostHog } from '../lib/analytics';
-import axios from 'axios';
 import './css/article.css';
 import { formatDate } from '../utils/formatDate';
-import { fetchBlogs } from '../api/blog';
+import { fetchPage } from '../api/cms';
+import { fetchRecentPosts } from '../api/site';
 import { Helmet } from "react-helmet-async";
 import { PageHeader, BenchCard, BenchCards } from './bench';
 import ArticleBody from './article/ArticleBody';
@@ -12,9 +12,6 @@ import TableOfContents from './article/TableOfContents';
 import ShareButton from './article/ShareButton';
 import { useActiveHeading, useReadCompletion } from './article/hooks';
 import { calculateReadingTime, extractHeadings, pickImage } from './article/utils';
-
-const baseURL = process.env.REACT_APP_cms_base_url;
-const apiKey = process.env.REACT_APP_cms_api_token;
 
 // Loading: the same two bands with plain blocks where the text will be
 const BlogSkeleton = () => (
@@ -53,26 +50,26 @@ const BlogPostPage = () => {
             setError(null);
 
             try {
-                const response = await axios.get(
-                    `${baseURL}/api/slugify/slugs/blog/${slug}?populate=*`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${apiKey}`,
-                        },
-                    }
-                );
-
-                const postData = response.data.data;
+                const { data } = await fetchPage('blog-posts', {
+                    'filters[slug][$eq]': slug,
+                    'pagination[pageSize]': 1,
+                    populate: '*',
+                });
+                const postData = data[0] || null;
                 setBlogPost(postData);
                 posthog?.capture('blog_post_viewed', {
                     slug,
-                    title: postData?.attributes?.Title,
-                    category: postData?.attributes?.Categories?.[0],
+                    title: postData?.title,
+                    category: postData?.categories?.[0],
                 });
 
                 // More to read: the latest posts, minus this one. A failure here is not an error for the page.
-                const latest = await fetchBlogs(1, 4);
-                setRelatedPosts(Array.isArray(latest) ? latest : []);
+                try {
+                    const latest = await fetchRecentPosts(4);
+                    setRelatedPosts(latest.data || []);
+                } catch {
+                    setRelatedPosts([]);
+                }
             } catch (err) {
                 console.error("Error fetching blog post:", err);
                 setError("The data service did not answer. Check your connection and try again.");
@@ -87,13 +84,13 @@ const BlogPostPage = () => {
         }
     }, [slug, posthog]);
 
-    const headings = useMemo(() => extractHeadings(blogPost?.attributes?.Content), [blogPost]);
+    const headings = useMemo(() => extractHeadings(blogPost?.body), [blogPost]);
     const activeHeadingId = useActiveHeading(!loading && !!blogPost);
     useReadCompletion(!!blogPost, () => posthog?.capture('blog_read_completed', {
         slug,
-        title: blogPost?.attributes?.Title,
-        reading_time_min: calculateReadingTime(blogPost?.attributes?.Content),
-        categories: blogPost?.attributes?.Categories,
+        title: blogPost?.title,
+        reading_time_min: calculateReadingTime(blogPost?.body),
+        categories: blogPost?.categories,
     }));
 
     if (loading) {
@@ -137,14 +134,15 @@ const BlogPostPage = () => {
 
     // Extract blog post data
     const {
-        Title, Content, Categories, publishedAt, updated, Teaser, Featured
-    } = blogPost.attributes;
+        title: Title, body: Content, categories: Categories, date, publishedAt, updatedAt, excerpt: Teaser, cover: coverMedia,
+    } = blogPost;
+    const publishedDate = date || publishedAt;
 
-    const cover = pickImage(Featured?.data?.attributes);
+    const cover = pickImage(coverMedia);
     const categoryList = Categories?.slice(0, 3) || [];
     const readingTime = calculateReadingTime(Content);
     const blogUrl = `https://wanghley.com/blog/${slug}`;
-    const more = relatedPosts.filter((post) => post.attributes?.slug !== slug).slice(0, 3);
+    const more = relatedPosts.filter((post) => post.slug !== slug).slice(0, 3);
 
     // Schema.org structured data
     const articleSchema = {
@@ -152,8 +150,8 @@ const BlogPostPage = () => {
         "@type": "BlogPosting",
         "headline": Title,
         "image": cover?.url,
-        "datePublished": publishedAt,
-        "dateModified": updated || publishedAt,
+        "datePublished": publishedDate,
+        "dateModified": updatedAt || publishedDate,
         "author": {
             "@type": "Person",
             "name": "Wanghley",
@@ -187,8 +185,8 @@ const BlogPostPage = () => {
                 <meta property="og:type" content="article" />
                 <meta property="og:url" content={blogUrl} />
                 <meta property="og:image" content={cover?.url || 'https://wanghley.com/og-image.png'} />
-                <meta property="article:published_time" content={publishedAt} />
-                <meta property="article:modified_time" content={updated || publishedAt} />
+                <meta property="article:published_time" content={publishedDate} />
+                <meta property="article:modified_time" content={updatedAt || publishedDate} />
                 <meta property="article:author" content="Wanghley" />
                 <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
                 <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
@@ -206,7 +204,7 @@ const BlogPostPage = () => {
                         refdes="U3"
                         title={Title}
                         lede={Teaser}
-                        meta={[categoryList[0], publishedAt ? formatDate(publishedAt) : null, readingTime ? `${readingTime} min read` : null].filter(Boolean)}
+                        meta={[categoryList[0], publishedDate ? formatDate(publishedDate) : null, readingTime ? `${readingTime} min read` : null].filter(Boolean)}
                     >
                         <div className="article-actions">
                             <ShareButton title={Title} url={blogUrl} event="blog_post_shared" />
@@ -243,20 +241,17 @@ const BlogPostPage = () => {
                                 <section className="article-section" aria-labelledby="article-more-title">
                                     <h2 id="article-more-title" className="article-section__title">More posts</h2>
                                     <BenchCards>
-                                        {more.map((post, index) => {
-                                            const a = post.attributes;
-                                            return (
-                                                <BenchCard
-                                                    key={post.id ?? a.slug}
-                                                    href={`/blog/${a.slug}`}
-                                                    title={a.Title}
-                                                    text={a.Teaser}
-                                                    meta={a.publishedAt ? formatDate(a.publishedAt) : undefined}
-                                                    image={pickImage(a.Featured?.data?.attributes, ['small', 'medium'])?.url}
-                                                    onClick={() => posthog?.capture('blog_related_post_clicked', { from_slug: slug, to_slug: a.slug, title: a.Title, index })}
-                                                />
-                                            );
-                                        })}
+                                        {more.map((post, index) => (
+                                            <BenchCard
+                                                key={post.documentId ?? post.slug}
+                                                href={`/blog/${post.slug}`}
+                                                title={post.title}
+                                                text={post.excerpt}
+                                                meta={(post.date || post.publishedAt) ? formatDate(post.date || post.publishedAt) : undefined}
+                                                image={pickImage(post.cover, ['small', 'medium'])?.url}
+                                                onClick={() => posthog?.capture('blog_related_post_clicked', { from_slug: slug, to_slug: post.slug, title: post.title, index })}
+                                            />
+                                        ))}
                                     </BenchCards>
                                 </section>
                             )}

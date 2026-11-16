@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { usePostHog } from '../lib/analytics';
-import { fetchBlogs } from '../api/blog';
+import { fetchAllPosts } from '../api/site';
+import { mediaUrl } from '../api/cms';
 import { formatMonth } from '../utils/formatDate';
-import { calculateReadingTime, pickImage } from '../components/article/utils';
+import { calculateReadingTime } from '../components/article/utils';
 import { PageHeader, BenchCard, BenchCards } from '../components/bench';
 import '../components/css/list-page.css';
 
 // The whole list is a handful of posts, so it loads in one go: search and the
 // category filter then cover every post.
-const PAGE_SIZE = 100;
 
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
@@ -23,10 +23,13 @@ const Blogs = () => {
 
     const load = useCallback(async () => {
         setStatus('loading');
-        const rows = await fetchBlogs(1, PAGE_SIZE); // fetchBlogs returns undefined when the request failed
-        if (!Array.isArray(rows)) { setStatus('error'); return; }
-        setPosts(rows.filter((p) => p?.attributes?.Title));
-        setStatus('ready');
+        try {
+            const rows = await fetchAllPosts();
+            setPosts(rows.filter((p) => p?.title));
+            setStatus('ready');
+        } catch {
+            setStatus('error');
+        }
     }, []);
 
     useEffect(() => { load(); }, [load]);
@@ -49,22 +52,22 @@ const Blogs = () => {
 
     // newest first
     const sorted = useMemo(
-        () => [...posts].sort((a, b) => String(b.attributes.publishedAt || '').localeCompare(String(a.attributes.publishedAt || ''))),
+        () => [...posts].sort((a, b) => String(b.date || b.publishedAt || '').localeCompare(String(a.date || a.publishedAt || ''))),
         [posts]
     );
 
     const categories = useMemo(() => {
         const counts = {};
-        sorted.forEach((p) => (p.attributes.Categories || []).forEach((c) => { counts[c] = (counts[c] || 0) + 1; }));
+        sorted.forEach((p) => (p.categories || []).forEach((c) => { counts[c] = (counts[c] || 0) + 1; }));
         const named = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).map((name) => ({ name, count: counts[name] }));
         return [{ name: 'All', count: sorted.length }, ...named];
     }, [sorted]);
 
     const shown = useMemo(() => {
         const q = searchTerm.trim().toLowerCase();
-        return sorted.filter(({ attributes: a }) => {
-            const matchesSearch = !q || a.Title.toLowerCase().includes(q) || (a.Teaser || '').toLowerCase().includes(q);
-            const matchesCategory = activeCategory === 'All' || (a.Categories || []).includes(activeCategory);
+        return sorted.filter((a) => {
+            const matchesSearch = !q || a.title.toLowerCase().includes(q) || (a.excerpt || '').toLowerCase().includes(q);
+            const matchesCategory = activeCategory === 'All' || (a.categories || []).includes(activeCategory);
             return matchesSearch && matchesCategory;
         });
     }, [sorted, searchTerm, activeCategory]);
@@ -170,16 +173,16 @@ const Blogs = () => {
                     {status === 'ready' && shown.length > 0 && (
                         <BenchCards>
                             {shown.map((post, index) => {
-                                const { Title, Teaser, Categories, publishedAt, slug, Featured, Content } = post.attributes;
+                                const { title: Title, excerpt: Teaser, categories: Categories, date, publishedAt, slug, cover, body: Content } = post;
                                 const readTime = calculateReadingTime(Content);
                                 return (
                                     <BenchCard
-                                        key={post.id ?? slug}
+                                        key={post.documentId ?? slug}
                                         href={`/blog/${slug}`}
                                         title={Title}
                                         text={Teaser}
-                                        meta={[publishedAt && formatMonth(publishedAt), Categories?.[0], readTime ? `${readTime} min read` : null].filter(Boolean).join(' · ')}
-                                        image={pickImage(Featured?.data?.attributes, ['medium', 'small', 'large'])?.url}
+                                        meta={[(date || publishedAt) && formatMonth(date || publishedAt), Categories?.[0], readTime ? `${readTime} min read` : null].filter(Boolean).join(' · ')}
+                                        image={mediaUrl(cover, ['medium', 'small', 'large'])}
                                         onClick={() => posthog?.capture('blog_card_clicked', { title: Title, slug, category: Categories?.[0], index })}
                                     />
                                 );

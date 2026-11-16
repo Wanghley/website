@@ -1,47 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { fetchBlogs } from '../../../api/blog';
-import { BLOG } from '../../../data/home';
+import React from 'react';
+import { fetchHomePage, fetchRecentPosts } from '../../../api/site';
+import { mediaUrl } from '../../../api/cms';
+import useCmsData from '../../../hooks/useCmsData';
 import { BenchCard, BenchCards } from '../../bench';
 
-const imageOf = (p) => {
-  const f = p?.attributes?.Featured?.data?.attributes;
-  return f?.formats?.medium?.url || f?.formats?.small?.url || f?.url || null;
-};
 const date = (d) => (d ? new Date(d).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '');
 
-export default function Blog() {
-  const [posts, setPosts] = useState([]);
+const load = () => fetchHomePage().then(async (home) => {
+  const { data } = await fetchRecentPosts(home.blogCount || 3);
+  return { home, posts: data };
+});
 
-  useEffect(() => {
-    let alive = true;
-    fetchBlogs(1, BLOG.count)
-      .then((res) => {
-        const rows = (Array.isArray(res?.data) ? res.data : res || []).filter((p) => p?.attributes?.Title).slice(0, BLOG.count);
-        if (alive) setPosts(rows);
-      })
-      .catch(() => {});
-    return () => { alive = false; };
-  }, []);
+export default function Blog() {
+  const { status, data } = useCmsData(load);
+  if (status !== 'ready' || !data) return null;
 
   return (
     <section id="blog" className="bp-sec bp-sec--light" aria-labelledby="blog-heading">
       <div className="bench-col">
-        <h2 id="blog-heading" className="bp-sec__title">{BLOG.heading}</h2>
-        {posts.length > 0 && (
+        <h2 id="blog-heading" className="bp-sec__title">{data.home.blogHeading}</h2>
+        {data.posts.length > 0 && (
           <BenchCards>
-            {posts.map((p) => {
-              const a = p.attributes;
-              return (
-                <BenchCard
-                  key={p.id}
-                  href={`/blog/${a.slug}`}
-                  title={a.Title}
-                  text={a.Excerpt}
-                  meta={date(a.published || a.publishedAt)}
-                  image={imageOf(p)}
-                />
-              );
-            })}
+            {data.posts.map((p) => (
+              <BenchCard
+                key={p.documentId}
+                href={`/blog/${p.slug}`}
+                title={p.title}
+                text={p.excerpt}
+                meta={date(p.date || p.publishedAt)}
+                image={mediaUrl(p.cover)}
+              />
+            ))}
           </BenchCards>
         )}
         <p className="bp-sec__more"><a className="bp-link" href="/blog">All posts <span aria-hidden="true">→</span></a></p>

@@ -16,8 +16,8 @@ const PersonalInfo = ({ personalInfo }) => {
     info.email && { key: 'email', Icon: FaEnvelope, text: info.email, href: `mailto:${info.email}` },
     info.linkedin && { key: 'linkedin', Icon: FaLinkedin, text: linkedinHandle(info.linkedin), href: info.linkedin, external: true },
     info.github && { key: 'github', Icon: FaGithub, text: info.github.split('/').pop().toLowerCase(), href: info.github, external: true },
-    info.googlescholar && { key: 'scholar', Icon: FaGoogleScholar, text: 'Google Scholar', href: info.googlescholar, external: true },
-    info.researchgate && { key: 'rg', Icon: FaResearchgate, text: 'ResearchGate', href: info.researchgate, external: true },
+    info.googleScholar && { key: 'scholar', Icon: FaGoogleScholar, text: 'Google Scholar', href: info.googleScholar, external: true },
+    info.researchGate && { key: 'rg', Icon: FaResearchgate, text: 'ResearchGate', href: info.researchGate, external: true },
   ].filter(Boolean);
 
   if (!items.length) return null;

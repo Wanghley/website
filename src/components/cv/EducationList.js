@@ -9,8 +9,8 @@ const EducationList = ({ educations = [] }) => (
   <>
     <h2 className="cv-section__title">Education</h2>
     <ul className="cv-list">
-      {educations.map(({ id, attributes: a }) => (
-        <CvEntry key={id ?? a.title} as="h3" when={span(a.start, a.end)} where={a.location?.description} org={a.title} role={[a.institution, a.degree].filter(Boolean).join(' · ')}>
+      {educations.map((a) => (
+        <CvEntry key={a.documentId} as="h3" when={span(a.startDate, a.endDate)} where={a.location?.description} org={a.title} role={[a.institution, a.degree].filter(Boolean).join(' · ')}>
           <CvText>{a.description}</CvText>
         </CvEntry>
       ))}

@@ -1,23 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { usePostHog } from '../../lib/analytics';
 import { useScrollToSection } from '../../lib/LenisRoot';
+import { fetchHomePage } from '../../api/site';
+import useCmsData from '../../hooks/useCmsData';
 import HeroBench, { SenseValue } from './HeroBench';
 import './css/HeroChamber.css';
 
-// Hero copy lives in /copy.md. Edit it there, then mirror it here.
-const COPY = {
-  eyebrow: 'ENGINEER · RESEARCHER · MAKER · INVENTOR · CURIOUS',
-  // The headline rotates (reduced motion shows them all as a short list).
-  // *word* marks an accent word (copper)
-  lines: [
-    'Compute at the sensor boundary.',
-    'ECE PhD student at Rice.',
-    'Engineering powered by *gambiarra*.',
-    'Mobilizing ecosystems across the Americas.',
-    'Deep tech for human impact.',
-  ],
-
-};
+// The hero's words come from the CMS home page. Each headline line may mark an
+// accent word with *asterisks* (rendered in copper).
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(
@@ -41,31 +31,34 @@ const accent = (t) => t.split(/(\*[^*]+\*)/).map((part, n) => (
 // The headline: one sentence at a time, stacked in the same grid cell so the
 // box is as tall as the longest sentence (no layout shift). The whole list is
 // in the DOM for assistive tech; reduced motion shows it as a plain list.
-function Headline({ reduced }) {
+function Headline({ reduced, lines }) {
   const [i, setI] = useState(0);
+  const count = lines.length;
   useEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || count < 2) return undefined;
     let id;
-    const start = () => { id = setInterval(() => setI((n) => (n + 1) % COPY.lines.length), ROTATE_MS); };
+    const start = () => { id = setInterval(() => setI((n) => (n + 1) % count), ROTATE_MS); };
     const stop = () => clearInterval(id);
     const onVis = () => { stop(); if (!document.hidden) start(); };
     start();
     document.addEventListener('visibilitychange', onVis);
     return () => { stop(); document.removeEventListener('visibilitychange', onVis); };
-  }, [reduced]);
+  }, [reduced, count]);
+
+  if (!count) return null;
 
   if (reduced) {
     return (
       <ul className="hero__headline hero__headline--static">
-        {COPY.lines.map((t) => <li key={t}>{accent(t)}</li>)}
+        {lines.map((t) => <li key={t}>{accent(t)}</li>)}
       </ul>
     );
   }
   return (
     <div className="hero__headline">
       <span className="hero__rotator" aria-hidden="true">
-        {COPY.lines.map((t, n) => (
-          <span key={t} className={`hero__rotator-item${n === i ? ' is-on' : ''}`}>{accent(t)}</span>
+        {lines.map((t, n) => (
+          <span key={t} className={`hero__rotator-item${n === i % count ? ' is-on' : ''}`}>{accent(t)}</span>
         ))}
       </span>
     </div>
@@ -76,20 +69,22 @@ export default function HeroChamber() {
   const posthog = usePostHog();
   const scrollToSection = useScrollToSection();
   const reduced = useReducedMotion();
+  const { status, data: home } = useCmsData(fetchHomePage);
+  const lines = status === 'ready' && Array.isArray(home?.heroLines) ? home.heroLines : [];
 
   return (
     <section id="home" className="hero" aria-labelledby="hero-title">
       <HeroBench className="hero__bench" reducedMotion={reduced} />
 
       <div className="hero__content bench-col">
-        <p className="hero__eyebrow">{COPY.eyebrow}</p>
+        {home?.heroEyebrow && <p className="hero__eyebrow">{home.heroEyebrow}</p>}
 
         <h1 id="hero-title" className="hero__title">
           <span className="hero__name">Wanghley</span>
-          <span className="sr-only"> Soares Martins. {COPY.lines.map(plain).join(' ')}</span>
+          <span className="sr-only"> Soares Martins. {lines.map(plain).join(' ')}</span>
         </h1>
 
-        <Headline reduced={reduced} />
+        <Headline reduced={reduced} lines={lines} />
 
         <div className="hero__ctas">
           <a
@@ -122,13 +117,13 @@ export default function HeroChamber() {
 
       <div className="hero__instrument bench-col">
         <p aria-hidden="true" className="hero__readout">
-          <span>PHD STUDENT · RICE ECE</span>
-          <span>HOUSTON 29.72°N 95.40°W</span>
+          {home?.heroStatus && <span>{home.heroStatus}</span>}
+          {home?.heroLocation && <span>{home.heroLocation}</span>}
           <span>
             SENSE <SenseValue className="hero__pf" /> pF
           </span>
         </p>
-        <a className="hero__open" href="#contact">Open to roles, research and speaking <span aria-hidden="true">→</span></a>
+        {home?.heroCta && <a className="hero__open" href="#contact">{home.heroCta} <span aria-hidden="true">→</span></a>}
       </div>
     </section>
   );

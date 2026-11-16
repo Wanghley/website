@@ -1,4 +1,5 @@
 import React from 'react';
+import { cmsUrl } from '../../api/cms';
 
 export const slugify = (text) => String(text).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
@@ -53,10 +54,10 @@ export const copyToClipboard = async (text) => {
 
 // The best CMS rendition of an image, with its size so the page does not jump
 // when it loads.
-export const pickImage = (attrs, order = ['large', 'medium', 'small']) => {
+export const pickImage = (media, order = ['large', 'medium', 'small']) => {
     for (const key of order) {
-        const f = attrs?.formats?.[key];
-        if (f?.url) return { url: f.url, width: f.width, height: f.height };
+        const f = media?.formats?.[key];
+        if (f?.url) return { url: cmsUrl(f.url), width: f.width, height: f.height };
     }
-    return attrs?.url ? { url: attrs.url, width: attrs.width, height: attrs.height } : null;
+    return media?.url ? { url: cmsUrl(media.url), width: media.width, height: media.height } : null;
 };
