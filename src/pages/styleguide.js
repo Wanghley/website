@@ -1,6 +1,7 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import rubrica from '../assets/handwriting/rubrica.png';
+import { PageHeader, SilkRule, SpecTable, Prose, BenchCard, BenchCards } from '../components/bench';
 import './css/styleguide.css';
 
 const COLORS = [
@@ -184,6 +185,79 @@ export default function Styleguide() {
           <li>--stagger 48ms · Nothing bounces except the Funko</li>
           <li>Reduced motion: animations off globally, and each set piece gets a designed still</li>
         </ul>
+      </section>
+
+      <section className="sg__section bench-col" aria-labelledby="sg-kit">
+        <h2 id="sg-kit" className="sg__h2">5. Page kit</h2>
+        <p className="sg__note">
+          Shared by the home page and every inner page (components/bench, styles in bench-page.css). Dark band first,
+          then the same parts on a light band. The silkscreen designator sits on a hairline, away from the heading, so
+          it reads as a marking on the board and not as a label above the title.
+        </p>
+      </section>
+
+      <section className="bp-sec" aria-labelledby="sg-kit-head">
+        <div className="bench-col">
+          <PageHeader
+            as="h3"
+            refdes="U2"
+            title="Page header"
+            lede="A title, one sentence on what the page is for, and a mono line for the facts."
+            meta={['12 items', 'Updated Oct 2026']}
+          />
+          <h3 id="sg-kit-head" className="sg__h3">Spec table (mono values) and cards</h3>
+          <SpecTable
+            data
+            rows={[
+              { label: 'Category', value: 'Hardware' },
+              { label: 'Dates', value: 'Jan 2025 – Mar 2025' },
+              { label: 'Links', value: <a className="bp-link" href="#sg-kit">Source on GitHub</a> },
+            ]}
+          />
+          <div className="sg__stack">
+            <BenchCards>
+              <BenchCard href="#sg-kit" meta="Mar 2025" title="A card with an image tile left blank" text="One or two sentences of teaser, clamped to three lines so a row of cards stays even." />
+              <BenchCard href="#sg-kit" meta="Feb 2025" title="A longer card title that wraps onto a second line" text="Titles are set at the step-1 size with a tight tracking and link in the band's text colour." />
+              <BenchCard href="#sg-kit" meta="Jan 2025" title="Third card" />
+            </BenchCards>
+          </div>
+        </div>
+      </section>
+
+      <section className="bp-sec bp-sec--light" aria-labelledby="sg-kit-prose">
+        <div className="bench-col">
+          <SilkRule refdes="J1" />
+          <h3 id="sg-kit-prose" className="bp-sec__title">Prose on a light band</h3>
+          <Prose>
+            <p>
+              Body text sits in a 68-character column at a 1.7 line height, so a long paragraph stays easy to follow
+              from one line to the next. A <a href="#sg-kit">link</a> keeps its underline, and a footnote marker
+              <sup><a href="#sg-note">1</a></sup> turns copper.
+            </p>
+            <h2>A heading inside prose</h2>
+            <p>There is more space above a heading than below it, and headings balance their own line breaks.</p>
+            <ul>
+              <li>Lists keep a visible marker in the muted tone.</li>
+              <li>Inline <code>code</code> sits on the band's surface colour.</li>
+            </ul>
+            <blockquote>
+              <p>Quotes get a one-pixel rule, never a thick coloured edge.</p>
+            </blockquote>
+            <pre><code>{`.bp-prose > * + * { margin-top: 1.1em; }`}</code></pre>
+            <table>
+              <thead>
+                <tr><th>Pair</th><th>Contrast</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>paper on ink</td><td>16.7:1</td></tr>
+                <tr><td>signal on ink</td><td>7.5:1</td></tr>
+                <tr><td>copper on ink</td><td>6.5:1</td></tr>
+                <tr><td>muted on ink</td><td>6.4:1</td></tr>
+              </tbody>
+            </table>
+            <p id="sg-note"><sup>1</sup> Numerals in tables use tabular figures so columns line up.</p>
+          </Prose>
+        </div>
       </section>
     </main>
   );

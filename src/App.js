@@ -1,5 +1,6 @@
 import './App.css';
 import './components/css/global.css';
+import './components/css/bench-page.css';
 import { lazy, Suspense, useEffect } from 'react';
 import {
   BrowserRouter as Router,

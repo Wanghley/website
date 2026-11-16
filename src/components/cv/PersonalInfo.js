@@ -1,76 +1,46 @@
 import React from 'react';
-import '../css/PersonalInfo.css';
 import { FaEnvelope, FaGithub, FaLinkedin, FaMapMarkerAlt } from 'react-icons/fa';
-import { FaGoogleScholar, FaResearchgate } from "react-icons/fa6";
+import { FaGoogleScholar, FaResearchgate } from 'react-icons/fa6';
 
+// "https://linkedin.com/in/wanghley" -> "in/wanghley"
+const linkedinHandle = (url) => {
+  const p = url.split('/');
+  return p[3] && p[4] ? `${p[3]}/${p[4]}` : url.replace(/^https?:\/\//, '');
+};
+
+// Contact line under the CV title. Every field is optional in the CMS.
 const PersonalInfo = ({ personalInfo }) => {
-    const linkedinParts = personalInfo?.linkedin.split('/');
-    const joinedLinkedin = linkedinParts[3] && linkedinParts[4] ? `${linkedinParts[3]}/${linkedinParts[4]}` : '';
+  const info = personalInfo || {};
+  const items = [
+    info.address?.description && { key: 'address', Icon: FaMapMarkerAlt, text: info.address.description },
+    info.email && { key: 'email', Icon: FaEnvelope, text: info.email, href: `mailto:${info.email}` },
+    info.linkedin && { key: 'linkedin', Icon: FaLinkedin, text: linkedinHandle(info.linkedin), href: info.linkedin, external: true },
+    info.github && { key: 'github', Icon: FaGithub, text: info.github.split('/').pop().toLowerCase(), href: info.github, external: true },
+    info.googleScholar && { key: 'scholar', Icon: FaGoogleScholar, text: 'Google Scholar', href: info.googleScholar, external: true },
+    info.researchGate && { key: 'rg', Icon: FaResearchgate, text: 'ResearchGate', href: info.researchGate, external: true },
+  ].filter(Boolean);
 
-    return (
-        <section className="personal-info">
-            {/* Name */}
-            <h2>{personalInfo?.name}</h2>
+  if (!items.length) return null;
 
-            {/* Headline */}
-            <h3>{personalInfo?.headline}</h3>
-
-            {/* Contact Information */}
-            <div className="contact-info">
-                {/* Address (Leftmost) */}
-                {personalInfo?.address?.description && (
-                    <p className="contact-item">
-                        <FaMapMarkerAlt /> {/* Address Icon */}
-                        {personalInfo?.address?.description}
-                    </p>
-                )}
-                {/* Email */}
-                <a href={`mailto:${personalInfo?.email}`}>
-                    <p className="contact-item">
-                        <FaEnvelope /> {/* Email Icon */}
-                        {personalInfo?.email}
-                    </p>
-                </a>
-                {/* LinkedIn */}
-                {personalInfo?.linkedin && (
-                    <a href={personalInfo?.linkedin} target="_blank" rel="noopener noreferrer">
-                        <p className="contact-item">
-                            <FaLinkedin /> {/* LinkedIn Icon */}
-                            {joinedLinkedin}
-                        </p>
-                    </a>
-                )}
-                {/* GitHub */}
-                {personalInfo?.github && (
-                    <a href={personalInfo?.github} target="_blank" rel="noopener noreferrer">
-                        <p className="contact-item">
-                            <FaGithub /> {/* GitHub Icon */}
-                            {personalInfo?.github.split('/').pop().toLowerCase()}
-                        </p>
-                    </a>
-                )}
-                {/* Google Scholar */}
-                {personalInfo?.googlescholar && (
-                    <a href={personalInfo?.googlescholar} target="_blank" rel="noopener noreferrer">
-                        <p className="contact-item">
-                            <FaGoogleScholar /> {/* Google Scholar Icon */}
-                            Google Scholar
-                        </p>
-                    </a>
-                )}
-                {/* ResearchGate (Rightmost) */}
-                {personalInfo?.researchgate && (
-                    <a href={personalInfo?.researchgate} target="_blank" rel="noopener noreferrer">
-                        <p className="contact-item">
-                            <FaResearchgate /> {/* ResearchGate Icon */}
-                            Research Gate
-                        </p>
-                    </a>
-                )}
-            </div>
-            <hr />
-        </section>
-    );
+  return (
+    <ul className="cv-contact" aria-label="Contact">
+      {items.map(({ key, Icon, text, href, external }) => (
+        <li key={key}>
+          {href ? (
+            <a href={href} {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+              <Icon aria-hidden="true" />
+              {text}
+            </a>
+          ) : (
+            <span>
+              <Icon aria-hidden="true" />
+              {text}
+            </span>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
 };
 
 export default PersonalInfo;

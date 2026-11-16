@@ -1,0 +1,66 @@
+/* About: an encyclopedia entry on the Bench page kit. A dark title band, then a
+   paper body with a contents rail, a hatnote, an infobox, the article in the
+   kit's Prose column and a reference list. Bench tokens only. */
+
+.about-ipa {
+  margin-left: 0.4em; white-space: nowrap;
+  font-family: var(--font-mono-bench); font-size: 0.4em; font-weight: 400; letter-spacing: 0.02em; color: var(--t-muted);
+}
+
+/* --- layout and contents --- */
+.about-layout { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+.about-article { min-width: 0; }
+.about-toc--rail { position: sticky; top: calc(var(--nav-height-scrolled) + 32px); max-height: calc(100vh - var(--nav-height-scrolled) - 64px); overflow-y: auto; }
+.about-toc__label { font-family: var(--font-mono-bench); font-size: var(--step--2); letter-spacing: 0.08em; text-transform: uppercase; color: var(--t-muted); margin-bottom: 10px; }
+.about-toc__item + .about-toc__item { border-top: 1px solid var(--t-line); }
+.about-toc a { display: flex; gap: 10px; padding: 7px 0; font-size: var(--step--1); line-height: 1.35; color: var(--t-muted); overflow-wrap: anywhere; }
+.about-toc a:hover { color: var(--t-fg); }
+.about-toc a[aria-current='true'] { color: var(--t-fg); font-weight: 600; }
+.about-toc__n { flex: none; min-width: 2.4em; font-family: var(--font-mono-bench); font-size: var(--step--2); font-variant-numeric: tabular-nums; line-height: 1.7; color: var(--t-muted); }
+.about-toc__item--3 a { padding-left: 14px; }
+.about-toc--inline { display: none; margin-bottom: 28px; border-top: 1px solid var(--t-line-strong); border-bottom: 1px solid var(--t-line-strong); }
+.about-toc--inline summary { padding: 12px 0; font-size: var(--step--1); font-weight: 600; color: var(--t-fg); cursor: pointer; }
+.about-toc--inline .about-toc__list { padding-bottom: 10px; }
+
+/* --- hatnote and infobox --- */
+.about-hatnote { max-width: 68ch; margin: 0 0 28px; padding-left: 1.5em; font-size: var(--step--1); font-style: italic; line-height: 1.5; color: var(--t-dim); }
+.about-hatnote a { color: var(--t-link); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.about-hatnote a:hover { color: var(--t-hover); }
+.about-infobox { margin: 0 0 28px; padding: 16px; background: var(--t-surface); border: 1px solid var(--t-line); border-radius: 4px; }
+.about-infobox__title { margin-bottom: 12px; font-size: var(--step-0); font-weight: 600; line-height: 1.2; text-align: center; color: var(--t-fg); }
+.about-infobox figure { margin: 0 0 14px; }
+.about-infobox img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border: 1px solid var(--t-line); border-radius: 3px; }
+.about-infobox .bp-spec { border-top: 0; }
+.about-infobox .bp-spec__row { grid-template-columns: 5.2rem minmax(0, 1fr); gap: 4px 12px; padding: 9px 0; font-size: var(--step--1); line-height: 1.4; }
+.about-infobox .bp-spec a { color: var(--t-link); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.about-infobox .bp-spec a:hover { color: var(--t-hover); }
+
+/* --- the article --- */
+.about-content .about-lead { font-size: var(--step-1); line-height: 1.5; color: var(--t-fg); }
+.bp-prose a.about-cite { vertical-align: super; padding-inline: 1px; font-family: var(--font-mono-bench); font-size: 0.72em; line-height: 0; color: var(--t-hover); text-decoration: none; }
+.bp-prose a.about-cite:hover { text-decoration: underline; }
+.about-figure img { margin-inline: auto; }
+.about-figure figcaption { text-align: center; }
+.bp-prose .about-refs { padding-left: 0; list-style: none; }
+.about-refs li { display: grid; grid-template-columns: 3rem minmax(0, 1fr); gap: 0 12px; padding: 8px 0; font-size: var(--step--1); line-height: 1.5; color: var(--t-dim); scroll-margin-top: calc(var(--nav-height-scrolled) + 24px); }
+.about-refs li + li { margin-top: 0; }
+.about-refs__id { font-family: var(--font-mono-bench); font-variant-numeric: tabular-nums; color: var(--t-muted); }
+.about-refs a { overflow-wrap: anywhere; }
+
+/* --- loading and error: the same bands, plain blocks, no motion --- */
+.about-skeleton { background: var(--t-surface); border-radius: 3px; }
+.about-skeleton--title { height: clamp(40px, 6vw, 76px); width: min(100%, 22rem); }
+.about-skeleton--lede { height: 22px; width: min(100%, 22rem); margin-top: 20px; }
+.about-skeleton--line { height: 16px; width: min(100%, 44rem); margin-top: 14px; }
+.about-error { display: grid; gap: 20px; justify-items: start; max-width: 52ch; font-size: var(--step-0); line-height: 1.5; color: var(--t-dim); }
+
+@media (min-width: 1024px) {
+  .about-infobox { float: right; width: 17rem; margin: 4px 0 24px 36px; }
+}
+@media (max-width: 1023px) {
+  .about-layout { grid-template-columns: minmax(0, 1fr); }
+  .about-toc--rail { display: none; }
+  .about-toc--inline { display: block; }
+  .about-infobox { max-width: 26rem; }
+  .about-infobox figure { max-width: 13rem; margin-inline: auto; }
+}

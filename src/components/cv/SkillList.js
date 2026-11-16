@@ -1,37 +1,28 @@
 import React from 'react';
-import '../css/EducationList.css';
-import '../css/SkillsList.css';
+import { SpecTable } from '../bench';
+import { SKILL_ORDER } from '../../data/layout';
 
-const expertiseToStars = {
-    Basic: 1,
-    Intermediate: 2,
-    Proficient: 3,
-    Advanced: 4,
-};
+const EXPERTISE = { Basic: 1, Intermediate: 2, Proficient: 3, Advanced: 4 };
+const rank = (category) => { const i = SKILL_ORDER.indexOf(category); return i < 0 ? SKILL_ORDER.length : i; };
 
-
+// The CMS groups skills by category, in no set order. Categories follow the
+// home page (Engineering first); within a group the strongest come first.
 const SkillsList = ({ skills }) => {
-    if (typeof skills !== 'object' || !skills) return <p>No skills available.</p>;
+  const groups = skills && typeof skills === 'object' ? Object.keys(skills).sort((a, b) => rank(a) - rank(b)) : [];
+  const rows = groups.map((category) => ({
+    label: category,
+    value: [...skills[category]]
+      .sort((a, b) => (EXPERTISE[b.expertise] ?? 0) - (EXPERTISE[a.expertise] ?? 0))
+      .map((s) => s.name)
+      .join(', '),
+  }));
 
-    return (
-        <section className="skills-list">
-            <h2>Skills</h2>
-            {Object.keys(skills).map((category) => (
-                <div key={category} className="skills-list__category">
-                    <h3>{category}</h3>
-                    <div className="skills-list__skills">
-                        {skills[category]
-                            .sort((a, b) => expertiseToStars[b.expertise] - expertiseToStars[a.expertise])
-                            .map(({ name }, index, arr) => (
-                                <span key={index} className="skills-list__skill-name">
-                                    {name}{index < arr.length - 1 ? ', ' : ''}
-                                </span>
-                            ))}
-                    </div>
-                </div>
-            ))}
-        </section>
-    );
+  return (
+    <>
+      <h2 className="cv-section__title">Skills</h2>
+      {rows.length ? <SpecTable rows={rows} keyWidth="10.5rem" /> : <p className="cv-empty">No skills listed yet.</p>}
+    </>
+  );
 };
 
 export default SkillsList;

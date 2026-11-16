@@ -21,36 +21,57 @@ const CONTENT_TYPES = {
       { url: '/contact', priority: 0.5, changefreq: 'monthly' }
     ]
   },
+  // `endpoint` is the CMS collection; `route` is the site path of one entry.
   blogs: {
+    endpoint: 'blog-posts',
+    route: '/blog',
     changefreq: 'weekly',
     priority: 0.8,
     filename: 'sitemap-blog.xml'
   },
   projects: {
+    endpoint: 'projects',
+    route: '/projects',
     changefreq: 'weekly',
     priority: 0.8,
     filename: 'sitemap-projects.xml'
   }
 };
 
-async function fetchDynamicRoutes(endpoint) {
+// Every entry of a CMS collection (Strapi 5: flat fields, paged by pageCount).
+async function fetchAllEntries(endpoint) {
+  const rows = [];
+  let page = 1;
+  let pageCount = 1;
+  do {
+    const { data } = await axios.get(`${baseURL}/api/${endpoint}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      params: { populate: '*', 'pagination[page]': page, 'pagination[pageSize]': 100 },
+    });
+    rows.push(...data.data);
+    pageCount = data.meta?.pagination?.pageCount ?? 1;
+    page += 1;
+  } while (page <= pageCount);
+  return rows;
+}
+
+async function fetchDynamicRoutes(type) {
+    const config = CONTENT_TYPES[type];
     try {
-        const response = await axios.get(`${baseURL}/api/${endpoint}?populate=*`, {
-            headers: { Authorization: `Bearer ${apiKey}` },
-        });
-        
-        return response.data.data.map((item) => ({
-            url: `/${endpoint}/${item.attributes.slug}`,
-            changefreq: CONTENT_TYPES[endpoint].changefreq,
-            priority: CONTENT_TYPES[endpoint].priority,
-            lastmod: item.attributes.updatedAt,
-            img: item.attributes.featuredImage?.url ? [{
-                url: item.attributes.featuredImage.url,
-                caption: item.attributes.title
+        const entries = await fetchAllEntries(config.endpoint);
+
+        return entries.filter((item) => item.slug).map((item) => ({
+            url: `${config.route}/${item.slug}`,
+            changefreq: config.changefreq,
+            priority: config.priority,
+            lastmod: item.updatedAt,
+            img: item.cover?.url ? [{
+                url: item.cover.url.startsWith('/') ? `${baseURL}${item.cover.url}` : item.cover.url,
+                caption: item.title
             }] : undefined
         }));
     } catch (error) {
-        console.error(`Error fetching ${endpoint} routes:`, error);
+        console.error(`Error fetching ${config.endpoint} routes:`, error.message);
         return [];
     }
 }

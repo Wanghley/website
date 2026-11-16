@@ -1,5 +1,7 @@
 import React from 'react';
-import { PHOTOS, PLACES } from '../../../data/home';
+import { PHOTOS } from '../../../data/photos';
+import { fetchPlaces } from '../../../api/site';
+import useCmsData from '../../../hooks/useCmsData';
 
 // Small drawn flags (not emoji: those render as letters on some systems).
 function Flag({ code }) {
@@ -24,24 +26,30 @@ function Flag({ code }) {
   );
 }
 
+// The flag is drawn for the place's country code. Countries without a drawn
+// flag get the US one, so the list is never blank; add a branch above to draw more.
 export default function PhotoStrip() {
+  const { status, data: places } = useCmsData(fetchPlaces);
+
   return (
-    <section className="hm-strip bench-col" aria-label="Photos of Wanghley">
-      <ul className="hm-strip__row">
+    <section className="hm-strip bp-theme bench-col" aria-label="Photos of Wanghley">
+      <ul className="hm-strip__row" tabIndex={0} aria-label="Photos">
         {PHOTOS.map((p) => (
           <li key={p.src}>
             <img src={p.src} alt={p.alt} width="240" height="320" loading="lazy" decoding="async" />
           </li>
         ))}
       </ul>
-      <ol className="hm-strip__places" aria-label="Places I have lived">
-        {PLACES.map((pl) => (
-          <li key={pl.city}>
-            <Flag code={pl.flag} />
-            <span>{pl.city}, {pl.country}</span>
-          </li>
-        ))}
-      </ol>
+      {status === 'ready' && places?.length > 0 && (
+        <ol className="hm-strip__places" aria-label="Places I have lived">
+          {places.map((pl) => (
+            <li key={pl.documentId}>
+              <Flag code={(pl.countryCode || '').toLowerCase()} />
+              <span>{pl.city}, {pl.country}</span>
+            </li>
+          ))}
+        </ol>
+      )}
     </section>
   );
 }

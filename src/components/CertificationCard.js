@@ -1,61 +1,29 @@
 import React from 'react';
-import './css/CertificationList.css';
+import CvEntry from './cv/Entry';
+import { formatMonth } from '../utils/formatDate';
 
-const CertificationCard = ({ certification }) => {
-  const { name, organization, date, url, credID } = certification.attributes;
-  const isUrlValid = url && url.trim() !== '';
-  const showTooltip = credID && credID.length > 10;
-
-  return (
-    <div className="certification-card">
-      <div className="certification-info">
-        <h3>{name}</h3>
-        <span>{organization}</span>
-      </div>
-      <div className="certification-details">
-        <span>Issued {new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}</span>
-        {credID && (
-          showTooltip ? (
-            <span className="credential-id">
-              <span className="credential-id__text">
-                Credential ID: {credID.substring(0, 10)}...
-              </span>
-              <span className="credential-id__tooltip">
-                {credID}
-              </span>
-            </span>
-          ) : (
-            <span>Credential ID: {credID}</span>
-          )
-        )}
-      </div>
-      <div className="certification-action">
-        <a 
-          href={isUrlValid ? url : '#'} 
-          target={isUrlValid ? '_blank' : undefined} 
-          rel={isUrlValid ? 'noopener noreferrer' : undefined} 
-          className={`show-credential-btn ${!isUrlValid ? 'disabled' : ''}`}
-          aria-disabled={!isUrlValid}
-        >
-          {isUrlValid ? 'Show Credential' : 'Show Credential'}
-        </a>
-      </div>
-    </div>
-  );
-};
-
-const CertificationsList = ({ certifications = [] }) => {
-  return (
-    <div className="certifications-list">
-      <ul>
-        {certifications.map((certification) => (
-          <li key={certification.id}>
-            <CertificationCard certification={certification} />
-          </li>
+// Certifications as CV lines. A credential with no URL simply has no link:
+// a disabled "Show credential" button promises something that is not there.
+const CertificationsList = ({ certifications = [] }) => (
+  <>
+    <h2 className="cv-section__title">Certifications</h2>
+    {certifications.length === 0 ? (
+      <p className="cv-empty">No certifications listed yet.</p>
+    ) : (
+      <ul className="cv-list">
+        {certifications.map((c) => (
+          <CvEntry key={c.documentId} as="h3" when={c.issuedDate ? `Issued ${formatMonth(c.issuedDate)}` : undefined} org={c.name} role={c.organization}>
+            {c.credentialId && <p className="cv-entry__id">Credential ID {c.credentialId}</p>}
+            {c.url && c.url.trim() && (
+              <p className="cv-entry__link">
+                <a className="bp-link" href={c.url} target="_blank" rel="noopener noreferrer">Show credential <span aria-hidden="true">↗</span></a>
+              </p>
+            )}
+          </CvEntry>
         ))}
       </ul>
-    </div>
-  );
-};
+    )}
+  </>
+);
 
 export default CertificationsList;

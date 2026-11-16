@@ -49,3 +49,4 @@
 .sg__facts dt { color: var(--muted); font-size: var(--step--1); }
 .sg__rubrica { width: min(260px, 100%); height: auto; margin: 16px 0; }
 .sg__tokens { display: grid; gap: 10px; }
+.sg__stack { margin-top: 40px; }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import NavbarSpacer from '../components/NavbarSpacer';
+import { PageHeader, Prose } from '../components/bench';
 import './css/legal.css';
 
 const Privacy = () => (
@@ -13,19 +13,17 @@ const Privacy = () => (
       <meta name="robots" content="noindex, follow" />
     </Helmet>
 
-    <NavbarSpacer />
+    <main id="main" className="legal-page">
+      <section className="bp-sec bp-sec--head">
+        <div className="bench-col">
+          <PageHeader size="md" title="Privacy Policy" meta={['Last updated: June 1, 2025', 'Effective immediately']} />
+        </div>
+      </section>
 
-    <main className="legal-page">
-      <div className="legal-page__container">
-        <header className="legal-page__header">
-          <span className="legal-page__label">LEGAL</span>
-          <h1 className="legal-page__title">Privacy Policy</h1>
-          <p className="legal-page__meta">Last updated: June 1, 2025 · Effective immediately</p>
-        </header>
+      <section className="bp-sec bp-sec--light">
+        <div className="bench-col">
+          <Prose as="article">
 
-        <article className="legal-page__body">
-
-          <section>
             <h2>1. Who We Are</h2>
             <p>
               This website, <strong>wanghley.com</strong>, is the personal portfolio of
@@ -33,9 +31,7 @@ const Privacy = () => (
               Durham, NC, United States. For any privacy-related matter, contact:
               <a href="mailto:me@wanghley.com"> me@wanghley.com</a>.
             </p>
-          </section>
 
-          <section>
             <h2>2. What Data We Collect</h2>
             <p>This site collects only the minimum data necessary to operate and improve it:</p>
             <ul>
@@ -61,9 +57,7 @@ const Privacy = () => (
               <li>Data from minors under 16 years of age</li>
               <li>Data through third-party advertising networks</li>
             </ul>
-          </section>
 
-          <section>
             <h2>3. How We Use Your Data</h2>
             <p>Data collected is used solely to:</p>
             <ul>
@@ -75,18 +69,14 @@ const Privacy = () => (
               Your data is <strong>never sold, rented, or shared</strong> with third parties
               for marketing purposes.
             </p>
-          </section>
 
-          <section>
             <h2>4. Legal Basis for Processing</h2>
             <p>
               Processing is based on <strong>legitimate interest</strong> (site analytics,
               security) and <strong>consent</strong> (contact form submission, newsletter
               sign-up). You may withdraw consent at any time by contacting us.
             </p>
-          </section>
 
-          <section>
             <h2>5. Data Retention</h2>
             <p>
               Analytics data is retained for up to 12 months in PostHog. Contact form data
@@ -94,11 +84,10 @@ const Privacy = () => (
               Newsletter subscriptions are managed by Substack — you may unsubscribe at
               any time.
             </p>
-          </section>
 
-          <section>
             <h2>6. Third-Party Services</h2>
-            <table className="legal-page__table">
+            <div className="bp-scroll" tabIndex={0} role="group" aria-label="Cookies and tracking technologies">
+            <table>
               <thead>
                 <tr>
                   <th>Service</th>
@@ -129,9 +118,8 @@ const Privacy = () => (
                 </tr>
               </tbody>
             </table>
-          </section>
+            </div>
 
-          <section>
             <h2>7. Your Rights</h2>
             <p>
               Depending on your jurisdiction, you have the right to access, correct, delete,
@@ -143,42 +131,36 @@ const Privacy = () => (
               To exercise any of these rights, email <a href="mailto:me@wanghley.com">me@wanghley.com</a>.
               Requests will be addressed within 30 days.
             </p>
-          </section>
 
-          <section>
             <h2>8. Security</h2>
             <p>
               This site is served over HTTPS. We apply reasonable technical and organisational
               measures to protect data against unauthorised access or disclosure. No method
               of transmission over the internet is 100% secure.
             </p>
-          </section>
 
-          <section>
             <h2>9. Changes to This Policy</h2>
             <p>
               This policy may be updated from time to time. Material changes will be
               reflected by updating the "Last updated" date at the top of this page.
               Continued use of the site constitutes acceptance of the revised policy.
             </p>
-          </section>
 
-          <section>
             <h2>10. Contact</h2>
             <p>
               Questions about this privacy policy? Email{' '}
               <a href="mailto:me@wanghley.com">me@wanghley.com</a> or use the{' '}
               <Link to="/#contact">contact form</Link>.
             </p>
-          </section>
 
-        </article>
+          </Prose>
 
-        <div className="legal-page__footer">
-          <Link to="/" className="legal-page__back">← Back to home</Link>
-          <Link to="/data-policy" className="legal-page__sibling">Data &amp; Cookie Policy →</Link>
+          <p className="legal-page__footer">
+            <Link to="/" className="bp-link">← Back to home</Link>
+            <Link to="/data-policy" className="bp-link">Data &amp; Cookie Policy →</Link>
+          </p>
         </div>
-      </div>
+      </section>
     </main>
   </>
 );

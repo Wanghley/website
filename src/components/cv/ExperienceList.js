@@ -1,134 +1,34 @@
-// components/ExperienceList.js
 import React from 'react';
+import CvEntry, { CvText } from './Entry';
+import { EXPERIENCE_GROUPS } from '../../data/layout';
 
-import '../css/ExperienceList.css';
-import ReactMarkdown from 'react-markdown';
-
-const ExperienceList = ({ experiences }) => {
-    return (
-        <section className="experience">
-            <h2>Experience</h2>
-
-            {/* Industry Experiences */}
-            <div className="experience-category">
-                <h3>Industry Experiences</h3>
-                <ul>
-                    {experiences.filter(exp => exp.attributes.type === 'Industry').map((experience) => (
-                        <li key={experience.id}>
-                            <div className="experience-details">
-                                <div className="company-date-row">
-                                    <span className="company">{experience.attributes.company}</span>
-                                    <span className="dates">
-                                        {experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} -
-                                        {experience.attributes.end
-                                            ? `${experience.attributes.end.split('-')[1]}/${experience.attributes.end.split('-')[0]}`
-                                            : 'Present'}
-                                    </span>
-                                </div>
-                                <div className="location-row">
-                                    <h4>{experience.attributes.title}</h4>
-                                    <span className="location">{experience.attributes.location?.description}</span>
-                                </div>
-                            </div>
-
-                            <ReactMarkdown className="description">
-                                {experience.attributes.description}
-                            </ReactMarkdown>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* Research Experiences */}
-            <div className="experience-category">
-                <h3>Research Experiences</h3>
-                <ul>
-                    {experiences.filter(exp => exp.attributes.type === 'Research').map((experience) => (
-                        <li key={experience.id}>
-                            <div className="experience-details">
-                                <div className="company-date-row">
-                                    <span className="company">{experience.attributes.company}</span>
-                                    <span className="dates">
-                                        {experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} -
-                                        {experience.attributes.end
-                                            ? `${experience.attributes.end.split('-')[1]}/${experience.attributes.end.split('-')[0]}`
-                                            : 'Present'}
-                                    </span>
-                                </div>
-                                <div className="location-row">
-                                    <h4>{experience.attributes.title}</h4>
-                                    <span className="location">{experience.attributes.location?.description}</span>
-                                </div>
-                            </div>
-                            <ReactMarkdown className="description">
-                                {experience.attributes.description}
-                            </ReactMarkdown>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* Teaching & Mentorship Experiences */}
-            <div className="experience-category">
-                <h3>Teaching & Mentorship Experiences</h3>
-                <ul>
-                    {experiences.filter(exp => exp.attributes.type === 'Teaching & Mentorship').map((experience) => (
-                        <li key={experience.id}>
-                            <div className="experience-details">
-                                <div className="company-date-row">
-                                    <span className="company">{experience.attributes.company}</span>
-                                    <span className="dates">
-                                        {experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} -
-                                        {experience.attributes.end
-                                            ? `${experience.attributes.end.split('-')[1]}/${experience.attributes.end.split('-')[0]}`
-                                            : 'Present'}
-                                    </span>
-                                </div>
-                                <div className="location-row">
-                                    <h4>{experience.attributes.title}</h4>
-                                    <span className="location">{experience.attributes.location?.description}</span>
-                                </div>
-                            </div>
-                            <ReactMarkdown className="description">
-                                {experience.attributes.description}
-                            </ReactMarkdown>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-
-            {/* Volunteer Experiences */}
-            <div className="experience-category">
-                <h3>Volunteer Experiences</h3>
-                <ul>
-                    {experiences.filter(exp => exp.attributes.type === 'Volunteering').map((experience) => (
-                        <li key={experience.id}>
-                            <div className="experience-details">
-                                <div className="company-date-row">
-                                    <span className="company">{experience.attributes.company}</span>
-                                    <span className="dates">
-                                        {experience.attributes.start.split('-')[1]}/{experience.attributes.start.split('-')[0]} -
-                                        {experience.attributes.end
-                                            ? `${experience.attributes.end.split('-')[1]}/${experience.attributes.end.split('-')[0]}`
-                                            : 'Present'}
-                                    </span>
-                                </div>
-                                <div className="location-row">
-                                    <h4>{experience.attributes.title}</h4>
-                                    <span className="location">{experience.attributes.location?.description}</span>
-                                </div>
-                            </div>
-                            <ReactMarkdown className="description">
-                                {experience.attributes.description}
-                            </ReactMarkdown>
-                        </li>
-                    ))}
-                </ul>
-            </div>
-        </section>
-
-
-    );
+// "2025-06-01" -> "06/2025". Split, not parsed: no timezone can move a month.
+const monthYear = (d) => {
+  const [y, m] = String(d).split('-');
+  return m ? `${m}/${y}` : y;
 };
+const span = (start, end) => [start && monthYear(start), end ? monthYear(end) : 'Present'].filter(Boolean).join(' – ');
+
+const ExperienceList = ({ experiences = [] }) => (
+  <>
+    <h2 className="cv-section__title">Experience</h2>
+    {EXPERIENCE_GROUPS.map(({ type, title }) => {
+      const rows = experiences.filter((e) => e.category === type);
+      if (!rows.length) return null;
+      return (
+        <div key={type} className="cv-group">
+          <h3 className="cv-group__title">{title}</h3>
+          <ul className="cv-list">
+            {rows.map((a) => (
+              <CvEntry key={a.documentId} when={span(a.startDate, a.endDate)} where={a.location?.description} org={a.organization} role={a.title}>
+                <CvText>{a.description}</CvText>
+              </CvEntry>
+            ))}
+          </ul>
+        </div>
+      );
+    })}
+  </>
+);
 
 export default ExperienceList;

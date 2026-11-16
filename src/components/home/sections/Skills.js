@@ -1,30 +1,27 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { fetchFeaturedSkills } from '../../../api/skills';
-import { SKILLS } from '../../../data/home';
+import React, { useMemo } from 'react';
+import { fetchFeaturedSkills, fetchHomePage } from '../../../api/site';
+import useCmsData from '../../../hooks/useCmsData';
+import { SKILL_ORDER } from '../../../data/layout';
+
+const loadSkills = () => Promise.all([fetchHomePage(), fetchFeaturedSkills()]).then(([home, rows]) => ({ home, rows }));
 
 export default function Skills() {
-  const [skills, setSkills] = useState(SKILLS.fallback);
-
-  useEffect(() => {
-    let alive = true;
-    fetchFeaturedSkills()
-      .then((rows) => { if (alive && Array.isArray(rows) && rows.length) setSkills(rows.map((r) => ({ name: r.name, type: r.type || 'Other' }))); })
-      .catch(() => {});
-    return () => { alive = false; };
-  }, []);
+  const { status, data } = useCmsData(loadSkills);
 
   const groups = useMemo(() => {
     const by = {};
-    skills.forEach((s) => { (by[s.type] = by[s.type] || []).push(s.name); });
-    const known = SKILLS.order.filter((t) => by[t]);
-    const rest = Object.keys(by).filter((t) => !SKILLS.order.includes(t));
+    (data?.rows || []).forEach((s) => { (by[s.category || 'Other'] = by[s.category || 'Other'] || []).push(s.name); });
+    const known = SKILL_ORDER.filter((t) => by[t]);
+    const rest = Object.keys(by).filter((t) => !SKILL_ORDER.includes(t));
     return [...known, ...rest].map((t) => ({ type: t, names: by[t] }));
-  }, [skills]);
+  }, [data]);
+
+  if (status !== 'ready' || !data || !groups.length) return null;
 
   return (
-    <section id="skills" className="hm-sec hm-sec--light" aria-labelledby="skills-heading">
+    <section id="skills" className="bp-sec bp-sec--light" aria-labelledby="skills-heading">
       <div className="bench-col">
-        <h2 id="skills-heading" className="hm-sec__title">{SKILLS.heading}</h2>
+        <h2 id="skills-heading" className="bp-sec__title">{data.home.skillsHeading}</h2>
         <dl className="hm-skills">
           {groups.map((g) => (
             <div key={g.type} className="hm-skills__group">

@@ -1,32 +1,25 @@
 import React from "react";
-import { Contact } from '../components';
 import { Helmet } from "react-helmet-async";
-import NavbarSpacer from '../components/NavbarSpacer';
-import './css/contact.css';
+import ContactForm from '../components/home/sections/ContactForm';
 
+// The same form as the home page, opening the page. The title is "Say hello."
 const ContactPage = () => {
     return (
-        <>
-        <Helmet>
-            <title>Wanghley – Sci&Tech</title>
-            <meta name="description" content="Get in touch with Wanghley. Reach out for collaborations, inquiries, or just to say hello!" />
-            <meta name="keywords" content="Wanghley, Sci&Tech, Portfolio, Projects, Skills, Experience, Contact" />
-            <link rel="canonical" href="https://wanghley.com/contact" />
-            <meta name="author" content="Wanghley" />
-            <meta name="robots" content="index, follow" />
+        <main id="main" className="contact-page">
+            <Helmet>
+                <title>Contact | Wanghley Martins</title>
+                <meta name="description" content="Get in touch with Wanghley Martins about industry roles, research collaboration, speaking and mentoring." />
+                <link rel="canonical" href="https://wanghley.com/contact" />
+                <meta name="robots" content="index, follow" />
 
-            <meta property="og:title" content="Wanghley – Sci&Tech" />
-            <meta property="og:description" content="Discover Wanghley's journey, skills, and experiences. Learn more about the person behind the projects." />
-            <meta property="og:type" content="website" />
-            <meta property="og:url" content="https://wanghley.com/contact" />
-            <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1746648815/branding/logo_applied_sq.png" />
-            <meta property="og:site_name" content="Wanghley – Sci&Tech" />
-            <meta property="og:locale" content="en_US" />
-            <meta property="og:locale:alternate" content="pt_BR" />
-        </Helmet>
-            <NavbarSpacer />
-            <Contact/>
-        </>
+                <meta property="og:title" content="Contact | Wanghley Martins" />
+                <meta property="og:description" content="Industry roles, research collaboration, speaking and mentoring." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://wanghley.com/contact" />
+                <meta property="og:image" content="https://wanghley.com/og-image.png" />
+            </Helmet>
+            <ContactForm as="h1" head source="contact_page" />
+        </main>
     );
 };
 

@@ -1,0 +1,54 @@
+/* List pages (projects, blog): the toolbar of a paper body: search, category chips
+   and the empty and loading states. Cards, bands and type come from the Bench page kit
+   (bench-page.css); this file only adds the toolbar and those states. */
+
+.list-toolbar { display: grid; gap: 18px; margin-bottom: 26px; }
+
+/* --- search --- */
+.list-search { position: relative; display: flex; align-items: center; max-width: 34rem; }
+.list-search input {
+  width: 100%; font: inherit; font-size: var(--step-0); color: var(--t-fg);
+  background: var(--t-surface); border: 1px solid var(--t-line-strong); border-radius: 4px;
+  padding: 12px 84px 12px 14px;
+  -webkit-appearance: none; appearance: none;
+}
+.list-search input::placeholder { color: var(--t-muted); opacity: 1; }
+.list-search input::-webkit-search-cancel-button { display: none; }
+.list-search input:focus { border-color: var(--t-link); }
+.list-search kbd, .list-search__clear {
+  position: absolute; right: 12px;
+  font-family: var(--font-mono-bench); font-size: var(--step--2); letter-spacing: 0.04em; color: var(--t-muted);
+}
+.list-search kbd { border: 1px solid var(--t-line-strong); border-radius: 3px; padding: 2px 7px; background: transparent; }
+.list-search__clear { background: none; border: 0; padding: 6px 4px; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.list-search__clear:hover { color: var(--t-hover); }
+
+/* --- category chips --- */
+.list-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.list-chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  font: inherit; font-size: var(--step--1); color: var(--t-dim);
+  background: transparent; border: 1px solid var(--t-line-strong); border-radius: 999px;
+  padding: 7px 14px; cursor: pointer;
+  transition: color var(--dur-ui) var(--ease-out), border-color var(--dur-ui) var(--ease-out), background-color var(--dur-ui) var(--ease-out);
+}
+.list-chip:hover { color: var(--t-fg); border-color: var(--t-fg); }
+.list-chip[aria-pressed='true'] { color: var(--paper); background: var(--ink); border-color: var(--ink); }
+.list-chip__n { font-family: var(--font-mono-bench); font-size: var(--step--2); font-variant-numeric: tabular-nums; color: var(--t-muted); }
+.list-chip[aria-pressed='true'] .list-chip__n { color: var(--paper-dim); }
+
+.list-results {
+  min-height: 1.5em; margin-bottom: 22px;
+  font-family: var(--font-mono-bench); font-size: var(--step--1); letter-spacing: 0.02em; color: var(--t-muted);
+}
+
+/* --- loading and empty states: plain blocks, no motion --- */
+.list-skeleton { display: block; background: var(--t-surface); border-radius: 3px; }
+.list-skeleton--meta { height: 12px; width: 30%; }
+.list-skeleton--title { height: 22px; width: 80%; }
+.list-skeleton--text { height: 38px; width: 100%; }
+.list-empty { display: grid; gap: 14px; justify-items: start; max-width: 46ch; padding-block: 12px; font-size: var(--step-0); line-height: 1.5; color: var(--t-dim); }
+.list-empty__title { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.015em; color: var(--t-fg); }
+
+@media (hover: none) { .list-search kbd { display: none; } }
+@media (pointer: coarse) { .list-chip, .list-search__clear { min-height: 44px; } }

@@ -1,30 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from 'react-router-dom';
+import { Helmet } from "react-helmet-async";
+import { FaPrint } from "react-icons/fa";
 import { usePostHog } from '../lib/analytics';
-import { fetchPersonalInfo } from '../api/personal-info';
-import { fetchAllEducations } from '../api/education';
-import { fetchAllExperiences } from '../api/experience';
-import { fetchAllPublications } from '../api/publication';
-import { fetchAllCertifications } from '../api/certification';
-import { getSkillsgrouped } from "../api/skills";
+import {
+  fetchCvPage, fetchPersonalInfo, fetchEducations, fetchExperiences,
+  fetchPublications, fetchCertifications, fetchAllSkills,
+} from '../api/site';
+import useContact from '../hooks/useContact';
 import PersonalInfo from '../components/cv/PersonalInfo';
 import EducationList from '../components/cv/EducationList';
 import ExperienceList from '../components/cv/ExperienceList';
 import PublicationList from '../components/cv/PublicationList';
 import CertificationsList from '../components/CertificationCard';
 import SkillsList from '../components/cv/SkillList';
-import { Helmet } from "react-helmet-async";
-import NavbarSpacer from '../components/NavbarSpacer';
-import { FaPrint, FaChevronRight } from "react-icons/fa";
+import { PageHeader } from '../components/bench';
+import { CV_SECTIONS } from '../data/layout';
 import './css/cv.css';
-
-const NAV_SECTIONS = [
-  { id: 'cv-profile',        label: 'Profile',        number: '01' },
-  { id: 'cv-experience',     label: 'Experience',     number: '02' },
-  { id: 'cv-education',      label: 'Education',      number: '03' },
-  { id: 'cv-skills',         label: 'Skills',         number: '04' },
-  { id: 'cv-publications',   label: 'Publications',   number: '05' },
-  { id: 'cv-certifications', label: 'Certifications', number: '06' },
-];
 
 const CVPage = () => {
   const posthog = usePostHog();
@@ -36,7 +28,9 @@ const CVPage = () => {
   const [skills, setSkills]                 = useState([]);
   const [loading, setLoading]               = useState(true);
   const [error, setError]                   = useState(null);
-  const [activeSection, setActiveSection]   = useState('cv-profile');
+  const [activeSection, setActiveSection]   = useState(CV_SECTIONS[0].id);
+  const [cvPage, setCvPage]                 = useState(null);
+  const { data: contact } = useContact();
 
   // IntersectionObserver to track which section is in view
   const observerRef = useRef(null);
@@ -49,7 +43,7 @@ const CVPage = () => {
       },
       { rootMargin: '-20% 0px -65% 0px', threshold: 0 }
     );
-    NAV_SECTIONS.forEach(({ id }) => {
+    CV_SECTIONS.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) observerRef.current.observe(el);
     });
@@ -60,17 +54,27 @@ const CVPage = () => {
     const fetchData = async () => {
       try {
         const [
-          personal, educationsData, experiencesData,
-          publicationsData, certificationsData, skillsData
+          page, personal, educationsData, experiencesData,
+          publicationsData, certificationsData, skillRows,
         ] = await Promise.all([
+          fetchCvPage(),
           fetchPersonalInfo(),
-          fetchAllEducations(),
-          fetchAllExperiences(),
-          fetchAllPublications(),
-          fetchAllCertifications(),
-          getSkillsgrouped(),
+          fetchEducations(),
+          fetchExperiences(),
+          fetchPublications(),
+          fetchCertifications(),
+          fetchAllSkills(),
         ]);
 
+        // The skills section groups the CMS rows by category.
+        const skillsData = skillRows.reduce((acc, s) => {
+          const category = s.category || 'Other';
+          if (!acc[category]) acc[category] = [];
+          acc[category].push({ name: s.name, expertise: s.level });
+          return acc;
+        }, {});
+
+        setCvPage(page);
         setPersonalInfo(personal);
         setEducations(educationsData);
         setExperiences(experiencesData);
@@ -95,7 +99,8 @@ const CVPage = () => {
 
   const handleNavClick = (e, id) => {
     e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const calm = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    document.getElementById(id)?.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
     setActiveSection(id);
   };
 
@@ -104,175 +109,115 @@ const CVPage = () => {
     window.print();
   };
 
-  /* ── Loading skeleton ── */
+  /* ── Loading: the same two bands, with plain blocks where the text will be ── */
   if (loading) {
     return (
-      <div className="cv-page-wrapper">
-        <NavbarSpacer />
-        <div className="cv-layout cv-layout--loading">
-          <aside className="cv-nav">
-            <div className="cv-nav__inner">
-              <div className="cv-nav__label">Contents</div>
-              <ul className="cv-nav__list">
-                {NAV_SECTIONS.map(({ id, label, number }) => (
-                  <li key={id} className="cv-nav__item">
-                    <span className="cv-nav__link cv-nav__link--skeleton">
-                      <span className="cv-nav__number">{number}</span>
-                      <span className="cv-nav__dot" />
-                      {label}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-              <button className="cv-print-btn" disabled>
-                <FaPrint />
-                <span>Print / PDF</span>
-              </button>
-            </div>
-          </aside>
-          <main className="cv-main">
-            <div className="cv-card">
-              <div className="cv-skeleton__header">
-                <div className="cv-skeleton cv-skeleton--title" />
-                <div className="cv-skeleton cv-skeleton--subtitle" />
-                <div className="cv-skeleton__contacts">
-                  {[1,2,3,4].map(i => <div key={i} className="cv-skeleton cv-skeleton--contact" />)}
-                </div>
-              </div>
-              <div className="cv-skeleton__divider" />
-              {[1,2,3].map(section => (
-                <div key={section} className="cv-skeleton__section">
-                  <div className="cv-skeleton cv-skeleton--section-title" />
-                  {[1,2].map(item => (
-                    <div key={item} className="cv-skeleton__item">
-                      <div className="cv-skeleton cv-skeleton--item-head" />
-                      <div className="cv-skeleton cv-skeleton--item-sub" />
-                      <div className="cv-skeleton cv-skeleton--item-body" />
-                      <div className="cv-skeleton cv-skeleton--item-body cv-skeleton--short" />
-                    </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </main>
-        </div>
-      </div>
+      <main id="main" className="cv-page" aria-busy="true">
+        <section className="bp-sec bp-sec--head">
+          <div className="bench-col">
+            <div className="bp-rule" aria-hidden="true" />
+            <div className="cv-skeleton cv-skeleton--title" />
+            <div className="cv-skeleton cv-skeleton--lede" />
+            <div className="cv-skeleton cv-skeleton--meta" />
+          </div>
+        </section>
+        <section className="bp-sec bp-sec--light">
+          <div className="bench-col">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="cv-skeleton cv-skeleton--entry" />
+            ))}
+          </div>
+        </section>
+        <p className="sr-only" role="status">Loading the curriculum vitae.</p>
+      </main>
     );
   }
 
   if (error) {
     return (
-      <div className="cv-page-wrapper">
-        <NavbarSpacer />
-        <div className="cv-error">
-          <p>Failed to load CV data. Please try refreshing the page.</p>
-          <button onClick={() => window.location.reload()}>Retry</button>
-        </div>
-      </div>
+      <main id="main" className="cv-page">
+        <section className="bp-sec bp-sec--head">
+          <div className="bench-col">
+            <PageHeader refdes="U1" title="Curriculum vitae" lede="The CV did not load." />
+          </div>
+        </section>
+        <section className="bp-sec bp-sec--light">
+          <div className="bench-col cv-error">
+            <p>The data service did not answer. Check your connection and try again{contact?.email && <>, or email <a className="bp-link" href={`mailto:${contact.email}`}>{contact.email}</a> and I will send it</>}.</p>
+            <button type="button" className="btn btn--primary" onClick={() => window.location.reload()}>Try again</button>
+          </div>
+        </section>
+      </main>
     );
   }
 
-  return (
-    <div className="cv-page-wrapper">
-      <NavbarSpacer />
+  // The CMS headline is a pipe-separated list of keywords; show it as facts.
+  const keywords = [...new Set((personalInfo?.headline || '').split('|').map((s) => s.trim()).filter(Boolean))];
 
+  return (
+    <main id="main" className="cv-page">
       <Helmet>
-        <title>Wanghley Martins — Curriculum Vitae</title>
-        <meta name="description" content="Curriculum vitae of Wanghley Martins — Edge AI engineer, biomedical researcher, and Duke Karsh Scholar." />
+        <title>Curriculum vitae | Wanghley Martins</title>
+        <meta name="description" content={`Curriculum vitae of Wanghley Martins. ${cvPage?.lede || ''}`} />
         <meta name="robots" content="index, follow" />
         <link rel="canonical" href="https://wanghley.com/curriculum-vitae" />
-        <meta property="og:title" content="Wanghley Martins — Curriculum Vitae" />
+        <meta property="og:title" content="Curriculum vitae | Wanghley Martins" />
+        <meta property="og:description" content={cvPage?.lede || ''} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://wanghley.com/curriculum-vitae" />
-        <meta property="og:image" content="https://res.cloudinary.com/wanghley/image/upload/v1746646971/vhwsrugv5l1sxh7fx0zi.jpg" />
+        <meta property="og:image" content="https://wanghley.com/og-image.png" />
       </Helmet>
 
-      <div className="cv-layout">
+      <section className="bp-sec bp-sec--head cv-head">
+        <div className="bench-col">
+          <PageHeader refdes="U1" title={personalInfo?.name || 'Curriculum vitae'} lede={cvPage?.lede} meta={keywords}>
+            <PersonalInfo personalInfo={personalInfo} />
+            {cvPage?.openTo && <p className="cv-open">{cvPage.openTo}</p>}
+            <div className="cv-actions no-print">
+              <Link className="btn btn--primary" to="/contact">Get in touch</Link>
+              <button type="button" className="btn btn--ghost" onClick={handlePrint}>
+                <FaPrint aria-hidden="true" /> Print or save as PDF
+              </button>
+            </div>
+          </PageHeader>
+        </div>
+      </section>
 
-        {/* ── Left sticky navigation ── */}
-        <aside className="cv-nav no-print" aria-label="CV section navigation">
-          <div className="cv-nav__inner">
-            <div className="cv-nav__label">Contents</div>
-            <ul className="cv-nav__list">
-              {NAV_SECTIONS.map(({ id, label, number }) => (
-                <li key={id} className="cv-nav__item">
-                  <a
-                    href={`#${id}`}
-                    className={`cv-nav__link ${activeSection === id ? 'cv-nav__link--active' : ''}`}
-                    onClick={(e) => handleNavClick(e, id)}
-                  >
-                    <span className="cv-nav__number">{number}</span>
-                    <span className="cv-nav__dot" aria-hidden="true" />
-                    <span className="cv-nav__text">{label}</span>
-                    <FaChevronRight className="cv-nav__arrow" aria-hidden="true" />
+      <section className="bp-sec bp-sec--light cv-body">
+        <div className="bench-col cv-layout">
+          <nav className="cv-rail no-print" aria-label="CV sections">
+            <p className="cv-rail__label">On this page</p>
+            <ul>
+              {CV_SECTIONS.map(({ id, label }) => (
+                <li key={id}>
+                  <a href={`#${id}`} aria-current={activeSection === id ? 'true' : undefined} onClick={(e) => handleNavClick(e, id)}>
+                    {label}
                   </a>
                 </li>
               ))}
             </ul>
+          </nav>
 
-            <div className="cv-nav__divider" />
-
-            <button className="cv-print-btn" onClick={handlePrint} aria-label="Print or save CV as PDF">
-              <FaPrint aria-hidden="true" />
-              <span>Print / PDF</span>
-            </button>
-            <p className="cv-print-hint">Select "Save as PDF"</p>
-          </div>
-        </aside>
-
-        {/* ── Main CV content ── */}
-        <main className="cv-main">
-          <div className="cv-card">
-
-            {/* Profile / Personal Info */}
-            <section id="cv-profile" className="cv-section">
-              <PersonalInfo personalInfo={personalInfo} />
-            </section>
-
-            <div className="cv-divider" />
-
-            {/* Experience */}
+          <div className="cv-content">
             <section id="cv-experience" className="cv-section">
               <ExperienceList experiences={experiences} />
             </section>
-
-            <div className="cv-divider" />
-
-            {/* Education */}
             <section id="cv-education" className="cv-section">
               <EducationList educations={educations} />
             </section>
-
-            <div className="cv-divider" />
-
-            {/* Skills */}
             <section id="cv-skills" className="cv-section">
               <SkillsList skills={skills} />
             </section>
-
-            <div className="cv-divider" />
-
-            {/* Publications */}
             <section id="cv-publications" className="cv-section">
               <PublicationList publications={publications} />
             </section>
-
-            <div className="cv-divider" />
-
-            {/* Certifications */}
             <section id="cv-certifications" className="cv-section">
-              <div className="cv-section__head">
-                <h2 className="cv-section__title">Certifications</h2>
-              </div>
-              <div className="cv-certifications-grid">
-                <CertificationsList certifications={certifications} />
-              </div>
+              <CertificationsList certifications={certifications} />
             </section>
-
           </div>
-        </main>
-      </div>
-    </div>
+        </div>
+      </section>
+    </main>
   );
 };
 
