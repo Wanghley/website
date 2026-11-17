@@ -13,6 +13,7 @@ import ShareButton from './article/ShareButton';
 import { useActiveHeading, useReadCompletion } from './article/hooks';
 import { calculateReadingTime, extractHeadings, pickImage } from './article/utils';
 import { fetchPage, mediaUrl } from '../api/cms';
+import ProjectReport from './ProjectReport';
 
 const withProtocol = (url) => (url.includes('http') ? url : `https://${url}`);
 
@@ -139,6 +140,7 @@ const ProjectPage = () => {
     const projectUrl = `https://wanghley.com/projects/${slug}`;
     const hasVideo = !!videoUrl;
     const hasGallery = media.length > 0;
+    const reportUrl = mediaUrl(project.report);
     const dates = Start ? [formatMonth(Start), End ? formatMonth(End) : 'Present'].join(' – ') : null;
 
     // Schema.org breadcrumb
@@ -266,6 +268,8 @@ const ProjectPage = () => {
                                     <MediaGallery media={media} />
                                 </section>
                             )}
+
+                            {reportUrl && <ProjectReport url={reportUrl} title={Title} />}
 
                             <p className="article-back">
                                 <Link to="/projects" className="bp-link">← All projects</Link>
