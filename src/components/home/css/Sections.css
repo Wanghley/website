@@ -1,7 +1,8 @@
 /* Home sections after the hero: only what is specific to the home page.
    Bands, section titles, links, cards and spec rows are the shared page kit
    in components/css/bench-page.css. Static: no entrance animations, no
-   scroll effects. Bench tokens only. */
+   scroll effects (the one slow loop is the logo strip, which stops for
+   reduced motion). Bench tokens only. */
 
 /* --- photo strip, right under the hero --- */
 .hm-strip { padding-block: 0 clamp(48px, 8vh, 88px); }
@@ -47,15 +48,90 @@
 .hm-about__links { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; }
 
 /* --- where I have been --- */
-.hm-trust { padding-block: clamp(48px, 8vh, 80px); position: relative; }
+/* A strip of one-colour logos that rolls on its own (TrustStrip.js renders the
+   content twice; the track moves one pass, so the loop has no seam). It pauses on
+   hover, on focus and from the Pause button, and is a static wrapped list for
+   people who ask for reduced motion. The loop time (--trust-dur) is set from the
+   content width in the component. */
+.hm-trust { --trust-logo-h: 40px; padding-block: clamp(48px, 8vh, 80px); position: relative; }
+.hm-trust__head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
 .hm-trust__title {
   font-family: var(--font-mono-bench); font-size: var(--step--1); font-weight: 400;
-  letter-spacing: 0.04em; color: var(--t-muted); margin-bottom: 24px;
+  letter-spacing: 0.04em; color: var(--t-muted);
 }
-.hm-trust__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px 40px; }
-.hm-trust__group dt { font-size: var(--step--1); color: var(--t-muted); margin-bottom: 10px; }
-.hm-trust__group ul { display: grid; gap: 6px; }
-.hm-trust__group li { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.01em; color: var(--t-fg); line-height: 1.25; }
+.hm-trust__toggle {
+  font: inherit; font-family: var(--font-mono-bench); font-size: var(--step--1); letter-spacing: 0.04em;
+  color: var(--t-muted); background: none; cursor: pointer;
+  border: 1px solid var(--t-line-strong); border-radius: 999px; padding: 4px 14px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.hm-trust__toggle:hover { color: var(--t-fg); border-color: var(--t-muted); }
+.hm-trust__toggle:focus-visible { outline: 2px solid var(--signal); outline-offset: 3px; }
+
+.hm-trust__viewport {
+  overflow: hidden;
+  --fade: clamp(32px, 9%, 160px);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 var(--fade), #000 calc(100% - var(--fade)), transparent);
+}
+.hm-trust__track {
+  display: flex;
+  width: max-content;
+  animation: hm-trust-roll var(--trust-dur, 70s) linear infinite;
+  will-change: transform;
+}
+.hm-trust.is-paused .hm-trust__track,
+.hm-trust__viewport:hover .hm-trust__track,
+.hm-trust__viewport:focus-within .hm-trust__track { animation-play-state: paused; }
+@keyframes hm-trust-roll { to { transform: translate3d(-50%, 0, 0); } }
+
+/* each pass is at least a screen wide, so a wide monitor never shows a gap */
+.hm-trust__set { display: flex; flex: none; min-width: 100vw; justify-content: space-around; margin: 0; }
+.hm-trust__group {
+  display: flex; align-items: center; flex: none;
+  gap: clamp(24px, 3vw, 40px);
+  padding-inline: clamp(28px, 4vw, 64px);
+  border-left: 1px solid var(--t-line);
+}
+.hm-trust__group dt {
+  font-family: var(--font-mono-bench); font-size: var(--step--1); letter-spacing: 0.04em;
+  color: var(--t-muted); white-space: nowrap;
+}
+.hm-trust__group dd { margin: 0; }
+.hm-trust__group ul { display: flex; align-items: center; gap: clamp(28px, 4vw, 56px); }
+.hm-trust__group li { display: flex; align-items: center; height: var(--trust-logo-h); }
+.hm-trust__link { display: flex; align-items: center; height: 100%; border-radius: 4px; }
+.hm-trust__link:focus-visible { outline: 2px solid var(--signal); outline-offset: 6px; }
+
+/* Logos are flattened to the page's off-white, so marks of any colour sit together
+   on the dark band; they light up on hover and focus. This needs a transparent
+   background, which the component checks for. */
+.hm-trust__logo,
+.hm-trust__wordmark { opacity: 0.62; transition: opacity 0.2s ease; }
+.hm-trust__logo {
+  display: block; height: var(--trust-logo-h); width: auto; max-width: 9.5rem; object-fit: contain;
+  filter: brightness(0) invert(0.95);
+  user-select: none; -webkit-user-drag: none;
+}
+.hm-trust__wordmark {
+  font-size: var(--step-1); font-weight: 600; letter-spacing: -0.01em; line-height: 1;
+  color: var(--t-fg); white-space: nowrap;
+}
+a.hm-trust__link:hover .hm-trust__logo, a.hm-trust__link:focus-visible .hm-trust__logo,
+a.hm-trust__link:hover .hm-trust__wordmark, a.hm-trust__link:focus-visible .hm-trust__wordmark { opacity: 1; }
+
+@media (max-width: 600px) { .hm-trust { --trust-logo-h: 32px; } }
+
+/* Reduced motion: no loop. The same list, wrapped inside the page column. */
+@media (prefers-reduced-motion: reduce) {
+  .hm-trust__viewport { -webkit-mask-image: none; mask-image: none; padding-inline: var(--edge); }
+  .hm-trust__track { display: block; width: auto; animation: none; will-change: auto; }
+  .hm-trust__set { flex-wrap: wrap; min-width: 0; justify-content: flex-start; gap: 28px clamp(32px, 5vw, 72px); }
+  .hm-trust__set[aria-hidden="true"], .hm-trust__toggle { display: none; }
+  .hm-trust__group { flex: 0 1 auto; flex-wrap: wrap; min-width: 0; padding-inline: 0; border-left: 0; }
+  .hm-trust__group dd { min-width: 0; }
+  .hm-trust__group ul { flex-wrap: wrap; gap: 16px clamp(28px, 4vw, 56px); }
+}
 
 /* --- skills --- */
 .hm-skills { display: grid; border-top: 1px solid var(--t-line); }

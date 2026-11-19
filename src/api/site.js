@@ -10,7 +10,7 @@ export const fetchAboutArticle = () => fetchSingle('about');
 export const fetchPersonalInfo = () => fetchSingle('personal-information', { populate: '*' });
 
 export const fetchPlaces = () => fetchCollection('places', { sort: 'sortOrder:asc' });
-export const fetchAffiliations = () => fetchCollection('affiliations', { sort: 'sortOrder:asc' });
+export const fetchAffiliations = () => fetchCollection('affiliations', { sort: 'sortOrder:asc', populate: 'logo' });
 
 export const fetchFeaturedProjects = (count) => fetchPage('projects', {
   'filters[featured][$eq]': true,
