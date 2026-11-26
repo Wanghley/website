@@ -214,6 +214,56 @@ stylesheet (`article.css`) replaced a 2,003-line project one and a 1,833-line bl
 - The About lead sentence ("known for his work in…") and the hatnote joke are yours, moved to
   `src/data/about.js` unchanged.
 
+## Lists and article pages: bento and datasheet (branch `feature/bento-lists`)
+
+**Lists** (`/projects`, `/blog`) are one bento system on three columns (two on a tablet, one on a
+phone). On Projects the CMS-selected work comes first in the CMS's own order (`sortOrder`): the
+first one with a sharp cover is the 2x2 lead (FPGA ECG/EMG), the other selected ones are 2x1, then
+the rest run newest first. A few later projects with a sharp cover are widened so the grid ends in
+whole rows (a lone tile at the end looked unfinished); `placeTiles` in `bench/bento.js` models how
+the browser packs the grid and its test shows no empty cells. The blog's 7 posts come out as one
+lead, two wide and four standard. A search or a filter turns the grid uniform, in date order.
+Tiles render in reading order, so tab order matches the screen (before this, focus skipped from
+the lead to the third row). A project with no cover gets a graphite text tile; the title link
+stretches over the whole tile and the tile carries one focus ring. Chips show only categories with
+two or more entries. Search and chips share `ListToolbar`, replacing ~60 duplicated lines per page.
+
+**Article pages** are a datasheet: the cover sits beside the title in the dark band (its frame
+follows the picture's shape and never exceeds the file's width), then contents | text | details.
+The details rail (period, field, stack from the CMS `skills`, what the project includes; for a
+post: published, reading time, topics) is sticky from 1320px; below that it is a strip above the
+text. A project with no write-up shows the strip alone. Video and gallery sit full width under the
+text. Newer and older tiles replace the "More posts" cards, with no extra request. The contents
+list drops a leading emoji from its labels (anchors unchanged). `ProjectPost.js` and `BlogPost.js`
+now share `ArticleHero`, `ArticleLayout`, `ArticleFacts`, `ArticleSkeleton`, `ArticleState` and
+`AdjacentNav`.
+
+**Decisions and findings**
+
+- No "Updated" row: every post and project in the CMS has `updatedAt` = 2026-11-16, the import day.
+  The SEO metadata (`dateModified`, `article:modified_time`) still sends that date; it was already
+  doing so and is left alone.
+- StepDrop is a standard tile, not a big one: its cover is 473 px wide and would go soft.
+- The three-zone body needs 1320 px (the 68ch text column plus two rails); between 1024 and 1319 px
+  the contents rail stays and the details become the strip.
+- `App.test.js` (the stock "renders learn react link" test) fails on the untouched branch too
+  (no `window.matchMedia` in jsdom).
+
+**Checks**
+
+- 53 tests pass (new: `bento`, `adjacent`); the build compiles with no warnings; `main.js` 116.8 kB
+  gzipped (116.4 before), `main.css` 16.5 kB (15.3 before).
+- axe (WCAG 2.2 A and AA plus best practice) at 1440 and 375 on `/projects`, `/blog`, a project with
+  a report, one without, one with no write-up, a post, and a post with no headings: 0 failing rules
+  in all 14 runs. The detector reports nothing on the changed files.
+- No horizontal overflow and no console errors at 375, 768 and 1440 on the five captured routes.
+- Interaction: a category filter gives 9 uniform tiles, a search gives 1, Escape restores 24
+  (7 of them big); the tile focus ring is one copper ring around the tile.
+- Screenshots: `docs/screenshots/phase-7/pre-bento-*` (the live site before) and `post-bento-*`.
+
+**Not checked:** `prefers-reduced-motion` (nothing here animates), a print stylesheet for these
+pages, and the Report / Interactive report views on the new layout beyond the unchanged frame.
+
 ## Content to fix in the CMS (Strapi), which only you can do
 
 - **Education** has no Rice entry, and the CV text never mentions Rice (18,122 characters, 0 times).
