@@ -115,6 +115,14 @@ input, textarea, select { caret-color: var(--signal); accent-color: var(--signal
 /* the separator trails each item, so a wrapped row never starts with one */
 .bp-head__meta li:not(:last-child)::after { content: '·'; margin-inline: 0.7em; color: var(--t-line-strong); }
 
+/* title with something beside it (an article's cover): side by side on a wide screen */
+.bp-head__split { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; align-items: center; }
+.bp-head__aside { min-width: 0; }
+@media (min-width: 1024px) {
+  .bp-head__split { grid-template-columns: minmax(0, 1fr) minmax(0, 27rem); gap: clamp(32px, 5vw, 72px); }
+  .bp-head__aside { margin-inline-start: auto; width: 100%; }
+}
+
 /* --- spec table: term and description rows (About values, CV, project facts) --- */
 .bp-spec { border-top: 1px solid var(--t-line); margin: 0; }
 .bp-spec__row {
@@ -132,10 +140,18 @@ input, textarea, select { caret-color: var(--signal); accent-color: var(--signal
 @media (max-width: 899px) {
   .bp-spec__row { grid-template-columns: 1fr; gap: 4px; }
 }
+/* stacked: the term above its value, for a narrow rail (article facts) */
+.bp-spec--stack .bp-spec__row { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 4px; padding: 12px 0; font-size: var(--step--1); }
+.bp-spec--stack dt {
+  font-family: var(--font-mono-bench); font-size: var(--step--2); font-weight: 400;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--t-muted);
+}
+.bp-spec--stack dd { color: var(--t-fg); }
 
 /* --- cards (projects, blog) --- */
 .bp-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: clamp(24px, 3vw, 36px); }
 .bp-card { display: grid; gap: 12px; align-content: start; }
+.bp-card__body { display: grid; gap: 12px; align-content: start; min-width: 0; }
 .bp-card__media { display: block; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 4px; border: 1px solid var(--t-line); background: var(--t-surface); }
 .bp-card__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .bp-card__blank { display: block; width: 100%; height: 100%; background: var(--t-surface); }
@@ -150,6 +166,83 @@ input, textarea, select { caret-color: var(--signal); accent-color: var(--signal
 
 .bp-card__actions { display: flex; flex-wrap: wrap; gap: 4px 18px; }
 .bp-card__actions .bp-link { font-size: var(--step--1); }
+
+/* --- bento: the same cards as tiles of different sizes on one grid (projects
+   and blog lists). Three columns, then two, then one. `dense` lets a 1x1 tile
+   fill the gap beside a wide one; the DOM order stays the reading order.
+   A tile is one big click target: the title link stretches over it and the
+   actions sit above. No motion: hover changes border and title colour only. --- */
+.bp-cards--bento {
+  --tile-row: 26rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: minmax(var(--tile-row), auto);
+  grid-auto-flow: dense;
+  gap: clamp(16px, 2vw, 24px);
+}
+.bp-cards--bento .bp-card {
+  position: relative;
+  display: flex; flex-direction: column; gap: 0;
+  min-width: 0;
+  background: var(--t-surface); color: var(--t-fg);
+  border: 1px solid var(--t-line-strong); border-radius: 4px;
+  overflow: hidden;
+  transition: border-color var(--dur-ui) var(--ease-out);
+}
+.bp-cards--bento .bp-card:hover { border-color: var(--t-fg); }
+.bp-cards--bento .bp-card__media {
+  position: relative; flex: 1 1 auto; min-height: 11rem; aspect-ratio: auto;
+  border: 0; border-radius: 0; border-bottom: 1px solid var(--t-line);
+}
+.bp-cards--bento .bp-card__media img { position: absolute; inset: 0; }
+.bp-cards--bento .bp-card__body { flex: none; padding: 16px 18px 18px; gap: 8px; }
+.bp-cards--bento .bp-card__title { font-size: var(--step-1); text-wrap: balance; }
+.bp-cards--bento .bp-card__text { -webkit-line-clamp: 2; }
+.bp-cards--bento .bp-card:hover .bp-card__title a { color: var(--t-hover); }
+/* the title link covers the whole tile; its focus ring is drawn around the tile */
+.bp-cards--bento .bp-card__title a, .bp-cards--bento .bp-card__title a:focus-visible { outline: none; box-shadow: none; }
+.bp-cards--bento .bp-card__title a::after { content: ''; position: absolute; inset: 0; border-radius: 4px; }
+.bp-cards--bento .bp-card__title a:focus-visible::after { outline: 2px solid var(--focus); outline-offset: -2px; }
+.bp-cards--bento .bp-card__actions { position: relative; z-index: 1; margin-top: 4px; }
+
+/* sizes */
+.bp-cards--bento .bp-card--lead { grid-column: span 2; grid-row: span 2; }
+.bp-cards--bento .bp-card--wide { grid-column: span 2; flex-direction: row; }
+.bp-cards--bento .bp-card--lead .bp-card__body { padding: 22px 26px 26px; gap: 10px; }
+.bp-cards--bento .bp-card--lead .bp-card__title { font-size: var(--step-2); max-width: 24ch; }
+.bp-cards--bento .bp-card--lead .bp-card__text { -webkit-line-clamp: 4; max-width: 62ch; font-size: var(--step-0); }
+.bp-cards--bento .bp-card--wide .bp-card__media { flex: 1.15 1 0; min-height: 0; border-bottom: 0; border-right: 1px solid var(--t-line); }
+.bp-cards--bento .bp-card--wide .bp-card__body { flex: 1 1 0; align-self: center; padding: 22px 24px; }
+.bp-cards--bento .bp-card--wide .bp-card__title { font-size: var(--step-2); }
+.bp-cards--bento .bp-card--wide .bp-card__text { -webkit-line-clamp: 5; }
+
+/* a tile with no image is a graphite face that carries its text */
+.bp-cards--bento .bp-card--face { background: var(--ink); border-color: var(--ink); }
+.bp-cards--bento .bp-card--face:hover { border-color: var(--t-hover); }
+.bp-cards--bento .bp-card--face .bp-card__body { flex: 1 1 auto; justify-content: end; }
+.bp-cards--bento .bp-card--face .bp-card__title { font-size: var(--step-2); }
+.bp-cards--bento .bp-card--face .bp-card__text { -webkit-line-clamp: 6; }
+.bp-cards--bento .bp-card--face .bp-card__title a:focus-visible::after { outline-offset: -4px; }
+
+@media (max-width: 1099px) {
+  .bp-cards--bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bp-cards--bento .bp-card--lead { grid-row: auto; flex-direction: row; }
+  .bp-cards--bento .bp-card--lead .bp-card__media { flex: 1.15 1 0; min-height: 0; border-bottom: 0; border-right: 1px solid var(--t-line); }
+  .bp-cards--bento .bp-card--lead .bp-card__body { flex: 1 1 0; align-self: center; }
+}
+@media (max-width: 639px) {
+  .bp-cards--bento { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; }
+  .bp-cards--bento .bp-card--lead, .bp-cards--bento .bp-card--wide { grid-column: auto; flex-direction: column; }
+  .bp-cards--bento .bp-card__media,
+  .bp-cards--bento .bp-card--lead .bp-card__media,
+  .bp-cards--bento .bp-card--wide .bp-card__media { flex: none; min-height: 0; aspect-ratio: 16 / 10; border-right: 0; border-bottom: 1px solid var(--t-line); }
+  .bp-cards--bento .bp-card--lead .bp-card__body,
+  .bp-cards--bento .bp-card--wide .bp-card__body { align-self: stretch; padding: 16px 18px 18px; }
+  .bp-cards--bento .bp-card--lead .bp-card__title,
+  .bp-cards--bento .bp-card--wide .bp-card__title,
+  .bp-cards--bento .bp-card--face .bp-card__title { font-size: var(--step-1); }
+  .bp-cards--bento .bp-card--lead .bp-card__text { font-size: var(--step--1); }
+  .bp-cards--bento .bp-card--face .bp-card__body { min-height: 11rem; }
+}
 
 /* --- prose: long-form reading (posts, project write-ups, about, legal).
    Wrap rendered markdown in <Prose>. Follows the band's theme.

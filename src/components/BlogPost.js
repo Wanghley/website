@@ -2,37 +2,25 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { usePostHog } from '../lib/analytics';
 import './css/article.css';
-import { formatDate } from '../utils/formatDate';
+import { formatDate, formatMonth } from '../utils/formatDate';
 import { fetchPage } from '../api/cms';
-import { fetchRecentPosts } from '../api/site';
+import { fetchAllPosts } from '../api/site';
 import { Helmet } from "react-helmet-async";
-import { PageHeader, BenchCard, BenchCards } from './bench';
 import ArticleBody from './article/ArticleBody';
+import ArticleHero from './article/ArticleHero';
+import ArticleLayout from './article/ArticleLayout';
+import ArticleFacts from './article/ArticleFacts';
+import ArticleSkeleton from './article/ArticleSkeleton';
+import ArticleState from './article/ArticleState';
+import AdjacentNav from './article/AdjacentNav';
+import { adjacent } from './article/adjacent';
 import TableOfContents from './article/TableOfContents';
 import ShareButton from './article/ShareButton';
 import { useActiveHeading, useReadCompletion } from './article/hooks';
 import { calculateReadingTime, extractHeadings, pickImage } from './article/utils';
+import { newestFirst } from './bench/bento';
 
-// Loading: the same two bands with plain blocks where the text will be
-const BlogSkeleton = () => (
-    <main id="main" className="article-page" aria-busy="true">
-        <section className="bp-sec bp-sec--head">
-            <div className="bench-col">
-                <div className="bp-rule" aria-hidden="true" />
-                <div className="article-skeleton article-skeleton--title" />
-                <div className="article-skeleton article-skeleton--lede" />
-            </div>
-        </section>
-        <section className="bp-sec bp-sec--light">
-            <div className="bench-col">
-                <div className="article-skeleton article-skeleton--block" />
-                <div className="article-skeleton article-skeleton--line" />
-                <div className="article-skeleton article-skeleton--line article-skeleton--short" />
-            </div>
-        </section>
-        <p className="sr-only" role="status">Loading the article.</p>
-    </main>
-);
+const postDate = (post) => post.date || post.publishedAt;
 
 // Main Blog Post Component
 const BlogPostPage = () => {
@@ -41,7 +29,7 @@ const BlogPostPage = () => {
     const [blogPost, setBlogPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [relatedPosts, setRelatedPosts] = useState([]);
+    const [allPosts, setAllPosts] = useState([]);
 
     // Fetch blog post data
     useEffect(() => {
@@ -62,14 +50,6 @@ const BlogPostPage = () => {
                     title: postData?.title,
                     category: postData?.categories?.[0],
                 });
-
-                // More to read: the latest posts, minus this one. A failure here is not an error for the page.
-                try {
-                    const latest = await fetchRecentPosts(4);
-                    setRelatedPosts(latest.data || []);
-                } catch {
-                    setRelatedPosts([]);
-                }
             } catch (err) {
                 console.error("Error fetching blog post:", err);
                 setError("The data service did not answer. Check your connection and try again.");
@@ -84,6 +64,16 @@ const BlogPostPage = () => {
         }
     }, [slug, posthog]);
 
+    // The newer and older post at the end of the page. The list is cached (the
+    // blog page reads the same one); a failure here is not an error for the page.
+    useEffect(() => {
+        let cancelled = false;
+        fetchAllPosts()
+            .then((rows) => { if (!cancelled) setAllPosts(newestFirst(rows.filter((p) => p?.title), postDate)); })
+            .catch(() => {});
+        return () => { cancelled = true; };
+    }, []);
+
     const headings = useMemo(() => extractHeadings(blogPost?.body), [blogPost]);
     const activeHeadingId = useActiveHeading(!loading && !!blogPost);
     useReadCompletion(!!blogPost, () => posthog?.capture('blog_read_completed', {
@@ -94,55 +84,59 @@ const BlogPostPage = () => {
     }));
 
     if (loading) {
-        return <BlogSkeleton />;
+        return <ArticleSkeleton label="Loading the article." />;
     }
 
     if (error) {
         return (
-            <main id="main" className="article-page">
-                <section className="bp-sec bp-sec--head">
-                    <div className="bench-col">
-                        <PageHeader refdes="U3" title="The article did not load" size="md" lede={error} />
-                    </div>
-                </section>
-                <section className="bp-sec bp-sec--light">
-                    <div className="bench-col article-state">
-                        <button type="button" className="btn btn--primary" onClick={() => window.location.reload()}>Try again</button>
-                        <Link to="/blog" className="bp-link">All posts →</Link>
-                    </div>
-                </section>
-            </main>
+            <ArticleState refdes="U3" title="The article did not load" lede={error}>
+                <button type="button" className="btn btn--primary" onClick={() => window.location.reload()}>Try again</button>
+                <Link to="/blog" className="bp-link">All posts →</Link>
+            </ArticleState>
         );
     }
 
     if (!blogPost) {
         return (
-            <main id="main" className="article-page">
-                <section className="bp-sec bp-sec--head">
-                    <div className="bench-col">
-                        <PageHeader refdes="U3" title="No article here" size="md" lede="That article does not exist, or it has moved." />
-                    </div>
-                </section>
-                <section className="bp-sec bp-sec--light">
-                    <div className="bench-col article-state">
-                        <Link to="/blog" className="btn btn--primary">Browse all posts</Link>
-                    </div>
-                </section>
-            </main>
+            <ArticleState refdes="U3" title="No article here" lede="That article does not exist, or it has moved.">
+                <Link to="/blog" className="btn btn--primary">Browse all posts</Link>
+            </ArticleState>
         );
     }
 
     // Extract blog post data
     const {
-        title: Title, body: Content, categories: Categories, date, publishedAt, updatedAt, excerpt: Teaser, cover: coverMedia,
+        title: Title, body: Content, categories: Categories, updatedAt, excerpt: Teaser, cover: coverMedia,
     } = blogPost;
-    const publishedDate = date || publishedAt;
+    const publishedDate = postDate(blogPost);
 
     const cover = pickImage(coverMedia);
     const categoryList = Categories?.slice(0, 3) || [];
     const readingTime = calculateReadingTime(Content);
     const blogUrl = `https://wanghley.com/blog/${slug}`;
-    const more = relatedPosts.filter((post) => post.slug !== slug).slice(0, 3);
+
+    // No "Updated" row: the CMS's updatedAt is the day the content was imported
+    // (the same day on every entry), not the day anyone revised the post.
+    const factRows = [
+        { label: 'Published', value: publishedDate ? formatDate(publishedDate) : null },
+        { label: 'Reading time', value: readingTime ? `${readingTime} min` : null },
+        {
+            label: 'Topics',
+            value: categoryList.length ? (
+                <ul className="article-facts__list">
+                    {categoryList.map((cat) => <li key={cat}>{cat}</li>)}
+                </ul>
+            ) : null,
+        },
+    ];
+
+    const { newer, older } = adjacent(allPosts, slug);
+    const asTile = (p) => p && ({
+        href: `/blog/${p.slug}`,
+        title: p.title,
+        meta: [postDate(p) && formatMonth(postDate(p)), p.categories?.[0]].filter(Boolean).join(' · '),
+        image: pickImage(p.cover, ['thumbnail', 'small'])?.url,
+    });
 
     // Schema.org structured data
     const articleSchema = {
@@ -192,75 +186,45 @@ const BlogPostPage = () => {
                 <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
             </Helmet>
 
-            <section className="bp-sec bp-sec--head">
-                <div className="bench-col">
-                    <nav className="article-crumbs" aria-label="Breadcrumb">
-                        <Link to="/">Home</Link>
-                        <span aria-hidden="true">/</span>
-                        <Link to="/blog">Blog</Link>
-                    </nav>
-                    <PageHeader
-                        size="md"
-                        refdes="U3"
-                        title={Title}
-                        lede={Teaser}
-                        meta={[categoryList[0], publishedDate ? formatDate(publishedDate) : null, readingTime ? `${readingTime} min read` : null].filter(Boolean)}
-                    >
-                        <div className="article-actions">
-                            <ShareButton title={Title} url={blogUrl} event="blog_post_shared" />
-                        </div>
-                    </PageHeader>
+            <ArticleHero
+                section="Blog"
+                sectionPath="/blog"
+                refdes="U3"
+                title={Title}
+                lede={Teaser}
+                cover={cover}
+            >
+                <div className="article-actions">
+                    <ShareButton title={Title} url={blogUrl} event="blog_post_shared" />
                 </div>
-            </section>
+            </ArticleHero>
 
             <section className="bp-sec bp-sec--light article-body">
                 <div className="bench-col">
-                    {cover && (
-                        <figure className="article-cover">
-                            <img src={cover.url} alt={Title} width={cover.width} height={cover.height} />
-                        </figure>
-                    )}
+                    <ArticleLayout
+                        hasToc={headings.length > 0}
+                        toc={<TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} event="blog_toc_clicked" />}
+                        tocInline={<TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} event="blog_toc_clicked" inline />}
+                        facts={<ArticleFacts title="Post details" rows={factRows} />}
+                        factsInline={<ArticleFacts title="Post details" rows={factRows} variant="strip-narrow" />}
+                    >
+                        {Content && <ArticleBody source={Content} headings={headings} raw />}
+                    </ArticleLayout>
 
-                    <div className="article-layout">
-                        <aside className="article-aside">
-                            <TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} event="blog_toc_clicked" />
-                        </aside>
+                    <AdjacentNav
+                        label="More posts"
+                        newer={asTile(newer)}
+                        older={asTile(older)}
+                        onNavigate={(direction) => posthog?.capture('blog_adjacent_clicked', {
+                            from_slug: slug,
+                            to_slug: (direction === 'newer' ? newer : older)?.slug,
+                            direction,
+                        })}
+                    />
 
-                        <article className="article-main">
-                            <TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} event="blog_toc_clicked" inline />
-
-                            {Content && <ArticleBody source={Content} headings={headings} raw />}
-
-                            {categoryList.length > 0 && (
-                                <ul className="article-topics" aria-label="Topics">
-                                    {categoryList.map((cat) => <li key={cat}>{cat}</li>)}
-                                </ul>
-                            )}
-
-                            {more.length > 0 && (
-                                <section className="article-section" aria-labelledby="article-more-title">
-                                    <h2 id="article-more-title" className="article-section__title">More posts</h2>
-                                    <BenchCards>
-                                        {more.map((post, index) => (
-                                            <BenchCard
-                                                key={post.documentId ?? post.slug}
-                                                href={`/blog/${post.slug}`}
-                                                title={post.title}
-                                                text={post.excerpt}
-                                                meta={(post.date || post.publishedAt) ? formatDate(post.date || post.publishedAt) : undefined}
-                                                image={pickImage(post.cover, ['small', 'medium'])?.url}
-                                                onClick={() => posthog?.capture('blog_related_post_clicked', { from_slug: slug, to_slug: post.slug, title: post.title, index })}
-                                            />
-                                        ))}
-                                    </BenchCards>
-                                </section>
-                            )}
-
-                            <p className="article-back">
-                                <Link to="/blog" className="bp-link">← All posts</Link>
-                            </p>
-                        </article>
-                    </div>
+                    <p className="article-back">
+                        <Link to="/blog" className="bp-link">← All posts</Link>
+                    </p>
                 </div>
             </section>
         </main>
