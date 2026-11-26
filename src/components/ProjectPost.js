@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { usePostHog } from '../lib/analytics';
 import './css/article.css';
 import { formatMonth } from '../utils/formatDate';
@@ -14,7 +14,9 @@ import { useActiveHeading, useReadCompletion } from './article/hooks';
 import { calculateReadingTime, extractHeadings, pickImage } from './article/utils';
 import { fetchPage, mediaUrl } from '../api/cms';
 import ProjectReport from './ProjectReport';
-import ProjectSite from './ProjectSite';
+import ProjectSite, { frameUrl } from './ProjectSite';
+import ViewSwitch from './article/ViewSwitch';
+import { projectViews, pickView } from './article/views';
 
 const withProtocol = (url) => (url.includes('http') ? url : `https://${url}`);
 
@@ -46,6 +48,10 @@ const ProjectPage = () => {
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    // Which view shows (?view=report), and which ones have been opened so far.
+    // A view that was opened stays mounted, hidden, so its place in a long report is kept.
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [opened, setOpened] = useState({});
 
     // Fetch project data
     useEffect(() => {
@@ -142,6 +148,18 @@ const ProjectPage = () => {
     const hasVideo = !!videoUrl;
     const hasGallery = media.length > 0;
     const reportUrl = mediaUrl(project.report);
+    const hasSite = !!frameUrl(project.site);
+    const views = projectViews({
+        hasOverview: !!(Description || hasVideo || hasGallery),
+        hasSite,
+        hasReport: !!reportUrl,
+    });
+    const active = pickView(views, searchParams.get('view'));
+    const selectView = (id) => {
+        setOpened((prev) => ({ ...prev, [active]: true, [id]: true }));
+        setSearchParams(id === views[0].id ? {} : { view: views.find((view) => view.id === id).slug }, { replace: true, preventScrollReset: true });
+        posthog?.capture('project_view_selected', { slug, title: Title, view: id });
+    };
     const dates = Start ? [formatMonth(Start), End ? formatMonth(End) : 'Present'].join(' – ') : null;
 
     // Schema.org breadcrumb
@@ -207,7 +225,17 @@ const ProjectPage = () => {
                                 </a>
                             )}
                             {hasVideo && (
-                                <a className="btn btn--ghost" href="#video"><FaPlay aria-hidden="true" /> Demo video</a>
+                                <a
+                                    className="btn btn--ghost"
+                                    href="#video"
+                                    onClick={(event) => {
+                                        // The video lives in the overview: bring it back first.
+                                        if (active === 'overview') return;
+                                        event.preventDefault();
+                                        selectView('overview');
+                                        setTimeout(() => document.getElementById('video')?.scrollIntoView(), 0);
+                                    }}
+                                ><FaPlay aria-hidden="true" /> Demo video</a>
                             )}
                             <ShareButton title={Title} url={projectUrl} event="project_shared" />
                         </div>
@@ -217,68 +245,84 @@ const ProjectPage = () => {
 
             <section className="bp-sec bp-sec--light article-body">
                 <div className="bench-col">
-                    {cover && (
-                        <figure className="article-cover">
-                            <img src={cover.url} alt={Title} width={cover.width} height={cover.height} />
-                        </figure>
+                    {views.length > 1 && (
+                        <ViewSwitch views={views} active={active} onChange={selectView} label="What to show for this project" />
                     )}
 
-                    <div className="article-layout">
-                        <aside className="article-aside">
-                            <TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} event="project_toc_clicked" />
-                        </aside>
+                    {views.map(({ id }) => (active === id || opened[id]) && (
+                        <div
+                            key={id}
+                            className="article-view"
+                            id={`project-view-panel-${id}`}
+                            role={views.length > 1 ? 'tabpanel' : undefined}
+                            aria-labelledby={views.length > 1 ? `project-view-tab-${id}` : undefined}
+                            hidden={active !== id}
+                        >
+                            {id === 'overview' && (
+                                <>
+                                    {cover && (
+                                        <figure className="article-cover">
+                                            <img src={cover.url} alt={Title} width={cover.width} height={cover.height} />
+                                        </figure>
+                                    )}
+                                    <div className="article-layout">
+                                        <aside className="article-aside">
+                                            <TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} event="project_toc_clicked" />
+                                        </aside>
 
-                        <article className="article-main">
-                            <TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} event="project_toc_clicked" inline />
+                                        <article className="article-main">
+                                            <TableOfContents headings={headings} activeId={activeHeadingId} slug={slug} event="project_toc_clicked" inline />
 
-                            {Description && <ArticleBody source={Description} headings={headings} />}
+                                            {Description && <ArticleBody source={Description} headings={headings} />}
 
-                            {hasVideo && (
-                                <section className="article-section" id="video" aria-labelledby="article-video-title">
-                                    <h2 id="article-video-title" className="article-section__title">Demo video</h2>
-                                    <video
-                                        className="article-video"
-                                        controls
-                                        preload="none"
-                                        poster={cover?.url}
-                                        onPlay={() => posthog?.capture('project_video_played', { slug, title: Title })}
-                                    >
-                                        <source src={videoUrl} type="video/mp4" />
-                                        Your browser does not support the video tag.
-                                    </video>
-                                </section>
+                                            {hasVideo && (
+                                                <section className="article-section" id="video" aria-labelledby="article-video-title">
+                                                    <h2 id="article-video-title" className="article-section__title">Demo video</h2>
+                                                    <video
+                                                        className="article-video"
+                                                        controls
+                                                        preload="none"
+                                                        poster={cover?.url}
+                                                        onPlay={() => posthog?.capture('project_video_played', { slug, title: Title })}
+                                                    >
+                                                        <source src={videoUrl} type="video/mp4" />
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                </section>
+                                            )}
+
+                                            {hasGallery && (
+                                                <section
+                                                    className="article-section"
+                                                    id="gallery"
+                                                    aria-labelledby="article-gallery-title"
+                                                    ref={(el) => {
+                                                        if (!el) return;
+                                                        const obs = new IntersectionObserver(([entry]) => {
+                                                            if (entry.isIntersecting) {
+                                                                posthog?.capture('project_gallery_viewed', { slug, title: Title, image_count: media.length });
+                                                                obs.disconnect();
+                                                            }
+                                                        }, { threshold: 0.3 });
+                                                        obs.observe(el);
+                                                    }}
+                                                >
+                                                    <h2 id="article-gallery-title" className="article-section__title">Gallery</h2>
+                                                    <MediaGallery media={media} />
+                                                </section>
+                                            )}
+                                        </article>
+                                    </div>
+                                </>
                             )}
+                            {id === 'site' && <ProjectSite site={project.site} title={Title} />}
+                            {id === 'report' && <ProjectReport url={reportUrl} title={Title} />}
+                        </div>
+                    ))}
 
-                            {hasGallery && (
-                                <section
-                                    className="article-section"
-                                    id="gallery"
-                                    aria-labelledby="article-gallery-title"
-                                    ref={(el) => {
-                                        if (!el) return;
-                                        const obs = new IntersectionObserver(([entry]) => {
-                                            if (entry.isIntersecting) {
-                                                posthog?.capture('project_gallery_viewed', { slug, title: Title, image_count: media.length });
-                                                obs.disconnect();
-                                            }
-                                        }, { threshold: 0.3 });
-                                        obs.observe(el);
-                                    }}
-                                >
-                                    <h2 id="article-gallery-title" className="article-section__title">Gallery</h2>
-                                    <MediaGallery media={media} />
-                                </section>
-                            )}
-
-                            <ProjectSite site={project.site} title={Title} />
-
-                            {reportUrl && <ProjectReport url={reportUrl} title={Title} />}
-
-                            <p className="article-back">
-                                <Link to="/projects" className="bp-link">← All projects</Link>
-                            </p>
-                        </article>
-                    </div>
+                    <p className="article-back">
+                        <Link to="/projects" className="bp-link">← All projects</Link>
+                    </p>
                 </div>
             </section>
         </main>

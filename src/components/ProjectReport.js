@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 // A self-contained HTML report uploaded to the CMS. The page fetches the file
-// and shows it in a sandboxed frame: its scripts run, but it cannot reach the
-// site's cookies, storage or parent page.
+// and shows it in a sandboxed frame inside the page: its scripts run, but it
+// cannot reach the site's cookies, storage or parent page. There is no link out
+// to where the file is stored.
 export default function ProjectReport({ url, title }) {
   const [html, setHtml] = useState(null);
   const [failed, setFailed] = useState(false);
@@ -19,20 +20,15 @@ export default function ProjectReport({ url, title }) {
     return () => { alive = false; };
   }, [url]);
 
+  if (failed) return <p className="article-frame-note" role="status">The report did not load. Try again in a moment.</p>;
+  if (html === null) return <p className="article-frame-note" role="status">Loading the report.</p>;
+
   return (
-    <section className="article-section" id="report" aria-labelledby="article-report-title">
-      <h2 id="article-report-title" className="article-section__title">Full report</h2>
-      {html && (
-        <iframe
-          title={`${title} report`}
-          srcDoc={html}
-          sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
-          style={{ width: '100%', height: '80vh', border: 0, display: 'block' }}
-        />
-      )}
-      {!html && !failed && <p>Loading the report.</p>}
-      {failed && <p>The report did not load. <a className="bp-link" href={url} target="_blank" rel="noopener noreferrer">Open it directly</a>.</p>}
-      <p><a className="bp-link" href={url} target="_blank" rel="noopener noreferrer">Download the HTML</a></p>
-    </section>
+    <iframe
+      className="article-frame"
+      title={`${title} report`}
+      srcDoc={html}
+      sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox"
+    />
   );
 }
