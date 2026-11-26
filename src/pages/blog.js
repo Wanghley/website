@@ -1,17 +1,19 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { usePostHog } from '../lib/analytics';
 import { fetchAllPosts } from '../api/site';
 import { mediaUrl } from '../api/cms';
 import { formatMonth } from '../utils/formatDate';
 import { calculateReadingTime } from '../components/article/utils';
-import { PageHeader, BenchCard, BenchCards } from '../components/bench';
+import { PageHeader, BenchCard, BenchCards, BenchCardSkeleton, ListToolbar } from '../components/bench';
+import { newestFirst, postSizes, readingOrder, visibleChips } from '../components/bench/bento';
 import '../components/css/list-page.css';
 
 // The whole list is a handful of posts, so it loads in one go: search and the
 // category filter then cover every post.
 
-const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
+const SKELETON_SIZES = ['lead', 'std', 'std', 'std', 'std', 'std'];
+const postDate = (p) => p.date || p.publishedAt;
 
 const Blogs = () => {
     const posthog = usePostHog();
@@ -19,13 +21,12 @@ const Blogs = () => {
     const [status, setStatus] = useState('loading'); // loading | ready | error
     const [searchTerm, setSearchTerm] = useState('');
     const [activeCategory, setActiveCategory] = useState('All');
-    const searchInputRef = useRef(null);
 
     const load = useCallback(async () => {
         setStatus('loading');
         try {
             const rows = await fetchAllPosts();
-            setPosts(rows.filter((p) => p?.title));
+            setPosts(newestFirst(rows.filter((p) => p?.title), postDate));
             setStatus('ready');
         } catch {
             setStatus('error');
@@ -34,49 +35,45 @@ const Blogs = () => {
 
     useEffect(() => { load(); }, [load]);
 
-    // Keyboard: Cmd/Ctrl+K focuses search, Escape clears it
-    useEffect(() => {
-        const onKeyDown = (e) => {
-            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-                e.preventDefault();
-                searchInputRef.current?.focus();
-            }
-            if (e.key === 'Escape') {
-                setSearchTerm('');
-                searchInputRef.current?.blur();
-            }
-        };
-        window.addEventListener('keydown', onKeyDown);
-        return () => window.removeEventListener('keydown', onKeyDown);
-    }, []);
+    const onSearch = useCallback((val) => {
+        setSearchTerm(val);
+        if (val.trim().length >= 3) posthog?.capture('blog_searched', { search_term: val.trim() });
+    }, [posthog]);
 
-    // newest first
-    const sorted = useMemo(
-        () => [...posts].sort((a, b) => String(b.date || b.publishedAt || '').localeCompare(String(a.date || a.publishedAt || ''))),
-        [posts]
-    );
-
-    const categories = useMemo(() => {
-        const counts = {};
-        sorted.forEach((p) => (p.categories || []).forEach((c) => { counts[c] = (counts[c] || 0) + 1; }));
-        const named = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).map((name) => ({ name, count: counts[name] }));
-        return [{ name: 'All', count: sorted.length }, ...named];
-    }, [sorted]);
-
-    const shown = useMemo(() => {
-        const q = searchTerm.trim().toLowerCase();
-        return sorted.filter((a) => {
-            const matchesSearch = !q || a.title.toLowerCase().includes(q) || (a.excerpt || '').toLowerCase().includes(q);
-            const matchesCategory = activeCategory === 'All' || (a.categories || []).includes(activeCategory);
-            return matchesSearch && matchesCategory;
-        });
-    }, [sorted, searchTerm, activeCategory]);
+    const onChip = useCallback((name) => {
+        setActiveCategory(name);
+        posthog?.capture('blog_category_filtered', { category: name });
+    }, [posthog]);
 
     const filtering = Boolean(searchTerm.trim()) || activeCategory !== 'All';
     const clearFilters = () => { setSearchTerm(''); setActiveCategory('All'); };
 
+    // Chips count every post; only the topics with two or more are offered. The
+    // other topics still show on their post and still match a search.
+    const chips = useMemo(() => {
+        const counts = {};
+        posts.forEach((p) => (p.categories || []).forEach((c) => { counts[c] = (counts[c] || 0) + 1; }));
+        const named = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).map((name) => ({ name, count: counts[name] }));
+        return visibleChips([{ name: 'All', count: posts.length }, ...named]);
+    }, [posts]);
+
+    const shown = useMemo(() => {
+        const q = searchTerm.trim().toLowerCase();
+        return posts.filter((a) => {
+            const matchesSearch = !q || a.title.toLowerCase().includes(q) || (a.excerpt || '').toLowerCase().includes(q);
+            const matchesCategory = activeCategory === 'All' || (a.categories || []).includes(activeCategory);
+            return matchesSearch && matchesCategory;
+        });
+    }, [posts, searchTerm, activeCategory]);
+
+    // The tiles in the order they appear on the grid, so tabbing goes the way the eye does.
+    const tiles = useMemo(() => {
+        const sizes = postSizes(shown, { uniform: filtering });
+        return readingOrder(sizes).map((i) => ({ post: shown[i], size: sizes[i] }));
+    }, [shown, filtering]);
+
     return (
-        <main id="main" className="blog-page">
+        <main id="main" className="blog-page list-page">
             <Helmet>
                 <title>Blog | Wanghley Martins</title>
                 <meta name="description" content="Notes by Wanghley Martins on building, studying and the detours between." />
@@ -93,70 +90,28 @@ const Blogs = () => {
                         refdes="U3"
                         title="Blog"
                         lede="Notes on building, studying and the detours between, newest first."
-                        meta={status === 'ready' ? [`${sorted.length} posts`] : []}
+                        meta={status === 'ready' ? [`${posts.length} posts`] : []}
                     />
                 </div>
             </section>
 
             <section className="bp-sec bp-sec--light blog-body" aria-label="Post list">
                 <div className="bench-col">
-                    <div className="list-toolbar">
-                        <div className="list-search">
-                            <label htmlFor="list-search" className="sr-only">Search posts</label>
-                            <input
-                                id="list-search"
-                                ref={searchInputRef}
-                                type="search"
-                                placeholder="Search posts"
-                                autoComplete="off"
-                                value={searchTerm}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    setSearchTerm(val);
-                                    if (val.trim().length >= 3) posthog?.capture('blog_searched', { search_term: val.trim() });
-                                }}
-                            />
-                            {searchTerm ? (
-                                <button type="button" className="list-search__clear" onClick={() => setSearchTerm('')}>Clear</button>
-                            ) : (
-                                <kbd aria-hidden="true">{isMac ? '⌘K' : 'Ctrl K'}</kbd>
-                            )}
-                        </div>
-
-                        {categories.length > 2 && (
-                            <div className="list-filters" role="group" aria-label="Filter by category">
-                                {categories.map(({ name, count }) => (
-                                    <button
-                                        key={name}
-                                        type="button"
-                                        className="list-chip"
-                                        aria-pressed={activeCategory === name}
-                                        onClick={() => { setActiveCategory(name); posthog?.capture('blog_category_filtered', { category: name }); }}
-                                    >
-                                        {name}<span className="list-chip__n">{count}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    <p className="list-results" role="status" aria-live="polite">
-                        {status === 'loading' && 'Loading posts.'}
-                        {status === 'ready' && (filtering
-                            ? `${shown.length} of ${sorted.length} posts${activeCategory !== 'All' ? ` in ${activeCategory}` : ''}${searchTerm.trim() ? ` matching "${searchTerm.trim()}"` : ''}`
-                            : `${sorted.length} posts`)}
-                    </p>
+                    <ListToolbar
+                        noun="posts"
+                        status={status}
+                        searchTerm={searchTerm}
+                        onSearch={onSearch}
+                        chips={chips}
+                        activeCategory={activeCategory}
+                        onChip={onChip}
+                        total={posts.length}
+                        shown={shown.length}
+                    />
 
                     {status === 'loading' && (
-                        <ul className="bp-cards" aria-hidden="true">
-                            {Array.from({ length: 3 }).map((_, i) => (
-                                <li key={i} className="bp-card">
-                                    <span className="bp-card__media"><span className="bp-card__blank" /></span>
-                                    <span className="list-skeleton list-skeleton--meta" />
-                                    <span className="list-skeleton list-skeleton--title" />
-                                    <span className="list-skeleton list-skeleton--text" />
-                                </li>
-                            ))}
+                        <ul className="bp-cards bp-cards--bento" aria-hidden="true">
+                            {SKELETON_SIZES.map((size, i) => <BenchCardSkeleton key={i} size={size} />)}
                         </ul>
                     )}
 
@@ -171,18 +126,19 @@ const Blogs = () => {
                     {status === 'ready' && shown.length > 0 && <h2 className="sr-only">All posts</h2>}
 
                     {status === 'ready' && shown.length > 0 && (
-                        <BenchCards>
-                            {shown.map((post, index) => {
-                                const { title: Title, excerpt: Teaser, categories: Categories, date, publishedAt, slug, cover, body: Content } = post;
+                        <BenchCards bento>
+                            {tiles.map(({ post, size }, index) => {
+                                const { title: Title, excerpt: Teaser, categories: Categories, slug, cover, body: Content } = post;
                                 const readTime = calculateReadingTime(Content);
                                 return (
                                     <BenchCard
                                         key={post.documentId ?? slug}
+                                        size={size}
                                         href={`/blog/${slug}`}
                                         title={Title}
                                         text={Teaser}
-                                        meta={[(date || publishedAt) && formatMonth(date || publishedAt), Categories?.[0], readTime ? `${readTime} min read` : null].filter(Boolean).join(' · ')}
-                                        image={mediaUrl(cover, ['medium', 'small', 'large'])}
+                                        meta={[postDate(post) && formatMonth(postDate(post)), Categories?.[0], readTime ? `${readTime} min read` : null].filter(Boolean).join(' · ')}
+                                        image={mediaUrl(cover, size === 'std' ? ['medium', 'small', 'large'] : ['large', 'medium'])}
                                         onClick={() => posthog?.capture('blog_card_clicked', { title: Title, slug, category: Categories?.[0], index })}
                                     />
                                 );
@@ -194,7 +150,7 @@ const Blogs = () => {
                         <div className="list-empty">
                             <h2 className="list-empty__title">No posts match</h2>
                             <p>Try a shorter search, or another category.</p>
-                            {filtering && <button type="button" className="btn btn--primary" onClick={clearFilters}>Show all {sorted.length} posts</button>}
+                            {filtering && <button type="button" className="btn btn--primary" onClick={clearFilters}>Show all {posts.length} posts</button>}
                         </div>
                     )}
                 </div>

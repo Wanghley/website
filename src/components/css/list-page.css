@@ -2,10 +2,12 @@
    and the empty and loading states. Cards, bands and type come from the Bench page kit
    (bench-page.css); this file only adds the toolbar and those states. */
 
-.list-toolbar { display: grid; gap: 18px; margin-bottom: 26px; }
+/* Search on the left, chips beside it: one row on a desktop, so the first tiles
+   sit in the first screen. On a phone the chips scroll sideways in one row. */
+.list-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-bottom: 8px; }
 
 /* --- search --- */
-.list-search { position: relative; display: flex; align-items: center; max-width: 34rem; }
+.list-search { position: relative; display: flex; align-items: center; flex: 0 1 22rem; min-width: 0; }
 .list-search input {
   width: 100%; font: inherit; font-size: var(--step-0); color: var(--t-fg);
   background: var(--t-surface); border: 1px solid var(--t-line-strong); border-radius: 4px;
@@ -24,7 +26,7 @@
 .list-search__clear:hover { color: var(--t-hover); }
 
 /* --- category chips --- */
-.list-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.list-filters { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
 .list-chip {
   display: inline-flex; align-items: center; gap: 8px;
   font: inherit; font-size: var(--step--1); color: var(--t-dim);
@@ -37,18 +39,34 @@
 .list-chip__n { font-family: var(--font-mono-bench); font-size: var(--step--2); font-variant-numeric: tabular-nums; color: var(--t-muted); }
 .list-chip[aria-pressed='true'] .list-chip__n { color: var(--paper-dim); }
 
+/* a live region: empty (and no height) until a search or filter narrows the list */
 .list-results {
-  min-height: 1.5em; margin-bottom: 22px;
+  margin-bottom: 18px;
   font-family: var(--font-mono-bench); font-size: var(--step--1); letter-spacing: 0.02em; color: var(--t-muted);
 }
+.list-results:empty { margin: 0; }
+.list-toolbar + .list-results:not(:empty) { margin-top: 14px; }
+.list-toolbar + .list-results:empty { margin-bottom: 20px; }
+
+/* list pages: a shorter title band and less air above the tiles */
+.list-page .bp-sec--head { padding-bottom: clamp(28px, 4.5vh, 44px); }
+.list-page .bp-sec--light { padding-top: clamp(28px, 5vh, 48px); }
 
 /* --- loading and empty states: plain blocks, no motion --- */
 .list-skeleton { display: block; background: var(--t-surface); border-radius: 3px; }
 .list-skeleton--meta { height: 12px; width: 30%; }
 .list-skeleton--title { height: 22px; width: 80%; }
 .list-skeleton--text { height: 38px; width: 100%; }
+.bp-cards--bento .list-skeleton { background: var(--t-line); }
 .list-empty { display: grid; gap: 14px; justify-items: start; max-width: 46ch; padding-block: 12px; font-size: var(--step-0); line-height: 1.5; color: var(--t-dim); }
 .list-empty__title { font-size: var(--step-1); font-weight: 600; letter-spacing: -0.015em; color: var(--t-fg); }
 
+@media (max-width: 639px) {
+  .list-toolbar { gap: 12px; }
+  .list-search { flex: 1 1 100%; }
+  .list-filters { flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; scroll-padding-inline: var(--gutter); scrollbar-width: thin; padding-bottom: 6px; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); }
+  .list-chip { flex: none; scroll-snap-align: start; }
+  .list-page .bp-sec--head { padding-bottom: 24px; }
+}
 @media (hover: none) { .list-search kbd { display: none; } }
 @media (pointer: coarse) { .list-chip, .list-search__clear { min-height: 44px; } }

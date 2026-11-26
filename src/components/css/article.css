@@ -1,6 +1,7 @@
-/* Article pages (projects and blog posts): a dark title band, then a paper
-   body with the cover image, a sticky "on this page" rail and the write-up in
-   the kit's Prose column. The write-up itself (headings, lists, tables,
+/* Article pages (projects and blog posts), laid out like a datasheet: a dark
+   title band with the cover beside the title, then a paper body in three zones
+   (a sticky "on this page" rail, the write-up in the kit's Prose column, a
+   sticky facts rail), media below, and the newer and older entry at the end. The write-up itself (headings, lists, tables,
    quotes, footnotes) is styled by .bp-prose in bench-page.css; this file adds
    the page frame, code blocks, diagrams and figures. Bench tokens only. */
 
@@ -14,11 +15,25 @@
 .article-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 26px; }
 .article-actions .btn { gap: 10px; }
 
-/* --- body --- */
-.article-cover { margin: 0 0 clamp(36px, 6vh, 56px); }
-.article-cover img { display: block; width: auto; max-width: 100%; height: auto; max-height: 34rem; border: 1px solid var(--t-line); border-radius: 4px; }
-.article-layout { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; }
+/* --- cover in the title band: the frame follows the picture's own shape (set
+   inline) and never grows past the file's width --- */
+.article-hero__cover { margin: 0; max-width: var(--cover-w, none); overflow: hidden; border: 1px solid var(--t-line-strong); border-radius: 4px; background: var(--t-surface); }
+.article-hero__cover img { display: block; width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 1023px) { .article-hero__cover { max-width: min(30rem, var(--cover-w, 30rem)); } }
+
+/* --- body: contents | text | facts. The grid's own font size is the text's, so
+   68ch here is the width of the Prose column. Below 1320px the facts are a strip
+   above the text; below 1024px the contents is a <details> as well. --- */
+.article-layout { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: clamp(32px, 5vw, 80px); align-items: start; font-size: var(--step-0); }
+.article-layout--no-toc { grid-template-columns: minmax(0, 1fr); }
 .article-main { min-width: 0; }
+.article-facts-rail { display: none; }
+@media (min-width: 1320px) {
+  .article-layout { grid-template-columns: 13rem minmax(0, 68ch) 16rem; justify-content: space-between; gap: clamp(32px, 4vw, 64px); }
+  .article-layout--no-toc { grid-template-columns: minmax(0, 68ch) 16rem; justify-content: center; }
+  .article-facts-rail { display: block; position: sticky; top: calc(var(--nav-height-scrolled) + 32px); }
+  .article-facts--strip-narrow { display: none; }
+}
 
 /* --- on this page --- */
 .article-aside { position: sticky; top: calc(var(--nav-height-scrolled) + 32px); max-height: calc(100vh - var(--nav-height-scrolled) - 64px); overflow-y: auto; }
@@ -32,6 +47,16 @@
 .article-toc--inline { display: none; margin-bottom: 28px; border-top: 1px solid var(--t-line-strong); border-bottom: 1px solid var(--t-line-strong); }
 .article-toc--inline summary { padding: 12px 0; font-size: var(--step--1); font-weight: 600; color: var(--t-fg); cursor: pointer; }
 .article-toc--inline .article-toc__list { padding-bottom: 10px; }
+
+/* --- facts: the entry's period, field, stack and what it includes --- */
+.article-facts__title { font-family: var(--font-mono-bench); font-size: var(--step--2); letter-spacing: 0.08em; text-transform: uppercase; color: var(--t-muted); margin-bottom: 10px; }
+.article-facts .bp-spec { border-top-color: var(--t-line-strong); }
+.article-facts__list { display: grid; gap: 4px; }
+.article-facts__list a { color: var(--t-link); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.article-facts__list a:hover { color: var(--t-hover); }
+/* the strip: the same rows, laid across */
+.article-facts--strip, .article-facts--strip-narrow { margin-bottom: clamp(28px, 5vh, 40px); }
+.article-facts--strip .bp-spec, .article-facts--strip-narrow .bp-spec { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); column-gap: 28px; }
 
 /* --- write-up extras (Prose covers the rest) --- */
 .article-content { max-width: 70ch; }
@@ -49,13 +74,6 @@
 .article-mermaid svg { max-width: 100%; height: auto; }
 .article-mermaid--note { justify-items: start; font-size: var(--step--1); color: var(--t-dim); }
 .article-mermaid--note pre { margin-top: 8px; font-family: var(--font-mono-bench); font-size: var(--step--2); white-space: pre-wrap; }
-
-/* --- topics under a post --- */
-.article-topics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: clamp(36px, 6vh, 56px); }
-.article-topics li {
-  padding: 4px 12px; border: 1px solid var(--t-line-strong); border-radius: 999px;
-  font-family: var(--font-mono-bench); font-size: var(--step--1); color: var(--t-dim);
-}
 
 /* --- view switch (Overview / Report) and the frame a report sits in --- */
 .article-views {
@@ -83,6 +101,27 @@
 .article-video { display: block; width: 100%; max-width: 52rem; border-radius: 4px; background: var(--ink-deep); }
 .article-back { margin-top: clamp(48px, 8vh, 72px); }
 
+/* --- the end of an article: the newer and the older entry --- */
+.article-adjacent { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: clamp(48px, 8vh, 72px); }
+.article-adjacent__item {
+  display: flex; align-items: center; gap: 16px; min-width: 0;
+  padding: 14px 16px; color: var(--t-fg);
+  background: var(--t-surface); border: 1px solid var(--t-line-strong); border-radius: 4px;
+  transition: border-color var(--dur-ui) var(--ease-out);
+}
+.article-adjacent__item--newer { grid-column: 1; }
+.article-adjacent__item--older { grid-column: 2; }
+.article-adjacent__item:hover { border-color: var(--t-fg); }
+.article-adjacent__item:focus-visible { box-shadow: none; outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+.article-adjacent__item:hover .article-adjacent__title { color: var(--t-hover); }
+.article-adjacent__item img { flex: none; width: 96px; height: 72px; object-fit: cover; border-radius: 3px; border: 1px solid var(--t-line); }
+.article-adjacent__text { display: grid; gap: 4px; min-width: 0; }
+.article-adjacent__dir, .article-adjacent__meta { font-family: var(--font-mono-bench); font-size: var(--step--2); letter-spacing: 0.04em; color: var(--t-muted); }
+.article-adjacent__title {
+  font-size: var(--step-0); font-weight: 600; line-height: 1.25; letter-spacing: -0.01em; text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
 /* --- loading and error: the same bands, plain blocks, no motion --- */
 .article-skeleton { background: var(--t-surface); border-radius: 3px; }
 .article-skeleton--title { height: clamp(36px, 5vw, 56px); width: min(100%, 34rem); }
@@ -96,4 +135,8 @@
   .article-layout { grid-template-columns: minmax(0, 1fr); }
   .article-aside { display: none; }
   .article-toc--inline { display: block; }
+}
+@media (max-width: 639px) {
+  .article-adjacent { grid-template-columns: minmax(0, 1fr); }
+  .article-adjacent__item--newer, .article-adjacent__item--older { grid-column: auto; }
 }

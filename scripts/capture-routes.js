@@ -8,6 +8,7 @@
  */
 const { chromium } = require('playwright');
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
@@ -22,6 +23,7 @@ const ROUTES = [
   ['about', '/about'],
   ['projects', '/projects'],
   ['project-stepdrop', '/projects/stepdrop'],
+  ['project-swipe', '/projects/swipe-o-matic-pcb-and-electronics-design'],
   ['blog', '/blog'],
   ['blog-post', '/blog/from-classroom-to-startup-floor-how-my-i-and-e-coursework-fuels-every-venture'],
   ['cv', '/curriculum-vitae'],
@@ -34,7 +36,8 @@ const ROUTES = [
 const WIDTHS = [[375, 812], [768, 1024], [1440, 900]];
 
 const up = () => new Promise((resolve) => {
-  http.get(BASE, (res) => { res.resume(); resolve(res.statusCode === 200); }).on('error', () => resolve(false));
+  const client = BASE.startsWith('https:') ? https : http;
+  client.get(BASE, (res) => { res.resume(); resolve(res.statusCode === 200); }).on('error', () => resolve(false));
 });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
