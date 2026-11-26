@@ -14,6 +14,7 @@ import { useActiveHeading, useReadCompletion } from './article/hooks';
 import { calculateReadingTime, extractHeadings, pickImage } from './article/utils';
 import { fetchPage, mediaUrl } from '../api/cms';
 import ProjectReport from './ProjectReport';
+import ProjectSite from './ProjectSite';
 
 const withProtocol = (url) => (url.includes('http') ? url : `https://${url}`);
 
@@ -268,6 +269,8 @@ const ProjectPage = () => {
                                     <MediaGallery media={media} />
                                 </section>
                             )}
+
+                            <ProjectSite site={project.site} title={Title} />
 
                             {reportUrl && <ProjectReport url={reportUrl} title={Title} />}
 
